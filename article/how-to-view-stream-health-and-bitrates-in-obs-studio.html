@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to View Stream Health and Bitrates in OBS Studio - obs-studio</title>
+    <meta name="description" content="Monitoring your broadcast's performance is crucial for maintaining a high-quality livestream. This guide provides a straightforward, step-by-step walkthrough on how to view your stream health, real-time bitrate, dropped frames, and other vital performanc">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-view-stream-health-and-bitrates-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to View Stream Health and Bitrates in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-view-stream-health-and-bitrates-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Monitoring your broadcast's performance is crucial for maintaining a high-quality livestream. This guide provides a straightforward, step-by-step walkthrough on how to view your stream health, real-time bitrate, dropped frames, and other vital performanc" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-view-stream-health-and-bitrates-in-obs-studio">How to
+View Stream Health and Bitrates in OBS Studio</h1>
+<p>Monitoring your broadcast's performance is crucial for maintaining a
+high-quality livestream. This guide provides a straightforward,
+step-by-step walkthrough on how to view your stream health, real-time
+bitrate, dropped frames, and other vital performance metrics directly
+within the OBS Studio interface.</p>
+<h3 id="method-1-use-the-stats-dock-recommended">Method 1: Use the Stats
+Dock (Recommended)</h3>
+<p>The <strong>Stats</strong> dock is the most comprehensive tool in OBS
+Studio for real-time monitoring. It displays your current bitrate, frame
+rendering lag, CPU usage, and dropped frames due to network
+congestion.</p>
+<ol type="1">
+<li>Open OBS Studio.</li>
+<li>In the top menu bar, click on <strong>Docs</strong> (or
+<strong>View</strong> &gt; <strong>Docks</strong> in older
+versions).</li>
+<li>Select <strong>Stats</strong> from the dropdown menu.</li>
+<li>A new window will pop up showing real-time data. You can drag and
+dock this window anywhere inside your OBS Studio dashboard so it remains
+visible while you stream.</li>
+</ol>
+<h3 id="method-2-check-the-status-bar">Method 2: Check the Status
+Bar</h3>
+<p>If you prefer a minimalist layout, OBS Studio displays basic
+real-time stream health at the very bottom right corner of the
+application window while you are live.</p>
+<ul>
+<li><strong>Status Square:</strong> A color-coded square indicates your
+overall stream health.
+<ul>
+<li><strong>Green:</strong> Your connection is stable, and the bitrate
+is holding.</li>
+<li><strong>Yellow:</strong> Your connection is fluctuating, and OBS is
+attempting to recover.</li>
+<li><strong>Red:</strong> Your connection is poor, and you are likely
+dropping frames.</li>
+</ul></li>
+<li><strong>kb/s Counter:</strong> Right next to the status square, you
+will see a real-time counter displaying your exact upload bitrate in
+kilobits per second.</li>
+<li><strong>FPS &amp; CPU:</strong> The status bar also displays your
+current frames per second (FPS) and CPU utilization to help you identify
+hardware bottlenecks.</li>
+</ul>
+<h3 id="troubleshooting-stream-health-issues">Troubleshooting Stream
+Health Issues</h3>
+<p>If you notice your stream health indicator turning yellow or red, or
+if the Stats dock shows a high number of "Dropped Frames (Network)":</p>
+<ul>
+<li><strong>Lower your bitrate:</strong> Your upload speed may not be
+able to sustain your current settings. Lower your bitrate in
+<strong>Settings &gt; Output &gt; Streaming</strong>.</li>
+<li><strong>Use a wired connection:</strong> Always use an Ethernet
+cable instead of Wi-Fi for streaming to ensure a stable connection.</li>
+<li><strong>Enable Dynamic Bitrate:</strong> Go to <strong>Settings &gt;
+Advanced &gt; Network</strong> and check <strong>Enable network
+optimizations</strong> and <strong>Dynamically change bitrate to manage
+congestion</strong>. This allows OBS to automatically lower your bitrate
+rather than dropping frames when your connection dips.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

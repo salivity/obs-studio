@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Downgrade OBS Studio to an Older Version - obs-studio</title>
+    <meta name="description" content="Updating OBS Studio can sometimes introduce unexpected bugs, break essential plugins, or cause performance issues with your streaming setup. This guide provides a quick, step-by-step walkthrough on how to safely downgrade OBS Studio to a previous, stable">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-downgrade-obs-studio-to-an-older-version">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Downgrade OBS Studio to an Older Version - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-downgrade-obs-studio-to-an-older-version" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Updating OBS Studio can sometimes introduce unexpected bugs, break essential plugins, or cause performance issues with your streaming setup. This guide provides a quick, step-by-step walkthrough on how to safely downgrade OBS Studio to a previous, stable" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-downgrade-obs-studio-to-an-older-version">How to
+Downgrade OBS Studio to an Older Version</h1>
+<p>Updating OBS Studio can sometimes introduce unexpected bugs, break
+essential plugins, or cause performance issues with your streaming
+setup. This guide provides a quick, step-by-step walkthrough on how to
+safely downgrade OBS Studio to a previous, stable version without losing
+your highly customized scenes, sources, profiles, or settings.</p>
+<h3 id="step-1-backup-your-obs-studio-data">Step 1: Backup Your OBS
+Studio Data</h3>
+<p>Before making any changes, it is vital to back up your configuration
+files to prevent data loss.</p>
+<ol type="1">
+<li>Press the <code>Windows Key + R</code> on your keyboard to open the
+Run dialog box.</li>
+<li>Type <code>%appdata%</code> and press <code>Enter</code>.</li>
+<li>Locate the folder named <code>obs-studio</code>.</li>
+<li>Copy this folder and paste it into a safe location, such as your
+Desktop or an external drive. This folder contains all of your profiles,
+scene collections, and plugin configurations.</li>
+</ol>
+<h3 id="step-2-download-the-older-version-of-obs-studio">Step 2:
+Download the Older Version of OBS Studio</h3>
+<p>To ensure system safety, only download previous versions of OBS
+Studio from the official repository.</p>
+<ol type="1">
+<li>Navigate to the official OBS Studio GitHub Releases page.</li>
+<li>Scroll through the releases to find the specific version that
+previously worked well with your setup.</li>
+<li>Under the "Assets" section of your chosen version, download the
+installer compatible with your operating system (typically the
+<code>.exe</code> installer for Windows).</li>
+</ol>
+<h3 id="step-3-uninstall-the-current-version-of-obs-studio">Step 3:
+Uninstall the Current Version of OBS Studio</h3>
+<p>To prevent file conflicts between the different versions, you must
+uninstall the current version of OBS.</p>
+<ol type="1">
+<li>Open the Windows <strong>Settings</strong> app and go to
+<strong>Apps</strong> &gt; <strong>Installed apps</strong> (or
+<strong>Programs and Features</strong> in the Control Panel).</li>
+<li>Locate <strong>OBS Studio</strong> in the list and click
+<strong>Uninstall</strong>.</li>
+<li><strong>Crucial Step:</strong> During the uninstallation process,
+you will be prompted with a checkbox asking if you want to delete your
+user settings and configuration files. <strong>Make sure this box is
+unchecked.</strong> Leaving it unchecked ensures your scenes and
+profiles remain on your computer.</li>
+</ol>
+<h3 id="step-4-install-the-downgraded-version">Step 4: Install the
+Downgraded Version</h3>
+<p>Once the uninstallation is complete, you can install the older
+version.</p>
+<ol type="1">
+<li>Locate the installer file you downloaded in Step 2.</li>
+<li>Double-click the file to run the installer.</li>
+<li>Follow the on-screen prompts to complete the installation
+process.</li>
+</ol>
+<h3 id="step-5-launch-and-verify">Step 5: Launch and Verify</h3>
+<p>Open the newly installed, downgraded version of OBS Studio. Your
+scenes, sources, and profiles should automatically load because your
+configuration files were kept intact. If any settings are missing, you
+can copy the contents of the backup folder you created in Step 1 back
+into the <code>%appdata%\obs-studio</code> directory.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

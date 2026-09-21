@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS File Handle Permissions on SMB Network Drives - obs-studio</title>
+    <meta name="description" content="Saving OBS Studio recordings directly to Server Message Block (SMB) network drives introduces distinct file handle behaviors and permission constraints compared to local storage. This article details the primary differences in file handle management, use">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-file-handle-permissions-on-smb-network-drives">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS File Handle Permissions on SMB Network Drives - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-file-handle-permissions-on-smb-network-drives" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Saving OBS Studio recordings directly to Server Message Block (SMB) network drives introduces distinct file handle behaviors and permission constraints compared to local storage. This article details the primary differences in file handle management, use" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-file-handle-permissions-on-smb-network-drives">OBS File
+Handle Permissions on SMB Network Drives</h1>
+<p>Saving OBS Studio recordings directly to Server Message Block (SMB)
+network drives introduces distinct file handle behaviors and permission
+constraints compared to local storage. This article details the primary
+differences in file handle management, user access tokens, file locking
+mechanisms, and permission inheritance when OBS writes video data across
+a network share versus a local disk.</p>
+<h3 id="local-vs-smb-file-handle-allocation">Local vs. SMB File Handle
+Allocation</h3>
+<p>When OBS Studio writes to a local drive, it requests a file handle
+directly from the Windows NT kernel via the Win32 API
+(<code>CreateFileW</code>). This local handle operates with direct
+access to the local file system (NTFS, exFAT), allowing immediate,
+low-latency write buffering and status updates.</p>
+<p>When recording to a mapped SMB drive, the file handle request must
+pass through the Windows Network Redirector (<code>rdbss.sys</code> and
+<code>mrxsmb.sys</code>). The handle generated is a remote file handle,
+subject to network latency, transport reliability (TCP/IP), and remote
+operating system translation. If the SMB connection experiences a
+micro-disconnection, the remote handle is invalidated
+(<code>ERROR_NETNAME_DELETED</code> or
+<code>ERROR_INVALID_HANDLE</code>). Unlike local handles that survive
+standard process throttling, an invalidated SMB handle causes OBS to
+fail write calls instantly, often halting the recording or corrupting
+the output container.</p>
+<h3 id="user-token-separation-and-elevated-handles">User Token
+Separation and Elevated Handles</h3>
+<p>A frequent conflict occurs when running OBS Studio with
+administrative privileges ("Run as Administrator"). Windows isolates
+mapped network drives (<code>Z:\</code>) to the specific logon session
+and security context that created them.</p>
+<ul>
+<li><strong>Local Storage:</strong> An elevated OBS process inherits
+elevated permissions, granting it broader access to write anywhere on
+local drives.</li>
+<li><strong>Mapped SMB Drives:</strong> An elevated OBS process cannot
+see or access mapped network drives created by a non-elevated user
+token. The file handle request will fail with a "path not found" or
+"access denied" error unless the registry value
+<code>EnableLinkedConnections</code> is enabled, or the storage is
+targeted using explicit UNC paths
+(<code>\\server\share\recordings</code>) rather than drive letters.</li>
+</ul>
+<h3 id="share-permissions-vs-file-system-acls">Share Permissions vs.
+File System ACLs</h3>
+<p>Local recording handles only evaluate local file system permissions
+(NTFS Access Control Lists). SMB recording handles require a dual-layer
+evaluation:</p>
+<ol type="1">
+<li><strong>Share-Level Permissions:</strong> Determine what rights are
+granted across the network transport (e.g., Read, Change, Full
+Control).</li>
+<li><strong>NTFS/Underlying ACLs:</strong> Determine the physical
+storage permissions on the host server.</li>
+</ol>
+<p>OBS requires continuous stream creation, metadata modification, and
+data appending. For the SMB file handle to function properly, the
+effective permission must be the most restrictive intersection of both
+layers. If an SMB share grants "Change" permissions, but the remote
+storage account lacks "Modify" on the NTFS level, OBS can create the
+initial file handle but will fail when attempting to alter file size
+attributes or finalize container headers.</p>
+<h3 id="file-locking-caching-and-oplocks">File Locking, Caching, and
+Oplocks</h3>
+<p>OBS requires uninterrupted write handles, especially for single-pass
+container formats like standard MP4.</p>
+<ul>
+<li><strong>Local Write Caching:</strong> Managed seamlessly by the
+Windows Cache Manager.</li>
+<li><strong>SMB Opportunistic Locks (Oplocks):</strong> SMB uses
+opportunistic locking and client-side caching leases to negotiate
+performance. If the SMB server revokes an oplock—often caused by another
+process (like a media scanner, backup utility, or another user)
+accessing the growing file—OBS must immediately flush its buffers and
+acknowledge the break. If the network or remote host delays this
+exchange, the write handle blocks, resulting in dropped frames in the
+recording or an outright I/O freeze.</li>
+</ul>
+<h3 id="mitigating-smb-file-handle-failures-in-obs">Mitigating SMB File
+Handle Failures in OBS</h3>
+<p>To avoid file handle termination and data loss when recording over
+SMB:</p>
+<ul>
+<li><strong>Use Universal Naming Convention (UNC) Paths:</strong> Direct
+OBS output to <code>\\ServerName\ShareName\Path</code> instead of
+relying on mapped drive letters to bypass token isolation issues.</li>
+<li><strong>Use Resilient Formats:</strong> Record using MKV or
+Fragmented MP4 (<code>fMP4</code>). If an SMB file handle drops,
+fragmented formats preserve all data written up to the point of
+disconnection. Standard MP4 leaves the file unreadable because the moov
+atom header cannot be finalized over a dead handle.</li>
+<li><strong>Grant Explicit Modify Rights:</strong> Ensure the
+authenticating network credentials possess both "Change" at the share
+level and "Modify" at the file system level to ensure
+attribute-modification handles execute without rejection.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Add an EQ to Your Microphone in OBS Studio - obs-studio</title>
+    <meta name="description" content="Adding an equalizer (EQ) to your microphone in OBS Studio is one of the easiest ways to instantly improve your audio quality. By adjusting specific frequencies, you can boost your voice's clarity, remove muddy low-end rumble, and deliver a more professio">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-add-an-eq-to-your-microphone-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Add an EQ to Your Microphone in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-add-an-eq-to-your-microphone-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Adding an equalizer (EQ) to your microphone in OBS Studio is one of the easiest ways to instantly improve your audio quality. By adjusting specific frequencies, you can boost your voice's clarity, remove muddy low-end rumble, and deliver a more professio" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-add-an-eq-to-your-microphone-in-obs-studio">How to Add an
+EQ to Your Microphone in OBS Studio</h1>
+<p>Adding an equalizer (EQ) to your microphone in OBS Studio is one of
+the easiest ways to instantly improve your audio quality. By adjusting
+specific frequencies, you can boost your voice's clarity, remove muddy
+low-end rumble, and deliver a more professional sound to your stream or
+recording. This guide will walk you through the quick steps of adding
+and configuring both the built-in OBS equalizer and advanced VST
+plugins.</p>
+<h2 id="method-1-using-the-built-in-obs-3-band-equalizer">Method 1:
+Using the Built-in OBS 3-Band Equalizer</h2>
+<p>OBS Studio includes a simple, built-in 3-band equalizer that allows
+you to adjust High, Mid, and Low frequencies.</p>
+<ol type="1">
+<li><strong>Open the Filters Menu:</strong> In the <strong>Audio
+Mixer</strong> dock at the bottom of your OBS screen, locate your
+microphone (usually labeled <em>Mic/Aux</em>). Click the three dots
+(options icon) next to it and select <strong>Filters</strong>.</li>
+<li><strong>Add the Equalizer:</strong> In the new window, click the
+<strong>+ (plus)</strong> icon in the bottom-left corner of the "Audio
+Filters" section. Select <strong>3-Band Equalizer</strong> from the
+list, give it a name, and click <strong>OK</strong>.</li>
+<li><strong>Adjust the Frequencies:</strong>
+<ul>
+<li><strong>High:</strong> Adjusts the treble. Turn this up slightly to
+add clarity and crispness to your voice.</li>
+<li><strong>Mid:</strong> Adjusts the presence of your voice. Modifying
+this can help your voice cut through game audio.</li>
+<li><strong>Low:</strong> Adjusts the bass. Turn this down slightly if
+your microphone sounds too boomy or muffled.</li>
+</ul></li>
+</ol>
+<h2 id="method-2-using-a-vst-2x-plugin-for-advanced-eq">Method 2: Using
+a VST 2.x Plugin (For Advanced EQ)</h2>
+<p>If you want more precise control over your audio (like a 10-band or
+parametric EQ), you can use third-party VST 2.x plugins. A highly
+recommended free option is the <em>ReaPlugs</em> suite (specifically
+<em>ReaEQ</em>) by Cockos.</p>
+<ol type="1">
+<li><strong>Install the VST Plugin:</strong> Download and install your
+preferred VST 2.x plugin. Ensure you install the 64-bit version, as OBS
+Studio is a 64-bit application and will not recognize 32-bit
+plugins.</li>
+<li><strong>Add the VST Filter in OBS:</strong> Open the
+<strong>Filters</strong> menu for your microphone again. Click the
+<strong>+ (plus)</strong> icon and select <strong>VST 2.x
+Plug-in</strong>.</li>
+<li><strong>Select your Plugin:</strong> In the drop-down menu under
+"Please select a plug-in," choose your installed EQ (e.g.,
+<em>reaeq-standalone</em>).</li>
+<li><strong>Configure the EQ:</strong> Click the <strong>Open Plug-in
+Interface</strong> button. This will open the plugin's native window,
+allowing you to add points to the frequency graph, cut out low-end
+rumble below 80Hz (high-pass filter), and fine-tune your vocal
+presence.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

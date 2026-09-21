@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS WebSocket Rejection Across Local Subnets - obs-studio</title>
+    <meta name="description" content="Connecting to OBS Studio's built-in WebSocket server from an external subnet often results in immediate connection rejections, timeouts, or refused handshakes. This article explores the root causes of cross-subnet connection failures with OBS WebSocket">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-web-socket-rejection-across-local-subnets">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS WebSocket Rejection Across Local Subnets - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-web-socket-rejection-across-local-subnets" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Connecting to OBS Studio's built-in WebSocket server from an external subnet often results in immediate connection rejections, timeouts, or refused handshakes. This article explores the root causes of cross-subnet connection failures with OBS WebSocket" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-websocket-rejection-across-local-subnets">OBS WebSocket
+Rejection Across Local Subnets</h1>
+<p>Connecting to OBS Studio's built-in WebSocket server from an external
+subnet often results in immediate connection rejections, timeouts, or
+refused handshakes. This article explores the root causes of
+cross-subnet connection failures with OBS WebSocket—including OS-level
+firewall restrictions, interface binding limitations, inter-VLAN routing
+controls, and network address translation issues—and explains how to
+resolve them to ensure reliable remote control.</p>
+<h3 id="default-host-firewall-scope-restrictions">Default Host Firewall
+Scope Restrictions</h3>
+<p>The most common cause of cross-subnet connection failure is the host
+operating system's firewall. When you allow OBS Studio through the
+Windows Defender Firewall or a Linux firewall (such as <code>ufw</code>
+or <code>iptables</code>), the rule often defaults to permitting
+incoming traffic solely from the local subnet.</p>
+<p>When a packet arrives from an IP address outside the host's immediate
+IP range (for example, from a <code>192.168.20.x</code> management VLAN
+to a <code>192.168.10.x</code> production workstation), the host
+firewall treats the request as a potential threat and silently drops or
+explicitly rejects the TCP connection on port 4455.</p>
+<ul>
+<li><strong>The Fix:</strong> Modify the inbound firewall rule for OBS
+Studio or port 4455. In Windows Defender Firewall with Advanced
+Security, locate the rule, open <strong>Properties &gt; Scope</strong>,
+and ensure the <strong>Remote IP address</strong> setting is set to
+<strong>Any IP address</strong> or explicitly includes the remote subnet
+range.</li>
+</ul>
+<h3 id="incorrect-ip-interface-binding">Incorrect IP Interface
+Binding</h3>
+<p>OBS WebSocket must listen on an interface accessible to the rest of
+the network. If the server is bound specifically to
+<code>127.0.0.1</code> (loopback), it will reject any connection attempt
+originating from outside the host machine itself, including traffic from
+other subnets.</p>
+<p>While modern OBS Studio WebSocket (v5.x+) binds to
+<code>0.0.0.0</code> (all IPv4 interfaces) by default, customized
+configurations, third-party plugins, or multi-homed network adapters can
+bind the service to a single network interface that cannot route between
+your specific subnets.</p>
+<ul>
+<li><strong>The Fix:</strong> Ensure OBS is bound to listen on all
+interfaces (<code>0.0.0.0</code> for IPv4 or <code>::</code> for IPv6).
+Check whether multiple network cards (such as a dedicated Dante or NDI
+interface) are confusing the default routing table of the host
+machine.</li>
+</ul>
+<h3
+id="inter-vlan-routing-and-network-access-control-lists-acls">Inter-VLAN
+Routing and Network Access Control Lists (ACLs)</h3>
+<p>In segmented networks featuring multiple VLANs or subnets, routers
+and layer-3 switches enforce access control lists (ACLs) and stateful
+firewall rules between segments.</p>
+<p>If the router separating the client subnet from the OBS subnet does
+not explicitly permit TCP traffic on the OBS WebSocket port (default:
+4455), the router will either drop the packets or send back a TCP RST
+(reset) packet.</p>
+<ul>
+<li><strong>The Fix:</strong> Verify your router or firewall rules
+between the subnets. Create a permissive rule that allows traffic from
+the client subnet/IP to the OBS host IP on TCP port 4455. Confirm that
+reverse traffic (established/related connections) is allowed back
+through the firewall.</li>
+</ul>
+<h3 id="asymmetric-routing-and-nat-issues">Asymmetric Routing and NAT
+Issues</h3>
+<p>If your network employs multiple gateways or complex routing paths,
+traffic sent to the OBS host might arrive successfully, but the OBS
+machine might route the return packets through a different default
+gateway. Asymmetric routing often causes stateful firewalls to drop
+return packets because the connection state was never recorded on the
+alternate return path.</p>
+<p>Similarly, if Destination NAT (DNAT) or Source NAT (SNAT) is
+incorrectly applied across local boundaries, the source or destination
+IP headers may not match what the TCP stack expects during the initial
+three-way handshake, resulting in a dropped connection.</p>
+<ul>
+<li><strong>The Fix:</strong> Trace the route from both ends using tools
+like <code>traceroute</code> or <code>tracert</code> to ensure that
+packets travel along a symmetrical path. Avoid applying NAT between
+trusted internal subnets.</li>
+</ul>
+<h3 id="hostname-and-mdns-resolution-failures">Hostname and mDNS
+Resolution Failures</h3>
+<p>Many remote control applications (such as custom Stream Deck
+integrations, companion apps, or web interfaces) attempt to connect to
+OBS using local hostnames (e.g., <code>obs-pc.local</code>). Multicast
+DNS (mDNS) packets do not cross subnet boundaries by default without an
+mDNS reflector or repeater (such as Avahi).</p>
+<p>If the client application cannot resolve the <code>.local</code>
+address across the subnet, the connection fails before a WebSocket
+handshake can even begin.</p>
+<ul>
+<li><strong>The Fix:</strong> Connect using the static IPv4 address of
+the OBS Studio workstation rather than a local hostname, or configure an
+mDNS gateway/proxy on your network router to propagate discovery packets
+between subnets.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why OBS Custom Docks Reset on Resolution Changes - obs-studio</title>
+    <meta name="description" content="Switching display resolutions or moving OBS Studio between monitors often causes custom browser docks and UI panels to disappear, overlap, or revert to default positions. This issue is primarily caused by the underlying Qt framework OBS relies on for win">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/why-obs-custom-docks-reset-on-resolution-changes">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why OBS Custom Docks Reset on Resolution Changes - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/why-obs-custom-docks-reset-on-resolution-changes" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Switching display resolutions or moving OBS Studio between monitors often causes custom browser docks and UI panels to disappear, overlap, or revert to default positions. This issue is primarily caused by the underlying Qt framework OBS relies on for win" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-obs-custom-docks-reset-on-resolution-changes">Why OBS Custom
+Docks Reset on Resolution Changes</h1>
+<p>Switching display resolutions or moving OBS Studio between monitors
+often causes custom browser docks and UI panels to disappear, overlap,
+or revert to default positions. This issue is primarily caused by the
+underlying Qt framework OBS relies on for window management, how the
+operating system handles display scaling (DPI), and built-in safety
+mechanisms designed to prevent user interface elements from rendering
+off-screen. Understanding these mechanisms helps clarify why layout
+states fail to adapt dynamically and how to keep docks stable.</p>
+<h3 id="qt-framework-geometry-and-coordinate-mapping">Qt Framework
+Geometry and Coordinate Mapping</h3>
+<p>OBS Studio is built using the Qt GUI framework, which utilizes
+<code>QMainWindow</code> and <code>QDockWidget</code> classes to manage
+customizable panels. When you dock a window or place a custom browser
+dock, Qt records its layout state, floating coordinates, and dimensions
+as specific pixel offsets relative to the primary display's
+resolution.</p>
+<p>When you change your display resolution—for example, dropping from 4K
+(3840x2160) to 1080p (1920x1080)—the total coordinate grid shrinks. If a
+custom dock was positioned at an offset beyond the 1920x1080 boundary,
+Qt no longer recognizes that screen area as valid display space.</p>
+<h3 id="off-screen-failsafe-triggering">Off-Screen Failsafe
+Triggering</h3>
+<p>To prevent docks and floating panels from becoming permanently
+inaccessible outside the visible desktop area, Qt and OBS feature
+built-in boundary checks. When the operating system broadcasts a display
+configuration change (such as a resolution drop or monitor
+disconnection), OBS evaluates whether the saved window coordinates fall
+within the new desktop boundaries.</p>
+<p>If the application determines that a dock’s previous coordinates
+exist outside the new bounds, it triggers a recovery mechanism.
+Depending on the dock's configuration, this mechanism will either:</p>
+<ul>
+<li>Reset the dock to a fallback position inside the main window.</li>
+<li>Collapse the dock entirely, unchecking it from the
+<strong>Docks</strong> menu.</li>
+<li>Stack multiple docks into a single tabbed group or default
+column.</li>
+</ul>
+<h3 id="high-dpi-scaling-and-os-display-changes">High-DPI Scaling and OS
+Display Changes</h3>
+<p>The problem is compounded when display resolution changes occur
+alongside adjustments to Windows or macOS display scaling (DPI). For
+example, running a laptop at 1080p at 125% scale connected to an
+external monitor at 1440p at 100% scale creates varying coordinate
+scaling factors.</p>
+<p>When OBS is shifted between these screens, or when the resolution
+changes during full-screen gaming, the operating system attempts to
+resize and rescale the application frame. If OBS recalculates widget
+sizes before the operating system finishes negotiating the new desktop
+resolution, the docks are forced to compress or reposition within an
+artificially constrained canvas, breaking the custom layout.</p>
+<h3 id="automatic-saving-of-corrupted-layout-states">Automatic Saving of
+Corrupted Layout States</h3>
+<p>OBS Studio automatically saves the current UI state to its
+configuration files (<code>basic.ini</code>) upon closing or whenever
+layout changes occur. If a resolution drop forces custom docks to
+collapse or reposition, OBS often immediately commits these changes to
+the active configuration profile. Consequently, returning to the
+original higher resolution will not restore the previous dock layout, as
+the safe fallback state has already overwritten the previous
+coordinates.</p>
+<h3 id="mitigating-the-issue">Mitigating the Issue</h3>
+<p>To minimize dock resets when switching resolutions:</p>
+<ul>
+<li><strong>Lock the UI:</strong> Enable <strong>Docks &gt; Lock
+UI</strong> to prevent docks from detaching or resizing easily during
+minor scaling fluctuations.</li>
+<li><strong>Maintain Consistent DPI:</strong> Ensure that multiple
+monitors share compatible scaling factors (e.g., 100% across all
+screens) to prevent coordinate recalculation errors.</li>
+<li><strong>Backup Layout Configurations:</strong> Keep a backup of the
+<code>basic.ini</code> file located in the OBS AppData directory to
+quickly restore dock placements if a resolution change resets the
+layout.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

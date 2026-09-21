@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Fix Washed-Out Colors in OBS Studio - obs-studio</title>
+    <meta name="description" content="If your game captures or streams in OBS Studio look faded, desaturated, or washed out compared to what you see on your monitor, you are likely experiencing a configuration mismatch. This article explains how to quickly resolve this common issue by adjust">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-fix-washed-out-colors-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Fix Washed-Out Colors in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-fix-washed-out-colors-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="If your game captures or streams in OBS Studio look faded, desaturated, or washed out compared to what you see on your monitor, you are likely experiencing a configuration mismatch. This article explains how to quickly resolve this common issue by adjust" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-fix-washed-out-colors-in-obs-studio">How to Fix
+Washed-Out Colors in OBS Studio</h1>
+<p>If your game captures or streams in OBS Studio look faded,
+desaturated, or washed out compared to what you see on your monitor, you
+are likely experiencing a configuration mismatch. This article explains
+how to quickly resolve this common issue by adjusting OBS color
+settings, addressing High Dynamic Range (HDR) conflicts, and configuring
+your graphics card settings for accurate color reproduction.</p>
+<h3 id="1-adjust-obs-color-space-and-color-range">1. Adjust OBS Color
+Space and Color Range</h3>
+<p>The most frequent cause of washed-out video is a mismatch in the
+color range settings. While "Full" range sounds superior to "Limited,"
+setting OBS to Full often results in washed-out colors or crushed blacks
+on standard video players and streaming platforms like YouTube and
+Twitch, which expect a Limited range.</p>
+<p>To configure these settings correctly:</p>
+<ol type="1">
+<li>Open OBS Studio and click <strong>Settings</strong> in the
+bottom-right corner.</li>
+<li>Select the <strong>Advanced</strong> tab from the left sidebar.</li>
+<li>Under the <strong>Video</strong> section, locate and adjust the
+following settings:
+<ul>
+<li><strong>Color Format:</strong> Set this to <strong>NV12</strong>
+(the standard format for SDR streaming and recording).</li>
+<li><strong>Color Space:</strong> Set this to <strong>Rec. 709</strong>
+(provides better color accuracy than Rec. 601).</li>
+<li><strong>Color Range:</strong> Set this to <strong>Limited</strong>
+(sometimes labeled as "Partial").</li>
+</ul></li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong>.</li>
+</ol>
+<h3 id="2-disable-or-configure-hdr">2. Disable or Configure HDR</h3>
+<p>Capturing a game running in High Dynamic Range (HDR) on a Standard
+Dynamic Range (SDR) canvas in OBS is a leading cause of severely faded
+colors. If you play in HDR, OBS will capture the bright highlights but
+compress them incorrectly into SDR, resulting in a dull, gray image.</p>
+<ul>
+<li><strong>Disable HDR in Windows:</strong> Press
+<code>Windows Key + Alt + B</code> to toggle HDR off before launching
+your game and OBS. Also, ensure HDR is turned off in your in-game video
+settings.</li>
+<li><strong>Configure OBS for HDR:</strong> If you want to record or
+stream in HDR, you must configure OBS to handle it. Go to
+<strong>Settings</strong> &gt; <strong>Advanced</strong> and set
+<strong>Color Format</strong> to <strong>P010</strong> and <strong>Color
+Space</strong> to <strong>Rec. 2100 (PQ)</strong>. Keep in mind that
+your target platform (like YouTube) must support HDR playback for this
+to display correctly.</li>
+</ul>
+<h3 id="3-check-gpu-color-settings">3. Check GPU Color Settings</h3>
+<p>Sometimes your graphics card control panel outputs a limited color
+range to your monitor. This makes your local gameplay look normal to
+your eyes, but when OBS captures the raw system signal, the mismatch
+causes the output to look washed out.</p>
+<p>For NVIDIA users:</p>
+<ol type="1">
+<li>Right-click your desktop and open the <strong>NVIDIA Control
+Panel</strong>.</li>
+<li>Under <strong>Display</strong>, click on <strong>Change
+resolution</strong>.</li>
+<li>Scroll down and select <strong>Use NVIDIA color
+settings</strong>.</li>
+<li>Change the <strong>Output dynamic range</strong> from Limited to
+<strong>Full</strong>.</li>
+<li>Click <strong>Apply</strong>.</li>
+</ol>
+<h3 id="4-use-game-capture-instead-of-display-capture">4. Use Game
+Capture Instead of Display Capture</h3>
+<p>Whenever possible, use the <strong>Game Capture</strong> source
+instead of <strong>Display Capture</strong> in your OBS Sources box.
+Display Capture captures the entire Windows desktop environment, which
+can introduce color profile shifts—especially on multi-monitor setups or
+when Windows Auto-HDR is active. Game Capture hooks directly into the
+game's graphics API, rendering a much cleaner and more accurate color
+output.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

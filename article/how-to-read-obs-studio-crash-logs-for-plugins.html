@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Read OBS Studio Crash Logs for Plugins - obs-studio</title>
+    <meta name="description" content="OBS Studio crashes are often caused by outdated, corrupted, or incompatible third-party plugins. This guide will walk you through locating your OBS Studio crash logs, identifying the specific crashed thread, pinpointing the faulty plugin file, and resolv">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-read-obs-studio-crash-logs-for-plugins">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Read OBS Studio Crash Logs for Plugins - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-read-obs-studio-crash-logs-for-plugins" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio crashes are often caused by outdated, corrupted, or incompatible third-party plugins. This guide will walk you through locating your OBS Studio crash logs, identifying the specific crashed thread, pinpointing the faulty plugin file, and resolv" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-read-obs-studio-crash-logs-for-plugins">How to Read OBS
+Studio Crash Logs for Plugins</h1>
+<p>OBS Studio crashes are often caused by outdated, corrupted, or
+incompatible third-party plugins. This guide will walk you through
+locating your OBS Studio crash logs, identifying the specific crashed
+thread, pinpointing the faulty plugin file, and resolving the issue to
+restore your software's stability.</p>
+<h3 id="step-1-locate-and-open-the-crash-log">Step 1: Locate and Open
+the Crash Log</h3>
+<p>To diagnose the issue, you must first access the log file generated
+during the crash.</p>
+<ol type="1">
+<li>Open OBS Studio (if it is able to open).</li>
+<li>Go to the top menu and select <strong>Help</strong> &gt;
+<strong>Crash Reports</strong> &gt; <strong>Show Crash Reports</strong>.
+This opens the folder containing your crash files.</li>
+<li>If OBS Studio will not open, press <code>Win + R</code> on your
+keyboard, type <code>%APPDATA%\obs-studio\crashes</code>, and press
+<strong>Enter</strong>.</li>
+<li>Open the most recent crash log file (usually named with a date and
+timestamp) using a standard text editor like Notepad.</li>
+</ol>
+<h3 id="step-2-identify-the-crashed-thread">Step 2: Identify the Crashed
+Thread</h3>
+<p>The top section of the crash log contains essential metadata about
+the crash, including the "Crashed Thread."</p>
+<ol type="1">
+<li>Look near the top of the file for a line that reads <strong>Crashed
+Thread: [Number]</strong> (for example,
+<code>Crashed Thread: 14</code>).</li>
+<li>Scroll down through the log until you find the section corresponding
+to that specific thread, labeled as <strong>Thread [Number]</strong>
+(for example, <code>Thread 14 (crashed):</code>).</li>
+</ol>
+<h3 id="step-3-analyze-the-stack-trace-for-plugin-files">Step 3: Analyze
+the Stack Trace for Plugin Files</h3>
+<p>Under the crashed thread header, you will see a list of files and
+memory addresses known as a "stack trace." The software reads this list
+from bottom to top (or top to bottom, depending on the error) to show
+the sequence of events leading to the failure.</p>
+<ol type="1">
+<li>Look at the names of the dynamic link library (<code>.dll</code> on
+Windows, <code>.so</code> on Linux, or <code>.dylib</code> on macOS)
+files listed in the crashed thread.</li>
+<li>Standard OBS files typically start with <code>obs</code>,
+<code>libobs</code>, or <code>w32-pthreads</code>. Ignore these
+initially.</li>
+<li>Search for third-party file names. Common examples of plugin-related
+files include:
+<ul>
+<li><code>obs-ndi.dll</code> (NDI Integration)</li>
+<li><code>obs-virtualcam.dll</code> (Virtual Camera)</li>
+<li><code>streamelements.dll</code> or <code>obs-se.dll</code>
+(StreamElements SE.Live)</li>
+<li><code>move-transition.dll</code> (Move Transition plugin)</li>
+<li><code>win-capture-audio.dll</code> (Application Audio Capture)</li>
+</ul></li>
+</ol>
+<p>The file name listed at the very top of the crashed thread's stack
+trace is almost always the direct cause of the crash.</p>
+<h3 id="step-4-resolve-the-faulty-plugin-issue">Step 4: Resolve the
+Faulty Plugin Issue</h3>
+<p>Once you have identified the filename of the problematic plugin, you
+can resolve the crash using one of the following methods:</p>
+<ul>
+<li><strong>Update the Plugin:</strong> Visit the official OBS resources
+page or the developer's GitHub repository to download and install the
+latest version of the plugin. New OBS Studio updates frequently break
+older plugin versions.</li>
+<li><strong>Remove the Plugin:</strong> If you no longer need the
+plugin, or if an update is unavailable, delete the plugin file. Navigate
+to <code>C:\Program Files\obs-studio\obs-plugins\64bit</code> (or your
+custom installation path) and delete the offending <code>.dll</code>
+file.</li>
+<li><strong>Uninstall SE.Live:</strong> If the crash is caused by
+<code>streamelements.dll</code>, uninstall the SE.Live plugin via
+Windows "Add or Remove Programs" to see if OBS stability returns.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

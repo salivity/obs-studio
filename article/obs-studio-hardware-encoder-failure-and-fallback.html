@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Hardware Encoder Failure and Fallback - obs-studio</title>
+    <meta name="description" content="When a primary hardware encoding chip—such as an NVIDIA NVENC, AMD AMF, or Intel QuickSync chip—fails during an active recording in OBS Studio, the software does not support dynamic, on-the-fly encoder fallback. Because the media pipeline is bound to">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-hardware-encoder-failure-and-fallback">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Hardware Encoder Failure and Fallback - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-hardware-encoder-failure-and-fallback" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When a primary hardware encoding chip—such as an NVIDIA NVENC, AMD AMF, or Intel QuickSync chip—fails during an active recording in OBS Studio, the software does not support dynamic, on-the-fly encoder fallback. Because the media pipeline is bound to" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-hardware-encoder-failure-and-fallback">OBS Studio
+Hardware Encoder Failure and Fallback</h1>
+<p>When a primary hardware encoding chip—such as an NVIDIA NVENC, AMD
+AMF, or Intel QuickSync chip—fails during an active recording in OBS
+Studio, the software does not support dynamic, on-the-fly encoder
+fallback. Because the media pipeline is bound to the initialized encoder
+session, a catastrophic hardware or driver crash abruptly stops the
+encoding pipeline rather than hot-swapping to a secondary encoder like
+x264 (CPU). Understanding this limitation, how OBS reports the failure,
+and how to protect recorded data is critical for preventing lost
+work.</p>
+<h3 id="the-technical-limitation-no-dynamic-hot-swapping">The Technical
+Limitation: No Dynamic Hot-Swapping</h3>
+<p>OBS Studio initializes its encoding pipeline upon clicking the "Start
+Recording" button. This establishes a fixed output pipeline linking the
+compositing canvas directly to the specified encoding library (e.g.,
+<code>libobs-nvenc</code>).</p>
+<p>If the hardware encoding silicon crashes, experiences a Timeout
+Detection and Recovery (TDR) event from the operating system, or runs
+out of usable memory, the encoder API returns an unrecoverable failure
+state. OBS Studio does not feature an automated failover mechanism to
+seamlessly transition an active video stream to software (CPU) encoding
+mid-recording. Doing so would require rebuilding the video pipeline,
+renegotiating timestamps, and altering the underlying container stream
+structure without dropping frames—a feature currently absent from the
+core architecture.</p>
+<h3 id="what-happens-during-a-failure">What Happens During a
+Failure</h3>
+<p>When the hardware encoder crashes during a session, the following
+sequence occurs:</p>
+<ol type="1">
+<li><strong>Pipeline Freezing:</strong> The encoder stops processing
+incoming frame textures from the OBS rendering engine.</li>
+<li><strong>Error Logging:</strong> OBS logs a critical failure in its
+session log (e.g., <code>[NVENC error: NV_ENC_ERR_DEVICE_RESIZED]</code>
+or <code>Device Removed / TDR</code>).</li>
+<li><strong>Recording Termination:</strong> OBS displays an error
+notification stating that an encoder error occurred and stops the active
+recording.</li>
+<li><strong>Session Hangs:</strong> In some severe driver-level crashes,
+OBS may hang entirely, remaining stuck on "Stopping Recording..." until
+the process is forcibly terminated via the operating system task
+manager.</li>
+</ol>
+<h3 id="impact-on-file-integrity">Impact on File Integrity</h3>
+<p>The fate of the recording up to the point of failure depends entirely
+on the chosen container format:</p>
+<ul>
+<li><strong>Standard MP4 / MOV:</strong> If recorded to standard MP4,
+the file will be corrupted and rendered unplayable. Standard MP4
+structures require a finalized "moov atom" (metadata index) written at
+the very end of a clean shutdown. An unexpected crash leaves the file
+without this header.</li>
+<li><strong>Fragmented MP4 (fMP4) / Fragmented MOV (fMOV):</strong> The
+file remains intact up to the last written fragment. This format writes
+metadata in continuous increments, making it resilient to unexpected
+stops.</li>
+<li><strong>Matroska (MKV):</strong> The recording will remain playable
+up to the second the encoder crashed. MKV was engineered to stream
+packet data without requiring an end-of-file metadata block.</li>
+</ul>
+<h3 id="mitigating-encoder-failure-risks">Mitigating Encoder Failure
+Risks</h3>
+<p>Because automatic fallback to a secondary encoder is unavailable
+during an active session, prevention and resilience strategies are
+required:</p>
+<ul>
+<li><strong>Use Crash-Resilient Formats:</strong> Always record to
+<strong>MKV</strong> or <strong>Fragmented MP4</strong>. In the event of
+a total hardware encoder crash, all footage recorded up to the moment of
+failure is preserved.</li>
+<li><strong>Monitor GPU Encoders Separately from 3D Engines:</strong>
+Hardware encoder failures are frequently caused by overall GPU
+instability rather than the encoder chip itself. Unstable overclocks,
+power spikes, or VRAM saturation from high-demand games can trigger a
+driver reset that kills the encoder.</li>
+<li><strong>Reserve Sufficient GPU Overhead:</strong> Run OBS Studio in
+Administrator Mode on Windows. This grants OBS priority access to
+DirectX resources, reducing the chance that a 3D application starves the
+hardware encoder pipeline of required memory or bandwidth.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

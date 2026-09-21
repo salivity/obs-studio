@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio x264 Profiles: Baseline, Main, and High - obs-studio</title>
+    <meta name="description" content="In OBS Studio, configuring the x264 encoder requires choosing an H.264 profile—Constrained Baseline, Main, or High—which determines the specific compression algorithms and decoding features the encoder utilizes. This article explains the technical di">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-x-264-profiles-baseline-main-and-high">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio x264 Profiles: Baseline, Main, and High - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-x-264-profiles-baseline-main-and-high" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In OBS Studio, configuring the x264 encoder requires choosing an H.264 profile—Constrained Baseline, Main, or High—which determines the specific compression algorithms and decoding features the encoder utilizes. This article explains the technical di" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-x264-profiles-baseline-main-and-high">OBS Studio x264
+Profiles: Baseline, Main, and High</h1>
+<p>In OBS Studio, configuring the x264 encoder requires choosing an
+H.264 profile—Constrained Baseline, Main, or High—which determines the
+specific compression algorithms and decoding features the encoder
+utilizes. This article explains the technical differences between these
+three profiles, how they influence video quality and device
+compatibility, and which setting you should select for your live stream
+or recording.</p>
+<h3 id="understanding-x264-profiles">Understanding x264 Profiles</h3>
+<p>An H.264 profile is a standardized subset of encoding capabilities.
+Higher profiles enable advanced compression algorithms that produce
+better visual quality at lower bitrates, but they require more computing
+power to decode on playback devices. Lower profiles use simpler
+algorithms, sacrificing compression efficiency to ensure compatibility
+with older or low-power hardware.</p>
+<h3 id="constrained-baseline-profile">Constrained Baseline Profile</h3>
+<p>The Constrained Baseline profile is the most basic encoding profile
+available in OBS Studio. It restricts the encoder to the most
+fundamental features of the H.264 standard.</p>
+<ul>
+<li><strong>Features:</strong> It uses Context-Adaptive Variable-Length
+Coding (CAVLC) and only allows I-frames (keyframes) and P-frames
+(predicted frames). It completely disables B-frames (bidirectional
+predictive frames).</li>
+<li><strong>Compression Efficiency:</strong> Lowest. Because it lacks
+B-frames and advanced prediction algorithms, it requires a significantly
+higher bitrate to achieve the same visual fidelity as the other
+profiles.</li>
+<li><strong>Compatibility:</strong> Universal. Virtually any device with
+a screen and a processor can decode Constrained Baseline video with
+minimal battery and CPU usage.</li>
+<li><strong>Best Used For:</strong> Ultra-low-latency environments,
+legacy mobile devices, old web browsers, or specialized streaming
+situations where compatibility with obsolete hardware is mandatory.</li>
+</ul>
+<h3 id="main-profile">Main Profile</h3>
+<p>The Main profile was historically the standard for
+standard-definition digital television broadcasts and intermediate
+consumer devices.</p>
+<ul>
+<li><strong>Features:</strong> It introduces B-frames and enables
+Context-Adaptive Binary Arithmetic Coding (CABAC), an entropy encoding
+method that is notably more efficient than CAVLC.</li>
+<li><strong>Compression Efficiency:</strong> Moderate. The inclusion of
+B-frames allows the encoder to compress data between frames more
+effectively, resulting in noticeably cleaner motion and sharper images
+than Baseline at the same bitrate.</li>
+<li><strong>Compatibility:</strong> High. Most modern and
+previous-generation consumer electronics, including older smartphones,
+game consoles, and legacy media players, support Main profile
+decoding.</li>
+<li><strong>Best Used For:</strong> Streaming platforms that mandate it
+for backwards compatibility, or when targeting viewers on older mobile
+devices that might struggle with higher profile decoding.</li>
+</ul>
+<h3 id="high-profile">High Profile</h3>
+<p>The High profile is the primary profile used for high-definition
+media, Blu-ray discs, and modern internet video platforms.</p>
+<ul>
+<li><strong>Features:</strong> In addition to all the features in the
+Main profile, High profile introduces an adaptive 8x8 transform block
+size (alongside the traditional 4x4 transform) and custom quantization
+matrices. This allows the encoder to compress flat areas and complex
+textures far more intelligently.</li>
+<li><strong>Compression Efficiency:</strong> Highest. It preserves the
+most fine detail, reduces macroblocking (pixelation) during fast motion,
+and maximizes video quality per kilobit of data.</li>
+<li><strong>Compatibility:</strong> Excellent on modern hardware. Any
+computer, smartphone, tablet, smart TV, or streaming device produced in
+the last decade includes hardware-accelerated decoding for High profile
+H.264 video.</li>
+<li><strong>Best Used For:</strong> Standard Twitch, YouTube, and Kick
+live streams, as well as local high-resolution recordings.</li>
+</ul>
+<h3 id="summary-and-recommendation">Summary and Recommendation</h3>
+<ul>
+<li><strong>Constrained Baseline:</strong> Maximum device compatibility,
+lowest image quality, no B-frames.</li>
+<li><strong>Main:</strong> Balanced compatibility and efficiency,
+includes B-frames.</li>
+<li><strong>High:</strong> Best image quality per bit, lowest bandwidth
+requirement for good visuals, standard across modern platforms.</li>
+</ul>
+<p>For modern streaming and recording in OBS Studio, you should select
+the <strong>High</strong> profile unless a specific service or legacy
+target device strictly requires Main or Baseline. Modern video platforms
+and viewer devices are built to handle the High profile by default.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

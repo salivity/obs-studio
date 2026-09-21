@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Studio Logs RTMPS SSL Parameters - obs-studio</title>
+    <meta name="description" content="This article explains how OBS Studio captures and records SSL/TLS negotiation parameters when establishing an encrypted Real-Time Messaging Protocol (RTMPS) stream. When connecting to an RTMPS endpoint, OBS Studio delegates cryptographic handshakes to un">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-studio-logs-rtmps-ssl-parameters">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Studio Logs RTMPS SSL Parameters - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-studio-logs-rtmps-ssl-parameters" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how OBS Studio captures and records SSL/TLS negotiation parameters when establishing an encrypted Real-Time Messaging Protocol (RTMPS) stream. When connecting to an RTMPS endpoint, OBS Studio delegates cryptographic handshakes to un" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-studio-logs-rtmps-ssl-parameters">How OBS Studio Logs
+RTMPS SSL Parameters</h1>
+<p>This article explains how OBS Studio captures and records SSL/TLS
+negotiation parameters when establishing an encrypted Real-Time
+Messaging Protocol (RTMPS) stream. When connecting to an RTMPS endpoint,
+OBS Studio delegates cryptographic handshakes to underlying security
+libraries such as mbedTLS or OpenSSL, funneling critical negotiation
+parameters—including TLS protocol versions, cipher suites, and
+certificate validation statuses—directly into the application's runtime
+log system.</p>
+<h3 id="the-underlying-tls-architecture">The Underlying TLS
+Architecture</h3>
+<p>OBS Studio handles live RTMP/RTMPS broadcasting primarily through its
+<code>obs-outputs</code> module. When connecting to an
+<code>rtmps://</code> URL on port 443, the application establishes a TCP
+socket and initiates a Transport Layer Security (TLS) handshake before
+transmitting RTMP packets.</p>
+<p>Depending on the operating system and compile-time configurations,
+OBS Studio typically utilizes <strong>mbedTLS</strong> or
+<strong>OpenSSL</strong> as its cryptographic backend. The communication
+between the TLS library and OBS Studio's internal logging framework
+(<code>blog()</code>) is managed via diagnostic callbacks. When the
+handshake process begins, the cryptographic library communicates state
+changes and negotiation metadata back to the application.</p>
+<h3 id="logged-negotiation-parameters">Logged Negotiation
+Parameters</h3>
+<p>During standard operation, OBS Studio records the macroscopic state
+of the connection to keep log sizes manageable. When the TLS layer
+executes, the following parameters are processed and selectively written
+to the log:</p>
+<ul>
+<li><strong>Protocol Version:</strong> The negotiated TLS version (e.g.,
+TLSv1.2 or TLSv1.3). If a server fails to negotiate a mutually supported
+version, a protocol mismatch error is explicitly logged.</li>
+<li><strong>Cipher Suite:</strong> The specific key exchange, bulk
+cipher, and message authentication algorithms selected for the session
+(e.g., <code>TLS_AES_256_GCM_SHA384</code> or
+<code>ECDHE-RSA-AES128-GCM-SHA256</code>).</li>
+<li><strong>Certificate Verification Status:</strong> Information
+regarding server identity verification. This includes whether the peer
+certificate is valid, expired, self-signed, or untrusted according to
+the system's root certificate store.</li>
+<li><strong>Handshake Completion or Failure Codes:</strong> Success
+messages confirming the socket upgrade to TLS, or standard alert codes
+(such as <code>UNKNOWN_CA</code>, <code>HANDSHAKE_FAILURE</code>, or
+<code>DECRYPT_ERROR</code>) if the negotiation fails.</li>
+</ul>
+<h3 id="standard-logging-vs-verbose-logging">Standard Logging vs.
+Verbose Logging</h3>
+<p>By default, OBS Studio operates at an informational log level
+(<code>LOG_INFO</code>). In this mode, successful handshakes often
+appear as succinct status entries confirming that a secure connection
+has been established to the target host and port. Granular details, such
+as intermediate certificate chain resolution and specific cipher
+negotiation steps, are retained at lower log levels to prevent log
+bloat.</p>
+<p>To log comprehensive TLS parameters:</p>
+<ol type="1">
+<li>Launch OBS Studio via command line using the <code>--verbose</code>
+flag (e.g., <code>obs64.exe --verbose</code> on Windows).</li>
+<li>The <code>--verbose</code> flag elevates internal log levels to
+<code>LOG_DEBUG</code>, instructing the underlying TLS callbacks to dump
+exact handshake states, record-layer details, and supported
+client-versus-server cipher comparisons.</li>
+</ol>
+<h3 id="locating-and-inspecting-the-logs">Locating and Inspecting the
+Logs</h3>
+<p>Log entries generated during the RTMPS connection attempt are written
+to standard plain-text files.</p>
+<ul>
+<li>In OBS Studio, open <strong>Help</strong> &gt; <strong>Log
+Files</strong> &gt; <strong>View Current Log</strong> (or <strong>View
+Previous Log</strong>).</li>
+<li>Alternatively, navigate directly to the application data directory:
+<ul>
+<li><strong>Windows:</strong>
+<code>%APPDATA%\obs-studio\logs</code></li>
+<li><strong>macOS:</strong>
+<code>~/Library/Application Support/obs-studio/logs</code></li>
+<li><strong>Linux:</strong> <code>~/.config/obs-studio/logs</code></li>
+</ul></li>
+</ul>
+<p>Within the log file, search for
+<code>[rtmp stream: 'adv_stream']</code> or
+<code>[rtmp stream: 'simple_stream']</code> followed by
+<code>Connecting to RTMP URL</code>. Handshake negotiations, TLS alerts,
+or library-specific diagnostic lines will appear immediately after the
+TCP connection confirmation.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Scripting: Parsing Custom JSON Schemas - obs-studio</title>
+    <meta name="description" content="This article explains how OBS Studio handles and parses custom JSON data within its built-in Lua and Python scripting engine. It covers the underlying C libraries responsible for deserialization, the role of internal data structures like obsdatat, and ho">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-scripting-parsing-custom-json-schemas">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Scripting: Parsing Custom JSON Schemas - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-scripting-parsing-custom-json-schemas" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how OBS Studio handles and parses custom JSON data within its built-in Lua and Python scripting engine. It covers the underlying C libraries responsible for deserialization, the role of internal data structures like obsdatat, and ho" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-scripting-parsing-custom-json-schemas">OBS Studio
+Scripting: Parsing Custom JSON Schemas</h1>
+<p>This article explains how OBS Studio handles and parses custom JSON
+data within its built-in Lua and Python scripting engine. It covers the
+underlying C libraries responsible for deserialization, the role of
+internal data structures like <code>obs_data_t</code>, and how schema
+validation operates between user-defined scripts and the core OBS
+architecture.</p>
+<h3 id="the-underlying-parsing-architecture">The Underlying Parsing
+Architecture</h3>
+<p>OBS Studio relies on <code>libobs</code>, its core C library, to
+handle application logic, data management, and script bindings. When
+JSON data passes through the scripting engine, OBS does not use an
+external runtime interpreter for parsing. Instead, it utilizes
+<strong>Jansson</strong>, an embedded C library for encoding, decoding,
+and manipulating JSON data.</p>
+<p>At the API level, OBS wraps Jansson structures inside its own native
+data container: <code>obs_data_t</code>. This object behaves like a
+typed key-value dictionary that natively supports strings, integers,
+floats, booleans, arrays (<code>obs_data_array_t</code>), and nested
+objects.</p>
+<h3 id="deserialization-via-obs_data_t">Deserialization via
+<code>obs_data_t</code></h3>
+<p>When a script receives or passes JSON strings, parsing occurs through
+the following sequence:</p>
+<ol type="1">
+<li><strong>Ingestion:</strong> The script invokes functions such as
+<code>obs_data_create_from_json()</code> or
+<code>obs_data_create_from_json_file()</code>.</li>
+<li><strong>C-Level Parsing:</strong> <code>libobs</code> forwards the
+raw string to Jansson's <code>json_loads()</code> function with
+validation flags enabled to ensure syntactic correctness.</li>
+<li><strong>Data Mapping:</strong> If valid, the Jansson AST (Abstract
+Syntax Tree) is recursively traversed, converting JSON types directly
+into an <code>obs_data_t</code> reference table.</li>
+<li><strong>Binding Exposure:</strong> The resulting object pointer is
+wrapped via SWIG (Simplified Wrapper and Interface Generator) for Python
+or custom C-Lua wrappers, exposing typed getters (such as
+<code>obs_data_get_string</code> or <code>obs_data_get_int</code>) to
+the scripting runtime.</li>
+</ol>
+<h3 id="custom-schema-handling-and-validation">Custom Schema Handling
+and Validation</h3>
+<p>OBS Studio's core does not natively implement formal JSON Schema
+specifications (such as JSON Schema Draft-07 or 2020-12). Instead, it
+enforces schemas through two distinct mechanisms:</p>
+<h4 id="1-property-driven-declarative-schemas">1. Property-Driven
+Declarative Schemas</h4>
+<p>For standard user inputs, OBS uses the <code>obs_properties_t</code>
+structure. In functions like <code>script_properties()</code>, the
+script defines an implicit schema by binding visual UI widgets (text
+inputs, sliders, lists) to specific keys. When a user changes a
+setting:</p>
+<ul>
+<li>OBS validates that the input matches the defined property type.</li>
+<li>The values are automatically serialized into an
+<code>obs_data_t</code> settings container.</li>
+<li>The script's <code>script_update(settings)</code> callback receives
+the pre-validated settings object.</li>
+</ul>
+<h4 id="2-arbitrary-json-payloads">2. Arbitrary JSON Payloads</h4>
+<p>When scripts import arbitrary JSON (for example, from external web
+APIs, WebSockets, or custom configuration files), schema enforcement
+shifts entirely to the script environment:</p>
+<ul>
+<li><strong>Python Scripts:</strong> Developers typically bypass
+<code>libobs</code> parsing initially, relying instead on Python's
+built-in <code>json</code> module alongside libraries like
+<code>jsonschema</code> to validate payloads against a formal schema.
+Once validated, values are passed into OBS APIs or converted to
+<code>obs_data_t</code> using
+<code>obs_data_create_from_json()</code>.</li>
+<li><strong>Lua Scripts:</strong> Lua lacks a built-in JSON parser or
+schema validator. Scripts must either rely on third-party pure-Lua
+modules (such as <code>dkjson</code> or <code>cjson</code>) or pass the
+raw JSON string directly to
+<code>obs.obs_data_create_from_json()</code>. In the latter case,
+structural validation is manual: the script inspects keys and types
+programmatically using <code>obs_data_has_user_value()</code> and
+type-checking getters.</li>
+</ul>
+<h3 id="argument-passing-in-callbacks-and-hotkeys">Argument Passing in
+Callbacks and Hotkeys</h3>
+<p>When custom JSON-derived arguments pass into event handlers, timers,
+or hotkey callbacks, OBS avoids re-parsing strings. The parsed
+<code>obs_data_t</code> structure maintains a reference count. When
+passed through script bindings:</p>
+<ul>
+<li><code>obs_data_addref()</code> increments the reference counter to
+preserve memory across asynchronous execution boundaries.</li>
+<li>The scripting engine passes the raw memory address wrapped in a
+language-specific table or class proxy.</li>
+<li>When the script finishes processing the data, it must explicitly
+call <code>obs_data_release()</code> (in Lua and C-style APIs) to
+decrement the counter and prevent memory leaks.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

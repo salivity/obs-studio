@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Virtual Camera Not Showing in Teams Fix - obs-studio</title>
+    <meta name="description" content="If you are trying to use OBS Studio to enhance your video presentations, encountering a missing virtual camera option in Microsoft Teams can be frustrating. This article provides a quick guide to understanding why the OBS Virtual Camera is not showing up">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-virtual-camera-not-showing-in-teams-fix">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Virtual Camera Not Showing in Teams Fix - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-virtual-camera-not-showing-in-teams-fix" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="If you are trying to use OBS Studio to enhance your video presentations, encountering a missing virtual camera option in Microsoft Teams can be frustrating. This article provides a quick guide to understanding why the OBS Virtual Camera is not showing up" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-virtual-camera-not-showing-in-teams-fix">OBS Virtual Camera
+Not Showing in Teams Fix</h1>
+<p>If you are trying to use OBS Studio to enhance your video
+presentations, encountering a missing virtual camera option in Microsoft
+Teams can be frustrating. This article provides a quick guide to
+understanding why the OBS Virtual Camera is not showing up in Microsoft
+Teams and offers direct, actionable solutions to resolve the issue on
+both Windows and macOS.</p>
+<p>There are several common reasons why Microsoft Teams might fail to
+detect the OBS Virtual Camera. Below are the most frequent causes and
+how to fix them.</p>
+<h2 id="1-start-the-virtual-camera-in-obs">1. Start the Virtual Camera
+in OBS</h2>
+<p>Microsoft Teams cannot detect the camera if the virtual feed has not
+been initiated in OBS Studio.</p>
+<ul>
+<li>Open <strong>OBS Studio</strong>.</li>
+<li>In the bottom-right <strong>Controls</strong> dock, click the
+<strong>Start Virtual Camera</strong> button.</li>
+<li>Once started, open Microsoft Teams and check your device
+settings.</li>
+</ul>
+<h2 id="2-fully-restart-microsoft-teams">2. Fully Restart Microsoft
+Teams</h2>
+<p>Microsoft Teams often runs in the background even after you close the
+window. If you started OBS after Teams was already open, Teams will not
+detect the new video source.</p>
+<ul>
+<li><strong>On Windows:</strong> Right-click the Teams icon in your
+system tray (bottom-right corner of the taskbar) and click
+<strong>Quit</strong>.</li>
+<li><strong>On macOS:</strong> Right-click the Teams icon in the Dock
+and select <strong>Quit</strong>, or press <code>Cmd + Q</code>.</li>
+<li>Relaunch Teams and check your camera settings.</li>
+</ul>
+<h2 id="3-run-both-programs-with-equal-permissions">3. Run Both Programs
+with Equal Permissions</h2>
+<p>If Microsoft Teams is running with administrator privileges and OBS
+Studio is not (or vice versa), Windows security protocols may prevent
+the two applications from sharing the virtual camera feed.</p>
+<ul>
+<li>Close both applications.</li>
+<li>Right-click the <strong>OBS Studio</strong> shortcut and select
+<strong>Run as administrator</strong>.</li>
+<li>Right-click the <strong>Microsoft Teams</strong> shortcut and select
+<strong>Run as administrator</strong>.</li>
+</ul>
+<h2 id="4-re-register-the-obs-virtual-camera-windows">4. Re-register the
+OBS Virtual Camera (Windows)</h2>
+<p>Sometimes the virtual camera driver becomes unregistered in Windows.
+You can manually re-register it using the command prompt.</p>
+<ol type="1">
+<li>Close both OBS and Teams.</li>
+<li>Open the Windows Start menu, search for <strong>Command
+Prompt</strong>, right-click it, and select <strong>Run as
+administrator</strong>.</li>
+<li>Type the following command (adjust the path if you installed OBS in
+a custom directory) and press Enter:
+<code>regsvr32 "C:\Program Files\obs-studio\data\obs-plugins\win-dshow\obs-virtualcam-module64.dll"</code></li>
+<li>You should see a success message. Restart your PC and try
+again.</li>
+</ol>
+<h2 id="5-enable-camera-permissions-macos">5. Enable Camera Permissions
+(macOS)</h2>
+<p>On macOS, strict privacy settings can block Microsoft Teams from
+accessing virtual video inputs.</p>
+<ol type="1">
+<li>Open <strong>System Settings</strong> (or System Preferences) on
+your Mac.</li>
+<li>Navigate to <strong>Privacy &amp; Security</strong> &gt;
+<strong>Camera</strong>.</li>
+<li>Ensure that both <strong>OBS</strong> and <strong>Microsoft
+Teams</strong> are toggled <strong>ON</strong>.</li>
+<li>If you are using the Teams web app, ensure your browser (Chrome,
+Edge, Safari) has permission to access the camera.</li>
+</ol>
+<h2 id="6-update-obs-studio-and-microsoft-teams">6. Update OBS Studio
+and Microsoft Teams</h2>
+<p>An outdated version of either software can cause compatibility
+issues.</p>
+<ul>
+<li>In OBS Studio, go to <strong>Help</strong> &gt; <strong>Check for
+Updates</strong>.</li>
+<li>In Microsoft Teams, click the three dots (...) next to your profile
+picture and select <strong>Check for updates</strong>, or download the
+latest version directly from Microsoft.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

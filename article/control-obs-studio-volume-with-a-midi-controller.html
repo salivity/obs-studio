@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control OBS Studio Volume with a MIDI Controller - obs-studio</title>
+    <meta name="description" content="Controlling your OBS Studio audio mixer with a physical MIDI controller streamlines your live production workflow, allowing for tactile, precise volume adjustments. This guide provides a straightforward, step-by-step process to connect your MIDI device t">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/control-obs-studio-volume-with-a-midi-controller">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Control OBS Studio Volume with a MIDI Controller - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/control-obs-studio-volume-with-a-midi-controller" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Controlling your OBS Studio audio mixer with a physical MIDI controller streamlines your live production workflow, allowing for tactile, precise volume adjustments. This guide provides a straightforward, step-by-step process to connect your MIDI device t" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="control-obs-studio-volume-with-a-midi-controller">Control OBS
+Studio Volume with a MIDI Controller</h1>
+<p>Controlling your OBS Studio audio mixer with a physical MIDI
+controller streamlines your live production workflow, allowing for
+tactile, precise volume adjustments. This guide provides a
+straightforward, step-by-step process to connect your MIDI device to OBS
+Studio, install the necessary plugin, and map your physical faders
+directly to the master volume sliders.</p>
+<h3 id="step-1-install-the-obs-midi-plugin">Step 1: Install the OBS MIDI
+Plugin</h3>
+<p>Because OBS Studio does not support MIDI devices natively, you must
+install a free plugin to bridge the connection.</p>
+<ol type="1">
+<li>Download the <strong>obs-midi-mg</strong> plugin (available on the
+official OBS Resources forum).</li>
+<li>Run the installer or extract the files into your OBS Studio
+installation folder.</li>
+<li>Restart OBS Studio if it was open during the installation.</li>
+</ol>
+<h3 id="step-2-connect-your-midi-controller">Step 2: Connect Your MIDI
+Controller</h3>
+<ol type="1">
+<li>Plug your physical MIDI controller board into your computer using a
+USB cable.</li>
+<li>Launch OBS Studio. Always ensure your controller is plugged in and
+powered on before opening OBS so the software can detect the
+hardware.</li>
+</ol>
+<h3 id="step-3-enable-the-midi-device-in-obs">Step 3: Enable the MIDI
+Device in OBS</h3>
+<ol type="1">
+<li>In the top menu bar of OBS Studio, click on <strong>Tools</strong>
+and select <strong>OBS MIDI MG Setup</strong>.</li>
+<li>A new window will appear. Navigate to the <strong>Devices</strong>
+or <strong>Active Devices</strong> tab.</li>
+<li>Locate your MIDI controller in the list of available input
+devices.</li>
+<li>Click the checkbox next to your device to enable it, then click
+<strong>Apply</strong>.</li>
+</ol>
+<h3 id="step-4-map-a-fader-to-the-master-volume-slider">Step 4: Map a
+Fader to the Master Volume Slider</h3>
+<ol type="1">
+<li>Navigate to the <strong>Bindings</strong> tab within the OBS MIDI MG
+setup window.</li>
+<li>Click the <strong>Add</strong> or <strong>+</strong> button to
+create a new action binding.</li>
+<li>Touch or move the physical fader/knob on your controller that you
+want to use for the master volume. The plugin will automatically detect
+and display the MIDI Control Change (CC) number of that specific
+fader.</li>
+<li>Under the <strong>Action</strong> settings on the right side of the
+window, configure the following:
+<ul>
+<li><strong>Category/Type:</strong> Select <strong>Source</strong>.</li>
+<li><strong>Source:</strong> Select your master audio track (e.g.,
+"Desktop Audio," "Mic/Aux," or your main audio interface track).</li>
+<li><strong>Action:</strong> Select <strong>Set Volume</strong> (or
+<strong>Volume</strong>).</li>
+</ul></li>
+<li>Click <strong>Save</strong> or <strong>Apply</strong> to confirm the
+mapping.</li>
+</ol>
+<h3 id="step-5-test-and-calibrate">Step 5: Test and Calibrate</h3>
+<p>Move the physical fader up and down on your MIDI board. You should
+immediately see the corresponding volume slider in the OBS Mixer panel
+move in unison. If the movement is inverted (e.g., pushing the fader up
+lowers the volume), check the "Invert" box in the plugin's binding
+settings.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

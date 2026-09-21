@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record Zoom with OBS Without Participant List - obs-studio</title>
+    <meta name="description" content="Recording a Zoom meeting using OBS Studio is an excellent way to capture high-quality video, but keeping the participant list out of the final recording is essential for a clean, professional look. This guide provides a straightforward, step-by-step walk">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/record-zoom-with-obs-without-participant-list">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Record Zoom with OBS Without Participant List - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/record-zoom-with-obs-without-participant-list" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Recording a Zoom meeting using OBS Studio is an excellent way to capture high-quality video, but keeping the participant list out of the final recording is essential for a clean, professional look. This guide provides a straightforward, step-by-step walk" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="record-zoom-with-obs-without-participant-list">Record Zoom with
+OBS Without Participant List</h1>
+<p>Recording a Zoom meeting using OBS Studio is an excellent way to
+capture high-quality video, but keeping the participant list out of the
+final recording is essential for a clean, professional look. This guide
+provides a straightforward, step-by-step walkthrough on how to configure
+OBS Studio to record only your Zoom meeting window while excluding the
+participant panel using two simple methods: popping out the participant
+list or cropping the capture source.</p>
+<h3 id="method-1-pop-out-the-participant-list-recommended">Method 1: Pop
+Out the Participant List (Recommended)</h3>
+<p>The easiest way to keep the participant list out of your OBS
+recording is to separate it from the main Zoom meeting window. Since OBS
+Window Capture only targets a single specific window, separating the
+participant list ensures it will not be recorded.</p>
+<ol type="1">
+<li><strong>Start your Zoom meeting</strong> and open the participant
+panel by clicking <strong>Participants</strong> at the bottom of the
+screen.</li>
+<li>Click the small dropdown arrow at the top-left of the participant
+panel and select <strong>Pop Out</strong>.</li>
+<li>Move the popped-out participant window to another area of your
+screen (or a second monitor).</li>
+<li>Open <strong>OBS Studio</strong>.</li>
+<li>In the <strong>Sources</strong> dock, click the <strong>+</strong>
+icon and select <strong>Window Capture</strong>.</li>
+<li>Name the source (e.g., "Zoom Meeting") and click
+<strong>OK</strong>.</li>
+<li>In the <strong>Window</strong> dropdown menu, select the main Zoom
+meeting window (usually labeled <code>Zoom Meeting</code>).</li>
+<li>Click <strong>OK</strong>. Because the participant list is in a
+separate window, OBS will only display and record the active video
+stream or shared screen.</li>
+</ol>
+<h3 id="method-2-crop-the-participant-list-in-obs">Method 2: Crop the
+Participant List in OBS</h3>
+<p>If you prefer to keep the participant list docked inside the main
+Zoom window, you can use OBS's built-in cropping feature to hide it from
+the recording.</p>
+<ol type="1">
+<li>Keep your Zoom meeting window open with the participant list docked
+on the right side.</li>
+<li>In <strong>OBS Studio</strong>, add a <strong>Window
+Capture</strong> source and select your Zoom window.</li>
+<li>In the OBS preview screen, select the Zoom source so that a red
+bounding box appears around it.</li>
+<li>Hold down the <strong>Alt</strong> key (Windows) or
+<strong>Option</strong> key (macOS) on your keyboard.</li>
+<li>Click and drag the handle on the right edge of the red bounding box
+inward. Drag it until the participant list is completely cropped out of
+the frame.</li>
+<li>Release the key. You can now resize and reposition the remaining
+meeting video to fit your OBS canvas by dragging the corners without
+holding the Alt/Option key.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

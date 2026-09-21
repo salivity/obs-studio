@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Local Media vs Browser Source Performance - obs-studio</title>
+    <meta name="description" content="This article compares the performance impact of using local media sources versus browser sources for playing video in OBS Studio. It examines how each method utilizes system resources like CPU, GPU, and RAM, helping streamers and content creators optimiz">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-local-media-vs-browser-source-performance">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Local Media vs Browser Source Performance - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-local-media-vs-browser-source-performance" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article compares the performance impact of using local media sources versus browser sources for playing video in OBS Studio. It examines how each method utilizes system resources like CPU, GPU, and RAM, helping streamers and content creators optimiz" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-local-media-vs-browser-source-performance">OBS Local Media
+vs Browser Source Performance</h1>
+<p>This article compares the performance impact of using local media
+sources versus browser sources for playing video in OBS Studio. It
+examines how each method utilizes system resources like CPU, GPU, and
+RAM, helping streamers and content creators optimize their broadcasting
+setups for smoother performance and fewer dropped frames.</p>
+<h2 id="understanding-the-technology-behind-each-source">Understanding
+the Technology Behind Each Source</h2>
+<p>To understand the performance differences, it is essential to look at
+how OBS Studio processes these two source types:</p>
+<ul>
+<li><strong>Local Media Source:</strong> This source uses OBS Studio's
+native media player (powered by FFmpeg) to read and render video files
+directly from your local storage drive (SSD or HDD).</li>
+<li><strong>Browser Source:</strong> This source runs an embedded
+instance of Chromium (Chromium Embedded Framework or CEF) inside OBS. It
+essentially opens a dedicated web browser window to load and render the
+video, even if the video file is hosted locally.</li>
+</ul>
+<h2 id="key-performance-differences">Key Performance Differences</h2>
+<h3 id="1-cpu-utilization">1. CPU Utilization</h3>
+<p>Local media sources are highly optimized for video playback. They
+utilize direct decoding pipelines that require minimal CPU overhead.</p>
+<p>In contrast, browser sources require the CPU to run the Chromium
+rendering engine. The CPU must handle HTML/CSS parsing, JavaScript
+execution, and browser process management alongside the video decoding.
+This results in significantly higher CPU usage when using browser
+sources compared to local media sources.</p>
+<h3 id="2-ram-memory-consumption">2. RAM (Memory) Consumption</h3>
+<p>Each browser source added to OBS Studio launches its own helper
+processes, mimicking how Google Chrome manages browser tabs. This
+architectural design makes browser sources incredibly RAM-heavy.</p>
+<p>Local media sources require very little RAM, as they only buffer a
+small portion of the video file into memory during playback. If you run
+multiple video overlays, switching from browser sources to local media
+sources can free up gigabytes of system memory.</p>
+<h3 id="3-gpu-usage-and-hardware-acceleration">3. GPU Usage and Hardware
+Acceleration</h3>
+<p>Both sources can utilize GPU hardware acceleration, but they do so
+differently:</p>
+<ul>
+<li><strong>Local Media Source:</strong> Decodes video directly using
+dedicated hardware decoders on your graphics card (such as NVIDIA's
+NVDEC or Intel's Quick Sync). This leaves your GPU's 3D rendering cores
+free to handle video game performance.</li>
+<li><strong>Browser Source:</strong> While it can use GPU acceleration,
+the Chromium wrapper introduces additional composition overhead. If GPU
+acceleration is disabled in OBS advanced settings, the CPU is forced to
+render the browser source, which can lead to severe rendering lags and
+dropped frames.</li>
+</ul>
+<h3 id="4-loading-times-and-latency">4. Loading Times and Latency</h3>
+<p>Local media sources offer near-instantaneous playback because the
+file is read directly from your local storage. Browser sources,
+especially those hosting web-based video links, are subject to network
+latency, DNS resolution, and web server response times. This can cause a
+noticeable delay between triggering the source and the video actually
+appearing on screen.</p>
+<h2 id="summary-when-to-use-each-source">Summary: When to Use Each
+Source</h2>
+<p>To maintain the highest stream quality and game performance, follow
+these guidelines:</p>
+<ul>
+<li><strong>Use Local Media Sources for:</strong> Stinger transitions,
+static or looping background videos, intro/outro screens, pre-recorded
+video clips, and local alerts.</li>
+<li><strong>Use Browser Sources only for:</strong> Dynamic content that
+requires real-time web interaction, such as live chat overlays,
+interactive stream alerts (Streamlabs, StreamElements), real-time sub
+counters, and third-party widgets.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

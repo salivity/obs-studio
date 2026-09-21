@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Check OBS Studio Plugin Compatibility - obs-studio</title>
+    <meta name="description" content="Updating OBS Studio to a major new version can sometimes break your stream setup if your third-party plugins are outdated. This article provides a straightforward guide on how to verify plugin compatibility before upgrading, including checking developer">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-check-obs-studio-plugin-compatibility">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Check OBS Studio Plugin Compatibility - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-check-obs-studio-plugin-compatibility" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Updating OBS Studio to a major new version can sometimes break your stream setup if your third-party plugins are outdated. This article provides a straightforward guide on how to verify plugin compatibility before upgrading, including checking developer" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-check-obs-studio-plugin-compatibility">How to Check OBS
+Studio Plugin Compatibility</h1>
+<p>Updating OBS Studio to a major new version can sometimes break your
+stream setup if your third-party plugins are outdated. This article
+provides a straightforward guide on how to verify plugin compatibility
+before upgrading, including checking developer repositories, utilizing
+community resources, and safely testing updates in a portable
+environment.</p>
+<h2 id="1-check-the-official-obs-plugins-forum-and-github">1. Check the
+Official OBS Plugins Forum and GitHub</h2>
+<p>Most OBS plugins are hosted either on the official OBS Studio
+Resources forum or on GitHub.</p>
+<ul>
+<li><strong>OBS Resources Forum:</strong> Search for your plugin on the
+official OBS website. Authors typically update the plugin's main thread
+with compatibility badges (e.g., "Compatible with OBS 30.x") or post
+updates in the "Updates" tab.</li>
+<li><strong>GitHub Releases:</strong> If the plugin is hosted on GitHub,
+visit the "Releases" page. Developers usually list compatibility notes,
+warnings about major OBS API changes, and pre-release versions designed
+for the upcoming OBS update.</li>
+</ul>
+<h2 id="2-review-the-obs-studio-release-notes">2. Review the OBS Studio
+Release Notes</h2>
+<p>When a major OBS Studio update is released, the development team
+publishes comprehensive release notes on their GitHub repository. These
+notes often explicitly list known incompatible plugins, deprecated
+features, or changes to the plugin API (such as the transition from Qt5
+to Qt6). Reading these notes beforehand can alert you to immediate red
+flags.</p>
+<h2 id="3-test-using-a-portable-obs-installation">3. Test Using a
+Portable OBS Installation</h2>
+<p>The safest way to check compatibility without risking your current
+live stream setup is to test the new OBS version in portable mode.</p>
+<ol type="1">
+<li>Download the ".zip" (not the installer) version of the new OBS
+Studio release.</li>
+<li>Extract the folder to a convenient location, such as your
+desktop.</li>
+<li>Inside the extracted folder, create a blank text file named
+<code>obs_portable_mode.txt</code> in the same directory as the
+<code>bin</code> folder.</li>
+<li>Copy your existing plugins into this portable folder's plugin
+directory.</li>
+<li>Run <code>obs64.exe</code> from the portable folder. This runs a
+completely isolated instance of OBS, allowing you to test your plugins
+safely without affecting your main installation.</li>
+</ol>
+<h2 id="4-consult-the-community-and-discord">4. Consult the Community
+and Discord</h2>
+<p>If the developer has not posted an official update, the OBS community
+usually has the answer.</p>
+<ul>
+<li><strong>OBS Discord:</strong> Join the official OBS Studio Discord
+server. The help channels frequently feature active discussions
+regarding which plugins are broken or have community-made fixes after a
+major update.</li>
+<li><strong>Reddit:</strong> Check the <code>r/obs</code> subreddit.
+Users often compile megathreads detailing which third-party plugins work
+and which ones cause crashes after a major release.</li>
+</ul>
+<h2 id="5-always-backup-your-profile-and-scene-collections">5. Always
+Backup Your Profile and Scene Collections</h2>
+<p>Before performing any major update, manually back up your OBS
+configuration. Navigate to <code>%appdata%\obs-studio</code> in Windows
+File Explorer and copy the entire folder to a safe location. If a plugin
+fails and crashes your software after an update, you can easily
+downgrade OBS and restore your exact settings using this backup.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

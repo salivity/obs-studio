@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prevent OBS Studio Lua Script Memory Leaks - obs-studio</title>
+    <meta name="description" content="Dynamically loading and unloading hundreds of media files in OBS Studio using Lua requires careful management of the boundary between the Lua runtime and OBS Studio's C-based core architecture (libobs). OBS Studio prevents memory leaks not through automa">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/prevent-obs-studio-lua-script-memory-leaks">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Prevent OBS Studio Lua Script Memory Leaks - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/prevent-obs-studio-lua-script-memory-leaks" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Dynamically loading and unloading hundreds of media files in OBS Studio using Lua requires careful management of the boundary between the Lua runtime and OBS Studio's C-based core architecture (libobs). OBS Studio prevents memory leaks not through automa" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="prevent-obs-studio-lua-script-memory-leaks">Prevent OBS Studio
+Lua Script Memory Leaks</h1>
+<p>Dynamically loading and unloading hundreds of media files in OBS
+Studio using Lua requires careful management of the boundary between the
+Lua runtime and OBS Studio's C-based core architecture
+(<code>libobs</code>). OBS Studio prevents memory leaks not through
+automated garbage collection alone, but through explicit reference
+counting, media decoder eviction policies, and dedicated C-API cleanup
+bindings exposed to Lua. Understanding how to correctly manipulate these
+mechanisms ensures both system RAM and GPU VRAM are reclaimed
+immediately when media assets are cycled.</p>
+<h3 id="c-level-reference-counting-obs_source_release">C-Level Reference
+Counting (<code>obs_source_release</code>)</h3>
+<p>OBS Studio's core tracks every media source via an internal reference
+counter. When a Lua script creates a source using
+<code>obs_source_create</code> or retrieves a handle to an existing
+source, the core increments this counter.</p>
+<p>Lua scripts must explicitly pair every creation or retrieval call
+with <code>obs_source_release</code>. Setting a Lua variable to
+<code>nil</code> does not immediately free the underlying C source. If
+<code>obs_source_release</code> is omitted, the C object remains pinned
+in memory indefinitely, along with its associated audio buffers and
+video contexts, even if the Lua garbage collector removes the wrapper
+object.</p>
+<h3 id="the-lua-garbage-collection-disconnect">The Lua Garbage
+Collection Disconnect</h3>
+<p>Lua’s garbage collector (LuaJIT in standard OBS builds) monitors only
+the memory allocated inside the Lua state. A pointer to an OBS media
+source consumes negligible memory inside Lua (often just a few bytes for
+a userdata wrapper), while the native C-side object may consume hundreds
+of megabytes of decoded frames and texture allocations.</p>
+<p>Because Lua does not perceive this heavy memory pressure, its
+automatic garbage collection cycle will not trigger aggressively enough
+to clean up cycled media files. While OBS provides <code>__gc</code>
+metamethods on its userdata wrappers as a fallback, relying on automatic
+garbage collection during high-volume file turnover causes rapid
+out-of-memory crashes. Scripts must explicitly invoke removal routines
+rather than waiting for Lua to collect orphaned wrappers.</p>
+<h3 id="data-settings-management-obs_data_release">Data Settings
+Management (<code>obs_data_release</code>)</h3>
+<p>Loading new files requires interacting with OBS data containers
+(<code>obs_data_t</code>) to set properties such as the file path
+(<code>local_file</code>). Like sources, data objects are
+reference-counted.</p>
+<p>A common vector for memory leaks when cycling media is failing to
+release data containers:</p>
+<ul>
+<li>Calling <code>obs_data_create()</code> or
+<code>obs_source_get_settings()</code> increments the reference
+counter.</li>
+<li>The settings must be applied to the source via
+<code>obs_source_update()</code>.</li>
+<li>The data container must immediately be freed using
+<code>obs_data_release()</code>.</li>
+</ul>
+<p>Failing to call <code>obs_data_release</code> leaves configuration
+dictionaries allocated in memory, which compounds into significant leaks
+across hundreds of file swaps.</p>
+<h3 id="modifying-existing-sources-vs-recreating-sources">Modifying
+Existing Sources vs. Recreating Sources</h3>
+<p>To eliminate the overhead and leak risks of constantly allocating and
+freeing full source structures, scripts can reuse a persistent
+<code>ffmpeg_source</code> or <code>image_source</code> instance:</p>
+<ol type="1">
+<li>Create a single static media source during script
+initialization.</li>
+<li>Dynamically update the <code>local_file</code> property using
+<code>obs_data_set_string</code> to point to the new asset.</li>
+<li>Call <code>obs_source_update</code> to signal the underlying FFmpeg
+demuxer to flush existing frame queues, terminate the current read
+thread, and open the new target file.</li>
+</ol>
+<p>This approach bypasses the creation and destruction of graphics
+pipelines and scene items, keeping allocation churn to a minimum.</p>
+<h3 id="decoder-eviction-and-texture-cleanup">Decoder Eviction and
+Texture Cleanup</h3>
+<p>When a media source must be removed completely, removing it from a
+scene via <code>obs_sceneitem_remove</code> does not destroy the source
+if references remain elsewhere. The complete teardown sequence
+requires:</p>
+<ol type="1">
+<li>Removing the scene item to detach it from the rendering tree.</li>
+<li>Calling <code>obs_source_remove</code> to signal that the source is
+pending deletion.</li>
+<li>Invoking <code>obs_source_release</code> on any local references
+held by the script.</li>
+</ol>
+<p>Once the internal reference count drops to zero, <code>libobs</code>
+triggers the destructor for the underlying plugin (such as the FFmpeg
+decoder). This halts decoding threads, unloads cached audio packets,
+flushes rendering swapchains, and frees the associated Direct3D 11 or
+OpenGL textures from VRAM.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

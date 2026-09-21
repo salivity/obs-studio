@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Dropped Frames During 4K Stinger Transitions - obs-studio</title>
+    <meta name="description" content="Dropping frames during a stinger transition between two 4K nested scenes in OBS Studio is a common issue caused by instantaneous hardware and rendering bottlenecks. This article examines the core technical causes behind this performance drop, focusing on">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-dropped-frames-during-4-k-stinger-transitions">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Dropped Frames During 4K Stinger Transitions - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-dropped-frames-during-4-k-stinger-transitions" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Dropping frames during a stinger transition between two 4K nested scenes in OBS Studio is a common issue caused by instantaneous hardware and rendering bottlenecks. This article examines the core technical causes behind this performance drop, focusing on" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-dropped-frames-during-4k-stinger-transitions">OBS Dropped
+Frames During 4K Stinger Transitions</h1>
+<p>Dropping frames during a stinger transition between two 4K nested
+scenes in OBS Studio is a common issue caused by instantaneous hardware
+and rendering bottlenecks. This article examines the core technical
+causes behind this performance drop, focusing on the simultaneous
+rendering demands of multiple 4K viewports, media decoding limits with
+alpha channels, VRAM bandwidth saturation, and the execution thread
+limits of the OBS graphics pipeline.</p>
+<h3 id="simultaneous-multi-scene-rendering-load">Simultaneous
+Multi-Scene Rendering Load</h3>
+<p>When OBS executes a stinger transition, it does not simply cut from
+one scene to another. During the duration of the transition, OBS must
+render both the outgoing scene and the incoming scene concurrently in
+the background, alongside the video file of the stinger itself.</p>
+<p>At a 4K resolution (3840x2160), a single raw, uncompressed 60 FPS
+video frame requires approximately 33 megabytes of memory. Processing
+two active 4K scenes simultaneously means the compositor is constantly
+building and drawing two distinct 4K frame buffers. If each nested scene
+contains multiple active sources, browser overlays, or shaders, the GPU
+render time spikes significantly, often exceeding the 16.6-millisecond
+render budget required to maintain a consistent 60 FPS.</p>
+<h3 id="high-bitrate-alpha-channel-decoding">High-Bitrate Alpha Channel
+Decoding</h3>
+<p>Stinger transitions almost always require an alpha channel
+(transparency) to reveal the incoming scene beneath the graphic.
+Transparent video formats like ProRes 4444 or WebM (VP8/VP9 with alpha)
+demand substantial processing power:</p>
+<ul>
+<li><strong>Software Decoding Overhead:</strong> Many alpha-capable
+video codecs do not support hardware-accelerated decoding via NVDEC or
+AMD AMF inside OBS. As a result, the decoding process falls back to the
+CPU, creating an immediate processing bottleneck that halts the frame
+rendering loop.</li>
+<li><strong>Decoder Latency:</strong> The instant the stinger triggers,
+the media player within OBS must spin up and read the file from storage,
+decompress the 4K frames, extract the alpha mask, and send the data to
+the GPU. Any delay in this decompression pipeline starves the
+compositor, leading to dropped rendering frames.</li>
+</ul>
+<h3 id="vram-throughput-and-memory-bus-saturation">VRAM Throughput and
+Memory Bus Saturation</h3>
+<p>Nested scenes compound rendering demands because OBS treats each
+nested scene as a separate render target. Instead of drawing sources
+directly to the main canvas, OBS renders the nested scene into an
+off-screen texture, which is then mapped onto the parent scene.</p>
+<p>When transitioning between two 4K nested scenes with a 4K
+stinger:</p>
+<ol type="1">
+<li>The GPU must write and read multiple 4K render textures
+simultaneously.</li>
+<li>Texture mapping, scaling, and color format conversions (such as NV12
+to RGB) must occur across all layers.</li>
+<li>This massive texture movement quickly saturates the PCIe bus and
+VRAM memory bandwidth, particularly on GPUs with narrower memory buses
+(e.g., 128-bit or 192-bit architectures).</li>
+</ol>
+<h3 id="obs-render-thread-contention">OBS Render Thread Contention</h3>
+<p>OBS Studio relies on a dedicated graphics execution thread to
+synchronize scene rendering, source updates, and frame output. Because
+all sources within both 4K nested scenes must be polled, updated, and
+composited into the final output within that single render thread,
+complex stingers create a sudden queue backlog. If a single resource
+within either nested scene stutters or takes too long to draw, the
+entire render thread misses its presentation deadline, resulting in
+visible "Frames Missed Due to Rendering Lag" in the OBS log.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

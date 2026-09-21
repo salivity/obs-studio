@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configure OBS Profile Switcher for Network Adapters - obs-studio</title>
+    <meta name="description" content="This article explains how to configure OBS Studio to automatically switch profiles when connecting to a secondary network adapter. By utilizing a custom PowerShell launch script, you can ensure that OBS Studio automatically detects your active network co">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/configure-obs-profile-switcher-for-network-adapters">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Configure OBS Profile Switcher for Network Adapters - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/configure-obs-profile-switcher-for-network-adapters" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how to configure OBS Studio to automatically switch profiles when connecting to a secondary network adapter. By utilizing a custom PowerShell launch script, you can ensure that OBS Studio automatically detects your active network co" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="configure-obs-profile-switcher-for-network-adapters">Configure
+OBS Profile Switcher for Network Adapters</h1>
+<p>This article explains how to configure OBS Studio to automatically
+switch profiles when connecting to a secondary network adapter. By
+utilizing a custom PowerShell launch script, you can ensure that OBS
+Studio automatically detects your active network connection and loads
+the correct profile with your dedicated streaming settings, bitrate, and
+IP binding.</p>
+<h3 id="step-1-create-your-obs-profiles">Step 1: Create Your OBS
+Profiles</h3>
+<p>Before automating the switch, you must set up the individual profiles
+in OBS Studio.</p>
+<ol type="1">
+<li>Open OBS Studio.</li>
+<li>Go to the top menu and select <strong>Profile</strong> &gt;
+<strong>New</strong>. Name this profile
+<code>Default Profile</code>.</li>
+<li>Configure your default streaming settings. Go to
+<strong>Settings</strong> &gt; <strong>Advanced</strong> &gt;
+<strong>Network</strong>. Under <strong>Bind to IP</strong>, select your
+primary network connection (or leave it as Default). Click
+<strong>Apply</strong>.</li>
+<li>Go to <strong>Profile</strong> &gt; <strong>New</strong> again and
+create a second profile named
+<code>Secondary Network Profile</code>.</li>
+<li>Under <strong>Settings</strong> &gt; <strong>Advanced</strong> &gt;
+<strong>Network</strong>, change the <strong>Bind to IP</strong> option
+to the specific IP address of your secondary network adapter. Click
+<strong>Apply</strong> and close OBS.</li>
+</ol>
+<h3 id="step-2-identify-your-network-adapter-name">Step 2: Identify your
+Network Adapter Name</h3>
+<p>To allow the automation script to detect your secondary network, you
+need the exact name of your network adapter.</p>
+<ol type="1">
+<li>Right-click the Windows Start button and select
+<strong>PowerShell</strong> (or Terminal).</li>
+<li>Type <code>Get-NetAdapter</code> and press
+<strong>Enter</strong>.</li>
+<li>Locate your secondary network adapter in the list and note its exact
+name under the <strong>Name</strong> column (e.g., <em>Ethernet 2</em>
+or <em>Wi-Fi 2</em>).</li>
+</ol>
+<h3 id="step-3-create-the-powershell-automation-script">Step 3: Create
+the PowerShell Automation Script</h3>
+<p>Because OBS Studio does not natively detect network changes on the
+fly, a PowerShell script is the most reliable way to check your network
+status and launch OBS with the correct profile parameters.</p>
+<ol type="1">
+<li>Open <strong>Notepad</strong> on your computer.</li>
+<li>Copy and paste the following script into the document:</li>
+</ol>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define adapter name and OBS profile names</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="va">$adapterName</span> <span class="op">=</span> <span class="st">&quot;Your Secondary Adapter Name&quot;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="va">$secondaryProfile</span> <span class="op">=</span> <span class="st">&quot;Secondary Network Profile&quot;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="va">$defaultProfile</span> <span class="op">=</span> <span class="st">&quot;Default Profile&quot;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Path to your OBS executable</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="va">$obsPath</span> <span class="op">=</span> <span class="st">&quot;C:\Program Files\obs-studio\bin\64bit\obs64.exe&quot;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="va">$obsDir</span> <span class="op">=</span> <span class="st">&quot;C:\Program Files\obs-studio\bin\64bit\&quot;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the status of the secondary adapter</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="va">$adapter</span> <span class="op">=</span> Get-NetAdapter <span class="op">-</span>Name <span class="va">$adapterName</span> <span class="op">-</span>ErrorAction SilentlyContinue</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span><span class="va">$adapter</span> <span class="op">-and</span> <span class="va">$adapter</span><span class="op">.</span><span class="fu">Status</span> <span class="op">-eq</span> <span class="st">&quot;Up&quot;</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Launch OBS with the secondary network profile</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Start-Process</span> <span class="op">-</span>FilePath <span class="va">$obsPath</span> <span class="op">-</span>WorkingDirectory <span class="va">$obsDir</span> <span class="op">-</span>ArgumentList <span class="st">&quot;--profile </span><span class="ch">`&quot;</span><span class="va">$secondaryProfile</span><span class="ch">`&quot;</span><span class="st">&quot;</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Launch OBS with the default profile</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Start-Process</span> <span class="op">-</span>FilePath <span class="va">$obsPath</span> <span class="op">-</span>WorkingDirectory <span class="va">$obsDir</span> <span class="op">-</span>ArgumentList <span class="st">&quot;--profile </span><span class="ch">`&quot;</span><span class="va">$defaultProfile</span><span class="ch">`&quot;</span><span class="st">&quot;</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<ol start="3" type="1">
+<li>Replace <code>"Your Secondary Adapter Name"</code> with the adapter
+name you found in Step 2.</li>
+<li>Save the file. When saving, change the "Save as type" dropdown to
+<strong>All Files (<em>.</em>)</strong> and name the file
+<code>launch-obs.ps1</code>.</li>
+</ol>
+<h3 id="step-4-run-the-script">Step 4: Run the Script</h3>
+<p>To launch OBS using your new automated rule, you can run the script
+directly through PowerShell.</p>
+<p>Right-click the <code>launch-obs.ps1</code> file and select
+<strong>Run with PowerShell</strong>. The script will instantly query
+your network hardware, determine if your secondary adapter is active,
+and launch OBS Studio with the matching profile and network binding
+automatically configured.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

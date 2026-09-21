@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Difference Between Expander and Compressor in OBS Studio - obs-studio</title>
+    <meta name="description" content="Audio quality is crucial for live streaming and recording in OBS Studio, and mastering its built-in audio filters can dramatically improve your broadcast. This article explains the key differences between the Expander and Compressor filters, detailing ho">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/difference-between-expander-and-compressor-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Difference Between Expander and Compressor in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/difference-between-expander-and-compressor-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Audio quality is crucial for live streaming and recording in OBS Studio, and mastering its built-in audio filters can dramatically improve your broadcast. This article explains the key differences between the Expander and Compressor filters, detailing ho" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1
+id="difference-between-expander-and-compressor-in-obs-studio">Difference
+Between Expander and Compressor in OBS Studio</h1>
+<p>Audio quality is crucial for live streaming and recording in OBS
+Studio, and mastering its built-in audio filters can dramatically
+improve your broadcast. This article explains the key differences
+between the Expander and Compressor filters, detailing how they
+manipulate your audio's dynamic range so you can choose the right tool
+to achieve clear, professional sound.</p>
+<h2 id="the-core-difference-dynamic-range">The Core Difference: Dynamic
+Range</h2>
+<p>The fundamental difference between a Compressor and an Expander is
+how they manipulate the dynamic range (the difference between the
+loudest and quietest parts) of your audio:</p>
+<ul>
+<li><strong>A Compressor reduces dynamic range</strong> by making loud
+sounds quieter.</li>
+<li><strong>An Expander increases dynamic range</strong> by making quiet
+sounds even quieter.</li>
+</ul>
+<hr />
+<h2 id="the-compressor-filter">The Compressor Filter</h2>
+<p>The Compressor is used to control sudden spikes in volume. When your
+audio level exceeds a specific limit (threshold), the compressor
+automatically lowers the volume of that peak.</p>
+<h3 id="why-use-a-compressor">Why Use a Compressor?</h3>
+<ul>
+<li><strong>Prevents clipping and distortion:</strong> It stops your
+audio from red-lining when you laugh, shout, or get excited.</li>
+<li><strong>Balances vocal levels:</strong> It brings loud outbursts
+closer in volume to your normal speaking voice, creating a more
+consistent listening experience for your audience.</li>
+</ul>
+<h3 id="key-compressor-settings-in-obs">Key Compressor Settings in
+OBS</h3>
+<ul>
+<li><strong>Threshold:</strong> The volume level at which the compressor
+starts working. Anything louder than this level will be turned
+down.</li>
+<li><strong>Ratio:</strong> How much the volume is reduced once it
+crosses the threshold. A 4:1 ratio means for every 4dB the input goes
+over the threshold, the output only increases by 1dB.</li>
+<li><strong>Attack:</strong> How quickly (in milliseconds) the
+compressor starts reducing the volume after it crosses the
+threshold.</li>
+<li><strong>Release:</strong> How quickly the compressor stops reducing
+the volume once the audio drops back below the threshold.</li>
+<li><strong>Output Gain:</strong> Used to boost the overall volume of
+the track after compression has made the loud parts quieter.</li>
+</ul>
+<hr />
+<h2 id="the-expander-filter">The Expander Filter</h2>
+<p>The Expander acts like a more subtle, natural version of a noise
+gate. Instead of cutting off audio completely when it drops below a
+certain limit, the expander gently reduces the volume of those quiet
+sections.</p>
+<h3 id="why-use-an-expander">Why Use an Expander?</h3>
+<ul>
+<li><strong>Reduces background noise:</strong> It quietens background
+hums, PC fan noise, air conditioning, and keyboard clicks when you are
+not speaking.</li>
+<li><strong>Natural decay:</strong> Unlike a Noise Gate, which can sound
+abrupt and choppy when it opens and closes, an Expander fades quiet
+sounds out smoothly, resulting in a more natural sound.</li>
+</ul>
+<h3 id="key-expander-settings-in-obs">Key Expander Settings in OBS</h3>
+<ul>
+<li><strong>Threshold:</strong> The volume level below which the
+expander starts working. Sounds quieter than this level will be
+reduced.</li>
+<li><strong>Ratio:</strong> The amount of reduction applied. A higher
+ratio behaves more like a harsh noise gate, while a lower ratio (like
+2:1) offers gentle noise reduction.</li>
+<li><strong>Attack:</strong> How fast the expander stops quietening the
+audio when you start speaking.</li>
+<li><strong>Release:</strong> How fast the expander fades out the
+background noise once you stop speaking.</li>
+<li><strong>Detection:</strong> Can be set to RMS (average volume) or
+Peak (maximum volume) to determine how the filter tracks your
+audio.</li>
+</ul>
+<hr />
+<h2 id="summary-comparison">Summary Comparison</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Compressor</th>
+<th style="text-align: left;">Expander</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Primary Goal</strong></td>
+<td style="text-align: left;">Tame loud spikes and even out vocal
+levels.</td>
+<td style="text-align: left;">Reduce quiet background noise.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Trigger Point</strong></td>
+<td style="text-align: left;">Activates when audio goes
+<strong>above</strong> the threshold.</td>
+<td style="text-align: left;">Activates when audio drops
+<strong>below</strong> the threshold.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Effect on Volume</strong></td>
+<td style="text-align: left;">Turns down loud sounds.</td>
+<td style="text-align: left;">Turns down quiet sounds.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Dynamic Range</strong></td>
+<td style="text-align: left;">Decreases dynamic range (makes levels more
+uniform).</td>
+<td style="text-align: left;">Increases dynamic range (makes quiet parts
+quieter).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Common Use Case</strong></td>
+<td style="text-align: left;">Screaming during gameplay, inconsistent
+speaking distance.</td>
+<td style="text-align: left;">PC fan noise, keyboard clicks, room
+reverb.</td>
+</tr>
+</tbody>
+</table></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

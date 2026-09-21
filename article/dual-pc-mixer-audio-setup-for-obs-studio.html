@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dual PC Mixer Audio Setup for OBS Studio - obs-studio</title>
+    <meta name="description" content="Managing audio in a dual-PC streaming setup can be challenging, but using a physical mixer provides unparalleled, real-time control over your sound levels. This guide explains the best way to route your gaming and streaming audio through a physical mixer">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/dual-pc-mixer-audio-setup-for-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Dual PC Mixer Audio Setup for OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/dual-pc-mixer-audio-setup-for-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Managing audio in a dual-PC streaming setup can be challenging, but using a physical mixer provides unparalleled, real-time control over your sound levels. This guide explains the best way to route your gaming and streaming audio through a physical mixer" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="dual-pc-mixer-audio-setup-for-obs-studio">Dual PC Mixer Audio
+Setup for OBS Studio</h1>
+<p>Managing audio in a dual-PC streaming setup can be challenging, but
+using a physical mixer provides unparalleled, real-time control over
+your sound levels. This guide explains the best way to route your gaming
+and streaming audio through a physical mixer into OBS Studio, ensuring
+zero-latency monitoring, clear microphone input, and seamless separation
+of your audio tracks without ground loop buzz.</p>
+<h2 id="1-connect-the-gaming-pc-to-the-mixer">1. Connect the Gaming PC
+to the Mixer</h2>
+<p>To get your game sound, discord, and system alerts into the mixer,
+you must run an audio output from your Gaming PC.</p>
+<ul>
+<li><strong>Analogue Connection:</strong> Run a 3.5mm auxiliary cable
+from the green speaker port (line out) of your Gaming PC into a stereo
+input channel on your mixer (using a 3.5mm to dual 1/4-inch
+Y-cable).</li>
+<li><strong>Prevent Noise:</strong> Install a <strong>ground loop
+isolator</strong> inline on this auxiliary cable. Dual-PC setups are
+highly prone to electrical buzzing caused by ground loops; this
+inexpensive adapter eliminates that interference.</li>
+<li><strong>Digital Connection (Optional):</strong> If your mixer
+supports multi-channel USB audio (like a GoXLR or Rodecaster Pro),
+connect the mixer directly to the Gaming PC via USB and assign your
+system audio to the appropriate physical faders.</li>
+</ul>
+<h2 id="2-connect-your-microphone">2. Connect Your Microphone</h2>
+<p>To ensure zero-latency monitoring of your own voice, your microphone
+should plug directly into the mixer rather than either PC.</p>
+<ul>
+<li>Plug your XLR microphone into Channel 1 of your mixer.</li>
+<li>Adjust the gain so your voice peaks in the green/yellow zone on the
+mixer's LED meter.</li>
+<li>Engage phantom power (+48V) if you are using a condenser
+microphone.</li>
+</ul>
+<h2 id="3-route-the-mixer-output-to-the-streaming-pc">3. Route the Mixer
+Output to the Streaming PC</h2>
+<p>Now you must send the combined audio mix (microphone, game sound, and
+alerts) from the mixer into your Streaming PC for OBS to capture.</p>
+<ul>
+<li><strong>Via USB:</strong> If using a USB-enabled mixer, connect the
+USB cable from the mixer to the Streaming PC. This will send the master
+mix digitally.</li>
+<li><strong>Via Analogue:</strong> Run an audio cable from the mixer’s
+"Main Out," "Tape Out," or "Line Out" into the Streaming PC’s
+<strong>Line-In port</strong> (usually the blue port on the
+motherboard's rear I/O). Avoid using the microphone port (pink port), as
+it introduces noise. Use another ground loop isolator on this line.</li>
+</ul>
+<h2 id="4-configure-audio-in-obs-studio">4. Configure Audio in OBS
+Studio</h2>
+<p>Once the physical connections are secure, you must configure OBS
+Studio on your Streaming PC to receive the single master audio feed.</p>
+<ol type="1">
+<li>Open OBS Studio on your Streaming PC.</li>
+<li>Go to <strong>Settings &gt; Audio</strong>.</li>
+<li>Under <strong>Global Audio Devices</strong>, set <strong>Desktop
+Audio</strong> and all other devices to <strong>Disabled</strong> to
+prevent duplicate audio tracks and echoing.</li>
+<li>Set <strong>Mic/Auxiliary Audio</strong> to the input device
+connected to your mixer (either the USB audio interface of your mixer or
+the "Line In" of your Streaming PC's soundcard).</li>
+<li>Click <strong>Apply</strong> and <strong>OK</strong>.</li>
+</ol>
+<h2 id="5-handle-the-discord-mix-minus-optional">5. Handle the Discord
+"Mix-Minus" (Optional)</h2>
+<p>If you chat on Discord on your Gaming PC, your teammates will hear
+themselves echo if you send your master mixer output back to them. To
+prevent this, use a <strong>Mix-Minus</strong> setup.</p>
+<ul>
+<li>Use an auxiliary send (AUX Send / FX Send) channel on your
+mixer.</li>
+<li>Route all audio except the Discord incoming audio to this AUX Send
+channel.</li>
+<li>Run a physical cable from the AUX Send port of the mixer back to the
+Line-In port of your Gaming PC. Set this Line-In as your input device in
+Discord.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

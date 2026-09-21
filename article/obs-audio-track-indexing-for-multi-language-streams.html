@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Audio Track Indexing for Multi-Language Streams - obs-studio</title>
+    <meta name="description" content="This article provides a comprehensive guide on how OBS Studio indexes, routes, and packages audio tracks for multi-language broadcasting environments. It explains the mechanics behind the software's internal audio matrix, output track assignment, metadat">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-audio-track-indexing-for-multi-language-streams">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Audio Track Indexing for Multi-Language Streams - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-audio-track-indexing-for-multi-language-streams" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides a comprehensive guide on how OBS Studio indexes, routes, and packages audio tracks for multi-language broadcasting environments. It explains the mechanics behind the software's internal audio matrix, output track assignment, metadat" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-audio-track-indexing-for-multi-language-streams">OBS Audio
+Track Indexing for Multi-Language Streams</h1>
+<p>This article provides a comprehensive guide on how OBS Studio
+indexes, routes, and packages audio tracks for multi-language
+broadcasting environments. It explains the mechanics behind the
+software's internal audio matrix, output track assignment, metadata
+tagging, and the transmission of separate language feeds over protocols
+like MPEG-TS, SRT, and modern multi-track streaming workflows.</p>
+<h2 id="the-obs-audio-routing-architecture">The OBS Audio Routing
+Architecture</h2>
+<p>OBS Studio operates on an internal multi-bus architecture centered
+around a 6-track discrete routing matrix. Any input source—such as
+commentator microphones, game feeds, remote translation lines, or
+ambient sounds—can be routed to any combination of these six tracks
+simultaneously via the Advanced Audio Properties panel.</p>
+<p>In a multi-language production, these tracks do not function as
+surround channels (such as left, right, center, or LFE). Instead, each
+numbered track operates as a discrete stereo or mono audio submix.
+Managing track indexing requires treating each track as an isolated
+programmatic feed:</p>
+<ul>
+<li><strong>Track 1:</strong> Typically reserved as the default combined
+mix (Clean feed or primary language + international ambient sound) for
+platforms that only accept a single audio channel.</li>
+<li><strong>Track 2:</strong> Primary language commentary (e.g.,
+English) mixed with international sound (IS/FX).</li>
+<li><strong>Track 3:</strong> Secondary language commentary (e.g.,
+Spanish) mixed with international sound.</li>
+<li><strong>Track 4:</strong> Tertiary language commentary (e.g.,
+French) mixed with international sound.</li>
+<li><strong>Track 5:</strong> Clean international sound (FX/Game/Stems
+only, no voices) for archival or live feed distribution.</li>
+<li><strong>Track 6:</strong> Intercom, internal production audio, or
+auxiliary language.</li>
+</ul>
+<h2 id="configuring-the-advanced-audio-properties-matrix">Configuring
+the Advanced Audio Properties Matrix</h2>
+<p>To route inputs to specific output indexes, access the
+<strong>Advanced Audio Properties</strong> window by clicking the gear
+icon in the Audio Mixer dock.</p>
+<p>The matrix on the right displays the six numeric track checkboxes for
+every active source in the project. For a true multi-language output,
+uncheck the master feeds from foreign tracks to avoid audio bleed. For
+instance, the Spanish interpreter's microphone must only have the
+checkbox checked under Track 3, while ambient game sound or stadium
+noise must be checked across Tracks 1, 2, 3, and 4 to ensure consistent
+background balance across all language renditions.</p>
+<h2 id="output-mapping-streaming-vs-recording">Output Mapping: Streaming
+vs. Recording</h2>
+<p>The internal track indices (1 through 6) must be assigned to the
+output container through the <strong>Settings &gt; Output</strong> menu,
+configured to <strong>Advanced</strong> mode.</p>
+<h3 id="1-standard-rtmp-streaming-single-track-limitation">1. Standard
+RTMP Streaming (Single Track Limitation)</h3>
+<p>Legacy RTMP streaming only permits a single indexed audio track to be
+transmitted to the endpoint. In the <strong>Streaming</strong> tab, the
+"Audio Track" radio button dictates which single index is compressed and
+sent via RTMP. Broadcasters targeting standard single-track destinations
+must rely on multiple OBS instances or cloud-based ingest servers to
+split languages if bound by legacy RTMP.</p>
+<h3 id="2-multi-track-master-recording">2. Multi-Track Master
+Recording</h3>
+<p>Under the <strong>Recording</strong> tab, users can select multiple
+track checkboxes simultaneously (Tracks 1 through 6). When saving to
+containers like MKV or MP4, OBS multiplexes these into separate audio
+streams within the file:</p>
+<ul>
+<li>The primary video stream is indexed as Stream 0:0.</li>
+<li>The selected audio tracks are indexed sequentially as Stream 0:1,
+Stream 0:2, Stream 0:3, etc., preserving total isolation for
+post-broadcast editing or multilingual VOD delivery.</li>
+</ul>
+<h3 id="3-native-multi-track-streaming-srt-and-mpeg-ts">3. Native
+Multi-Track Streaming (SRT and MPEG-TS)</h3>
+<p>For professional workflows requiring live multi-language transmission
+from a single OBS instance, the <strong>Custom Output (FFmpeg)</strong>
+setting or native SRT output is utilized.</p>
+<p>When streaming via MPEG-TS over SRT or UDP, OBS can map multiple
+tracks into discrete elementary audio streams within the transport
+stream container:</p>
+<ol type="1">
+<li>Navigate to <strong>Settings &gt; Output &gt; Recording</strong> (or
+custom streaming output).</li>
+<li>Set the type to <strong>Custom Output (FFmpeg)</strong>.</li>
+<li>Select <strong>MPEG-TS</strong> as the container format.</li>
+<li>Set the muxer options to map the desired OBS audio tracks into
+designated Program Elementary Streams (PES).</li>
+</ol>
+<p>In MPEG-TS delivery, OBS assigns Packet Identifiers (PIDs)
+sequentially to each active audio track index.</p>
+<h2 id="audio-track-metadata-and-language-tagging">Audio Track Metadata
+and Language Tagging</h2>
+<p>One critical limitation of the standard OBS interface is the lack of
+native GUI fields for ISO 639-2 language tags (e.g., <code>eng</code>,
+<code>spa</code>, <code>fra</code>). By default, OBS labels indexed
+tracks generically as <code>Track 1</code>, <code>Track 2</code>, and so
+on.</p>
+<p>To assign metadata so downstream media players, set-top boxes, and
+ingest servers automatically identify the language of each track:</p>
+<ul>
+<li><strong>FFmpeg Muxer Flags:</strong> In the FFmpeg custom output
+settings, muxer arguments can be manually passed to index languages to
+their respective audio stream:
+<pre class="text"><code>metadata:s:a:0=language=eng metadata:s:a:1=language=spa metadata:s:a:2=language=fra</code></pre>
+<em>(Note: FFmpeg uses a 0-based stream indexing convention where
+<code>a:0</code> corresponds to the first selected OBS audio track,
+<code>a:1</code> corresponds to the second, and so on.)</em></li>
+</ul>
+<h2 id="indexing-considerations-with-enhanced-broadcasting">Indexing
+Considerations with Enhanced Broadcasting</h2>
+<p>Modern updates to OBS Studio introduce support for Enhanced
+Broadcasting architectures (such as Enhanced RTMP and WHIP/WebRTC).
+These protocols extend traditional single-track broadcasting by allowing
+OBS to negotiate multiple audio tracks with ingestion servers
+directly.</p>
+<p>When using Enhanced Broadcasting:</p>
+<ul>
+<li>The server queries OBS for its available audio configuration.</li>
+<li>OBS presents its configured track indices over the signaling
+layer.</li>
+<li>The ingestion server decodes each track, reads the programmatic
+identifiers, and routes the individual audio channels to dynamic
+language selectors on downstream video players.</li>
+</ul>
+<p>Ensuring strict track discipline at the Advanced Audio Properties
+stage is essential to prevent sending unmixed or cross-contaminated
+language audio down the multi-track pipeline.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

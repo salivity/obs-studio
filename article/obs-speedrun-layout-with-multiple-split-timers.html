@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Speedrun Layout with Multiple Split Timers - obs-studio</title>
+    <meta name="description" content="Creating a professional speedrun stream requires a clean, easy-to-read layout that displays your gameplay alongside your timing data. This article will show you how to set up OBS Studio for speedrunning, configure multiple split timers using software lik">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-speedrun-layout-with-multiple-split-timers">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Speedrun Layout with Multiple Split Timers - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-speedrun-layout-with-multiple-split-timers" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Creating a professional speedrun stream requires a clean, easy-to-read layout that displays your gameplay alongside your timing data. This article will show you how to set up OBS Studio for speedrunning, configure multiple split timers using software lik" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-speedrun-layout-with-multiple-split-timers">OBS Speedrun
+Layout with Multiple Split Timers</h1>
+<p>Creating a professional speedrun stream requires a clean,
+easy-to-read layout that displays your gameplay alongside your timing
+data. This article will show you how to set up OBS Studio for
+speedrunning, configure multiple split timers using software like
+LiveSplit, capture them seamlessly in OBS, and arrange your layout for
+maximum viewer engagement.</p>
+<h2 id="step-1-preparing-your-split-timers-in-livesplit">Step 1:
+Preparing Your Split Timers in LiveSplit</h2>
+<p>Before configuring OBS, you need to set up your timer. LiveSplit is
+the industry standard for speedrunning. To display multiple timers (such
+as your overall run time, current segment time, and world record
+pace):</p>
+<ol type="1">
+<li>Open LiveSplit, right-click the window, and select <strong>Edit
+Layout</strong>.</li>
+<li>Click the <strong>Plus (+)</strong> button to add components.</li>
+<li>Add a <strong>Timer</strong> for your main run time.</li>
+<li>Add a second <strong>Timer</strong> or a <strong>Detailed
+Timer</strong> component. In its settings, set the comparison or timing
+method to track a different metric, such as "Segment Time" or
+"Delta."</li>
+<li>Add the <strong>Splits</strong> component to show your past and
+upcoming split comparisons.</li>
+<li>In the Layout Settings, check <strong>Allow Transparency</strong> if
+you want a transparent background, or set the background to a solid
+color (like chroma key green) to filter it out later.</li>
+</ol>
+<h2 id="step-2-importing-the-timers-into-obs-studio">Step 2: Importing
+the Timers into OBS Studio</h2>
+<p>Once your layout is configured in LiveSplit, you need to bring it
+into OBS:</p>
+<ol type="1">
+<li>Open OBS Studio and navigate to your active Scene.</li>
+<li>Click the <strong>Plus (+)</strong> icon under the Sources dock and
+select <strong>Window Capture</strong>.</li>
+<li>Name the source "LiveSplit" and select the LiveSplit window from the
+dropdown menu.</li>
+<li>Set the Capture Method to <strong>Windows 10 (1903 or
+agreeable)</strong>. This setting natively supports LiveSplit's alpha
+channel transparency.</li>
+<li>If your timer background is not automatically transparent,
+right-click the LiveSplit source in OBS, go to <strong>Filters</strong>,
+add a <strong>Color Key</strong> or <strong>Chroma Key</strong>, and
+select your background color to filter it out.</li>
+</ol>
+<h2 id="step-3-arranging-the-speedrun-layout">Step 3: Arranging the
+Speedrun Layout</h2>
+<p>How you arrange your layout depends on the aspect ratio of the game
+you are playing:</p>
+<ul>
+<li><strong>Retro Games (4:3 Aspect Ratio):</strong> This aspect ratio
+leaves empty space on widescreen 16:9 streams. Place your game capture
+on one side of the screen, and use the remaining vertical space on the
+opposite side to stack your webcam, main split timer, and secondary
+segment timers.</li>
+<li><strong>Modern Games (16:9 Aspect Ratio):</strong> Since the game
+fills the entire screen, you should overlay your timers. Place your
+primary splits in a corner where they do not block crucial in-game HUD
+elements. Reduce the opacity of the timer background in LiveSplit to
+keep the gameplay visible underneath.</li>
+</ul>
+<h2 id="step-4-adding-multiple-independent-timers">Step 4: Adding
+Multiple Independent Timers</h2>
+<p>If you need entirely independent timer windows (for example, one
+tracking Real Time/RTA and another tracking Game Time/IGT):</p>
+<ol type="1">
+<li>Create a copy of your LiveSplit folder to run two independent
+instances of the program.</li>
+<li>Configure the first instance for RTA and the second instance for IGT
+in their respective settings.</li>
+<li>In OBS, add two separate <strong>Window Capture</strong> sources,
+targeting each respective LiveSplit window.</li>
+<li>Crop the captures if necessary by holding the <strong>Alt</strong>
+key while dragging the bounding box edges in OBS, then position them
+side-by-side.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

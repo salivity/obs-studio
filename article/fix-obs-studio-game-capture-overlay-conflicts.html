@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix OBS Studio Game Capture Overlay Conflicts - obs-studio</title>
+    <meta name="description" content="When streaming or recording with OBS Studio, the Game Capture source can conflict with third-party software overlays—such as those from Discord, Steam, GeForce Experience, or RivaTuner. These conflicts often result in a black screen, severe FPS drops,">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/fix-obs-studio-game-capture-overlay-conflicts">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Fix OBS Studio Game Capture Overlay Conflicts - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/fix-obs-studio-game-capture-overlay-conflicts" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When streaming or recording with OBS Studio, the Game Capture source can conflict with third-party software overlays—such as those from Discord, Steam, GeForce Experience, or RivaTuner. These conflicts often result in a black screen, severe FPS drops," />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="fix-obs-studio-game-capture-overlay-conflicts">Fix OBS Studio
+Game Capture Overlay Conflicts</h1>
+<p>When streaming or recording with OBS Studio, the Game Capture source
+can conflict with third-party software overlays—such as those from
+Discord, Steam, GeForce Experience, or RivaTuner. These conflicts often
+result in a black screen, severe FPS drops, or game crashes because
+multiple programs are trying to hook into the same graphics rendering
+pipeline simultaneously. This guide provides direct, actionable
+solutions to resolve these overlay conflicts and restore smooth capture
+performance.</p>
+<h2 id="disable-unnecessary-third-party-overlays">Disable Unnecessary
+Third-Party Overlays</h2>
+<p>The most effective way to resolve a conflict is to disable the
+overlay in the conflicting application. Identify which background
+programs are running and disable their overlay features:</p>
+<ul>
+<li><strong>Discord:</strong> Go to User Settings &gt; Game Overlay, and
+toggle off "Enable in-game overlay."</li>
+<li><strong>GeForce Experience:</strong> Open the application, go to
+Settings (gear icon), and toggle off the "In-Game Overlay" option.</li>
+<li><strong>Steam:</strong> Go to Steam &gt; Settings &gt; In-Game, and
+uncheck "Enable the Steam Overlay while in-game."</li>
+<li><strong>RivaTuner Statistics Server (RTSS) / MSI
+Afterburner:</strong> Set the "Application detection level" to "None"
+for the specific game, or close the application while streaming.</li>
+<li><strong>AMD Radeon Software:</strong> Go to Settings &gt; General,
+and disable the "In-Game Overlay" under the Preferences section.</li>
+</ul>
+<h2 id="adjust-obs-game-capture-properties">Adjust OBS Game Capture
+Properties</h2>
+<p>OBS Studio includes built-in settings designed to manage how it
+interacts with other hooks. You can adjust these settings to prevent OBS
+from fighting other applications for hook priority:</p>
+<ol type="1">
+<li>Open OBS Studio and locate your <strong>Game Capture</strong> source
+in the Sources dock.</li>
+<li>Double-click the source to open its
+<strong>Properties</strong>.</li>
+<li>Scroll down and uncheck <strong>Capture third-party overlays (such
+as Steam)</strong>. This prevents OBS from attempting to record the
+overlay layer, reducing resource conflicts.</li>
+<li>Ensure <strong>Use anti-cheat compatibility hook</strong> is
+checked. This is required for most modern games and helps OBS hook into
+the game engine safely.</li>
+<li>Click <strong>OK</strong> to save the changes.</li>
+</ol>
+<h2 id="run-obs-studio-as-administrator">Run OBS Studio as
+Administrator</h2>
+<p>Running OBS Studio with administrator privileges allows it to bypass
+certain permission barriers and hook into the game's graphics API more
+reliably than third-party background applications.</p>
+<ol type="1">
+<li>Right-click on the <strong>OBS Studio</strong> shortcut on your
+desktop or Start menu.</li>
+<li>Select <strong>Properties</strong>.</li>
+<li>Go to the <strong>Compatibility</strong> tab.</li>
+<li>Check the box that says <strong>Run this program as an
+administrator</strong>.</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong>.</li>
+</ol>
+<h2 id="change-the-hook-rate-in-rivatuner-rtss">Change the Hook Rate in
+RivaTuner (RTSS)</h2>
+<p>If you must use RivaTuner Statistics Server for hardware monitoring
+alongside OBS, you can delay its hook so it does not conflict with OBS
+during game startup:</p>
+<ol type="1">
+<li>Open <strong>RivaTuner Statistics Server</strong>.</li>
+<li>Hold the <strong>Ctrl</strong> key and click the
+<strong>Add</strong> button in the bottom left to open the hidden
+properties, or locate the <code>Global</code> profile.</li>
+<li>Look for the <strong>Injection delay</strong> setting (measured in
+milliseconds).</li>
+<li>Set the delay to <strong>15000</strong> (15 seconds). This gives OBS
+Studio enough time to hook into the game first before RTSS attempts to
+hook.</li>
+</ol>
+<h2 id="use-window-capture-as-a-workaround">Use Window Capture as a
+Workaround</h2>
+<p>If the game capture source continues to conflict despite disabling
+overlays, switching the capture method in OBS is a highly reliable
+workaround:</p>
+<ol type="1">
+<li>In OBS, hide or delete your <strong>Game Capture</strong>
+source.</li>
+<li>Add a new <strong>Window Capture</strong> source.</li>
+<li>Select your game from the <strong>Window</strong> dropdown
+menu.</li>
+<li>Set the <strong>Capture Method</strong> to <strong>Windows 10 (1903
+and up)</strong> or <strong>Graphics Capture</strong>. This capture
+method bypasses direct hook injection entirely, eliminating overlay
+conflicts at the cost of slightly higher CPU/GPU overhead.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

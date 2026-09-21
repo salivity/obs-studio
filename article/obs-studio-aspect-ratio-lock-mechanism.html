@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Aspect Ratio Lock Mechanism - obs-studio</title>
+    <meta name="description" content="OBS Studio maintains source proportions during freehand transformations by capturing mouse interactions on its preview canvas, projecting these movements into the source's local coordinate space, and applying mathematical scalar constraints before updati">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-aspect-ratio-lock-mechanism">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Aspect Ratio Lock Mechanism - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-aspect-ratio-lock-mechanism" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio maintains source proportions during freehand transformations by capturing mouse interactions on its preview canvas, projecting these movements into the source's local coordinate space, and applying mathematical scalar constraints before updati" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-aspect-ratio-lock-mechanism">OBS Studio Aspect Ratio
+Lock Mechanism</h1>
+<p>OBS Studio maintains source proportions during freehand
+transformations by capturing mouse interactions on its preview canvas,
+projecting these movements into the source's local coordinate space, and
+applying mathematical scalar constraints before updating the scene
+item's affine transformation matrix. By recalculating dimensions along a
+locked diagonal axis or applying a uniform scale factor to both
+dimensions, the software ensures that freehand dragging cannot distort
+the native width-to-height ratio of the visual asset.</p>
+<h3 id="input-capture-and-coordinate-translation">Input Capture and
+Coordinate Translation</h3>
+<p>The transformation workflow begins within the preview viewport
+subsystem (<code>OBSBasicPreview</code>). When a user clicks and drags a
+transform handle—typically located on the corners or edges of a selected
+source—the user interface captures the cursor’s raw screen coordinates
+via Qt event handlers (<code>mouseMoveEvent</code>).</p>
+<p>Because the canvas can be panned, zoomed, or rendered at a different
+resolution than the output base resolution, the system first maps these
+screen coordinates back into canvas-space coordinates. It then uses the
+inverse of the source’s current transform matrix to convert the
+canvas-space delta into the source’s local model coordinate space.</p>
+<h3 id="the-scalar-constraint-calculation">The Scalar Constraint
+Calculation</h3>
+<p>Once the cursor's movement is translated into local coordinates, OBS
+Studio evaluates whether the aspect ratio lock is enforced. Aspect ratio
+preservation is either the default state or toggled via modifier keys
+(such as holding <code>Shift</code> to disable locking, depending on
+configuration).</p>
+<p>To lock the aspect ratio during corner-handle transformations, OBS
+Studio evaluates the displacement along the primary axes and constrains
+the scaling vector:</p>
+<ol type="1">
+<li><strong>Delta Projection:</strong> The engine calculates the
+requested change in width (<span class="math inline">\(\Delta
+x\)</span>) and height (<span class="math inline">\(\Delta y\)</span>)
+based on the handle position.</li>
+<li><strong>Dominant Axis or Diagonal Vectoring:</strong> Rather than
+independently applying <span class="math inline">\(\Delta x\)</span> to
+the width and <span class="math inline">\(\Delta y\)</span> to the
+height, the transformation logic projects the mouse offset onto the
+aspect ratio vector <span class="math inline">\((W_{base},
+H_{base})\)</span>. Alternatively, it identifies the dominant axis of
+movement and calculates a single uniform scale factor <span
+class="math inline">\(k\)</span>: <span class="math display">\[k =
+\frac{\text{New Dimension}}{\text{Base Dimension}}\]</span></li>
+<li><strong>Coupled Scaling:</strong> The engine forces the secondary
+axis to conform to <span class="math inline">\(k\)</span>: <span
+class="math display">\[\text{Scale}_x = k\]</span> <span
+class="math display">\[\text{Scale}_y = k\]</span></li>
+</ol>
+<p>If a side handle (top, bottom, left, or right) is dragged while
+aspect ratio locking is enforced, the movement along a single axis
+automatically scales the perpendicular axis proportionally from the
+source's defined origin or anchor point.</p>
+<h3 id="matrix-construction-and-the-scene-pipeline">Matrix Construction
+and the Scene Pipeline</h3>
+<p>After computing the constrained scale factors, the interaction logic
+passes the values to the core scene management subsystem
+(<code>libobs/obs-scene.c</code>) using functions such as
+<code>obs_sceneitem_set_scale()</code>.</p>
+<p>The underlying pipeline converts the position, rotation, and
+constrained scale values into a standard 4x4 affine transformation
+matrix (<code>matrix4</code>). During rendering, this matrix is pushed
+to the OBS graphics subsystem (<code>libobs/graphics</code>),
+transforming the vertex coordinates of the source quad. Because the
+horizontal and vertical scaling components of the matrix are kept
+mathematically coupled, the GPU renders the source texture with its
+original proportions preserved across every frame.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

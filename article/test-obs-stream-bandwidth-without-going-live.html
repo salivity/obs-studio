@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test OBS Stream Bandwidth Without Going Live - obs-studio</title>
+    <meta name="description" content="Testing your internet connection before broadcasting is crucial for ensuring a stable, lag-free stream. This guide explains how to natively test your stream bandwidth in OBS Studio using built-in features for Twitch and YouTube, allowing you to analyze y">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/test-obs-stream-bandwidth-without-going-live">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Test OBS Stream Bandwidth Without Going Live - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/test-obs-stream-bandwidth-without-going-live" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Testing your internet connection before broadcasting is crucial for ensuring a stable, lag-free stream. This guide explains how to natively test your stream bandwidth in OBS Studio using built-in features for Twitch and YouTube, allowing you to analyze y" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="test-obs-stream-bandwidth-without-going-live">Test OBS Stream
+Bandwidth Without Going Live</h1>
+<p>Testing your internet connection before broadcasting is crucial for
+ensuring a stable, lag-free stream. This guide explains how to natively
+test your stream bandwidth in OBS Studio using built-in features for
+Twitch and YouTube, allowing you to analyze your bitrate and connection
+stability without actually going live to your audience.</p>
+<h2 id="method-1-twitch-bandwidth-test-mode">Method 1: Twitch Bandwidth
+Test Mode</h2>
+<p>If you stream to Twitch, OBS Studio has a built-in feature that
+allows you to send data to Twitch servers to test your connection
+without broadcasting to your channel.</p>
+<h3 id="option-a-connected-account-easiest">Option A: Connected Account
+(Easiest)</h3>
+<ol type="1">
+<li>Open OBS Studio and go to <strong>Settings</strong> &gt;
+<strong>Stream</strong>.</li>
+<li>Set your Service to <strong>Twitch</strong> and ensure your account
+is connected.</li>
+<li>Check the box labeled <strong>Enable Bandwidth Test
+Mode</strong>.</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong>.</li>
+<li>Click <strong>Start Streaming</strong> on the main OBS interface. A
+warning will appear reminding you that you are in bandwidth test mode;
+click <strong>Yes</strong> to proceed.</li>
+</ol>
+<h3 id="option-b-using-a-stream-key">Option B: Using a Stream Key</h3>
+<ol type="1">
+<li>Go to your <strong>Twitch Creator Dashboard</strong> &gt;
+<strong>Settings</strong> &gt; <strong>Stream</strong> and copy your
+<strong>Primary Stream Key</strong>.</li>
+<li>Open OBS Studio, go to <strong>Settings</strong> &gt;
+<strong>Stream</strong>, and paste your key.</li>
+<li>Append <code>?bandwidthtest=true</code> to the end of your stream
+key (e.g., <code>live_12345678_abcdefg?bandwidthtest=true</code>).</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong>.</li>
+<li>Click <strong>Start Streaming</strong>.</li>
+</ol>
+<h2 id="method-2-youtube-private-stream-test">Method 2: YouTube Private
+Stream Test</h2>
+<p>While YouTube does not have a dedicated "test mode" flag like Twitch,
+you can achieve the same result by streaming to a private
+destination.</p>
+<ol type="1">
+<li>Go to the <strong>YouTube Creator Studio</strong> and click
+<strong>Go Live</strong>.</li>
+<li>Create a new stream and set the <strong>Visibility</strong> to
+<strong>Private</strong> or <strong>Unlisted</strong>.</li>
+<li>Copy the <strong>Stream Key</strong> from the YouTube
+dashboard.</li>
+<li>Open OBS Studio, go to <strong>Settings</strong> &gt;
+<strong>Stream</strong>, set the service to <strong>YouTube</strong>,
+and paste the stream key.</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong>.</li>
+<li>Click <strong>Start Streaming</strong>. Your data will send to
+YouTube, but no viewers will be notified, and your stream will not be
+public.</li>
+</ol>
+<h2 id="how-to-analyze-your-test-results-in-obs">How to Analyze Your
+Test Results in OBS</h2>
+<p>Once you have started your test stream using one of the methods
+above, you need to monitor OBS to verify your connection quality.</p>
+<ol type="1">
+<li>In OBS Studio, go to the top menu and select <strong>View</strong>
+&gt; <strong>Docks</strong> &gt; <strong>Stats</strong>.</li>
+<li>Look at the <strong>Dropped Frames (Network)</strong> section. If
+this percentage is above 0%, your bitrate is too high for your current
+upload speed.</li>
+<li>Observe the status bar in the bottom-right corner of OBS.
+<ul>
+<li><strong>Green square:</strong> Your connection is stable.</li>
+<li><strong>Yellow/Red square:</strong> Your connection is struggling,
+and you should lower your video bitrate in <strong>Settings</strong>
+&gt; <strong>Output</strong>.</li>
+</ul></li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

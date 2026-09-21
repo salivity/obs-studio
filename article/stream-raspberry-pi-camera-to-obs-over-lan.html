@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stream Raspberry Pi Camera to OBS over LAN - obs-studio</title>
+    <meta name="description" content="This article explains how to capture high-frame-rate (HFR) video from a Raspberry Pi camera module and stream it directly into OBS Studio over a local area network (LAN). By utilizing the native libcamera tools on Raspberry Pi OS and the Secure Reliable">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/stream-raspberry-pi-camera-to-obs-over-lan">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Stream Raspberry Pi Camera to OBS over LAN - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/stream-raspberry-pi-camera-to-obs-over-lan" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how to capture high-frame-rate (HFR) video from a Raspberry Pi camera module and stream it directly into OBS Studio over a local area network (LAN). By utilizing the native libcamera tools on Raspberry Pi OS and the Secure Reliable" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="stream-raspberry-pi-camera-to-obs-over-lan">Stream Raspberry Pi
+Camera to OBS over LAN</h1>
+<p>This article explains how to capture high-frame-rate (HFR) video from
+a Raspberry Pi camera module and stream it directly into OBS Studio over
+a local area network (LAN). By utilizing the native
+<code>libcamera</code> tools on Raspberry Pi OS and the Secure Reliable
+Transport (SRT) protocol, you can achieve a low-latency,
+high-performance video feed suitable for live streaming, recording, or
+monitoring.</p>
+<h3 id="step-1-prepare-the-hardware-and-network">Step 1: Prepare the
+Hardware and Network</h3>
+<p>To achieve high frame rates (such as 60 FPS or higher) with minimal
+latency, ensure your hardware and network meet the following
+requirements:</p>
+<ul>
+<li><strong>Raspberry Pi:</strong> A Raspberry Pi 4 or Raspberry Pi 5 is
+recommended for hardware-accelerated encoding.</li>
+<li><strong>Camera Module:</strong> Raspberry Pi Camera Module V2
+(supports up to 720p at 60 FPS) or Camera Module 3 / HQ Camera.</li>
+<li><strong>Network:</strong> Connect both the Raspberry Pi and the OBS
+computer to the same router via wired Ethernet cables. If Wi-Fi must be
+used, ensure both devices are on a stable 5 GHz band.</li>
+</ul>
+<h3 id="step-2-configure-the-raspberry-pi-stream">Step 2: Configure the
+Raspberry Pi Stream</h3>
+<p>Modern Raspberry Pi OS releases use the <code>libcamera</code>
+framework. We will use <code>libcamera-vid</code> to capture the video
+and stream it using the SRT protocol in listener mode. This allows OBS
+to initiate the connection.</p>
+<ol type="1">
+<li>Open a terminal on your Raspberry Pi.</li>
+<li>Run the following command to start a 1280x720 stream at 60 frames
+per second:</li>
+</ol>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">libcamera-vid</span> <span class="at">-t</span> 0 <span class="at">--inline</span> <span class="at">--width</span> 1280 <span class="at">--height</span> 720 <span class="at">--framerate</span> 60 <span class="at">--codec</span> h264 <span class="at">-o</span> srt://0.0.0.0:1234<span class="pp">?</span>mode=listener</span></code></pre></div>
+<ul>
+<li><code>-t 0</code>: Disables the timeout so the stream runs
+indefinitely.</li>
+<li><code>--inline</code>: Forces header bytes to be inline, which helps
+OBS decode the stream immediately upon connection.</li>
+<li><code>--width 1280 --height 720 --framerate 60</code>: Sets the
+resolution and targets 60 FPS. You can lower the resolution (e.g.,
+640x480) if you wish to push for higher frame rates like 90 or 120 FPS,
+depending on your camera module's capabilities.</li>
+<li><code>-o srt://0.0.0.0:1234?mode=listener</code>: Opens port 1234 on
+the Pi to listen for incoming OBS connections.</li>
+</ul>
+<p>Note the IP address of your Raspberry Pi by running
+<code>hostname -I</code> in the terminal.</p>
+<h3 id="step-3-set-up-obs-studio-to-receive-the-stream">Step 3: Set Up
+OBS Studio to Receive the Stream</h3>
+<p>Now configure OBS Studio on your main computer to capture the
+incoming SRT feed.</p>
+<ol type="1">
+<li>Open <strong>OBS Studio</strong>.</li>
+<li>In the <strong>Sources</strong> dock, click the <strong>+</strong>
+icon and select <strong>Media Source</strong>.</li>
+<li>Name the source (e.g., "Pi Camera") and click
+<strong>OK</strong>.</li>
+<li>In the properties window, uncheck the box labeled <strong>Local
+File</strong>.</li>
+<li>In the <strong>Input</strong> field, enter the SRT address of your
+Raspberry Pi:
+<code>srt://&lt;RASPBERRY_PI_IP&gt;:1234?mode=caller</code> <em>(Replace
+<code>&lt;RASPBERRY_PI_IP&gt;</code> with the actual IP address of your
+Raspberry Pi).</em></li>
+<li>In the <strong>Input Format</strong> field, type:
+<code>mpegts</code></li>
+<li>Set the <strong>Network Buffering</strong> option to <strong>1
+MB</strong> (or lower) to minimize latency.</li>
+<li>Click <strong>OK</strong>. The high-frame-rate video feed from your
+Raspberry Pi will appear in the OBS viewport.</li>
+</ol>
+<h3 id="step-4-fine-tuning-for-ultra-low-latency">Step 4: Fine-Tuning
+for Ultra-Low Latency</h3>
+<p>If you experience stuttering or lag, apply these optimizations:</p>
+<ul>
+<li><strong>Reduce OBS Buffering:</strong> Re-open the Media Source
+properties in OBS and set the "Network Buffering" to the minimum allowed
+or use the "Speed" preset.</li>
+<li><strong>Adjust Bitrate on the Pi:</strong> You can limit the
+bandwidth usage of the stream by adding the <code>--bitrate</code> flag
+to your Raspberry Pi command. For example, adding
+<code>--bitrate 5000000</code> limits the stream to 5 Mbps, which is
+ideal for a stable 720p60 stream.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

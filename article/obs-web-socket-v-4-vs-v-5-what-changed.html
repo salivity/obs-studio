@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS WebSocket v4 vs v5: What Changed? - obs-studio</title>
+    <meta name="description" content="The transition from OBS WebSocket v4 to v5 represents a major milestone in OBS Studio's remote control capabilities, marking its evolution from a third-party plugin to a native, completely rewritten protocol. This article highlights the key differences b">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-web-socket-v-4-vs-v-5-what-changed">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS WebSocket v4 vs v5: What Changed? - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-web-socket-v-4-vs-v-5-what-changed" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The transition from OBS WebSocket v4 to v5 represents a major milestone in OBS Studio's remote control capabilities, marking its evolution from a third-party plugin to a native, completely rewritten protocol. This article highlights the key differences b" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-websocket-v4-vs-v5-what-changed">OBS WebSocket v4 vs v5:
+What Changed?</h1>
+<p>The transition from OBS WebSocket v4 to v5 represents a major
+milestone in OBS Studio's remote control capabilities, marking its
+evolution from a third-party plugin to a native, completely rewritten
+protocol. This article highlights the key differences between these two
+versions, including native integration, protocol restructuring, security
+improvements, and default port changes, helping developers and streamers
+understand what changed and how to adapt.</p>
+<h2 id="native-integration-into-obs-studio">Native Integration into OBS
+Studio</h2>
+<p>In version 4 (v4) and earlier, the OBS WebSocket was a separate,
+third-party plugin that users had to download and install manually to
+enable remote control from applications like Stream Deck, Touch Portal,
+or custom scripts.</p>
+<p>With the release of OBS Studio 28, WebSocket version 5 (v5) became a
+native, built-in feature of the core OBS Studio installation. Users no
+longer need to install external files, as remote connection capabilities
+are available out of the box.</p>
+<h2 id="complete-protocol-redesign-breaking-changes">Complete Protocol
+Redesign (Breaking Changes)</h2>
+<p>The transition to v5 is not backward compatible with v4. The entire
+protocol was redesigned from the ground up to be more robust,
+consistent, and performant.</p>
+<ul>
+<li><strong>Different Message Format:</strong> The JSON payload
+structures for requests, responses, and events were completely
+overhauled. Developers must update their integration libraries to
+support the new v5 schemas.</li>
+<li><strong>Compatibility Shim:</strong> Because of these breaking
+changes, OBS Studio included a temporary "v4 compatibility shim" in
+transitionary releases to allow older apps to still connect, but native
+v5 adoption is required for long-term support.</li>
+</ul>
+<h2 id="default-port-change">Default Port Change</h2>
+<p>To avoid conflicts with older v4 installations and other software,
+the default connection port was changed.</p>
+<ul>
+<li><strong>WebSocket v4 default port:</strong> <code>4444</code></li>
+<li><strong>WebSocket v5 default port:</strong> <code>4455</code></li>
+</ul>
+<p>This change prevents older legacy applications from accidentally
+attempting to connect to the new native v5 server using incompatible v4
+commands.</p>
+<h2 id="enhanced-security-and-authentication">Enhanced Security and
+Authentication</h2>
+<p>Security was significantly tightened in the transition to v5.</p>
+<ul>
+<li><strong>Modernized Handshake:</strong> The authentication process
+now uses a more secure SHA256-based challenge-response mechanism.</li>
+<li><strong>Encrypted Communication Capabilities:</strong> The protocol
+was built with modern security standards in mind, ensuring that remote
+connections over local networks or the internet are much more secure
+against unauthorized access.</li>
+</ul>
+<h2 id="improved-request-and-event-handling">Improved Request and Event
+Handling</h2>
+<p>The way developers interact with OBS via code is much more
+streamlined in v5:</p>
+<ul>
+<li><strong>Batch Requests:</strong> Version 5 introduced official
+support for batch requests, allowing developers to send multiple
+commands in a single payload, reducing network overhead.</li>
+<li><strong>Consistent Naming Conventions:</strong> Request and event
+names were standardized. Under v4, naming conventions were sometimes
+inconsistent; v5 enforces a strict, predictable camelCase naming
+structure for all API calls.</li>
+<li><strong>Fine-grained Event Subscriptions:</strong> Clients
+connecting to v5 can now subscribe to specific categories of events
+(e.g., only transitions, or only source volume changes) rather than
+receiving all events by default, significantly reducing CPU and network
+usage for high-performance applications.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

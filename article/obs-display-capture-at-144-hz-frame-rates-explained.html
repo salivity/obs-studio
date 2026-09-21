@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Display Capture at 144Hz Frame Rates Explained - obs-studio</title>
+    <meta name="description" content="Capturing high-refresh-rate competitive monitors at 144Hz using OBS Studio's Display Capture presents unique synchronization challenges. Because streaming and standard video recordings are typically locked to 60 frames per second (fps), OBS Studio must r">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-display-capture-at-144-hz-frame-rates-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Display Capture at 144Hz Frame Rates Explained - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-display-capture-at-144-hz-frame-rates-explained" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Capturing high-refresh-rate competitive monitors at 144Hz using OBS Studio's Display Capture presents unique synchronization challenges. Because streaming and standard video recordings are typically locked to 60 frames per second (fps), OBS Studio must r" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-display-capture-at-144hz-frame-rates-explained">OBS Display
+Capture at 144Hz Frame Rates Explained</h1>
+<p>Capturing high-refresh-rate competitive monitors at 144Hz using OBS
+Studio's Display Capture presents unique synchronization challenges.
+Because streaming and standard video recordings are typically locked to
+60 frames per second (fps), OBS Studio must reconcile the uneven ratio
+between the monitor’s 144Hz refresh rate and the canvas's target frame
+rate. This article explores how OBS processes non-standard frame rates
+through display duplication, why frame pacing issues occur, and how to
+configure capture settings for optimal smoothness.</p>
+<h3 id="the-mathematics-of-frame-rate-mismatch">The Mathematics of Frame
+Rate Mismatch</h3>
+<p>When OBS Studio captures a 144Hz monitor for a standard 60fps output,
+it encounters a non-integer frame-rate ratio (144 divided by 60 equals
+2.4). Because OBS cannot render a fractional frame, it must periodically
+drop frames to conform to its internal compositor clock.</p>
+<p>Instead of an even frame distribution, OBS captures an inconsistent
+cadence—often alternating between taking every second frame and every
+third frame. While the game may feel fluid on your competitive display,
+the resulting video stream or recording often displays noticeable
+micro-stutter or judder due to irregular frame pacing.</p>
+<h3 id="how-display-capture-operates">How Display Capture Operates</h3>
+<p>OBS Studio relies on the Windows Desktop Window Manager (DWM) and the
+DirectX Graphics Infrastructure (DXGI) Desktop Duplication API to
+execute Display Capture.</p>
+<p>Under this pipeline, the GPU renders desktop frames to a swap chain
+at the monitor’s native refresh rate (144Hz). Whenever the OBS render
+loop triggers at its target 60fps interval, DXGI provides OBS with the
+most recently completed surface from the desktop compositor. If the
+game’s frame rate fluctuates—or if G-Sync/FreeSync dynamically alters
+the monitor's refresh rate—the intervals at which new surfaces arrive
+become unpredictable. This increases the likelihood of frame queuing
+delays or repeated frames in the output.</p>
+<h3 id="performance-overhead-and-latency">Performance Overhead and
+Latency</h3>
+<p>Display Capture requires copying the entire desktop surface into OBS,
+placing additional strain on the GPU's copy engine. On high-refresh
+displays, pulling 144 distinct 1080p, 1440p, or 4K frame surfaces per
+second demands considerable memory bandwidth, even if more than half of
+those frames are discarded before the final encode. This process can
+produce subtle input latency in fast-paced competitive titles,
+particularly on systems where GPU utilization is already hovering near
+100%.</p>
+<h3 id="mitigating-frame-pacing-issues">Mitigating Frame Pacing
+Issues</h3>
+<p>To eliminate stutter and capture competitive gameplay cleanly,
+consider the following adjustments:</p>
+<ul>
+<li><strong>Use Game Capture Instead:</strong> Game Capture hooks
+directly into the graphics API (DirectX, Vulkan, or OpenGL) of the
+target application rather than capturing the composite desktop surface.
+This method reduces GPU overhead and allows OBS to hook frames directly
+before monitor presentation.</li>
+<li><strong>Match Refresh Rates to Integer Divisors:</strong> Changing
+your monitor’s refresh rate to 120Hz allows a clean 2:1 drop down to
+60fps. OBS will cleanly sample every other frame, producing consistent
+frame pacing without visual stutter.</li>
+<li><strong>Cap In-Game Frame Rates:</strong> If maintaining 144Hz is
+required, capping in-game frame rates to an exact multiple of your OBS
+canvas (e.g., 60fps, 120fps) or using an external frame-rate limiter
+helps smooth out surface delivery to the Desktop Duplication API.</li>
+<li><strong>Enable Fractional or Custom Framerates:</strong> If your
+final output supports high-refresh playback, you can navigate to OBS
+Settings &gt; Video, set the frame rate mode to "Fractional FPS Value,"
+and set OBS to record at an integer or matching rate, provided your
+encoding hardware can handle the increased throughput.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

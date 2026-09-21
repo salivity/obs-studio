@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Set Up an OBS Profile for Local Recording - obs-studio</title>
+    <meta name="description" content="This guide will show you how to create and configure a secondary profile in OBS Studio specifically optimized for high-quality local video recording. By separating your streaming and recording settings into different profiles, you can easily switch to ca">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-set-up-an-obs-profile-for-local-recording">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Set Up an OBS Profile for Local Recording - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-set-up-an-obs-profile-for-local-recording" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide will show you how to create and configure a secondary profile in OBS Studio specifically optimized for high-quality local video recording. By separating your streaming and recording settings into different profiles, you can easily switch to ca" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-set-up-an-obs-profile-for-local-recording">How to Set Up
+an OBS Profile for Local Recording</h1>
+<p>This guide will show you how to create and configure a secondary
+profile in OBS Studio specifically optimized for high-quality local
+video recording. By separating your streaming and recording settings
+into different profiles, you can easily switch to capturing pristine,
+high-bitrate offline footage without altering your live broadcast
+configurations.</p>
+<h3 id="step-1-create-a-new-profile">Step 1: Create a New Profile</h3>
+<p>Profiles in OBS Studio save your output, transmission, and video
+settings. Creating a new profile ensures your streaming settings remain
+untouched.</p>
+<ol type="1">
+<li>Open OBS Studio.</li>
+<li>Click on <strong>Profile</strong> in the top menu bar.</li>
+<li>Select <strong>New</strong> from the dropdown menu.</li>
+<li>Name the profile (e.g., "High-Quality Recording") and click
+<strong>OK</strong>.</li>
+<li>If the Auto-Configuration Wizard appears, close it to configure the
+settings manually.</li>
+</ol>
+<p><em>(Optional)</em> You can also go to <strong>Scene
+Collection</strong> &gt; <strong>New</strong> to create a dedicated set
+of sources and scenes for your recordings.</p>
+<h3 id="step-2-configure-the-output-settings">Step 2: Configure the
+Output Settings</h3>
+<p>To get the best recording quality without lag, you need to adjust
+your encoder and bitrate settings.</p>
+<ol type="1">
+<li>Click on <strong>Settings</strong> in the bottom-right corner of
+OBS.</li>
+<li>Select the <strong>Output</strong> tab on the left.</li>
+<li>Change the <strong>Output Mode</strong> dropdown at the top from
+<em>Simple</em> to <strong>Advanced</strong>.</li>
+<li>Click on the <strong>Recording</strong> tab.</li>
+</ol>
+<p>Adjust the following settings within the Recording tab:</p>
+<ul>
+<li><strong>Type:</strong> Standard</li>
+<li><strong>Recording Path:</strong> Click <em>Browse</em> and select a
+fast storage drive (preferably an SSD) with plenty of free space.</li>
+<li><strong>Recording Format:</strong> Select <strong>mkv</strong> or
+<strong>fragmented mp4</strong>. <em>Note: MKV is recommended because if
+OBS crashes, the recording is saved. You can automatically convert it to
+MP4 later via File &gt; Remux Recordings.</em></li>
+<li><strong>Video Encoder:</strong> Select a hardware encoder to reduce
+CPU usage.
+<ul>
+<li>For NVIDIA cards: <strong>NVIDIA NVENC H.264</strong> or
+<strong>HEVC</strong> (H.265).</li>
+<li>For AMD cards: <strong>AMD HW H.264</strong> or
+<strong>HEVC</strong>.</li>
+<li>For Intel: <strong>QuickSync H.264</strong>.</li>
+</ul></li>
+<li><strong>Audio Encoder:</strong> FFmpeg AAC (Default).</li>
+</ul>
+<h3 id="step-3-set-the-rate-control-for-quality">Step 3: Set the Rate
+Control for Quality</h3>
+<p>Streaming requires a strict Constant Bitrate (CBR), but local
+recording benefits from quality-based encoding.</p>
+<ol type="1">
+<li>Set <strong>Rate Control</strong> to <strong>CQP</strong> (Constant
+QP) or <strong>CRF</strong> (Constant Rate Factor).</li>
+<li>Set the <strong>CQ Level</strong> or <strong>CRF</strong> value:
+<ul>
+<li><strong>16 to 18:</strong> Near-lossless quality (ideal for high-end
+editing).</li>
+<li><strong>20 to 23:</strong> Excellent quality with highly manageable
+file sizes (recommended for most users).</li>
+<li><em>Lower numbers mean higher quality but larger file
+sizes.</em></li>
+</ul></li>
+<li>Set <strong>Keyframe Interval</strong> to <strong>2 s</strong>.</li>
+<li>Set <strong>Preset</strong> to <strong>P5: Slow (Good
+Quality)</strong> or <strong>P6: Slower (Better Quality)</strong>.</li>
+<li>Set <strong>Tuning</strong> to <strong>High Quality</strong>.</li>
+<li>Set <strong>Multipass Mode</strong> to <strong>Two Passes (Quarter
+Resolution)</strong>.</li>
+<li>Keep <strong>Profile</strong> on <strong>high</strong>.</li>
+<li>Ensure <strong>Look-ahead</strong> and <strong>Psycho Visual
+Tuning</strong> are checked.</li>
+</ol>
+<h3 id="step-4-maximize-video-and-audio-resolution">Step 4: Maximize
+Video and Audio Resolution</h3>
+<p>Next, configure your canvas and framerate settings to capture smooth,
+sharp video.</p>
+<ol type="1">
+<li>Navigate to the <strong>Video</strong> tab on the left menu.</li>
+<li>Set <strong>Base (Canvas) Resolution</strong> to your monitor's
+native resolution (e.g., 1920x1080 or 2560x1440).</li>
+<li>Set <strong>Output (Scaled) Resolution</strong> to match your Base
+Resolution. Scaling down reduces quality, so keeping them identical is
+best for local recordings.</li>
+<li>Set <strong>Downscale Filter</strong> to <strong>Lanczos</strong>
+(if resolutions differ) or leave it as default.</li>
+<li>Set <strong>Common FPS Values</strong> to <strong>60</strong>.</li>
+</ol>
+<p>For high-quality audio:</p>
+<ol type="1">
+<li>Navigate to the <strong>Audio</strong> tab.</li>
+<li>Set the <strong>Sample Rate</strong> to <strong>48kHz</strong>.</li>
+<li>Go back to the <strong>Output</strong> tab, click on the
+<strong>Audio</strong> tab at the top, and set the <strong>Audio
+Bitrate</strong> for Track 1 (and any other tracks you use) to
+<strong>320</strong> kbps.</li>
+</ol>
+<p>Click <strong>Apply</strong> and <strong>OK</strong> to save your
+changes. You can now toggle between your streaming and recording
+profiles instantly using the "Profile" menu at the top of OBS
+Studio.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

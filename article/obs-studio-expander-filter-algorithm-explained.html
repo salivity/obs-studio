@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Expander Filter Algorithm Explained - obs-studio</title>
+    <meta name="description" content="The native Expander filter in OBS Studio is built on a standard digital feedforward dynamic range architecture that lowers the volume of audio signals falling below a user-defined threshold. This article breaks down the mathematical and digital signal pr">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-expander-filter-algorithm-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Expander Filter Algorithm Explained - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-expander-filter-algorithm-explained" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The native Expander filter in OBS Studio is built on a standard digital feedforward dynamic range architecture that lowers the volume of audio signals falling below a user-defined threshold. This article breaks down the mathematical and digital signal pr" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-expander-filter-algorithm-explained">OBS Studio
+Expander Filter Algorithm Explained</h1>
+<p>The native Expander filter in OBS Studio is built on a standard
+digital feedforward dynamic range architecture that lowers the volume of
+audio signals falling below a user-defined threshold. This article
+breaks down the mathematical and digital signal processing (DSP)
+mechanics powering the filter, including its level detection methods
+(Peak and RMS), logarithmic gain computation, and recursive
+attack/release envelope ballistics.</p>
+<h2 id="feedforward-dynamic-range-architecture">Feedforward Dynamic
+Range Architecture</h2>
+<p>OBS Studio implements downward dynamic range expansion using a
+classic feedforward digital dynamic range controller (DRC) design. In
+this topology, the incoming audio signal is split into two paths:</p>
+<ol type="1">
+<li><strong>The Sidechain/Detector Path:</strong> The signal level is
+measured, evaluated against threshold and ratio parameters, and used to
+calculate a smooth gain reduction envelope.</li>
+<li><strong>The Direct Signal Path:</strong> The uncorrupted original
+audio is delayed by any internal buffer requirements and then multiplied
+by the computed linear gain factor.</li>
+</ol>
+<p>Because the gain control is derived independently from the output,
+the filter maintains deterministic, stable behavior across varied
+hardware configurations without feedback-induced oscillations.</p>
+<h2 id="level-detection-peak-vs-rms">Level Detection: Peak vs. RMS</h2>
+<p>Before determining how much attenuation to apply, the algorithm
+measures the signal level through one of two selectable detection
+algorithms:</p>
+<ul>
+<li><strong>Peak Detection:</strong> The algorithm tracks the
+instantaneous absolute magnitude of incoming samples (<span
+class="math inline">\(|x[n]|\)</span>). Peak detection provides
+near-instantaneous response to transient audio events, making it ideal
+for sharp noise gating.</li>
+<li><strong>RMS (Root-Mean-Square) Detection:</strong> The detector
+calculates the effective energy over time using a continuous running
+average of squared sample values (<span
+class="math inline">\(x[n]^2\)</span>) passed through a first-order
+leaky integrator. This approximates human loudness perception and
+results in smoother, more transparent expansion.</li>
+</ul>
+<p>Both detection methods convert the measured linear amplitude into the
+logarithmic decibel (dBFS) scale via standard conversion (<span
+class="math inline">\(20 \log_{10}(level)\)</span>) to align with human
+hearing dynamics.</p>
+<h2 id="the-logarithmic-gain-computer">The Logarithmic Gain
+Computer</h2>
+<p>Once the signal level (<span class="math inline">\(X_{dB}\)</span>)
+is known, the downward expansion function calculates the target gain
+reduction. Unlike an upward expander that boosts loud signals, OBS
+Studio's filter acts purely downward:</p>
+<ul>
+<li><strong>Above Threshold (<span class="math inline">\(X_{dB} \ge
+Threshold_{dB}\)</span>):</strong> The signal is left unaffected with a
+gain factor of <span class="math inline">\(0\text{ dB}\)</span> (unity
+gain).</li>
+<li><strong>Below Threshold (<span class="math inline">\(X_{dB} &lt;
+Threshold_{dB}\)</span>):</strong> Gain reduction is applied
+proportionally to the user-selected ratio (<span
+class="math inline">\(R:1\)</span>):</li>
+</ul>
+<p><span class="math display">\[\Delta G_{dB} = (Threshold_{dB} -
+X_{dB}) \times (1 - R)\]</span></p>
+<p>When the ratio is set to high values (such as <span
+class="math inline">\(10:1\)</span> or higher), the gain computer
+functions virtually as a noise gate. At lower ratios (such as <span
+class="math inline">\(2:1\)</span> or <span
+class="math inline">\(4:1\)</span>), it gently lowers the noise floor
+without creating jarring cutoffs.</p>
+<h2 id="ballistics-and-smoothing-envelope">Ballistics and Smoothing
+Envelope</h2>
+<p>Sudden changes in gain produce audible distortion, clicks, and zipper
+noise. To prevent this, the raw gain values from the computer are
+processed through an envelope follower governed by user-defined Attack
+and Release time constants.</p>
+<p>OBS Studio applies first-order Infinite Impulse Response (IIR)
+low-pass filter ballistics:</p>
+<p><span class="math display">\[y[n] = \alpha \cdot y[n-1] + (1 -
+\alpha) \cdot x[n]\]</span></p>
+<p>The coefficient <span class="math inline">\(\alpha\)</span> is
+derived from the sampling rate (<span
+class="math inline">\(f_s\)</span>) and the desired time constant (<span
+class="math inline">\(\tau\)</span>) in seconds:</p>
+<p><span class="math display">\[\alpha = e^{-\frac{1}{\tau \cdot
+f_s}}\]</span></p>
+<ul>
+<li><strong>Attack Time:</strong> Dictates how quickly attenuation is
+removed when signal levels rise back above the threshold (restoring
+unity gain).</li>
+<li><strong>Release Time:</strong> Dictates how gradually gain reduction
+is introduced when the signal falls below the threshold, ensuring speech
+tails and natural room reverberation decay organically.</li>
+</ul>
+<h2 id="linear-conversion-and-application">Linear Conversion and
+Application</h2>
+<p>In the final stage, the smoothed decibel gain value is transformed
+back to a linear multiplier:</p>
+<p><span class="math display">\[g_{linear} =
+10^{\frac{G_{dB}}{20}}\]</span></p>
+<p>The linear factor is multiplied against the delayed input samples
+buffer across all audio channels. The result is transparent attenuation
+of ambient room noise, keyboard clicks, and HVAC hum whenever active
+speech ceases.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

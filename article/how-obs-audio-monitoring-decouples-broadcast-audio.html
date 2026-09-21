@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Audio Monitoring Decouples Broadcast Audio - obs-studio</title>
+    <meta name="description" content="OBS Studio manages audio by isolating the local listen-back path from the final broadcast mix through a dedicated monitoring device pipeline. By configuring a distinct audio monitoring device, creators split incoming signals into two independent processi">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-audio-monitoring-decouples-broadcast-audio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Audio Monitoring Decouples Broadcast Audio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-audio-monitoring-decouples-broadcast-audio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio manages audio by isolating the local listen-back path from the final broadcast mix through a dedicated monitoring device pipeline. By configuring a distinct audio monitoring device, creators split incoming signals into two independent processi" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-audio-monitoring-decouples-broadcast-audio">How OBS
+Audio Monitoring Decouples Broadcast Audio</h1>
+<p>OBS Studio manages audio by isolating the local listen-back path from
+the final broadcast mix through a dedicated monitoring device pipeline.
+By configuring a distinct audio monitoring device, creators split
+incoming signals into two independent processing routes: one destined
+for the recording and streaming encoders, and another routed directly to
+local listening hardware. This separation prevents recursive feedback
+loops, enables independent volume adjustments, and allows creators to
+audition sources privately without broadcasting them to the
+audience.</p>
+<h3 id="dual-pipeline-audio-routing">Dual-Pipeline Audio Routing</h3>
+<p>At the core of OBS Studio's audio engine is a split-bus architecture.
+Every audio source added to a scene enters the internal mixer, where it
+can be routed along two separate paths: the <strong>Program/Output
+Bus</strong> and the <strong>Monitoring Bus</strong>.</p>
+<p>The Program Bus delivers mixed audio to the active recording and
+streaming encoders based on track assignments (Tracks 1 through 6). The
+Monitoring Bus acts as an auxiliary send that routes audio exclusively
+to the hardware destination chosen under
+<code>Settings &gt; Audio &gt; Advanced &gt; Monitoring Device</code>.
+Because this send bypasses the final stream mix, OBS can route signals
+to the creator's ears via a completely independent hardware driver.</p>
+<h3 id="monitoring-modes-in-advanced-audio-properties">Monitoring Modes
+in Advanced Audio Properties</h3>
+<p>The decoupling mechanism is controlled per-source via the
+<strong>Advanced Audio Properties</strong> window. Here, each input can
+be assigned one of three operational states:</p>
+<ul>
+<li><strong>Monitor Off:</strong> The source routes solely to the
+Program Bus. It is encoded to the stream or recording according to its
+track checkboxes, but no signal is sent to the monitoring hardware.</li>
+<li><strong>Monitor Only (Mute Output):</strong> The source is
+completely severed from the Program Bus and sent exclusively to the
+selected monitoring device. This mode is used for off-stream
+communication, director cues, or personal reference tracks that the
+audience must not hear.</li>
+<li><strong>Monitor and Output:</strong> The source is duplicated at the
+mixer stage. One clean copy continues down the Program Bus to the
+encoder, while an identical copy is tapped and routed directly to the
+monitoring device.</li>
+</ul>
+<h3 id="preventing-desktop-audio-feedback-loops">Preventing Desktop
+Audio Feedback Loops</h3>
+<p>A major technical benefit of this decoupled structure is the
+elimination of infinite audio feedback. In standard streaming setups,
+OBS often captures "Desktop Audio" as a primary sound source. If
+monitored audio were sent to that same desktop output, the software
+would capture its own monitor feed, re-broadcast it, and trigger a
+cascading echo loop.</p>
+<p>By assigning the Audio Monitoring Device to a separate physical
+hardware output (such as a dedicated headphone jack, secondary
+soundcard, or virtual audio cable), the monitored signal exists entirely
+outside the desktop capture boundary. OBS outputs the listen-back feed
+directly to the listener’s ears without re-injecting that signal into
+the scene's capture sources.</p>
+<h3 id="independent-gain-and-volume-calibration">Independent Gain and
+Volume Calibration</h3>
+<p>Decoupling the two feeds also ensures that physical listening levels
+do not compromise the broadcast mix. The faders in the OBS Audio Mixer
+control the volume of the signal sent to the stream and recording
+encoders.</p>
+<p>Conversely, the loudness experienced through the monitoring feed can
+be adjusted via physical headphone volume controls or Windows sound
+settings on the target monitoring hardware. This allows the creator to
+increase or decrease personal monitoring volume to comfortable levels
+without altering the normalized decibel levels required for a clean,
+distortion-free stream output.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

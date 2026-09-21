@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capture Scrolling Webpage Screenshots in OBS Studio - obs-studio</title>
+    <meta name="description" content="While OBS Studio is primarily known for video recording and live streaming, it is also a powerful tool for capturing high-resolution, full-page scrolling screenshots of websites. By utilizing OBS Studio's built-in "Browser" source and adjusting the canva">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/capture-scrolling-webpage-screenshots-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Capture Scrolling Webpage Screenshots in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/capture-scrolling-webpage-screenshots-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="While OBS Studio is primarily known for video recording and live streaming, it is also a powerful tool for capturing high-resolution, full-page scrolling screenshots of websites. By utilizing OBS Studio's built-in "Browser" source and adjusting the canva" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="capture-scrolling-webpage-screenshots-in-obs-studio">Capture
+Scrolling Webpage Screenshots in OBS Studio</h1>
+<p>While OBS Studio is primarily known for video recording and live
+streaming, it is also a powerful tool for capturing high-resolution,
+full-page scrolling screenshots of websites. By utilizing OBS Studio's
+built-in "Browser" source and adjusting the canvas resolution to fit an
+entire webpage, you can bypass the need for third-party browser
+extensions and capture ultra-high-definition, seamless images of long
+web pages. This guide will walk you through the precise steps to set up
+your canvas, load the website, and export a high-resolution
+screenshot.</p>
+<h3 id="step-1-configure-a-custom-high-resolution-canvas">Step 1:
+Configure a Custom High-Resolution Canvas</h3>
+<p>To capture a full scrolling webpage, you must temporarily increase
+OBS Studio's canvas height to match the vertical length of the target
+website.</p>
+<ol type="1">
+<li>Open OBS Studio.</li>
+<li>Click on <strong>Settings</strong> in the bottom-right Controls dock
+(or go to <strong>File</strong> &gt; <strong>Settings</strong>).</li>
+<li>Select the <strong>Video</strong> tab from the left sidebar.</li>
+<li>In the <strong>Base (Canvas) Resolution</strong> field, manually
+type in a custom high-resolution aspect ratio. For example, use
+<strong>1920x4000</strong> or <strong>1920x8000</strong> depending on
+how long the webpage is.</li>
+<li>In the <strong>Output (Scaled) Resolution</strong> field, type the
+exact same resolution to prevent any downscaling and preserve image
+quality.</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong>. Your
+preview window will now appear as a tall, narrow vertical strip.</li>
+</ol>
+<h3 id="step-2-add-and-configure-the-browser-source">Step 2: Add and
+Configure the Browser Source</h3>
+<p>Instead of capturing your actual desktop browser, you will load the
+webpage directly inside OBS as a source to ensure it renders at the
+exact resolution of your canvas.</p>
+<ol type="1">
+<li>Go to the <strong>Sources</strong> dock at the bottom of the
+screen.</li>
+<li>Click the <strong>+</strong> (Add) icon and select
+<strong>Browser</strong>.</li>
+<li>Name the source (e.g., "Webpage Screenshot") and click
+<strong>OK</strong>.</li>
+<li>In the Properties window, paste the destination URL into the
+<strong>URL</strong> field.</li>
+<li>Set the <strong>Width</strong> to <strong>1920</strong> (or your
+preferred width).</li>
+<li>Set the <strong>Height</strong> to match your custom canvas height
+(e.g., <strong>4000</strong> or <strong>8000</strong>).</li>
+<li>Scroll down and check the box for <strong>Refresh browser when scene
+becomes active</strong> to ensure the page loads cleanly.</li>
+<li>Click <strong>OK</strong>. The webpage will load and stretch to fill
+the entire tall preview window.</li>
+</ol>
+<h3 id="step-3-interact-with-the-webpage-optional">Step 3: Interact with
+the Webpage (Optional)</h3>
+<p>If you need to accept cookie banners, close pop-ups, log in, or
+scroll down to trigger lazy-loading images before taking the
+screenshot:</p>
+<ol type="1">
+<li>Right-click the <strong>Browser</strong> source in your Sources
+list.</li>
+<li>Select <strong>Interact</strong> from the context menu.</li>
+<li>A separate window will open allowing you to click, type, and scroll
+through the webpage as you would in a normal browser. Close the window
+when finished.</li>
+</ol>
+<h3 id="step-4-capture-and-save-the-screenshot">Step 4: Capture and Save
+the Screenshot</h3>
+<p>Once the page is fully loaded and rendered on your preview canvas,
+you can take the high-resolution capture.</p>
+<ol type="1">
+<li>Right-click your <strong>Browser</strong> source in the Sources list
+(or right-click directly on the preview window).</li>
+<li>Select <strong>Screenshot (Source)</strong> from the menu. This
+captures the raw browser source at its native high-resolution.</li>
+<li>Alternatively, you can select <strong>Screenshot (Preview)</strong>
+to capture the entire canvas.</li>
+<li>To find your saved screenshot, go to the top menu bar of OBS and
+click <strong>File</strong> &gt; <strong>Show Recordings</strong>. Your
+high-resolution scrolling screenshot will be saved there in PNG
+format.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

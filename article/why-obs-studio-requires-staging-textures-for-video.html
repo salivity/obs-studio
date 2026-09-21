@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why OBS Studio Requires Staging Textures for Video - obs-studio</title>
+    <meta name="description" content="This article explains why Open Broadcaster Software (OBS) Studio relies on staging textures to transfer video frames between host system RAM and discrete GPU video memory (VRAM). It outlines the architectural limitations of discrete graphics hardware, th">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/why-obs-studio-requires-staging-textures-for-video">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why OBS Studio Requires Staging Textures for Video - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/why-obs-studio-requires-staging-textures-for-video" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains why Open Broadcaster Software (OBS) Studio relies on staging textures to transfer video frames between host system RAM and discrete GPU video memory (VRAM). It outlines the architectural limitations of discrete graphics hardware, th" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-obs-studio-requires-staging-textures-for-video">Why OBS
+Studio Requires Staging Textures for Video</h1>
+<p>This article explains why Open Broadcaster Software (OBS) Studio
+relies on staging textures to transfer video frames between host system
+RAM and discrete GPU video memory (VRAM). It outlines the architectural
+limitations of discrete graphics hardware, the memory access
+restrictions enforced by graphics APIs like Direct3D 11, and how staging
+resources prevent major performance bottlenecks during video capture,
+rendering, and encoding workflows.</p>
+<h2 id="memory-architecture-differences">Memory Architecture
+Differences</h2>
+<p>In systems with discrete graphics cards, the CPU and GPU utilize
+physically separate memory pools connected by the PCI Express (PCIe)
+bus. System RAM is optimized for low-latency CPU operations, while
+discrete VRAM is designed for massive parallel bandwidth.</p>
+<p>To maximize graphics rendering throughput, textures allocated
+directly in VRAM (typically designated with default usage flags in APIs
+like DirectX or Vulkan) use proprietary, tiled, or swizzled memory
+layouts determined by the GPU manufacturer. Because these layouts are
+not linear and the memory is directly controlled by the GPU’s internal
+memory management unit, the host CPU cannot directly access, read, or
+write to these textures via standard pointers.</p>
+<h2 id="the-role-of-staging-textures">The Role of Staging Textures</h2>
+<p>A staging texture is an intermediate resource created specifically to
+bridge this gap. Configured with CPU-accessible access flags (such as
+<code>D3D11_USAGE_STAGING</code>), a staging texture has specific
+characteristics:</p>
+<ul>
+<li><strong>Linear Layout:</strong> The memory is stored linearly,
+allowing the CPU to read or write standard raw pixel data (such as NV12,
+BGRA, or YUV formats) in row-by-row strides.</li>
+<li><strong>Host Visibility:</strong> It resides in system memory or a
+CPU-visible PCIe aperture (BAR), allowing the CPU to map memory
+addresses directly into its virtual address space using API calls like
+<code>Map</code> and <code>Unmap</code>.</li>
+<li><strong>Non-Renderable:</strong> Staging textures cannot be used as
+render targets, shader inputs, or compositing surfaces by the GPU
+pipeline. Their exclusive purpose is data transfer.</li>
+</ul>
+<h2 id="the-two-step-transfer-process">The Two-Step Transfer
+Process</h2>
+<p>Whenever OBS Studio moves video frames across the host-device
+boundary, it must perform a synchronized, two-step operation to
+accommodate the hardware limitations.</p>
+<h3 id="uploading-from-system-ram-to-vram">Uploading from System RAM to
+VRAM</h3>
+<p>When OBS receives a software-decoded video frame, webcam capture, or
+synthetic source stored in system RAM, it cannot write directly to the
+VRAM composition canvas:</p>
+<ol type="1">
+<li>The CPU maps a staging texture and writes the video surface into
+it.</li>
+<li>The texture is unmapped, and the GPU issues a hardware Direct Memory
+Access (DMA) command (such as <code>CopySubresourceRegion</code>) to
+transfer the linear data into the tiled, high-performance VRAM texture
+across the PCIe bus.</li>
+</ol>
+<h3 id="downloading-from-vram-to-system-ram">Downloading from VRAM to
+System RAM</h3>
+<p>The reverse occurs when OBS needs to pull frames from the GPU back to
+the CPU—such as when utilizing software encoding (x264) or sending
+output to a CPU-bound virtual camera:</p>
+<ol type="1">
+<li>The GPU renders the final composite frame into a standard render
+target in VRAM.</li>
+<li>The GPU executes an internal copy from the render target to a
+staging texture.</li>
+<li>Once the GPU finishes the copy, the CPU safely maps the staging
+texture to read the raw pixel bytes into system memory for
+encoding.</li>
+</ol>
+<h2 id="preventing-pipeline-stalls-and-synchronization-locks">Preventing
+Pipeline Stalls and Synchronization Locks</h2>
+<p>GPUs operate asynchronously relative to the CPU, executing commands
+several frames behind the application's dispatch calls. If OBS were to
+attempt direct access to an active rendering resource, the graphics
+driver would be forced to trigger a pipeline flush, freezing the GPU
+until all queued draw calls complete.</p>
+<p>Staging textures act as asynchronous mailboxes. By utilizing a pool
+of rotating staging textures (double- or triple-buffering), OBS allows
+the GPU to transfer data in the background via dedicated DMA copy
+engines. This keeps the CPU rendering loop and the GPU execution
+pipeline running concurrently without synchronization stalls or dropped
+frames.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

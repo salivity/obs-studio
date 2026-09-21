@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio: CoreAudio macOS vs PulseAudio Linux - obs-studio</title>
+    <meta name="description" content="This article examines the architectural differences in how OBS Studio interfaces with CoreAudio on macOS compared to PulseAudio on Linux. It outlines how OBS interacts with these systems, focusing on client-server design versus direct hardware abstractio">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-core-audio-mac-os-vs-pulse-audio-linux">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio: CoreAudio macOS vs PulseAudio Linux - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-core-audio-mac-os-vs-pulse-audio-linux" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines the architectural differences in how OBS Studio interfaces with CoreAudio on macOS compared to PulseAudio on Linux. It outlines how OBS interacts with these systems, focusing on client-server design versus direct hardware abstractio" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-coreaudio-macos-vs-pulseaudio-linux">OBS Studio:
+CoreAudio macOS vs PulseAudio Linux</h1>
+<p>This article examines the architectural differences in how OBS Studio
+interfaces with CoreAudio on macOS compared to PulseAudio on Linux. It
+outlines how OBS interacts with these systems, focusing on client-server
+design versus direct hardware abstraction, threading models, buffer
+handling, latency management, and the operating-system-level constraints
+that dictate how digital audio reaches the OBS mixing engine.</p>
+<h3 id="system-topology-and-transport-layers">System Topology and
+Transport Layers</h3>
+<p>The fundamental divergence between CoreAudio and PulseAudio in OBS
+Studio lies in the distance between OBS and the hardware.</p>
+<p>On macOS, OBS Studio utilizes CoreAudio’s Hardware Abstraction Layer
+(HAL) and AudioUnit APIs. CoreAudio operates as an in-process,
+direct-link subsystem. Audio input from microphones or system audio taps
+runs through the system's <code>AudioComponent</code> pipeline, where
+the driver directly executes synchronous audio processing callbacks.
+There is no intermediary sound server; OBS registers input procedures
+directly within the process space that interfaces with the kernel-level
+audio drivers.</p>
+<p>On Linux, OBS Studio interfaces with PulseAudio as a client to a
+user-space sound server daemon. The OBS PulseAudio plugin
+(<code>linux-pulseaudio</code>) links against <code>libpulse</code>.
+Audio does not travel straight from the kernel (ALSA) into OBS. Instead,
+the kernel sends data to the PulseAudio daemon, which processes, mixes,
+and transfers the stream across a local Unix domain socket using
+asynchronous Inter-Process Communication (IPC) and shared memory
+(<code>shm</code>) blocks into the OBS process.</p>
+<h3 id="threading-and-execution-models">Threading and Execution
+Models</h3>
+<p>CoreAudio relies on dedicated, high-priority real-time I/O threads
+managed by the macOS kernel. When an input device has samples available,
+CoreAudio invokes an <code>AudioDeviceIOProc</code> callback on this
+high-priority thread. OBS Studio must process or copy these raw PCM
+buffers immediately to prevent an audio drop (overrun/underrun). OBS
+handles this by doing minimal work in the callback: it reads the
+<code>AudioBufferList</code> and immediately pushes the data into its
+internal circular ring buffers (<code>circlebuf</code>).</p>
+<p>PulseAudio relies on an event-driven mainloop architecture. OBS
+typically implements the <code>pa_threaded_mainloop</code> to interact
+with the PulseAudio API. The thread runs a poll-based event loop where
+state changes, buffer requests, and data receipts are processed
+asynchronously. Instead of being dictated by hardware clocks, data
+delivery depends on the scheduling of both the PulseAudio daemon and the
+client thread. When the stream is readable, a callback
+(<code>pa_stream_read</code>) is triggered to retrieve pointers to the
+shared memory region containing the audio samples.</p>
+<h3 id="latency-management-and-clocking">Latency Management and
+Clocking</h3>
+<p>CoreAudio uses strict hardware clock-driven synchronization. Latency
+is configured by setting buffer frame sizes directly on the hardware
+device via properties like
+<code>kAudioDevicePropertyBufferFrameSize</code>. Because the CoreAudio
+thread is driven by the physical hardware interrupt, clock drift between
+physical capture devices and OBS is minimal and deterministic, provided
+the sample rates match.</p>
+<p>PulseAudio employs timer-based scheduling (<code>tsched</code>),
+popularized in modern desktop Linux. Instead of relying purely on
+regular hardware interrupts, PulseAudio programs system timers to wake
+up the system dynamically when buffers need servicing. OBS requests
+latency characteristics through target buffer metrics
+(<code>pa_buffer_attr</code>), such as <code>maxlength</code>,
+<code>tlength</code>, and <code>fragsize</code>. The actual latency
+varies dynamically based on system load and scheduler latency, requiring
+OBS to actively monitor stream timing to correct for clock drift
+relative to its internal video presentation timestamps.</p>
+<h3 id="system-audio-capture-and-sandboxing">System Audio Capture and
+Sandboxing</h3>
+<p>Capturing desktop/application audio highlights a major architectural
+split between the two platforms:</p>
+<ul>
+<li><strong>macOS (CoreAudio):</strong> CoreAudio does not natively
+provide a default loopback or "monitor" device for output audio due to
+macOS security and privacy models. Modern OBS versions on macOS capture
+desktop audio either through high-level ScreenCaptureKit APIs (which
+wrap CoreAudio application audio routing) or require a virtual CoreAudio
+HAL plugin (such as an aggregate device or virtual sound driver). Modern
+macOS also strictly requires user entitlement checks and TCC
+(Transparency, Consent, and Control) approvals to execute CoreAudio
+capture threads.</li>
+<li><strong>Linux (PulseAudio):</strong> PulseAudio natively abstracts
+every sink (output) with a corresponding "monitor source." OBS Studio
+queries the server via introspection routines
+(<code>pa_context_get_source_info_list</code>) and captures full desktop
+audio simply by connecting a recording stream
+(<code>pa_stream_connect_record</code>) directly to the target sink's
+monitor. No external drivers, aggregate devices, or specialized
+permissions are required to route desktop outputs into OBS.</li>
+</ul>
+<h3 id="resampling-and-format-negotiation">Resampling and Format
+Negotiation</h3>
+<p>OBS Studio's internal audio pipeline operates using 32-bit
+floating-point planar PCM data at a user-defined sample rate (typically
+44.1 kHz or 48 kHz).</p>
+<p>Under CoreAudio, OBS requests native input formats via the
+<code>AudioStreamBasicDescription</code> (ASBD) structure. CoreAudio can
+perform in-process, high-quality sample rate conversion and channel
+mapping automatically via an <code>AudioConverter</code> unit before the
+data reaches the OBS internal buffer, minimizing CPU overhead while
+maintaining sample accuracy.</p>
+<p>Under PulseAudio, the audio stream format is negotiated using
+<code>pa_sample_spec</code>. If the source hardware format does not
+match what OBS requests, the PulseAudio server daemon performs the
+resampling, channel mixing, and format conversion prior to transmitting
+the stream over IPC to OBS. While this centralizes processing, it can
+introduce additional CPU overhead at the daemon level unless explicitly
+bypassed via pass-through configurations or matching sample rates.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

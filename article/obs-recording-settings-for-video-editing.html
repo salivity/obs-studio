@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Recording Settings for Video Editing - obs-studio</title>
+    <meta name="description" content="This article provides a comprehensive guide on how to configure OBS Studio to record high-quality, low-latency raw footage that is perfectly optimized for video editing software like Adobe Premiere Pro, DaVinci Resolve, and Final Cut Pro. By adjusting yo">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-recording-settings-for-video-editing">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Recording Settings for Video Editing - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-recording-settings-for-video-editing" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides a comprehensive guide on how to configure OBS Studio to record high-quality, low-latency raw footage that is perfectly optimized for video editing software like Adobe Premiere Pro, DaVinci Resolve, and Final Cut Pro. By adjusting yo" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-recording-settings-for-video-editing">OBS Recording Settings
+for Video Editing</h1>
+<p>This article provides a comprehensive guide on how to configure OBS
+Studio to record high-quality, low-latency raw footage that is perfectly
+optimized for video editing software like Adobe Premiere Pro, DaVinci
+Resolve, and Final Cut Pro. By adjusting your encoder, rate control, and
+file formats, you can eliminate recording lag, prevent editor timeline
+stuttering, and ensure your footage retains maximum visual fidelity.</p>
+<h3 id="1-output-settings-advanced-mode">1. Output Settings (Advanced
+Mode)</h3>
+<p>To configure these settings, navigate to <strong>Settings &gt;
+Output</strong>, and change the <strong>Output Mode</strong> dropdown at
+the top to <strong>Advanced</strong>. Click on the
+<strong>Recording</strong> tab.</p>
+<ul>
+<li><strong>Type:</strong> Standard</li>
+<li><strong>Recording Format:</strong> Fragmented MP4 (.mp4) or MKV.
+<em>Note: MKV is safer because if OBS crashes, your recording is saved.
+You can automatically convert MKV to MP4 for editing by enabling
+"Automatically remux to MP4" under Settings &gt; Advanced.</em></li>
+<li><strong>Video Encoder:</strong> NVIDIA NVENC H.264 (or HEVC) if you
+have an NVIDIA GPU; AMD HW H.264 (or HEVC) for AMD GPUs. Hardware
+encoders drastically reduce system latency compared to CPU-based
+encoding (x264).</li>
+<li><strong>Audio Encoder:</strong> FFmpeg AAC</li>
+<li><strong>Audio Track:</strong> Select multiple tracks if you want to
+record desktop audio and your microphone on separate layers for
+editing.</li>
+</ul>
+<h3 id="2-encoder-settings-for-low-latency-and-high-quality">2. Encoder
+Settings for Low-Latency and High Quality</h3>
+<p>Under the same Recording tab, configure the encoder settings below
+the file paths:</p>
+<ul>
+<li><strong>Rate Control:</strong> CQP (Constant Quantization
+Parameter). This is the gold standard for local recording, adjusting
+bitrate dynamically based on the complexity of the scene.</li>
+<li><strong>CQ Level:</strong> 16 to 20. A lower number means higher
+quality but larger file sizes. 18 is the sweet spot for visually
+lossless footage.</li>
+<li><strong>Keyframe Interval:</strong> 2 s (standard for editing
+software timelines).</li>
+<li><strong>Preset:</strong> P4: Medium or P5: Slow. Avoid P6 or P7, as
+they increase GPU rendering latency with minimal quality gains.</li>
+<li><strong>Tuning:</strong> Low-Latency or High Quality. If your
+timeline or preview is lagging during capture, "Low-Latency" will
+prioritize system performance.</li>
+<li><strong>Multipass Mode:</strong> Single Pass (reduces GPU overhead)
+or Two Passes (Quarter Resolution).</li>
+<li><strong>Profile:</strong> High</li>
+<li><strong>Max B-frames:</strong> 2</li>
+</ul>
+<h3 id="3-video-settings">3. Video Settings</h3>
+<p>Navigate to <strong>Settings &gt; Video</strong> to set your
+resolution.</p>
+<ul>
+<li><strong>Base (Canvas) Resolution:</strong> Set this to your
+monitor's native resolution (e.g., 1920x1080 or 2560x1440).</li>
+<li><strong>Output (Scaled) Resolution:</strong> Match this to your Base
+Resolution. Downscaling introduces rendering latency and loses raw pixel
+detail.</li>
+<li><strong>Downscale Filter:</strong> Bicubic (16 samples) or Lanczos
+(36 samples) if you must downscale. If resolutions match, this setting
+is ignored.</li>
+<li><strong>Common FPS Values:</strong> 60 or 59.94 for smooth
+gaming/motion footage; 30 or 24 for standard talking-head videos.</li>
+</ul>
+<h3 id="4-advanced-settings-for-editing-compatibility">4. Advanced
+Settings for Editing Compatibility</h3>
+<p>Go to <strong>Settings &gt; Advanced</strong> to ensure your colors
+translate properly to your video editor:</p>
+<ul>
+<li><strong>Process Priority:</strong> Above Normal. This forces your OS
+to prioritize OBS over other running applications, preventing dropped
+frames.</li>
+<li><strong>Color Format:</strong> NV12 (most compatible format for
+editing software).</li>
+<li><strong>Color Space:</strong> Rec. 709.</li>
+<li><strong>Color Range:</strong> Limited. While "Full" sounds better,
+most video editors (like Premiere Pro) default to "Limited" range. Using
+"Full" can result in crushed blacks and washed-out highlights on your
+editing timeline unless manually calibrated.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

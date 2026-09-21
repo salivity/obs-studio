@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capture Premiere Pro Timeline with OBS Studio - obs-studio</title>
+    <meta name="description" content="Capturing your Adobe Premiere Pro timeline output in OBS Studio is a highly effective way to livestream your editing sessions, record tutorials, or present real-time progress to clients. This guide outlines the two most efficient methods to achieve this:">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/capture-premiere-pro-timeline-with-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Capture Premiere Pro Timeline with OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/capture-premiere-pro-timeline-with-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Capturing your Adobe Premiere Pro timeline output in OBS Studio is a highly effective way to livestream your editing sessions, record tutorials, or present real-time progress to clients. This guide outlines the two most efficient methods to achieve this:" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="capture-premiere-pro-timeline-with-obs-studio">Capture Premiere
+Pro Timeline with OBS Studio</h1>
+<p>Capturing your Adobe Premiere Pro timeline output in OBS Studio is a
+highly effective way to livestream your editing sessions, record
+tutorials, or present real-time progress to clients. This guide outlines
+the two most efficient methods to achieve this: using Premiere Pro’s
+built-in Mercury Transmit feature for a clean feed, and using OBS Window
+Capture for a quick, single-monitor setup.</p>
+<h3 id="method-1-mercury-transmit-best-for-a-clean-video-feed">Method 1:
+Mercury Transmit (Best for a Clean Video Feed)</h3>
+<p>This method sends a dedicated, clean full-screen feed of your Program
+Monitor to a secondary monitor, which OBS then captures. This is the
+professional standard as it excludes the Premiere Pro interface,
+timeline tracks, and toolbars.</p>
+<ol type="1">
+<li><strong>Connect a Second Monitor:</strong> Ensure you have a
+dual-monitor setup connected to your computer.</li>
+<li><strong>Configure Premiere Pro:</strong>
+<ul>
+<li>Open Premiere Pro and go to <strong>Edit</strong> &gt;
+<strong>Preferences</strong> &gt; <strong>Playback</strong> (Windows) or
+<strong>Premiere Pro</strong> &gt; <strong>Settings</strong> &gt;
+<strong>Playback</strong> (macOS).</li>
+<li>Check the box for <strong>Enable Mercury Transmit</strong>.</li>
+<li>Under the <strong>Video Device</strong> list, check the box next to
+your secondary monitor.</li>
+<li>Click <strong>OK</strong>. Your Program Monitor timeline output will
+now display full-screen on the second monitor.</li>
+</ul></li>
+<li><strong>Configure OBS Studio:</strong>
+<ul>
+<li>Open OBS Studio.</li>
+<li>In the <strong>Sources</strong> dock, click the <strong>+</strong>
+icon and select <strong>Display Capture</strong>.</li>
+<li>Name the source and click <strong>OK</strong>.</li>
+<li>In the properties window, select the secondary monitor showing the
+Premiere Pro full-screen output.</li>
+<li>Click <strong>OK</strong>.</li>
+</ul></li>
+</ol>
+<h3
+id="method-2-window-capture-with-cropping-best-for-single-monitors">Method
+2: Window Capture with Cropping (Best for Single Monitors)</h3>
+<p>If you only have one monitor, you can capture the entire Premiere Pro
+window and crop it so only the Program Monitor (timeline output) is
+visible in OBS.</p>
+<ol type="1">
+<li><strong>Configure OBS Studio:</strong>
+<ul>
+<li>Open OBS Studio.</li>
+<li>In the <strong>Sources</strong> dock, click the <strong>+</strong>
+icon and select <strong>Window Capture</strong>.</li>
+<li>Name the source and click <strong>OK</strong>.</li>
+<li>In the <strong>Window</strong> dropdown menu, select
+<code>[Adobe Premiere Pro.exe]</code>.</li>
+<li>Set the <strong>Capture Method</strong> to <strong>Windows 10 (1903
+and up)</strong> or <strong>BitBlt</strong> depending on which renders
+the preview more smoothly. Click <strong>OK</strong>.</li>
+</ul></li>
+<li><strong>Crop to the Program Monitor:</strong>
+<ul>
+<li>In the OBS preview window, select the red bounding box around the
+captured Premiere Pro window.</li>
+<li>Hold down the <strong>Alt</strong> key (Windows) or
+<strong>Option</strong> key (macOS) on your keyboard.</li>
+<li>Click and drag the sides of the bounding box inward to crop out the
+timeline, project panels, and menus, leaving only the Program Monitor
+visible.</li>
+<li>Release the keys and resize the remaining clean feed to fit your OBS
+canvas.</li>
+</ul></li>
+</ol>
+<h3 id="audio-configuration">Audio Configuration</h3>
+<p>To ensure your stream or recording captures the audio from your
+Premiere Pro timeline:</p>
+<ol type="1">
+<li>In Premiere Pro, go to <strong>Preferences</strong> &gt;
+<strong>Audio Hardware</strong>.</li>
+<li>Note your <strong>Default Output</strong> device (e.g., your
+headphones or system audio).</li>
+<li>In OBS Studio, go to <strong>Settings</strong> &gt;
+<strong>Audio</strong>.</li>
+<li>Set <strong>Desktop Audio</strong> to match the same output device
+used by Premiere Pro. This guarantees that any audio played back on your
+timeline is successfully routed into OBS.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS RNNoise vs Speex CPU Overhead - obs-studio</title>
+    <meta name="description" content="When configuring audio filters in OBS Studio, choosing between the RNNoise and Speex noise suppression methods significantly impacts both system performance and audio quality. This article compares the CPU overhead of these two filters, explaining why Sp">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-rn-noise-vs-speex-cpu-overhead">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS RNNoise vs Speex CPU Overhead - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-rn-noise-vs-speex-cpu-overhead" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When configuring audio filters in OBS Studio, choosing between the RNNoise and Speex noise suppression methods significantly impacts both system performance and audio quality. This article compares the CPU overhead of these two filters, explaining why Sp" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-rnnoise-vs-speex-cpu-overhead">OBS RNNoise vs Speex CPU
+Overhead</h1>
+<p>When configuring audio filters in OBS Studio, choosing between the
+RNNoise and Speex noise suppression methods significantly impacts both
+system performance and audio quality. This article compares the CPU
+overhead of these two filters, explaining why Speex is highly efficient
+for low-spec systems while RNNoise requires more processing power to
+deliver superior, AI-driven noise isolation.</p>
+<h2 id="speex-ultra-low-cpu-overhead">Speex: Ultra-Low CPU Overhead</h2>
+<p>Speex is a traditional, algorithmic noise suppression method that
+uses digital signal processing (DSP) to identify and subtract constant
+background frequencies.</p>
+<ul>
+<li><strong>CPU Impact:</strong> Extremely low. Speex requires
+negligible processing power and typically registers at near 0% CPU usage
+on modern systems.</li>
+<li><strong>How It Works:</strong> It relies on simple mathematical
+algorithms to target static, predictable noises like microphone hiss,
+hums, or constant fan noise.</li>
+<li><strong>Best For:</strong> Older or budget hardware, dual-PC
+streaming setups where every frame counts, or systems already running at
+high CPU utilization.</li>
+</ul>
+<h2 id="rnnoise-higher-cpu-overhead-for-superior-quality">RNNoise:
+Higher CPU Overhead for Superior Quality</h2>
+<p>RNNoise is a modern, deep-learning-based noise suppression method
+that utilizes a recurrent neural network (RNN) to distinguish human
+speech from background noise.</p>
+<ul>
+<li><strong>CPU Impact:</strong> Moderate to high compared to Speex.
+Because it runs real-time AI inference on your audio stream, it demands
+noticeably more CPU cycles. On budget or older processors, this can
+result in a noticeable increase in CPU usage (often between 1% and 5%
+depending on the CPU).</li>
+<li><strong>How It Works:</strong> The neural network analyzes the audio
+in real-time, actively separating voice frequencies from dynamic
+background noises like mechanical keyboard clicks, barking dogs, or
+traffic.</li>
+<li><strong>Best For:</strong> Mid-to-high-end PCs with thermal and
+processing headroom, and environments with unpredictable, complex
+background noises.</li>
+</ul>
+<h2 id="direct-comparison-and-recommendation">Direct Comparison and
+Recommendation</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Speex</th>
+<th style="text-align: left;">RNNoise</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>CPU Overhead</strong></td>
+<td style="text-align: left;">Extremely Low (Negligible)</td>
+<td style="text-align: left;">Moderate (Requires active processing)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Technology</strong></td>
+<td style="text-align: left;">Classical DSP Algorithms</td>
+<td style="text-align: left;">Recurrent Neural Network (AI)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Noise Profile</strong></td>
+<td style="text-align: left;">Best for static hums/white noise</td>
+<td style="text-align: left;">Best for dynamic/transient noises</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Audio Quality</strong></td>
+<td style="text-align: left;">Can sound tinny or robotic</td>
+<td style="text-align: left;">Natural voice retention</td>
+</tr>
+</tbody>
+</table>
+<p>If your streaming or recording PC has a modern multi-core processor,
+the CPU overhead of RNNoise is generally negligible in the grand scheme
+of system performance, making it the preferred choice for its superior
+noise-clearing capabilities. However, if you are experiencing CPU
+bottlenecks, encoder overloads, or dropped frames in OBS, switching to
+Speex will instantly free up processing resources at the expense of
+advanced noise suppression.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

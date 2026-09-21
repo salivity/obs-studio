@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Studio Processes CEA-708 SDI Captions - obs-studio</title>
+    <meta name="description" content="OBS Studio processes multi-channel SDI ancillary data containing CEA-708 closed captions through a pipeline that bridges hardware capture SDKs, ancillary data demultiplexing, and broadcast streaming protocols. When receiving professional SDI feeds, OBS e">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-studio-processes-cea-708-sdi-captions">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Studio Processes CEA-708 SDI Captions - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-studio-processes-cea-708-sdi-captions" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio processes multi-channel SDI ancillary data containing CEA-708 closed captions through a pipeline that bridges hardware capture SDKs, ancillary data demultiplexing, and broadcast streaming protocols. When receiving professional SDI feeds, OBS e" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-studio-processes-cea-708-sdi-captions">How OBS Studio
+Processes CEA-708 SDI Captions</h1>
+<p>OBS Studio processes multi-channel SDI ancillary data containing
+CEA-708 closed captions through a pipeline that bridges hardware capture
+SDKs, ancillary data demultiplexing, and broadcast streaming protocols.
+When receiving professional SDI feeds, OBS extracts Vertical Ancillary
+(VANC) packets via dedicated capture card integrations—such as
+Blackmagic DeckLink or AJA—demultiplexes the SMPTE 334M data streams,
+parses the embedded CEA-708 services, and injects the resulting caption
+data into H.264 or H.265 Supplemental Enhancement Information (SEI) user
+data units for final distribution.</p>
+<h3 id="sdi-ancillary-data-ingestion">SDI Ancillary Data Ingestion</h3>
+<p>SDI video feeds transport data outside the active picture area within
+the Vertical Blanking Interval (VBI). Closed captions comply with the
+SMPTE 291M ancillary data standard and the SMPTE 334M mapping
+standard.</p>
+<p>OBS Studio does not read raw SDI signals directly at the hardware
+layer; instead, it relies on vendor-specific plugins (predominantly
+<code>obs-decklink</code> using the Blackmagic Desktop Video SDK).
+During frame capture:</p>
+<ol type="1">
+<li>The hardware interface captures both the active video frame and the
+corresponding VANC lines.</li>
+<li>The capture driver isolates ancillary packets flagged with the
+standard Data Identification (DID) <code>0x61</code> and Secondary Data
+Identification (SDID) <code>0x01</code>, which signify caption data
+under SMPTE 334M.</li>
+<li>The capture plugin passes these raw VANC packets to OBS Studio's
+internal caption handling pipeline alongside the decoded audio and video
+frames.</li>
+</ol>
+<h3 id="cea-708-demultiplexing-and-multi-channel-handling">CEA-708
+Demultiplexing and Multi-Channel Handling</h3>
+<p>CEA-708 is designed to support advanced digital television closed
+captioning (DTVCC), carrying multiple data streams simultaneously. A
+single CEA-708 packet sequence can contain:</p>
+<ul>
+<li>Legacy CEA-608 compatibility data (transferred inside CEA-708
+caption service blocks or via line 21 conversion).</li>
+<li>Up to 63 independent DTVCC logical services (typically Service 1 for
+primary language, Service 2 for secondary language, and higher services
+for additional languages or specialized displays).</li>
+</ul>
+<p>OBS Studio parses the incoming payload using lightweight parsing
+libraries like <code>libcaption</code>. The demultiplexer reads the
+packet header, sequence number, and service blocks:</p>
+<ul>
+<li><strong>Service Block Identification:</strong> Each block header
+inside the CEA-708 packet indicates the targeted service number and the
+block size.</li>
+<li><strong>Stream Routing:</strong> When configured for pass-through or
+re-encoding, OBS tracks the multi-service packets. If downmixing or
+legacy conversion is active, the engine separates CEA-608 byte-pairs
+embedded within the CEA-708 stream.</li>
+<li><strong>Synchronization:</strong> Captions are associated with the
+presentation time stamps (PTS) of the corresponding video frame to
+ensure that multi-channel text maintains lip-sync and timeline
+accuracy.</li>
+</ul>
+<h3 id="video-encoding-and-output-injection">Video Encoding and Output
+Injection</h3>
+<p>Once processed, the caption streams must be carried into digital
+distribution formats like RTMP, SRT, or local recordings (such as MP4 or
+MKV):</p>
+<ol type="1">
+<li><strong>SEI NAL Unit Packaging:</strong> Because streaming protocols
+do not natively pass raw SDI VANC packets, OBS converts the CEA-708 data
+into MPEG-4/AVC or HEVC Supplemental Enhancement Information (SEI)
+messages.</li>
+<li><strong>ITU-T T.35 Formatting:</strong> The captions are encoded as
+user data registered according to <code>ITU-T T.35</code> format
+specifications (country code <code>0xB5</code>, provider code
+<code>0x0031</code> for ATSC A/53). Both CEA-608 data (for broad player
+compatibility) and CEA-708 multi-service structures are encapsulated in
+this structure.</li>
+<li><strong>Muxing:</strong> The video encoder (such as x264 or hardware
+encoders like NVENC) appends the SEI NAL units directly to the keyframes
+(IDR) and predictive frames (P/B-frames) of the active video stream,
+allowing downstream media players and decoders to display user-selected
+multi-language captions.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

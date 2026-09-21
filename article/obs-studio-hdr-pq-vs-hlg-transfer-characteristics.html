@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio HDR: PQ vs HLG Transfer Characteristics - obs-studio</title>
+    <meta name="description" content="Selecting between Perceptual Quantizer (PQ) and Hybrid Log-Gamma (HLG) in OBS Studio fundamentally alters how luminance, color volume, and dynamic range are encoded, previewed, and distributed in an HDR workflow. While both curves belong to the ITU-R BT.">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-hdr-pq-vs-hlg-transfer-characteristics">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio HDR: PQ vs HLG Transfer Characteristics - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-hdr-pq-vs-hlg-transfer-characteristics" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Selecting between Perceptual Quantizer (PQ) and Hybrid Log-Gamma (HLG) in OBS Studio fundamentally alters how luminance, color volume, and dynamic range are encoded, previewed, and distributed in an HDR workflow. While both curves belong to the ITU-R BT." />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-hdr-pq-vs-hlg-transfer-characteristics">OBS Studio
+HDR: PQ vs HLG Transfer Characteristics</h1>
+<p>Selecting between Perceptual Quantizer (PQ) and Hybrid Log-Gamma
+(HLG) in OBS Studio fundamentally alters how luminance, color volume,
+and dynamic range are encoded, previewed, and distributed in an HDR
+workflow. While both curves belong to the ITU-R BT.2100 standard and
+utilize the wide BT.2020 color gamut, they interpret light values in
+drastically different ways. This choice determines your capture
+compatibility, downstream encoding requirements, tonemapping behavior
+for SDR outputs, and viewer display accuracy on platforms like
+YouTube.</p>
+<h3 id="absolute-vs-relative-luminance">Absolute vs. Relative
+Luminance</h3>
+<p>The core technical difference between PQ and HLG lies in how they
+define brightness values:</p>
+<ul>
+<li><strong>PQ (ST 2084):</strong> PQ uses an absolute luminance scale
+targeting up to 10,000 cd/m² (nits). A specific digital signal value in
+OBS corresponds to an exact nit value on an HDR display. If a game
+highlights an element at 1,000 nits, a PQ-configured stream explicitly
+targets that exact luminance.</li>
+<li><strong>HLG:</strong> HLG uses a relative, scene-referred curve that
+adapts dynamically to the peak brightness of the viewer's display. It
+does not dictate absolute nits; instead, the dynamic range scales up or
+down based on the capabilities of the rendering hardware and ambient
+room lighting.</li>
+</ul>
+<h3 id="source-matching-and-capture-integrity">Source Matching and
+Capture Integrity</h3>
+<p>Your selection in OBS Studio under <strong>Settings &gt; Advanced
+&gt; Video &gt; Color Space</strong> (Rec. 2100 (PQ) or Rec. 2100 (HLG))
+must align with your capture sources to prevent washed-out colors or
+severe clipping:</p>
+<ul>
+<li><strong>PC and Console Gaming:</strong> Modern gaming systems
+(Windows 11 Auto HDR, Xbox Series X/S, PlayStation 5) and capture cards
+almost universally output standard HDR10, which relies on the PQ
+transfer curve. Selecting PQ in OBS preserves this signal 1:1 without
+forcing an internal transfer function conversion.</li>
+<li><strong>Broadcast Cameras and Live Production:</strong> Many
+professional mirrorless and cinema cameras output HLG natively via HDMI
+or SDI to avoid complex HDR color grading during live acquisition. If
+your primary source is a broadcast camera shooting in HLG, setting your
+canvas to Rec. 2100 (HLG) maintains proper luminance levels without
+manual lutting or tonemapping.</li>
+</ul>
+<h3 id="ingestion-tonemapping-and-sdr-preview">Ingestion, Tonemapping,
+and SDR Preview</h3>
+<p>OBS Studio must handle compositing and previewing HDR content
+locally, which introduces specific challenges:</p>
+<ul>
+<li><strong>SDR Tonemapping:</strong> If you record or stream an SDR
+fallback alongside your HDR feed, OBS must tonemap the wide dynamic
+range down to Rec. 709. Because PQ operates on absolute values with high
+peak targets, poorly managed PQ tonemapping can cause midtones to look
+dim or blow out highlights. HLG naturally transitions to SDR more
+gracefully because its lower curve mirrors standard gamma curves (Rec.
+709) up to approximately 50% signal level.</li>
+<li><strong>Overlays and Color Mixing:</strong> Standard SDR overlays,
+browser sources, and alerts must be tonemapped into the HDR canvas. With
+PQ, OBS uses the "SDR White Level" setting (typically 100–300 nits) to
+position SDR assets within the absolute 10,000-nit space. With HLG,
+overlays are assigned a relative percentage of total output, making
+asset brightness less predictable across different displays.</li>
+</ul>
+<h3 id="platform-support-and-streaming-encoders">Platform Support and
+Streaming Encoders</h3>
+<p>Delivery platforms dictate which transfer function yields the best
+viewer experience:</p>
+<ul>
+<li><strong>YouTube Live HDR:</strong> YouTube supports both PQ and HLG
+over RTMP (via HEVC) and HLS (via HEVC or AV1). However, PQ requires
+static HDR10 metadata (Mastering Display Color Volume and Content Light
+Level) to be recognized and processed properly by consumer TVs. If
+metadata is stripped or misconfigured, PQ video can render
+incorrectly.</li>
+<li><strong>HLG Resilience:</strong> HLG does not require metadata to
+display an HDR image. If transmitted over a system that drops metadata,
+HLG streams will still be decoded by compatible displays and gracefully
+displayed on SDR panels without severe color degradation.</li>
+</ul>
+<h3 id="summary-which-should-you-choose">Summary: Which Should You
+Choose?</h3>
+<ul>
+<li><strong>Choose Rec. 2100 (PQ)</strong> if you stream or record HDR
+gameplay from PC or consoles, master fixed-luminance content, and target
+platforms where HDR10 playback fidelity is the priority.</li>
+<li><strong>Choose Rec. 2100 (HLG)</strong> if your workflow centers on
+live camera feeds, requires robust fallback on legacy SDR displays
+without complex tonemapping, or relies on transmission pipelines that
+strip HDR metadata.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

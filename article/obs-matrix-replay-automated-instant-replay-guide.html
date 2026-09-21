@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Matrix Replay: Automated Instant Replay Guide - obs-studio</title>
+    <meta name="description" content="Setting up an automated instant replay system in OBS Studio can significantly elevate the production value of your live streams. This guide provides a step-by-step walkthrough on how to install, configure, and automate instant replays using the Matrix Re">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-matrix-replay-automated-instant-replay-guide">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Matrix Replay: Automated Instant Replay Guide - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-matrix-replay-automated-instant-replay-guide" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Setting up an automated instant replay system in OBS Studio can significantly elevate the production value of your live streams. This guide provides a step-by-step walkthrough on how to install, configure, and automate instant replays using the Matrix Re" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-matrix-replay-automated-instant-replay-guide">OBS Matrix
+Replay: Automated Instant Replay Guide</h1>
+<p>Setting up an automated instant replay system in OBS Studio can
+significantly elevate the production value of your live streams. This
+guide provides a step-by-step walkthrough on how to install, configure,
+and automate instant replays using the Matrix Replay plugin. You will
+learn how to set up the replay source, create a dedicated replay scene,
+configure automation triggers, and optimize your settings for seamless
+broadcast integration.</p>
+<h2 id="step-1-install-the-matrix-replay-plugin">Step 1: Install the
+Matrix Replay Plugin</h2>
+<p>To get started, you must download and install the Matrix Replay
+plugin for OBS Studio.</p>
+<ol type="1">
+<li>Visit the official OBS Resources page and search for the
+<strong>Matrix Replay</strong> plugin.</li>
+<li>Download the installer or the zip file compatible with your
+operating system (Windows, Mac, or Linux).</li>
+<li>If using the zip file, extract the contents directly into your OBS
+Studio installation folder (usually
+<code>C:\Program Files\obs-studio</code> on Windows).</li>
+<li>Restart OBS Studio to ensure the plugin loads correctly.</li>
+</ol>
+<h2 id="step-2-add-and-configure-the-matrix-replay-source">Step 2: Add
+and Configure the Matrix Replay Source</h2>
+<p>Unlike the native OBS Replay Buffer which saves files to your hard
+drive, Matrix Replay keeps a continuous cache in your system memory
+(RAM). This allows for instant, lag-free playback.</p>
+<ol type="1">
+<li>Open OBS Studio and select the scene containing the video source you
+want to replay (e.g., your game capture).</li>
+<li>In the <strong>Sources</strong> dock, click the <strong>+</strong>
+icon and select <strong>Matrix Replay</strong>.</li>
+<li>Name the source (e.g., "Game Replay Source") and click
+<strong>OK</strong>.</li>
+<li>In the properties window:
+<ul>
+<li><strong>Source:</strong> Select the video source you want to capture
+for replays.</li>
+<li><strong>Duration:</strong> Set the length of the replay in seconds
+(e.g., 10 to 15 seconds is standard).</li>
+<li><strong>Memory Limit:</strong> Adjust the RAM allocation based on
+your system specs. Higher resolutions and framerates require more
+memory.</li>
+</ul></li>
+<li>Click <strong>OK</strong> to save the settings.</li>
+</ol>
+<h2 id="step-3-create-a-dedicated-replay-scene">Step 3: Create a
+Dedicated Replay Scene</h2>
+<p>To show the replay to your viewers, you need to set up a dedicated
+scene that displays the Matrix Replay source with optional overlays.</p>
+<ol type="1">
+<li>In the <strong>Scenes</strong> dock, click the <strong>+</strong>
+icon and create a new scene named <strong>Instant Replay</strong>.</li>
+<li>Inside this new scene, add your <strong>Matrix Replay</strong>
+source.</li>
+<li>(Optional) Add a "Replay" graphic overlay or text to let your
+viewers know they are watching a playback.</li>
+<li>(Optional) Set up a stinger transition to play when switching to and
+from this scene for a professional broadcast look.</li>
+</ol>
+<h2 id="step-4-automate-the-replay-trigger">Step 4: Automate the Replay
+Trigger</h2>
+<p>To make the replay system hands-free or easily triggerable during
+intense gameplay, you can automate the process using hotkeys, a Stream
+Deck, or websocket tools like SAMMI or UpDeck.</p>
+<h3 id="option-a-hotkey-automation">Option A: Hotkey Automation</h3>
+<ol type="1">
+<li>Go to <strong>Settings</strong> &gt; <strong>Hotkeys</strong> in OBS
+Studio.</li>
+<li>Search for your <strong>Instant Replay</strong> scene.</li>
+<li>Assign a hotkey to "Switch to scene."</li>
+<li>Search for the <strong>Matrix Replay</strong> source and assign a
+hotkey to "Trigger Replay" or "Save Replay."</li>
+<li>Pressing this hotkey will instantly switch to your replay scene and
+play the cached footage.</li>
+</ol>
+<h3 id="option-b-stream-deckwebsocket-automation">Option B: Stream
+Deck/Websocket Automation</h3>
+<p>If you use an external control surface, you can program a single
+button to execute a multi-action command:</p>
+<ol type="1">
+<li><strong>Action 1:</strong> Switch to the "Instant Replay"
+scene.</li>
+<li><strong>Action 2:</strong> Trigger the Matrix Replay source
+playback.</li>
+<li><strong>Action 3:</strong> Wait for the duration of the replay
+(e.g., 10 seconds delay).</li>
+<li><strong>Action 4:</strong> Switch back to your primary gameplay
+scene.</li>
+</ol>
+<h2 id="step-5-optimize-performance-settings">Step 5: Optimize
+Performance Settings</h2>
+<p>Because Matrix Replay uses system RAM to store video frames,
+optimizing your settings is crucial to avoid dropped frames or game
+lag.</p>
+<ul>
+<li><strong>Limit Resolution:</strong> If you experience performance
+drops, lower the resolution of the Matrix Replay source in its
+properties.</li>
+<li><strong>Manage Duration:</strong> Avoid setting the replay buffer
+duration unnecessarily high. Keep it under 20 seconds to minimize RAM
+usage.</li>
+<li><strong>Monitor OBS Status:</strong> Keep an eye on the OBS stats
+dock (View &gt; Stats) to ensure your CPU and memory usage remain within
+safe limits during live playbacks.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

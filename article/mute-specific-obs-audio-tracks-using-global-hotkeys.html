@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mute Specific OBS Audio Tracks Using Global Hotkeys - obs-studio</title>
+    <meta name="description" content="Controlling individual audio outputs in OBS Studio is crucial for maintaining a professional broadcast or recording. This guide explains how to assign global hotkeys to mute and unmute specific secondary audio sources and tracks in OBS Studio. Because OB">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/mute-specific-obs-audio-tracks-using-global-hotkeys">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Mute Specific OBS Audio Tracks Using Global Hotkeys - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/mute-specific-obs-audio-tracks-using-global-hotkeys" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Controlling individual audio outputs in OBS Studio is crucial for maintaining a professional broadcast or recording. This guide explains how to assign global hotkeys to mute and unmute specific secondary audio sources and tracks in OBS Studio. Because OB" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="mute-specific-obs-audio-tracks-using-global-hotkeys">Mute
+Specific OBS Audio Tracks Using Global Hotkeys</h1>
+<p>Controlling individual audio outputs in OBS Studio is crucial for
+maintaining a professional broadcast or recording. This guide explains
+how to assign global hotkeys to mute and unmute specific secondary audio
+sources and tracks in OBS Studio. Because OBS binds hotkeys to
+individual audio <em>sources</em> rather than the 1–6 track matrix
+directly, you will learn how to configure your secondary sources, route
+them to specific tracks, and set up global hotkeys that work even when
+OBS is minimized.</p>
+<h3 id="step-1-set-up-and-isolate-your-secondary-audio-source">Step 1:
+Set Up and Isolate Your Secondary Audio Source</h3>
+<p>Before assigning hotkeys, ensure the secondary audio you want to
+control (such as music, Discord, or game audio) is added as an
+independent source.</p>
+<ol type="1">
+<li>Open OBS Studio.</li>
+<li>In the <strong>Sources</strong> dock, click the <strong>+</strong>
+(plus) icon.</li>
+<li>Select <strong>Application Audio Capture (BETA)</strong> or
+<strong>Audio Output Capture</strong> to bring in your secondary
+audio.</li>
+<li>Name the source clearly (e.g., "Spotify Music" or "Discord").</li>
+<li>Select the correct device or application in the properties window
+and click <strong>OK</strong>.</li>
+</ol>
+<h3 id="step-2-route-the-source-to-a-secondary-track">Step 2: Route the
+Source to a Secondary Track</h3>
+<p>To ensure this audio source only outputs to your desired secondary
+track (such as Track 2 for Twitch VODs or Track 3 for clean
+recordings):</p>
+<ol type="1">
+<li>Right-click anywhere inside the <strong>Audio Mixer</strong>
+dock.</li>
+<li>Select <strong>Advanced Audio Properties</strong>.</li>
+<li>Locate your secondary audio source in the list.</li>
+<li>On the far right under <strong>Tracks</strong>, check the box for
+the specific track you want this audio routed to (e.g., Track 2) and
+uncheck the tracks where you do not want it to appear.</li>
+</ol>
+<h3 id="step-3-assign-global-hotkeys-to-mute-the-source">Step 3: Assign
+Global Hotkeys to Mute the Source</h3>
+<p>Now that the source is isolated and routed to its track, you can
+assign the hotkeys. Muting this source will automatically mute its input
+on its assigned secondary audio track.</p>
+<ol type="1">
+<li>Go to <strong>File</strong> &gt; <strong>Settings</strong> in the
+top menu.</li>
+<li>Click on the <strong>Hotkeys</strong> tab in the left sidebar.</li>
+<li>Use the <strong>Filter</strong> search bar at the top to search for
+the name of your secondary audio source (e.g., "Spotify Music").</li>
+<li>Scroll down to find your source. You will see options for
+<strong>Mute</strong> and <strong>Unmute</strong>.</li>
+<li>Click on the input field next to <strong>Mute</strong> and press the
+key combination you want to use (e.g.,
+<code>Ctrl + Shift + F11</code>).</li>
+<li>Click on the input field next to <strong>Unmute</strong> and assign
+a key combination (you can use the same key to toggle, or different keys
+for dedicated control).</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong>.</li>
+</ol>
+<h3 id="step-4-ensure-the-hotkeys-work-globally">Step 4: Ensure the
+Hotkeys Work Globally</h3>
+<p>OBS Studio hotkeys are global by default, meaning they function while
+you are in-game or using another application. If your hotkeys do not
+register while you are playing a game:</p>
+<ul>
+<li>Close OBS Studio.</li>
+<li>Right-click the OBS Studio shortcut and select <strong>Run as
+administrator</strong>. Running OBS with administrator privileges allows
+it to detect keyboard inputs even when a high-privilege application
+(like a game) is in focus.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

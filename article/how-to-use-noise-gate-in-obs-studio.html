@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Use Noise Gate in OBS Studio - obs-studio</title>
+    <meta name="description" content="Eliminating unwanted background noise is crucial for producing high-quality live streams and recordings. This guide provides a straightforward, step-by-step tutorial on how to apply and configure a noise gate filter to your microphone in OBS Studio, help">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-use-noise-gate-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Use Noise Gate in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-use-noise-gate-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Eliminating unwanted background noise is crucial for producing high-quality live streams and recordings. This guide provides a straightforward, step-by-step tutorial on how to apply and configure a noise gate filter to your microphone in OBS Studio, help" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-use-noise-gate-in-obs-studio">How to Use Noise Gate in
+OBS Studio</h1>
+<p>Eliminating unwanted background noise is crucial for producing
+high-quality live streams and recordings. This guide provides a
+straightforward, step-by-step tutorial on how to apply and configure a
+noise gate filter to your microphone in OBS Studio, helping you silence
+keyboard clicks, fan hums, and other ambient sounds when you are not
+speaking.</p>
+<h3 id="step-1-access-the-microphone-filters">Step 1: Access the
+Microphone Filters</h3>
+<ol type="1">
+<li>Open <strong>OBS Studio</strong>.</li>
+<li>Locate the <strong>Audio Mixer</strong> dock, which is typically
+situated at the bottom center of the screen.</li>
+<li>Find your microphone input (usually labeled
+<strong>Mic/Aux</strong>).</li>
+<li>Click on the <strong>three vertical dots</strong> next to the volume
+slider (or right-click on the microphone source) and select
+<strong>Filters</strong> from the drop-down menu.</li>
+</ol>
+<h3 id="step-2-add-the-noise-gate-filter">Step 2: Add the Noise Gate
+Filter</h3>
+<ol type="1">
+<li>In the new Filters window, locate the <strong>Audio Filters</strong>
+section on the left.</li>
+<li>Click the <strong>+ (plus sign)</strong> icon in the bottom-left
+corner.</li>
+<li>Select <strong>Noise Gate</strong> from the list of available
+filters.</li>
+<li>Name the filter (e.g., "Noise Gate") and click
+<strong>OK</strong>.</li>
+</ol>
+<h3 id="step-3-configure-the-noise-gate-settings">Step 3: Configure the
+Noise Gate Settings</h3>
+<p>The noise gate works by blocking audio signals that fall below a
+certain volume threshold. You will need to adjust the following sliders
+to match your environment:</p>
+<ul>
+<li><strong>Close Threshold:</strong> This is the volume level (in
+decibels) at which the microphone will turn off. Set this slightly
+higher than the level of your background noise, but lower than your
+speaking voice. (e.g., -32 dB).</li>
+<li><strong>Open Threshold:</strong> This is the volume level required
+to turn the microphone back on. Set this slightly below your normal
+speaking volume so that the gate opens immediately when you start
+talking (e.g., -26 dB).</li>
+<li><strong>Attack Time:</strong> How quickly the gate opens when you
+speak. The default <strong>25ms</strong> is recommended so your first
+syllables are not cut off.</li>
+<li><strong>Hold Time:</strong> How long the gate stays open after you
+stop speaking. The default <strong>200ms</strong> prevents the gate from
+closing during natural pauses in your speech.</li>
+<li><strong>Release Time:</strong> How slowly the gate fades out after
+the hold time expires. The default <strong>150ms</strong> creates a
+smooth transition instead of an abrupt cut-off.</li>
+</ul>
+<h3 id="step-4-test-and-fine-tune">Step 4: Test and Fine-Tune</h3>
+<p>To ensure the filter is working correctly, stop speaking and look at
+the green volume bar in the <strong>Audio Mixer</strong>. The meter
+should drop to zero (completely gray) when you are silent. If the bar
+still moves when you type or breathe, raise the <strong>Close
+Threshold</strong> slightly until the background noise is blocked. If
+your voice gets cut off when you speak softly, lower the <strong>Open
+Threshold</strong> and <strong>Close Threshold</strong> values.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

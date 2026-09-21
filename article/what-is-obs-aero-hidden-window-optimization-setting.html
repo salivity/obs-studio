@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What is OBS Aero Hidden Window Optimization Setting? - obs-studio</title>
+    <meta name="description" content="The "Disable Windows 10/11 Aero hidden window optimization" setting in OBS Studio is a configuration designed to prevent capture issues with minimized, covered, or hidden windows. While Windows naturally suspends the rendering of background windows to sa">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/what-is-obs-aero-hidden-window-optimization-setting">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="What is OBS Aero Hidden Window Optimization Setting? - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/what-is-obs-aero-hidden-window-optimization-setting" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The "Disable Windows 10/11 Aero hidden window optimization" setting in OBS Studio is a configuration designed to prevent capture issues with minimized, covered, or hidden windows. While Windows naturally suspends the rendering of background windows to sa" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="what-is-obs-aero-hidden-window-optimization-setting">What is OBS
+Aero Hidden Window Optimization Setting?</h1>
+<p>The "Disable Windows 10/11 Aero hidden window optimization" setting
+in OBS Studio is a configuration designed to prevent capture issues with
+minimized, covered, or hidden windows. While Windows naturally suspends
+the rendering of background windows to save system resources, this
+optimization can cause OBS to display frozen frames, stuttering, or
+black screens during a Window Capture. This article explains how this
+setting works, why it is necessary, and when you should enable or
+disable it for optimal streaming and recording performance.</p>
+<h2 id="how-windows-handles-hidden-windows">How Windows Handles Hidden
+Windows</h2>
+<p>In Windows 10 and 11, the Desktop Window Manager (DWM) manages how
+application windows are rendered on your screen. To maximize system
+efficiency and save GPU resources, Windows uses an optimization
+technique that stops updating the visual content of any window that is
+minimized, hidden behind another application, or dragged off-screen.
+Because the window is not visible to the user, Windows stops drawing its
+frames.</p>
+<h2 id="the-problem-for-obs-studio">The Problem for OBS Studio</h2>
+<p>When you use the "Window Capture" source in OBS to stream or record a
+specific application (such as a web browser, chat client, or game), OBS
+relies on Windows to constantly update that application's visual
+data.</p>
+<p>If you minimize that application or cover it entirely with another
+window, Windows' built-in optimization kicks in and stops rendering it.
+Consequently, OBS can no longer fetch new frames, causing the capture in
+your stream or recording to freeze, lag, or go entirely black.</p>
+<h2
+id="what-the-disable-aero-hidden-window-optimization-setting-does">What
+the "Disable Aero Hidden Window Optimization" Setting Does</h2>
+<p>When you check the <strong>"Disable Windows 10/11 Aero hidden window
+optimization"</strong> option in OBS (located under <strong>Settings
+&gt; Advanced &gt; Sources</strong>), OBS overrides the default Windows
+behavior.</p>
+<ul>
+<li><strong>Forces Background Rendering:</strong> It forces Windows to
+continue rendering and updating the visual data of hidden or covered
+windows.</li>
+<li><strong>Maintains a Smooth Capture:</strong> Because the window
+continues to update in the background, OBS can capture it continuously
+without any freezing, stuttering, or black screens, even if you are
+working on top of that window or have it minimized.</li>
+</ul>
+<h2 id="should-you-enable-or-disable-this-setting">Should You Enable or
+Disable This Setting?</h2>
+<p>For the vast majority of users, <strong>keeping this setting enabled
+(checked) is highly recommended</strong>. It ensures that your sources
+do not randomly freeze during a live broadcast or recording session when
+you switch tasks.</p>
+<p>However, there is a minor trade-off to consider:</p>
+<ul>
+<li><strong>Performance Impact:</strong> Because Windows is forced to
+render windows that you cannot actively see, your GPU and CPU will
+experience slightly higher resource usage.</li>
+<li><strong>When to Turn It Off:</strong> If you are running a low-end
+PC and desperately need to save GPU resources, you can uncheck this
+setting. If you do, you must ensure that any window you are capturing
+with OBS remains completely visible and un-minimized on your screen
+(ideally on a second monitor) while recording or streaming.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

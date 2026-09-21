@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Texture Buffer Allocation and Reuse - obs-studio</title>
+    <meta name="description" content="OBS Studio maintains optimal frame rates and prevents performance degradation by relying on pre-allocated memory structures, texture pools, and circular queues within its graphics subsystem. Instead of allocating and freeing GPU memory on a per-frame bas">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-texture-buffer-allocation-and-reuse">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Texture Buffer Allocation and Reuse - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-texture-buffer-allocation-and-reuse" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio maintains optimal frame rates and prevents performance degradation by relying on pre-allocated memory structures, texture pools, and circular queues within its graphics subsystem. Instead of allocating and freeing GPU memory on a per-frame bas" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-texture-buffer-allocation-and-reuse">OBS Studio
+Texture Buffer Allocation and Reuse</h1>
+<p>OBS Studio maintains optimal frame rates and prevents performance
+degradation by relying on pre-allocated memory structures, texture
+pools, and circular queues within its graphics subsystem. Instead of
+allocating and freeing GPU memory on a per-frame basis, OBS configures
+fixed render targets and staging surfaces during initialization or
+resolution reconfiguration. This article details the internal mechanics
+of how OBS Studio's graphics abstraction layer manages video memory,
+leverages swap chains, handles staging surfaces for encoding, and
+ensures zero-allocation rendering loops during live streaming and
+recording.</p>
+<h3 id="the-graphics-abstraction-layer-libobsgraphics">The Graphics
+Abstraction Layer (libobs/graphics)</h3>
+<p>At the foundation of OBS Studio's video processing is
+<code>libobs/graphics</code>, an abstraction layer that wraps native
+graphic APIs including Direct3D 11 on Windows, Metal on macOS, and
+OpenGL on Linux. This subsystem manages GPU objects through standardized
+pointers such as <code>gs_texture_t</code> and
+<code>gs_stagesurf_t</code>.</p>
+<p>When the graphics subsystem boots, it establishes persistent render
+targets based on the user's configured "Base (Canvas) Resolution" and
+"Output (Scaled) Resolution." Because the dimensions and color formats
+(typically standard formats like NV12, P010, or RGBA) are known in
+advance, OBS allocates the necessary VRAM surfaces immediately. The
+rendering loop operates exclusively on these pre-existing pointers,
+completely bypassing the OS-level driver calls for memory allocation
+(<code>CreateTexture2D</code> in D3D11 or <code>glGenTextures</code> in
+OpenGL) during standard frame execution.</p>
+<h3 id="persistent-source-textures-and-in-place-updates">Persistent
+Source Textures and In-Place Updates</h3>
+<p>OBS sources (such as game captures, webcams, or media sources) do not
+create dynamic textures on every frame tick. Instead, sources
+instantiate an internal texture object once when their feed connects or
+changes dimension.</p>
+<p>When a new frame arrives from a video source:</p>
+<ul>
+<li><strong>Hardware-accelerated paths:</strong> Video frames already
+residing in GPU memory (e.g., Game Capture using shared DirectX handles)
+are mapped directly or blitted to the internal render canvas using
+hardware copy operations (<code>CopyResource</code> or
+<code>CopySubresourceRegion</code>), requiring no new allocations.</li>
+<li><strong>CPU-to-GPU paths:</strong> For sources that output raw
+system memory frames (such as certain USB capture devices), OBS writes
+data into a pre-existing dynamic texture via mapped subresource updates.
+The memory pointer is updated in place, preventing the expansion or
+churn of the application's VRAM footprint.</li>
+</ul>
+<h3 id="ring-buffers-and-render-pipelines">Ring Buffers and Render
+Pipelines</h3>
+<p>To decouple rendering from encoding, OBS uses a circular queue (ring
+buffer) of texture surfaces. Because the render thread and the video
+encoding thread run asynchronously, a single shared texture would cause
+race conditions or frame tearing.</p>
+<p>OBS solves this by provisioning a fixed pool of frame
+buffers—typically two or three surfaces configured in a swap chain or
+ping-pong structure:</p>
+<ol type="1">
+<li><strong>Render Pass:</strong> The compositor draws all active scene
+items onto the current working canvas texture.</li>
+<li><strong>Handoff:</strong> Once composition and scaling are complete,
+the texture reference is pushed into the queue for the encoder.</li>
+<li><strong>Recycling:</strong> The encoder reads the frame and releases
+its lock, returning the texture index back to the pool to be overwritten
+by a subsequent render pass.</li>
+</ol>
+<p>If the encoder lags behind, OBS drops the frame rather than
+allocating a new buffer to absorb the delay. This strict limitation
+ensures that VRAM usage remains completely flat, regardless of stream
+duration.</p>
+<h3 id="staging-textures-for-hardware-and-software-encoders">Staging
+Textures for Hardware and Software Encoders</h3>
+<p>Different encoding methods require specific texture lifecycles:</p>
+<ul>
+<li><strong>Hardware Encoding (NVENC, AMF, QuickSync):</strong> Frames
+are transferred via native GPU-to-GPU interfaces (such as DirectX 11
+surfaces passed straight to NVENC). The hardware encoder reads directly
+from registered, persistent VRAM buffers.</li>
+<li><strong>Software Encoding (x264):</strong> Frames must be copied
+from GPU memory back to CPU RAM. To accomplish this without pipeline
+stalls or dynamic allocations, OBS allocates a dedicated set of staging
+surfaces (<code>gs_stagesurf_t</code>). These staging surfaces remain
+mapped to fixed CPU memory blocks. When a frame is ready, a GPU DMA
+transfer moves the data to the staging texture, where the software
+encoder consumes it directly from the pinned system memory address.</li>
+</ul>
+<p>Through static resolution boundaries, persistent GPU handles,
+in-place texture updates, and bounded queue architectures, OBS Studio
+completely eliminates runtime memory allocation in its rendering loop,
+maintaining constant memory footprints and deterministic frame
+delivery.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

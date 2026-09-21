@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio macOS Sandboxing: Accessing Local Files - obs-studio</title>
+    <meta name="description" content="This article examines how OBS Studio navigates macOS security restrictions, specifically App Sandbox policies and the Transparency, Consent, and Control (TCC) framework, when reading local media files stored in external directories or removable drives. I">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-mac-os-sandboxing-accessing-local-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio macOS Sandboxing: Accessing Local Files - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-mac-os-sandboxing-accessing-local-files" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines how OBS Studio navigates macOS security restrictions, specifically App Sandbox policies and the Transparency, Consent, and Control (TCC) framework, when reading local media files stored in external directories or removable drives. I" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-macos-sandboxing-accessing-local-files">OBS Studio
+macOS Sandboxing: Accessing Local Files</h1>
+<p>This article examines how OBS Studio navigates macOS security
+restrictions, specifically App Sandbox policies and the Transparency,
+Consent, and Control (TCC) framework, when reading local media files
+stored in external directories or removable drives. It details the
+underlying system permissions, the technical challenges of persistent
+file access across app relaunches, and the configurations required to
+ensure seamless media playback during live production.</p>
+<h3 id="macos-security-architecture-sandbox-and-tcc">macOS Security
+Architecture: Sandbox and TCC</h3>
+<p>macOS enforces strict boundaries between applications and local
+storage using two primary mechanisms: the App Sandbox and the
+Transparency, Consent, and Control (TCC) subsystem. Although OBS Studio
+distributed outside the Mac App Store operates outside the strictest App
+Sandbox profile to maintain plugin and hardware capture compatibility,
+it must still comply with Apple's Hardened Runtime and TCC
+requirements.</p>
+<p>TCC protects specific user directories, including
+<code>~/Documents</code>, <code>~/Downloads</code>,
+<code>~/Desktop</code>, iCloud Drive folders, network volumes, and
+external removable drives. When OBS Studio attempts to load media
+assets—such as video overlays, stingers, or background audio—from these
+protected locations, macOS intercepts the file system call and checks
+the application's current privilege state.</p>
+<h3 id="explicit-user-consent-via-system-open-panels">Explicit User
+Consent via System Open Panels</h3>
+<p>Under macOS security rules, an application gains read access to an
+external directory through user-driven interactions. When you add a
+Media Source or VLC Video Source in OBS Studio and click "Browse," OBS
+invokes the native <code>NSOpenPanel</code>.</p>
+<p>Selecting a file through this native dialog grants OBS temporary,
+system-approved access to the chosen file or folder. macOS considers
+this an explicit grant of permission by the user. If the file is located
+on an external drive or network share, the operating system registers
+that OBS has been authorized to interact with that path for the duration
+of the current session.</p>
+<h3 id="persistent-access-and-path-traversal-issues">Persistent Access
+and Path Traversal Issues</h3>
+<p>Problems commonly arise when OBS Studio restarts or when automated
+scripts load scenes containing assets from external storage. While an
+active session retains the temporary permission granted by
+<code>NSOpenPanel</code>, security scopes can expire upon application
+termination unless properly retained:</p>
+<ol type="1">
+<li><strong>Broken File Pointers:</strong> If an external drive remounts
+under a different mount point (e.g., <code>/Volumes/DriveName 1</code>
+instead of <code>/Volumes/DriveName</code>), OBS cannot resolve the
+path, triggering missing media errors.</li>
+<li><strong>Permission Revocation:</strong> If OBS attempts to read a
+saved file path on launch without an active user prompt, macOS may block
+the background file access call, causing the media source to appear
+black or silent.</li>
+<li><strong>Subfolder Access:</strong> Authorizing a single media file
+does not automatically grant OBS permission to read sibling files or
+parent directories unless the entire directory structure was selected
+during the initial dialog.</li>
+</ol>
+<h3 id="resolving-restrictions-with-full-disk-access">Resolving
+Restrictions with Full Disk Access</h3>
+<p>To avoid manual permission confirmations and prevent dropped assets
+during live broadcasts, users frequently bypass targeted TCC checks by
+granting OBS Studio elevated system storage permissions.</p>
+<p>Assigning <strong>Full Disk Access</strong> (FDA) to OBS Studio
+exempts the application from individual folder prompts and external
+volume access dialogs. With FDA enabled in macOS System Settings under
+Privacy &amp; Security, OBS can traverse all connected volumes,
+secondary internal partitions, and external drives seamlessly. This
+setup ensures that scene collections referencing complex folder
+structures across multiple drives load consistently upon startup without
+being blocked by macOS security daemons.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

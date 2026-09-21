@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FTL vs RTMP Handshake Differences in OBS Studio - obs-studio</title>
+    <meta name="description" content="This article compares the network handshake protocols of standard RTMP and the Faster Than Light (FTL) protocol within OBS Studio forks. While standard RTMP establishes an all-TCP, multi-phase byte exchange followed by Action Message Format (AMF) control">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/ftl-vs-rtmp-handshake-differences-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="FTL vs RTMP Handshake Differences in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/ftl-vs-rtmp-handshake-differences-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article compares the network handshake protocols of standard RTMP and the Faster Than Light (FTL) protocol within OBS Studio forks. While standard RTMP establishes an all-TCP, multi-phase byte exchange followed by Action Message Format (AMF) control" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="ftl-vs-rtmp-handshake-differences-in-obs-studio">FTL vs RTMP
+Handshake Differences in OBS Studio</h1>
+<p>This article compares the network handshake protocols of standard
+RTMP and the Faster Than Light (FTL) protocol within OBS Studio forks.
+While standard RTMP establishes an all-TCP, multi-phase byte exchange
+followed by Action Message Format (AMF) control packets, FTL utilizes a
+dual-channel architecture consisting of a lightweight TCP control
+handshake with cryptographic verification that provisions a UDP-based
+Real-Time Transport Protocol (RTP) pipeline. Understanding these
+fundamental handshake variations explains why FTL achieves sub-second
+latency while RTMP remains tied to higher-overhead transmission
+pipelines.</p>
+<h2 id="transport-layer-architecture">Transport Layer Architecture</h2>
+<p>The fundamental difference between RTMP and FTL begins at the
+transport layer of the OSI model:</p>
+<ul>
+<li><strong>RTMP:</strong> Operates entirely over a single TCP
+connection (typically port 1935). The handshake, stream control, and
+media transmission share this reliable, ordered byte stream.</li>
+<li><strong>FTL:</strong> Employs a hybrid transport architecture. It
+initiates a TCP connection (typically port 8084 or 7984) strictly as a
+control and signaling channel, while actual audio and video data travel
+independently over UDP using RTP.</li>
+</ul>
+<p>Because RTMP encapsulates everything in TCP, its handshake binds the
+client and server to TCP's window sizing, congestion avoidance, and
+acknowledgment loops from the outset. FTL's handshake uses TCP only long
+enough to authenticate and negotiate parameters before switching media
+ingestion to UDP, eliminating head-of-line blocking.</p>
+<h2 id="the-standard-rtmp-handshake-sequence">The Standard RTMP
+Handshake Sequence</h2>
+<p>The RTMP handshake consists of a predefined, non-negotiated exchange
+of raw byte packets labeled C0/S0, C1/S1, and C2/S2:</p>
+<ol type="1">
+<li><strong>Packet C0 and S0:</strong> The client sends a single byte
+(C0) specifying the requested RTMP version (typically
+<code>0x03</code>). The server replies with S0, confirming the
+version.</li>
+<li><strong>Packet C1 and S1:</strong> The client transmits C1 (1,536
+bytes), containing an epoch timestamp, a zeroed field, and 1,528 bytes
+of random data. The server acknowledges and sends S1, which contains its
+own timestamp and 1,528 random bytes.</li>
+<li><strong>Packet C2 and S2:</strong> The client mirrors the random
+data from S1 back to the server in C2. The server mirrors the data from
+C1 back to the client in S2.</li>
+</ol>
+<p>Once this byte-level exchange completes, the connection is considered
+established. However, the client must then send an application-level
+<code>connect</code> command formatted in Action Message Format
+(AMF0/AMF3), wait for a <code>_result</code> response, issue a
+<code>createStream</code> command, and finally send a
+<code>publish</code> command before any media transmission can occur.
+This requires multiple Round Trip Times (RTT) over TCP.</p>
+<h2 id="the-ftl-protocol-handshake-sequence">The FTL Protocol Handshake
+Sequence</h2>
+<p>FTL bypasses the fixed-byte structure of RTMP in favor of a text- and
+JSON-based command-response sequence over its TCP control
+connection:</p>
+<ol type="1">
+<li><strong>TCP Connection &amp; Version Check:</strong> The OBS client
+connects to the ingest server and sends an initial string handshake
+containing the protocol version (e.g., <code>FTL/0.2</code>).</li>
+<li><strong>HMAC-SHA256 Challenge-Response:</strong> Unlike RTMP, which
+passes stream keys as plain text query parameters or inside AMF objects,
+FTL integrates secure authentication directly into the handshake. The
+server transmits a cryptographic salt/challenge to the client. The
+client hashes its stream key with this salt using HMAC-SHA256 and sends
+the response back to the server.</li>
+<li><strong>Port and Payload Negotiation:</strong> Once authenticated,
+the server returns configuration data, including an assigned UDP
+destination port and designated Dynamic Payload Types (such as H.264 for
+video and Opus for audio).</li>
+<li><strong>RTP/SRTP Initialization:</strong> The OBS fork completes the
+TCP negotiation and immediately binds an outbound UDP socket. Media
+frames are wrapped in RTP headers containing synchronized timestamps and
+Sequence Numbers, then fired directly to the server-assigned UDP port
+without requiring acknowledgment handshakes for each packet.</li>
+</ol>
+<h2 id="authentication-timing-and-stream-initialization">Authentication
+Timing and Stream Initialization</h2>
+<p>The placement of the authentication step highlights a key
+architectural divergence:</p>
+<ul>
+<li>In <strong>RTMP</strong>, authentication is decoupled from the
+network transport handshake. The three-way packet handshake (C0–C2) must
+finish successfully before the client can transmit authentication
+credentials inside the AMF-encoded <code>connect</code> or
+<code>publish</code> payload. If the key is invalid, the TCP connection
+closes only after multiple round trips have already elapsed.</li>
+<li>In <strong>FTL</strong>, authentication is native to the control
+handshake. The control channel serves as an explicit gatekeeper: unless
+the cryptographic challenge is resolved, the server never opens or
+allocates a UDP port for media ingestion.</li>
+</ul>
+<h2 id="network-overhead-and-startup-latency">Network Overhead and
+Startup Latency</h2>
+<p>RTMP’s multi-phase setup introduces substantial startup latency.
+Between the underlying TCP three-way handshake (SYN, SYN-ACK, ACK), the
+raw RTMP handshake (C0/C1/C2), and the subsequent AMF commands
+(<code>connect</code>, <code>createStream</code>, <code>publish</code>),
+RTMP typically requires at least 4 to 6 round trips before transmitting
+the first audio/video chunk.</p>
+<p>By comparison, FTL consolidates signaling into a brief
+request-response exchange over TCP and immediately transitions media to
+UDP. By decoupling media transmission from TCP state management, FTL
+avoids the initial buffering requirements and connection latency
+inherent in standard RTMP implementations in OBS Studio.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Enable Wayland Screen Sharing in OBS Studio - obs-studio</title>
+    <meta name="description" content="Sharing your screen in OBS Studio on a Linux desktop running Wayland can sometimes result in a blank or black screen due to Wayland's strict security model. This guide provides a straightforward, step-by-step walkthrough on how to enable Wayland screen s">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-enable-wayland-screen-sharing-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Enable Wayland Screen Sharing in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-enable-wayland-screen-sharing-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Sharing your screen in OBS Studio on a Linux desktop running Wayland can sometimes result in a blank or black screen due to Wayland's strict security model. This guide provides a straightforward, step-by-step walkthrough on how to enable Wayland screen s" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-enable-wayland-screen-sharing-in-obs-studio">How to
+Enable Wayland Screen Sharing in OBS Studio</h1>
+<p>Sharing your screen in OBS Studio on a Linux desktop running Wayland
+can sometimes result in a blank or black screen due to Wayland's strict
+security model. This guide provides a straightforward, step-by-step
+walkthrough on how to enable Wayland screen sharing for OBS Studio using
+PipeWire and XDG Desktop Portals, ensuring seamless video capture on
+modern Linux distributions like Ubuntu, Fedora, and Arch Linux.</p>
+<h2 id="step-1-install-pipewire-and-xdg-desktop-portal">Step 1: Install
+PipeWire and XDG Desktop Portal</h2>
+<p>Wayland does not allow applications to directly read screen contents.
+Instead, it relies on PipeWire and the XDG Desktop Portal to securely
+share your desktop or individual windows.</p>
+<p>You must install the portal backend appropriate for your specific
+desktop environment. Open your terminal and run the command matching
+your distribution and desktop:</p>
+<ul>
+<li><strong>Ubuntu / Debian (GNOME):</strong>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt update</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install pipewire xdg-desktop-portal xdg-desktop-portal-gnome</span></code></pre></div></li>
+<li><strong>Fedora (GNOME):</strong>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> dnf install pipewire xdg-desktop-portal xdg-desktop-portal-gnome</span></code></pre></div></li>
+<li><strong>Arch Linux (GNOME):</strong>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> pacman <span class="at">-S</span> pipewire xdg-desktop-portal xdg-desktop-portal-gnome</span></code></pre></div></li>
+<li><strong>KDE Plasma (All Distributions):</strong> Replace
+<code>xdg-desktop-portal-gnome</code> with
+<code>xdg-desktop-portal-kde</code> in the commands above.</li>
+</ul>
+<p>After installing these packages, restart your computer to ensure the
+background services launch correctly.</p>
+<h2 id="step-2-use-the-flatpak-version-of-obs-studio-recommended">Step
+2: Use the Flatpak Version of OBS Studio (Recommended)</h2>
+<p>The Flatpak version of OBS Studio is sandboxed and comes
+pre-configured with the necessary permissions to communicate with
+PipeWire and Wayland portals out of the box.</p>
+<ol type="1">
+<li>Install Flatpak on your system if it is not already installed.</li>
+<li>Install OBS Studio from Flathub by running the following command:
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">flatpak</span> install flathub com.obsproject.Studio</span></code></pre></div></li>
+</ol>
+<p>If you prefer using your distribution's native package manager (like
+<code>apt</code>, <code>dnf</code>, or <code>pacman</code>), ensure your
+installed version of OBS Studio is version 27.0 or newer, as this is the
+minimum version required for native Wayland support.</p>
+<h2 id="step-3-add-the-pipewire-screen-capture-source">Step 3: Add the
+PipeWire Screen Capture Source</h2>
+<p>Once the prerequisites are installed and your system has been
+restarted, you can set up screen capture inside the application:</p>
+<ol type="1">
+<li>Launch <strong>OBS Studio</strong>.</li>
+<li>Go to the <strong>Sources</strong> dock at the bottom of the
+window.</li>
+<li>Click the <strong>+ (Add)</strong> button.</li>
+<li>Select <strong>Screen Capture (PipeWire)</strong> from the dropdown
+menu.</li>
+<li>Give the source a name and click <strong>OK</strong>.</li>
+<li>A system-level pop-up dialog will appear asking for permission to
+share your screen. Select the monitor or window you want to capture,
+then click <strong>Share</strong> or <strong>Allow</strong>.</li>
+</ol>
+<p>Your Wayland desktop will now be visible and ready for recording or
+streaming in OBS Studio.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

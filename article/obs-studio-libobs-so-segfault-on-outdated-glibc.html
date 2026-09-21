@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio libobs.so Segfault on Outdated GLIBC - obs-studio</title>
+    <meta name="description" content="Launching modern builds of OBS Studio on Linux distributions with outdated versions of the GNU C Library (GLIBC) frequently results in a segmentation fault within libobs.so. This crash occurs primarily due to application binary interface (ABI) incompatib">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-libobs-so-segfault-on-outdated-glibc">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio libobs.so Segfault on Outdated GLIBC - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-libobs-so-segfault-on-outdated-glibc" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Launching modern builds of OBS Studio on Linux distributions with outdated versions of the GNU C Library (GLIBC) frequently results in a segmentation fault within libobs.so. This crash occurs primarily due to application binary interface (ABI) incompatib" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-libobsso-segfault-on-outdated-glibc">OBS Studio
+libobs.so Segfault on Outdated GLIBC</h1>
+<p>Launching modern builds of OBS Studio on Linux distributions with
+outdated versions of the GNU C Library (GLIBC) frequently results in a
+segmentation fault within <code>libobs.so</code>. This crash occurs
+primarily due to application binary interface (ABI) incompatibilities,
+missing runtime symbols, and differences in thread-local storage (TLS)
+implementations between modern toolchains and legacy C runtimes.
+Understanding the specific mechanics behind this failure helps diagnose
+whether the issue stems from dynamic linking mismatches, unhandled
+initialization hooks, or packaging flaws.</p>
+<h2 id="dynamic-symbol-mismatch-and-weak-linking">Dynamic Symbol
+Mismatch and Weak Linking</h2>
+<p>Modern builds of <code>libobs.so</code> rely on standard C library
+functions and threading routines compiled against contemporary GLIBC
+versions. When pre-compiled OBS Studio binaries are deployed on a host
+with an older GLIBC, the dynamic linker (<code>ld.so</code>) attempts to
+resolve required symbol versions (e.g., <code>GLIBC_2.34</code>).</p>
+<p>If a symbol is weakly linked or resolved against a fallback
+implementation, or if the loader fails to map a required symbol
+entirely, dynamic loading may proceed partially rather than aborting
+immediately. Once <code>libobs.so</code> calls these missing or
+mismatched routines during startup, the program executes undefined
+memory addresses, triggering an immediate <code>SIGSEGV</code>.</p>
+<h2
+id="thread-local-storage-tls-and-threading-model-changes">Thread-Local
+Storage (TLS) and Threading Model Changes</h2>
+<p>Recent GLIBC releases introduced substantial changes to thread
+handling, notably integrating <code>libpthread</code> directly into
+<code>libc.so</code> (introduced in GLIBC 2.34). Previously, POSIX
+thread operations lived in a dedicated <code>libpthread.so</code> shared
+object.</p>
+<p><code>libobs.so</code> heavily relies on multi-threading for
+audio/video pipeline initialization and thread-local state tracking.
+When a binary compiled against a unified GLIBC environment executes on
+an older system where <code>libpthread</code> remains distinct:</p>
+<ul>
+<li>Thread-local variables allocate differently in memory.</li>
+<li>Mutexes and thread-initialization hooks may refer to inconsistent
+structure layouts.</li>
+<li>Thread creation calls fail silently or assign null pointers to core
+context handles, which causes <code>libobs.so</code> to dereference
+invalid memory upon first access.</li>
+</ul>
+<h2 id="plugin-and-dependency-chain-conflicts">Plugin and Dependency
+Chain Conflicts</h2>
+<p>OBS Studio relies on a modular architecture where
+<code>libobs.so</code> dynamically loads backend modules (such as
+graphics context providers, capture plugins, and encoders) at runtime
+via <code>dlopen()</code>.</p>
+<p>Even if the main OBS executable manages to launch,
+<code>libobs.so</code> attempts to scan and load plugins located in
+<code>/usr/lib/obs-plugins/</code> or equivalent directories. If these
+shared libraries link against conflicting, newer runtime dependencies
+that the host GLIBC cannot resolve, the failure cascades back to
+<code>libobs.so</code>. The core library often assumes non-null pointers
+for plugin export tables, causing the core loop to segfault when parsing
+uninitialized structures.</p>
+<h2 id="how-to-resolve-the-segmentation-fault">How to Resolve the
+Segmentation Fault</h2>
+<p>To prevent <code>libobs.so</code> from crashing due to GLIBC version
+disparities, several deployment adjustments can be made:</p>
+<ul>
+<li><strong>Use Isolated Runtimes (Flatpak):</strong> The official
+Flatpak distribution bundles its own up-to-date runtime, completely
+isolating OBS Studio and <code>libobs.so</code> from the host system's
+older GLIBC version.</li>
+<li><strong>Compile from Source:</strong> Building OBS Studio directly
+on the target machine ensures that all symbol bindings in
+<code>libobs.so</code> accurately reflect the ABI provided by the host's
+installed GLIBC.</li>
+<li><strong>Upgrade the Operating System:</strong> Upgrading the host
+distribution to a release that natively supplies the GLIBC version
+targeted by the pre-compiled OBS Studio package permanently resolves
+linking incompatibilities.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

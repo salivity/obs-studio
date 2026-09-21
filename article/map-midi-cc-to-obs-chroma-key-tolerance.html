@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map MIDI CC to OBS Chroma Key Tolerance - obs-studio</title>
+    <meta name="description" content="Controlling your green screen settings in real-time can significantly improve the quality of your live stream. This article provides a step-by-step guide on how to map a physical fader or knob on an external MIDI controller to smoothly adjust the chroma">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/map-midi-cc-to-obs-chroma-key-tolerance">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Map MIDI CC to OBS Chroma Key Tolerance - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/map-midi-cc-to-obs-chroma-key-tolerance" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Controlling your green screen settings in real-time can significantly improve the quality of your live stream. This article provides a step-by-step guide on how to map a physical fader or knob on an external MIDI controller to smoothly adjust the chroma" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="map-midi-cc-to-obs-chroma-key-tolerance">Map MIDI CC to OBS
+Chroma Key Tolerance</h1>
+<p>Controlling your green screen settings in real-time can significantly
+improve the quality of your live stream. This article provides a
+step-by-step guide on how to map a physical fader or knob on an external
+MIDI controller to smoothly adjust the chroma key tolerance (similarity
+and smoothness) in OBS Studio. By using a specialized OBS plugin, you
+can bypass manual mouse adjustments and achieve seamless, hands-on
+control.</p>
+<p><strong>Step 1: Install the OBS MIDI MG Plugin</strong></p>
+<p>OBS Studio does not support MIDI controllers natively for granular
+filter adjustments. To enable this functionality:</p>
+<ol type="1">
+<li>Download the <strong>obs-midi-mg</strong> plugin from the official
+OBS Studio resources forum.</li>
+<li>Install the plugin by running the installer or extracting the files
+into your OBS Studio installation directory.</li>
+<li>Restart OBS Studio to activate the plugin.</li>
+</ol>
+<p><strong>Step 2: Set Up Your Chroma Key Filter</strong></p>
+<p>Ensure your camera source has the chroma key filter applied:</p>
+<ol type="1">
+<li>Right-click your camera or capture card source in the
+<strong>Sources</strong> dock and select <strong>Filters</strong>.</li>
+<li>Click the <strong>+</strong> icon under "Effect Filters" and select
+<strong>Chroma Key</strong>.</li>
+<li>Name the filter (e.g., "Chroma Key") and close the window.</li>
+</ol>
+<p><strong>Step 3: Configure Your MIDI Device in OBS</strong></p>
+<ol type="1">
+<li>Open OBS Studio and navigate to the top menu. Go to
+<strong>Tools</strong> and select <strong>OBS MIDI MG
+Setup</strong>.</li>
+<li>In the <strong>Devices</strong> tab, locate your connected external
+MIDI controller under the "Input" section.</li>
+<li>Check the <strong>Active</strong> box next to your controller to
+enable it.</li>
+</ol>
+<p><strong>Step 4: Bind the MIDI CC to the Chroma Key
+Tolerance</strong></p>
+<ol type="1">
+<li>Switch to the <strong>Bindings</strong> tab in the OBS MIDI MG setup
+window.</li>
+<li>Click <strong>Add Binding</strong>.</li>
+<li>Move the physical knob, fader, or wheel on your MIDI controller that
+you wish to use. The plugin will automatically detect the incoming MIDI
+CC (Continuous Controller) message and channel.</li>
+<li>In the <strong>Action</strong> dropdown menu, select <strong>Set
+Source Filter Value</strong>.</li>
+<li>Select your camera source, then select your "Chroma Key" filter from
+the respective target dropdowns.</li>
+<li>In the parameter dropdown, select <strong>Similarity</strong> (which
+controls the primary color range tolerance) or
+<strong>Smoothness</strong>.</li>
+<li>Adjust the scale limits. Because MIDI CC sends values from 0 to 127,
+map these to the appropriate filter scale (typically 1 to 1000 for
+similarity) to ensure the physical sweep of your controller translates
+to a smooth, usable range in OBS.</li>
+<li>Click <strong>Save</strong>.</li>
+</ol>
+<p>You can now slide your MIDI fader or turn the knob to dynamically
+adjust the green screen tolerance on the fly, allowing you to instantly
+compensate for changes in studio lighting.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

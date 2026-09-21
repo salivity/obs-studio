@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Best OBS Settings for Recording Crisp Desktop Text - obs-studio</title>
+    <meta name="description" content="Recording high-quality desktop tutorials requires specific configurations in OBS Studio to ensure that small text remains sharp, legible, and free of compression artifacts. This guide provides a straightforward breakdown of the optimal video, output, and">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/best-obs-settings-for-recording-crisp-desktop-text">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Best OBS Settings for Recording Crisp Desktop Text - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/best-obs-settings-for-recording-crisp-desktop-text" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Recording high-quality desktop tutorials requires specific configurations in OBS Studio to ensure that small text remains sharp, legible, and free of compression artifacts. This guide provides a straightforward breakdown of the optimal video, output, and" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="best-obs-settings-for-recording-crisp-desktop-text">Best OBS
+Settings for Recording Crisp Desktop Text</h1>
+<p>Recording high-quality desktop tutorials requires specific
+configurations in OBS Studio to ensure that small text remains sharp,
+legible, and free of compression artifacts. This guide provides a
+straightforward breakdown of the optimal video, output, and encoder
+settings in OBS Studio to achieve crystal-clear text readability for
+your desktop screencasts and presentations.</p>
+<h2 id="1-configure-the-video-settings-eliminate-scaling">1. Configure
+the Video Settings (Eliminate Scaling)</h2>
+<p>Scaling is the primary cause of blurry text. To keep your text crisp,
+your canvas size and output size must match perfectly to avoid any pixel
+interpolation.</p>
+<ul>
+<li><strong>Go to Settings &gt; Video:</strong>
+<ul>
+<li><strong>Base (Canvas) Resolution:</strong> Set this to your
+monitor's native resolution (e.g., <code>1920x1080</code> or
+<code>2560x1440</code>).</li>
+<li><strong>Output (Scaled) Resolution:</strong> Match this exactly to
+your Base Resolution. If your canvas is <code>1920x1080</code>, your
+output must also be <code>1920x1080</code>.</li>
+<li><strong>Downscale Filter:</strong> Since you are not scaling, this
+setting will be grayed out. If you absolutely must downscale, select
+<strong>Lanczos (Sharpened scaling, 36 samples)</strong>.</li>
+<li><strong>Common FPS Values:</strong> Set this to <strong>30</strong>
+or <strong>60</strong>. For static desktop tutorials, 30 FPS is usually
+sufficient and requires less processing power.</li>
+</ul></li>
+</ul>
+<h2 id="2-set-up-the-output-settings-recording">2. Set Up the Output
+Settings (Recording)</h2>
+<p>To access the necessary advanced encoding options, you must change
+your output mode.</p>
+<ul>
+<li><strong>Go to Settings &gt; Output:</strong>
+<ul>
+<li>Change the <strong>Output Mode</strong> dropdown at the top from
+Simple to <strong>Advanced</strong>.</li>
+<li>Click on the <strong>Recording</strong> tab.</li>
+<li><strong>Recording Path:</strong> Choose a fast storage drive
+(preferably an SSD) to prevent dropped frames.</li>
+<li><strong>Recording Format:</strong> Select <strong>MKV</strong> or
+<strong>Fragmented MP4</strong>. MKV is highly recommended because if
+OBS or your system crashes, the recording is saved. You can
+automatically convert it to MP4 later using the "Automatically remux to
+mp4" option in OBS Advanced settings.</li>
+<li><strong>Video Encoder:</strong> Select a hardware encoder to reduce
+CPU load. Use <strong>NVIDIA NVENC H.264</strong> (or HEVC) if you have
+an NVIDIA card, <strong>AMD HW H.264</strong> if you have an AMD card,
+or <strong>x264</strong> (CPU) if you do not have a dedicated GPU.</li>
+</ul></li>
+</ul>
+<h2 id="3-optimize-encoder-settings-for-text-clarity">3. Optimize
+Encoder Settings for Text Clarity</h2>
+<p>Standard streaming bitrates (CBR) will compress fine details, making
+text look blurry during movement. Instead, you should use quality-based
+rate control.</p>
+<ul>
+<li><strong>Rate Control:</strong> Set this to <strong>CQP</strong>
+(Constant QP) or <strong>CRF</strong> (Constant Rate Factor for
+x264).</li>
+<li><strong>CQ Level / CRF:</strong> Set this value between <strong>16
+and 20</strong>.
+<ul>
+<li><em>Lower values mean higher quality but larger file sizes.</em> A
+level of <strong>16</strong> delivers near-lossless text clarity, while
+<strong>20</strong> offers a great balance between crispness and file
+size.</li>
+</ul></li>
+<li><strong>Keyframe Interval:</strong> Set this to
+<strong>2s</strong>.</li>
+<li><strong>Preset:</strong> Set this to <strong>P5: Slow (Good
+Quality)</strong> or <strong>P6: Slower (Better Quality)</strong> if
+using NVIDIA NVENC. For x264, use <strong>medium</strong> or
+<strong>fast</strong>.</li>
+<li><strong>Profile:</strong> Set to <strong>high</strong>.</li>
+<li><strong>Max B-frames:</strong> Set to <strong>2</strong>.</li>
+</ul>
+<h2 id="4-fine-tune-advanced-settings-color-contrast">4. Fine-Tune
+Advanced Settings (Color Contrast)</h2>
+<p>To make black text on white backgrounds (or vice-versa) pop on video
+platforms, adjust your color space settings.</p>
+<ul>
+<li><strong>Go to Settings &gt; Advanced:</strong>
+<ul>
+<li>Under the <strong>Video</strong> section, set <strong>Color
+Format</strong> to <strong>NV12</strong>.</li>
+<li>Set <strong>Color Space</strong> to <strong>Rec. 709</strong> (this
+provides more accurate color reproduction for digital displays).</li>
+<li>Set <strong>Color Range</strong> to <strong>Limited</strong>. While
+"Full" offers more contrast, "Limited" prevents color clipping and
+ensures compatibility with video players like YouTube, preventing your
+text from looking washed out or overly dark.</li>
+</ul></li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

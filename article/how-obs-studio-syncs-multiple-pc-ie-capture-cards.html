@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Studio Syncs Multiple PCIe Capture Cards - obs-studio</title>
+    <meta name="description" content="This article explains how OBS Studio maintains frame order consistency when capturing asynchronous video inputs from multiple PCIe capture cards. It details how the software processes independent hardware streams using internal presentation timestamps (P">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-studio-syncs-multiple-pc-ie-capture-cards">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Studio Syncs Multiple PCIe Capture Cards - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-studio-syncs-multiple-pc-ie-capture-cards" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how OBS Studio maintains frame order consistency when capturing asynchronous video inputs from multiple PCIe capture cards. It details how the software processes independent hardware streams using internal presentation timestamps (P" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-studio-syncs-multiple-pcie-capture-cards">How OBS Studio
+Syncs Multiple PCIe Capture Cards</h1>
+<p>This article explains how OBS Studio maintains frame order
+consistency when capturing asynchronous video inputs from multiple PCIe
+capture cards. It details how the software processes independent
+hardware streams using internal presentation timestamps (PTS), dedicated
+source buffers, master clock synchronization, and a decoupled graphics
+rendering loop to eliminate frame drift and visual stuttering.</p>
+<h3 id="hardware-timestamps-and-ingestion">Hardware Timestamps and
+Ingestion</h3>
+<p>Each PCIe capture card operates on its own independent onboard pixel
+clock and analog-to-digital converter. Because these hardware clocks
+drift relative to one another and the host system, inputs are inherently
+asynchronous.</p>
+<p>When a video frame arrives via the PCIe bus, the capture driver
+(utilizing APIs such as DirectShow, Media Foundation, or vendor-specific
+SDKs like Blackmagic DeckLink) attaches a Presentation Time Stamp (PTS)
+to the frame. OBS Studio reads these timestamps to identify precisely
+when each frame was captured relative to the operating system’s
+high-precision monotonic clock (such as Windows'
+<code>QueryPerformanceCounter</code> or Linux's
+<code>CLOCK_MONOTONIC</code>).</p>
+<h3 id="input-buffering-and-thread-decoupling">Input Buffering and
+Thread Decoupling</h3>
+<p>To prevent capture thread bottlenecks from stalling the application,
+OBS assigns each video input to an independent capture thread.</p>
+<p>Frames received from each PCIe card are placed into a thread-safe
+circular FIFO (First-In, First-Out) queue. This queue serves as a
+de-jitter buffer that absorbs variations in PCIe bus bandwidth
+allocation, thread preemption, and minor micro-stutters from individual
+cards. By decoupling capture ingestion from the rendering pipeline, OBS
+ensures that a momentary delay on one PCIe lane does not block other
+capture devices.</p>
+<h3 id="the-obs-reference-clock">The OBS Reference Clock</h3>
+<p>OBS Studio synchronizes all sources against a global reference clock.
+In standard configurations, OBS uses the audio output subsystem as the
+master timing clock, as the human ear is far more sensitive to audio
+gaps and pitch variations than the eye is to frame adjustments. If no
+audio is active, the system monotonic clock acts as the fallback
+reference.</p>
+<p>Incoming video frames are mapped from their source capture timestamps
+onto this shared master timeline. This creates a unified temporal
+baseline where frames from Card A and Card B can be evaluated together,
+regardless of their native frame rates or clock divergence.</p>
+<h3 id="the-fixed-rate-render-loop">The Fixed-Rate Render Loop</h3>
+<p>The OBS rendering pipeline runs on an independent graphics thread
+tied strictly to the user’s target output framerate (for example,
+exactly every 16.66 milliseconds for a 60 FPS canvas).</p>
+<p>During each render tick, the compositing engine queries the frame
+buffer of each capture card:</p>
+<ul>
+<li><strong>Frame Selection:</strong> OBS inspects the timestamps in the
+buffer and selects the frame whose timestamp is closest to, but does not
+exceed, the current render tick timestamp.</li>
+<li><strong>Frame Dropping:</strong> If a capture card delivers frames
+faster than the OBS render rate, any intermediate frames that have been
+superseded by a newer valid frame are discarded to prevent input lag
+from accumulating.</li>
+<li><strong>Frame Duplication:</strong> If a card experiences a latency
+spike or operates at a lower refresh rate, the rendering engine holds
+and re-renders the most recent valid frame, preventing blank spaces or
+tearing.</li>
+</ul>
+<p>By evaluating every PCIe source against the master timeline during
+each discrete graphics tick, OBS Studio guarantees that all inputs are
+displayed in their correct chronological sequence on the final
+composited canvas.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

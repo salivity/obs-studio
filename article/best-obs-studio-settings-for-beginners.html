@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Best OBS Studio Settings for Beginners - obs-studio</title>
+    <meta name="description" content="Getting started with OBS Studio can feel overwhelming due to its numerous configuration options. This guide provides the best general settings for beginners to achieve high-quality video and audio output for streaming or recording without overloading the">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/best-obs-studio-settings-for-beginners">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Best OBS Studio Settings for Beginners - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/best-obs-studio-settings-for-beginners" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Getting started with OBS Studio can feel overwhelming due to its numerous configuration options. This guide provides the best general settings for beginners to achieve high-quality video and audio output for streaming or recording without overloading the" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="best-obs-studio-settings-for-beginners">Best OBS Studio Settings
+for Beginners</h1>
+<p>Getting started with OBS Studio can feel overwhelming due to its
+numerous configuration options. This guide provides the best general
+settings for beginners to achieve high-quality video and audio output
+for streaming or recording without overloading their system. We will
+cover the essential configurations for video resolution, frame rates,
+audio setups, and output encoders to ensure a smooth setup process.</p>
+<h2 id="1-video-settings">1. Video Settings</h2>
+<p>Before configuring your stream or recording quality, you must set up
+your canvas and output resolutions. Go to <strong>Settings &gt;
+Video</strong> to adjust these options:</p>
+<ul>
+<li><strong>Base (Canvas) Resolution:</strong> Set this to your
+monitor's native resolution (typically <strong>1920x1080</strong>). This
+represents your working space.</li>
+<li><strong>Output (Scaled) Resolution:</strong> This is the resolution
+of the final video file or stream. Beginners should set this to
+<strong>1280x720</strong> for a smooth performance on mid-range
+computers, or <strong>1920x1080</strong> if you have a strong graphics
+card and high-speed internet.</li>
+<li><strong>Downscale Filter:</strong> Select <strong>Bicubic (Sharpened
+scaling, 16 samples)</strong>. It offers a great balance between video
+quality and computer performance.</li>
+<li><strong>Common FPS Values:</strong> Select <strong>30 FPS</strong>
+if you are streaming fast-paced games on a lower-end PC, or <strong>60
+FPS</strong> for smooth movement if your hardware can handle it.</li>
+</ul>
+<h2 id="2-output-settings-streaming--recording">2. Output Settings
+(Streaming &amp; Recording)</h2>
+<p>Navigate to <strong>Settings &gt; Output</strong>. To keep things
+simple, change the <strong>Output Mode</strong> at the top from
+<em>Advanced</em> to <strong>Simple</strong>.</p>
+<ul>
+<li><strong>Video Bitrate:</strong> For 1080p at 60 FPS, set this
+between <strong>4,500 and 6,000 Kbps</strong>. For 720p at 60 FPS, a
+bitrate of <strong>3,500 to 4,500 Kbps</strong> is ideal. Ensure your
+upload speed is at least 20% higher than your chosen bitrate.</li>
+<li><strong>Encoder:</strong> Select a hardware encoder if available.
+Look for <strong>NVIDIA NVENC</strong> (for Nvidia cards), <strong>AMD
+AMF</strong> (for AMD cards), or <strong>Intel QuickSync</strong>. If
+none are available, use <strong>x264</strong> (which uses your
+CPU).</li>
+<li><strong>Audio Bitrate:</strong> Set this to <strong>160
+Kbps</strong> for high-quality, clear sound.</li>
+<li><strong>Recording Path:</strong> Choose a folder on your computer
+with plenty of storage space to save your recorded videos.</li>
+<li><strong>Recording Quality:</strong> Select <strong>High Quality,
+Medium File Size</strong>.</li>
+<li><strong>Recording Format:</strong> Choose <strong>MKV</strong>. If
+OBS crashes, an MKV file will save your progress, whereas an MP4 file
+will be corrupted. You can easily convert MKV to MP4 inside OBS by going
+to <em>File &gt; Remux Recordings</em>.</li>
+</ul>
+<h2 id="3-audio-settings">3. Audio Settings</h2>
+<p>Go to <strong>Settings &gt; Audio</strong> to configure your sound
+devices.</p>
+<ul>
+<li><strong>Sample Rate:</strong> Set this to <strong>48 kHz</strong> to
+match most modern hardware and prevent audio desynchronization.</li>
+<li><strong>Channels:</strong> Set this to <strong>Stereo</strong>.</li>
+<li><strong>Desktop Audio:</strong> Select <strong>Default</strong> or
+your primary headphones/speakers to capture game and computer
+sounds.</li>
+<li><strong>Mic/Auxiliary Audio:</strong> Select your specific USB or
+XLR microphone from the dropdown menu to capture your voice.</li>
+</ul>
+<h2 id="4-run-the-auto-configuration-wizard">4. Run the
+Auto-Configuration Wizard</h2>
+<p>If you want OBS to automatically analyze your system and apply the
+optimal settings for your specific hardware, you can use the built-in
+wizard. Go to <strong>Tools &gt; Auto-Configuration Wizard</strong> in
+the top menu, select whether you want to optimize for streaming or
+recording, and let the software apply the recommended settings.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Studio Hooks Raw Audio for STT Plugins - obs-studio</title>
+    <meta name="description" content="OBS Studio processes microphone input through its core media subsystem (libobs), allowing external plugins to intercept raw, uncompressed Pulse-Code Modulation (PCM) audio via specialized internal hooks. By attaching a source audio capture callback or an">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-studio-hooks-raw-audio-for-stt-plugins">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Studio Hooks Raw Audio for STT Plugins - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-studio-hooks-raw-audio-for-stt-plugins" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio processes microphone input through its core media subsystem (libobs), allowing external plugins to intercept raw, uncompressed Pulse-Code Modulation (PCM) audio via specialized internal hooks. By attaching a source audio capture callback or an" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-studio-hooks-raw-audio-for-stt-plugins">How OBS Studio
+Hooks Raw Audio for STT Plugins</h1>
+<p>OBS Studio processes microphone input through its core media
+subsystem (<code>libobs</code>), allowing external plugins to intercept
+raw, uncompressed Pulse-Code Modulation (PCM) audio via specialized
+internal hooks. By attaching a source audio capture callback or an audio
+filter hook, a Speech-to-Text (STT) plugin gains direct access to audio
+buffers as they are captured from system drivers. These buffers are
+extracted on a dedicated real-time audio thread, downmixed or resampled
+to the STT engine's expected format (typically 16 kHz mono PCM), and
+passed safely across thread boundaries via circular FIFO buffers for
+real-time transcription.</p>
+<h3 id="the-audio-pipeline-and-libobs-data-structures">The Audio
+Pipeline and <code>libobs</code> Data Structures</h3>
+<p>When a microphone source is active in OBS Studio, native audio
+subsystems (such as WASAPI on Windows, CoreAudio on macOS, or
+PipeWire/ALSA on Linux) feed raw audio frames into the source's internal
+buffer. Within <code>libobs</code>, this audio data is structured as
+<code>struct audio_data</code>.</p>
+<p>The <code>audio_data</code> struct exposes key properties required
+for processing:</p>
+<ul>
+<li><code>data[MAX_AV_PLANES]</code>: Pointers to the raw audio sample
+arrays. OBS typically works with 32-bit floating-point planar audio
+(IEEE float).</li>
+<li><code>frames</code>: The number of audio frames present in the
+current chunk (commonly in increments corresponding to several
+milliseconds of audio, depending on the sample rate).</li>
+<li><code>timestamp</code>: The presentation timestamp (PTS) in
+nanoseconds, which assists in synchronizing transcriptions with live
+video frames.</li>
+</ul>
+<h3
+id="interception-methods-source-callbacks-vs-audio-filters">Interception
+Methods: Source Callbacks vs. Audio Filters</h3>
+<p>STT plugins generally employ one of two hooking strategies to acquire
+these chunks:</p>
+<h4
+id="1-audio-capture-callbacks-obs_source_add_audio_capture_callback">1.
+Audio Capture Callbacks
+(<code>obs_source_add_audio_capture_callback</code>)</h4>
+<p>Plugins can globally monitor an existing audio source by registering
+a capture callback using:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> obs_source_add_audio_capture_callback<span class="op">(</span>obs_source_t <span class="op">*</span>source<span class="op">,</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                                           obs_source_audio_capture_t callback<span class="op">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                                           <span class="dt">void</span> <span class="op">*</span>param<span class="op">);</span></span></code></pre></div>
+<p>When registered, OBS automatically calls this function whenever the
+target source receives a new chunk of raw audio. This hook operates
+non-destructively without modifying the audio being sent to the master
+output or stream.</p>
+<h4 id="2-audio-filter-hooks-filter_audio">2. Audio Filter Hooks
+(<code>filter_audio</code>)</h4>
+<p>Alternatively, a plugin can register itself as an audio filter
+(<code>OBS_SOURCE_TYPE_FILTER</code> with capability flag
+<code>OBS_SOURCE_AUDIO</code>). This implementation defines the
+<code>filter_audio</code> member of the <code>obs_source_info</code>
+struct:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> <span class="kw">struct</span> audio_data <span class="op">*</span>stt_filter_audio<span class="op">(</span><span class="dt">void</span> <span class="op">*</span>data<span class="op">,</span> <span class="kw">struct</span> audio_data <span class="op">*</span>audio<span class="op">)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Access audio-&gt;data here</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> audio<span class="op">;</span> <span class="co">// Pass audio downstream unaltered</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>This method allows users to attach the STT functionality specifically
+to individual input devices inside the OBS Audio Mixer UI.</p>
+<h3 id="format-normalization-and-resampling">Format Normalization and
+Resampling</h3>
+<p>Most STT engines (such as Whisper, Vosk, or cloud-based speech APIs)
+do not accept the 32-bit float, multi-channel planar format at 44.1 kHz
+or 48 kHz that OBS defaults to natively. They typically require 16 kHz
+or 24 kHz mono signed 16-bit integer (S16LE) or 32-bit float PCM
+data.</p>
+<p>To bridge this gap inside the hook:</p>
+<ol type="1">
+<li><strong>Channel Downmixing</strong>: Planar stereo/surround channels
+are averaged into a single mono channel.</li>
+<li><strong>Sample Conversion</strong>: 32-bit float values (normalized
+between <code>-1.0</code> and <code>1.0</code>) are converted to 16-bit
+signed integers (<code>-32768</code> to <code>32767</code>), if required
+by the target engine.</li>
+<li><strong>Resampling</strong>: The plugin initializes OBS’s internal
+resampler API (<code>audio_resampler_t</code>) or a third-party
+resampler (such as SpeexDSP or libswresample) to downsample the frame
+rate to the required target rate.</li>
+</ol>
+<h3 id="non-blocking-audio-dispatch-via-ring-buffers">Non-Blocking Audio
+Dispatch via Ring Buffers</h3>
+<p>The execution context of <code>obs_source_audio_capture_t</code> and
+<code>filter_audio</code> runs directly on the high-priority real-time
+audio thread of OBS. Executing blocking network requests or
+CPU-intensive inference directly within the hook will stall the audio
+pipeline, causing audio dropouts, stream stuttering, and buffer
+underruns.</p>
+<p>To prevent audio pipeline stalls, plugins transfer audio chunks using
+an asynchronous, lock-free ring buffer (circular buffer):</p>
+<ol type="1">
+<li><strong>Producer (Audio Hook)</strong>: The hook copies normalized
+raw PCM bytes into a shared ring buffer memory segment.</li>
+<li><strong>Signaling</strong>: The hook triggers a condition variable
+or lightweight semaphore to notify a background worker thread.</li>
+<li><strong>Consumer (STT Worker Thread)</strong>: A separate processing
+thread reads contiguous chunks (often aggregated into 100ms–1000ms
+segments, depending on whether streaming or batch transcription is used)
+from the ring buffer and feeds them directly into the speech-to-text
+inference runtime.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

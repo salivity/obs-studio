@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Route Independent Audio Mixes in OBS Studio - obs-studio</title>
+    <meta name="description" content="OBS Studio manages independent audio feeds for broadcast streams, floor monitors, and talent earpieces by combining multi-track audio routing, the native audio monitoring engine, and specialized audio routing plugins or hardware outputs. While native OBS">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-route-independent-audio-mixes-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Route Independent Audio Mixes in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-route-independent-audio-mixes-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio manages independent audio feeds for broadcast streams, floor monitors, and talent earpieces by combining multi-track audio routing, the native audio monitoring engine, and specialized audio routing plugins or hardware outputs. While native OBS" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-route-independent-audio-mixes-in-obs-studio">How to Route
+Independent Audio Mixes in OBS Studio</h1>
+<p>OBS Studio manages independent audio feeds for broadcast streams,
+floor monitors, and talent earpieces by combining multi-track audio
+routing, the native audio monitoring engine, and specialized audio
+routing plugins or hardware outputs. While native OBS offers a primary
+mix for the stream and a secondary mix for monitoring, achieving three
+or more truly distinct mixes requires assigning specific audio tracks to
+dedicated hardware outputs or using plugins to tap into individual
+channel buses.</p>
+<h3 id="native-track-routing-vs-audio-monitoring">Native Track Routing
+vs. Audio Monitoring</h3>
+<p>OBS Studio natively divides audio into six internal tracks and a
+dedicated Monitoring Device:</p>
+<ul>
+<li><strong>Broadcast Mix (Track 1):</strong> In <em>Settings &gt;
+Output</em>, the live stream encoder is mapped to a specific track
+(typically Track 1). In <em>Edit &gt; Advanced Audio Properties</em>,
+any source checked under Track 1 will be heard by the internet
+audience.</li>
+<li><strong>The Native Monitoring Bus:</strong> In <em>Settings &gt;
+Audio</em>, you designate an "Audio Monitoring Device." This sends sound
+to a selected hardware output (such as a physical headphone jack, an
+auxiliary output, or a virtual cable). In <em>Advanced Audio
+Properties</em>, setting a source to "Monitor and Output" sends it to
+both the stream and this monitoring device, while "Monitor Only (mute
+output)" routes it strictly to the monitor output.</li>
+</ul>
+<p>Because native OBS provides only one global monitoring device, it can
+natively split audio into two distinct destinations (e.g., Stream and
+Floor Monitors). Creating a third independent mix for talent earpieces
+requires additional routing methods.</p>
+<h3 id="creating-three-distinct-mixes">Creating Three Distinct
+Mixes</h3>
+<p>To deliver customized audio to the stream, floor monitors, and talent
+earpieces simultaneously, standard production workflows employ the
+following techniques:</p>
+<h4 id="1-the-broadcast-mix">1. The Broadcast Mix</h4>
+<p>Configure your live stream to use Track 1. In <em>Advanced Audio
+Properties</em>, check Track 1 for every audio element the remote
+audience should hear, such as main microphones, game audio, media
+sources, and alert sounds.</p>
+<h4 id="2-floor-monitors-native-monitoring-bus">2. Floor Monitors
+(Native Monitoring Bus)</h4>
+<p>Route the native monitoring bus to the floor monitor speakers:</p>
+<ul>
+<li>Go to <strong>Settings &gt; Audio</strong> and set the <strong>Audio
+Monitoring Device</strong> to the physical audio output connected to
+your floor monitors.</li>
+<li>In <strong>Advanced Audio Properties</strong>, set audience-facing
+mics and media sources to <strong>Monitor and Output</strong>.</li>
+<li>Ensure that microphones near the floor monitors are set to
+<strong>Monitor Off</strong> to prevent feedback loops, keeping their
+signal exclusive to the broadcast.</li>
+</ul>
+<h4 id="3-talent-earpieces-ifb-routing-via-plugin-or-virtual-cable">3.
+Talent Earpieces (IFB Routing via Plugin or Virtual Cable)</h4>
+<p>Talent earpieces typically require an IFB (Interruptible Foldback)
+feed containing production cues, intercoms, and program audio, while
+excluding the talent's own voice to avoid distracting latency. Because
+the primary monitoring bus is already used by the floor monitors, use
+one of the following methods for the earpieces:</p>
+<ul>
+<li><strong>Audio Monitor Filter Plugin:</strong> Install the popular
+third-party "Audio Monitor" filter. This filter allows you to attach an
+independent audio output directly to any source or scene. Add this
+filter to intercoms, program audio, and director mics, assigning the
+filter's target device directly to the talent's wireless transmitter or
+headphone interface.</li>
+<li><strong>Multi-Track ASIO / Auxiliary Outputs:</strong> When using an
+audio interface with multiple physical outputs, route individual OBS
+tracks directly to your hardware. By sending different track
+combinations to physical Outputs 1-2 (Floor) and Outputs 3-4 (Talent),
+you maintain independent volume and source balances.</li>
+<li><strong>Virtual Audio Cables:</strong> Map specific sources or
+scenes to a virtual cable (such as VB-Cable), which in turn feeds
+external routing software or an auxiliary headphone mix on your sound
+card.</li>
+</ul>
+<h3 id="fine-tuning-balances-in-advanced-audio-properties">Fine-Tuning
+Balances in Advanced Audio Properties</h3>
+<p>Once the physical and virtual routes are established, finalize the
+setup in <strong>Advanced Audio Properties</strong>:</p>
+<ul>
+<li><strong>Volume Sliders:</strong> Set the relative levels of each
+source. Filters applied directly to a source (like gain, compression, or
+the Audio Monitor filter) affect downstream routing accordingly.</li>
+<li><strong>Sync Offset:</strong> If wireless earpieces or remote video
+streams introduce latency, adjust the sync offset per device to ensure
+floor monitors and in-ear feeds remain phase-coherent with the live
+visual performance.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

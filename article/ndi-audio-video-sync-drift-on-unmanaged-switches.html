@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NDI Audio Video Sync Drift on Unmanaged Switches - obs-studio</title>
+    <meta name="description" content="Audio and video synchronization drift when receiving remote NDI streams in OBS Studio across unmanaged network switches is typically caused by a combination of missing traffic prioritization (QoS), hardware clock divergence, packet jitter, and software b">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/ndi-audio-video-sync-drift-on-unmanaged-switches">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="NDI Audio Video Sync Drift on Unmanaged Switches - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/ndi-audio-video-sync-drift-on-unmanaged-switches" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Audio and video synchronization drift when receiving remote NDI streams in OBS Studio across unmanaged network switches is typically caused by a combination of missing traffic prioritization (QoS), hardware clock divergence, packet jitter, and software b" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="ndi-audio-video-sync-drift-on-unmanaged-switches">NDI Audio
+Video Sync Drift on Unmanaged Switches</h1>
+<p>Audio and video synchronization drift when receiving remote NDI
+streams in OBS Studio across unmanaged network switches is typically
+caused by a combination of missing traffic prioritization (QoS),
+hardware clock divergence, packet jitter, and software buffering
+behaviors. Without managed network controls to handle high-bandwidth NDI
+data, variable transmission delays affect audio and video packets
+differently. Over time, these micro-delays accumulate in OBS Studio’s
+rendering queue, causing the audio to gradually slip out of sync with
+the video feed.</p>
+<h2 id="lack-of-quality-of-service-qos-and-packet-contention">Lack of
+Quality of Service (QoS) and Packet Contention</h2>
+<p>Unmanaged switches treat all network traffic identically using simple
+FIFO (First-In, First-Out) queuing. NDI streams split audio and video
+into separate data packets: high-bandwidth, bursty video frames and
+lightweight, consistent audio chunks.</p>
+<p>When network traffic peaks or competes with background data:</p>
+<ul>
+<li>Unmanaged switches cannot prioritize real-time media packets over
+general traffic.</li>
+<li>Video packets, which are substantially larger, frequently get queued
+or delayed in internal switch buffers (bufferbloat).</li>
+<li>Audio packets often pass through with less buffering delay due to
+their small footprint.</li>
+<li>The uneven delivery of audio versus video creates timing mismatches
+before the stream ever reaches OBS Studio.</li>
+</ul>
+<h2 id="clock-skew-between-endpoints">Clock Skew Between Endpoints</h2>
+<p>Every digital device relies on an internal hardware clock to measure
+time and frame rates. Because remote senders and the local OBS receiving
+machine operate on distinct, unsynchronized internal clocks:</p>
+<ul>
+<li>Even a minute clock difference (e.g., a few parts per million)
+causes one system to run slightly faster or slower than the other.</li>
+<li>In professional broadcast networks, Precision Time Protocol (PTP) or
+Network Time Protocol (NTP) synchronizes these clocks over managed
+switches.</li>
+<li>Unmanaged switches do not support the precision packet-timing
+mechanisms required for strict hardware clock synchronization, making
+clock drift inevitable during extended streaming sessions.</li>
+</ul>
+<h2 id="network-jitter-and-packet-loss-recovery">Network Jitter and
+Packet Loss Recovery</h2>
+<p>NDI utilizes TCP or UDP (via NDI|HX or RUDP) to transmit streams
+across local networks. On unmanaged switches lacking Flow Control (IEEE
+802.3x):</p>
+<ul>
+<li><strong>Packet Drops:</strong> Transient buffer overruns lead to
+dropped packets.</li>
+<li><strong>Retransmission Delays:</strong> When TCP retransmits lost
+packets, it stalls the media pipeline. Audio and video handle this
+recovery differently; video decoders may skip or freeze frames, while
+audio streams may either mute or stretch to bridge the gap.</li>
+<li><strong>Variable Jitter:</strong> Inconsistent delivery intervals
+force the receiving software to constantly guess timestamps, degrading
+synchronization over time.</li>
+</ul>
+<h2 id="obs-studio-buffer-management-and-timestamp-handling">OBS Studio
+Buffer Management and Timestamp Handling</h2>
+<p>OBS Studio processes media using internal presentation timestamps
+(PTS). How it handles the NDI stream directly influences drift
+behavior:</p>
+<ul>
+<li><strong>Source vs. Network Timing:</strong> The NDI source in OBS
+can synchronize using the sender's embedded timestamps or the local
+system arrival clock. If set to internal timestamps over an unstable
+unmanaged link, OBS must dynamically stretch or drop frames to keep
+up.</li>
+<li><strong>Asymmetrical Buffering:</strong> If the OBS render thread or
+the video decoding thread experiences even minor frame-processing
+latency, OBS may drop video frames while continuing to process
+uninterrupted audio. If OBS does not actively discard corresponding
+audio samples to compensate, progressive audio lead occurs.</li>
+</ul>
+<h2 id="hardware-bottlenecks-on-the-receiver">Hardware Bottlenecks on
+the Receiver</h2>
+<p>Receiving and decoding multiple remote NDI streams places heavy
+demands on the host machine's Network Interface Card (NIC) and CPU/GPU
+decoding pipelines. Unmanaged switches often fail to handle bursty
+packet flows smoothly, offloading packet pacing to the receiver's NIC.
+If the NIC driver or CPU encounters interrupt latency:</p>
+<ul>
+<li>Video decoding threads fall behind the real-time presentation
+deadline.</li>
+<li>Audio processing—being computationally lighter—maintains real-time
+playback.</li>
+<li>The cumulative delay between the audio render queue and the video
+render queue manifests as permanent drift until the OBS scene or NDI
+source is manually refreshed.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

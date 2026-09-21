@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio UDP Multicast Packet Format Explained - obs-studio</title>
+    <meta name="description" content="When broadcasting video feeds via raw UDP multicast, OBS Studio encapsulates media streams using the MPEG-2 Transport Stream (MPEG-TS) format packed into UDP datagrams. This article breaks down the exact byte-level structure utilized during transmission,">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-udp-multicast-packet-format-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio UDP Multicast Packet Format Explained - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-udp-multicast-packet-format-explained" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When broadcasting video feeds via raw UDP multicast, OBS Studio encapsulates media streams using the MPEG-2 Transport Stream (MPEG-TS) format packed into UDP datagrams. This article breaks down the exact byte-level structure utilized during transmission," />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-udp-multicast-packet-format-explained">OBS Studio UDP
+Multicast Packet Format Explained</h1>
+<p>When broadcasting video feeds via raw UDP multicast, OBS Studio
+encapsulates media streams using the MPEG-2 Transport Stream (MPEG-TS)
+format packed into UDP datagrams. This article breaks down the exact
+byte-level structure utilized during transmission, including UDP frame
+aggregation, the standard 188-byte MPEG-TS container header, and how
+Packetized Elementary Streams (PES) carrying video and audio data are
+mapped within these packets.</p>
+<h3 id="network-layer-framing-and-aggregation">Network Layer Framing and
+Aggregation</h3>
+<p>OBS Studio utilizes FFmpeg libraries to output raw UDP streams. At
+the network level, sending individual transport packets would cause
+massive overhead and network inefficiency. To adhere to standard
+Ethernet Maximum Transmission Units (MTUs) of 1500 bytes, OBS Studio
+groups multiple TS packets into a single UDP datagram.</p>
+<ul>
+<li><strong>Ethernet MTU:</strong> 1500 bytes standard limit.</li>
+<li><strong>IP + UDP Headers:</strong> 28 bytes total (20-byte IPv4
+header + 8-byte UDP header).</li>
+<li><strong>Payload Capacity:</strong> 1472 bytes maximum.</li>
+<li><strong>Aggregation Count:</strong> OBS packs exactly <strong>7
+MPEG-TS packets</strong> per UDP datagram.</li>
+<li><strong>Total UDP Payload Size:</strong> <span
+class="math inline">\(7 \times 188\text{ bytes} = 1316\text{
+bytes}\)</span>.</li>
+</ul>
+<p>This leaves 156 bytes of headroom under the standard MTU, preventing
+IP-level packet fragmentation across standard network hardware.</p>
+<h3 id="the-188-byte-mpeg-ts-packet-structure">The 188-Byte MPEG-TS
+Packet Structure</h3>
+<p>Every UDP datagram payload consists of a sequential array of 188-byte
+MPEG-TS packets. Each 188-byte packet is composed of a 4-byte header
+followed by an optional adaptation field and the payload itself.</p>
+<h4 id="the-4-byte-mpeg-ts-header">The 4-Byte MPEG-TS Header</h4>
+<ol type="1">
+<li><strong>Sync Byte (8 bits):</strong> Always set to <code>0x47</code>
+(ASCII character 'G'). This acts as the frame delimiter.</li>
+<li><strong>Transport Error Indicator / TEI (1 bit):</strong> Set to
+<code>1</code> by demodulators/network receivers if an uncorrectable bit
+error exists; set to <code>0</code> by OBS.</li>
+<li><strong>Payload Unit Start Indicator / PUSI (1 bit):</strong> Set to
+<code>1</code> when the packet marks the beginning of a new PES packet
+or Program-Specific Information (PSI) table.</li>
+<li><strong>Transport Priority (1 bit):</strong> Indicates higher
+priority for the packet when set to <code>1</code>.</li>
+<li><strong>Packet Identifier / PID (13 bits):</strong> Uniquely
+identifies the stream content (e.g., Program Association Table, Program
+Map Table, video data, or audio data).</li>
+<li><strong>Transport Scrambling Control (2 bits):</strong> Set to
+<code>00</code> for unscrambled broadcast feeds.</li>
+<li><strong>Adaptation Field Control (2 bits):</strong> Indicates
+whether an adaptation field or payload is present:
+<ul>
+<li><code>01</code>: Payload only (184 bytes of data)</li>
+<li><code>10</code>: Adaptation field only (no payload)</li>
+<li><code>11</code>: Adaptation field followed by payload</li>
+</ul></li>
+<li><strong>Continuity Counter (4 bits):</strong> Increments from
+<code>0x0</code> to <code>0xF</code> for each consecutive packet sharing
+the same PID, enabling receivers to detect dropped UDP packets.</li>
+</ol>
+<h3 id="adaptation-field">Adaptation Field</h3>
+<p>When present, the adaptation field carries synchronization and clock
+metadata essential for decoding:</p>
+<ul>
+<li><strong>Adaptation Field Length (8 bits):</strong> Defines the size
+of the adaptation field.</li>
+<li><strong>Flags (8 bits):</strong> Signals the presence of optional
+metadata such as the Program Clock Reference (PCR), Discontinuity
+Indicator, or Random Access Indicator.</li>
+<li><strong>Program Clock Reference (PCR) (42 bits):</strong> Provides a
+27 MHz clock reference enabling the receiver to synchronize audio and
+video timestamps without drift.</li>
+<li><strong>Stuffing Bytes (<code>0xFF</code>):</strong> Used to pad the
+packet out to the mandatory 188-byte boundary when data does not fill
+the space.</li>
+</ul>
+<h3 id="program-specific-information-psi">Program-Specific Information
+(PSI)</h3>
+<p>To allow a multicast receiver to parse the feed, OBS Studio
+interleaves system metadata packets into the transmission:</p>
+<ul>
+<li><strong>Program Association Table (PAT):</strong> Transmitted on
+<strong>PID <code>0x0000</code></strong>. Contains the list of programs
+and maps program numbers to their corresponding Program Map Table
+PIDs.</li>
+<li><strong>Program Map Table (PMT):</strong> Transmitted on an assigned
+PID (commonly <code>0x1000</code> or assigned dynamically). Defines
+elementary stream types (e.g., <code>0x1B</code> for H.264/AVC,
+<code>0x24</code> for H.265/HEVC, <code>0x0F</code> for AAC) and maps
+them to specific audio and video PIDs.</li>
+</ul>
+<h3 id="pes-payload-video-and-audio-streams">PES Payload (Video and
+Audio Streams)</h3>
+<p>The actual media content (typically H.264/H.265 video and AAC audio)
+is fragmented into Packetized Elementary Stream (PES) packets:</p>
+<ol type="1">
+<li><strong>PES Header:</strong> Begins with the start code prefix
+<code>0x000001</code>, followed by the Stream ID (e.g.,
+<code>0xE0</code> for video, <code>0xC0</code> for audio), and PES
+packet length.</li>
+<li><strong>Timestamps:</strong> Contains the Presentation Time Stamp
+(PTS) and Decoding Time Stamp (DTS) to control frame display and decode
+sequences.</li>
+<li><strong>Data Chunks:</strong> The PES payload contains the raw video
+Network Abstraction Layer (NAL) units or raw audio frames, which are
+divided into consecutive 184-byte chunks across multiple MPEG-TS packets
+sharing the respective stream PID.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

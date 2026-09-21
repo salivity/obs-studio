@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Texture Bleeding on Cropped Transparent Edges - obs-studio</title>
+    <meta name="description" content="Texture bleeding along cropped edges of transparent images in OBS Studio is primarily caused by GPU texture filtering interpolating pixels beyond the intended crop boundaries. When a graphic is scaled, positioned on fractional pixel coordinates, or cropp">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-texture-bleeding-on-cropped-transparent-edges">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Texture Bleeding on Cropped Transparent Edges - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-texture-bleeding-on-cropped-transparent-edges" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Texture bleeding along cropped edges of transparent images in OBS Studio is primarily caused by GPU texture filtering interpolating pixels beyond the intended crop boundaries. When a graphic is scaled, positioned on fractional pixel coordinates, or cropp" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-texture-bleeding-on-cropped-transparent-edges">OBS Texture
+Bleeding on Cropped Transparent Edges</h1>
+<p>Texture bleeding along cropped edges of transparent images in OBS
+Studio is primarily caused by GPU texture filtering interpolating pixels
+beyond the intended crop boundaries. When a graphic is scaled,
+positioned on fractional pixel coordinates, or cropped using OBS's
+built-in transform tools, the graphics rendering pipeline samples
+neighboring pixels—including fully transparent pixels with hidden color
+data—resulting in visible outlines, halos, or artifacts along the sliced
+edges.</p>
+<h3 id="gpu-texture-filtering-and-interpolation">GPU Texture Filtering
+and Interpolation</h3>
+<p>OBS Studio relies on the GPU to render scenes in real time using
+standard rendering APIs like DirectX or OpenGL. When you resize, scale,
+or transform a source, the GPU applies texture filtering (such as
+Bilinear, Bicubic, or Lanczos) to smooth the image.</p>
+<p>Texture filtering works by sampling multiple adjacent texels (texture
+pixels) and calculating a weighted average to determine the color of a
+displayed pixel. When a transparent source is cropped using the Alt-crop
+method or the Transform menu, the underlying texture still exists in
+memory. If a crop boundary falls between texels, the sampling filter
+evaluates pixels just outside the crop boundary, blending edge pixels
+with neighboring data. This mathematical blending manifests as a faint
+line or "bleed" along the border.</p>
+<h3 id="straight-alpha-vs-premultiplied-alpha-artifacts">Straight Alpha
+vs. Premultiplied Alpha Artifacts</h3>
+<p>Transparent images, such as 32-bit PNGs, store color across four
+channels: Red, Green, Blue, and Alpha (transparency). Many image editing
+applications export transparent images using "straight alpha." In a
+straight alpha workflow, pixels with an alpha value of zero can still
+retain residual RGB color values (often solid black or solid white).</p>
+<p>When OBS samples across a cropped edge where visible pixels meet
+transparent pixels:</p>
+<ul>
+<li>The filtering algorithm interpolates both the alpha and the color
+values simultaneously.</li>
+<li>If the fully transparent pixels carry an uncleaned black or white
+RGB value, the sampler blends that color into the edge pixels before
+applying transparency.</li>
+<li>This results in a dark or light fringe along the edge, commonly
+mistaken for a rendering glitch rather than a mathematical color
+blend.</li>
+</ul>
+<h3 id="sub-pixel-positioning-and-canvas-scaling">Sub-Pixel Positioning
+and Canvas Scaling</h3>
+<p>OBS scenes operate on a coordinate plane where sources can
+accidentally be placed on fractional coordinates (sub-pixels). When a
+source's position or size is not snapped to a whole integer value (e.g.,
+an X-coordinate of 150.5 instead of 150), the GPU must resample the
+entire texture to align it with the display grid.</p>
+<p>Resampling an already cropped boundary across sub-pixel offsets
+forces edge pixels to be shared across screen pixels. This misalignment
+exaggerates texture bleeding, turning a 1-pixel boundary into a
+semi-transparent, blurred seam.</p>
+<h3 id="lack-of-texture-clamping-on-basic-crops">Lack of Texture
+Clamping on Basic Crops</h3>
+<p>When applying a crop using the standard transform properties, OBS
+does not automatically clamp the texture coordinates strictly to the
+cropped boundaries at the shader level. Without strict UV coordinate
+clamping or an explicit scissor test, hardware texture samplers fetch
+surrounding texels according to the active wrap and filter modes.
+Consequently, pixels that should visually cease to exist still influence
+the final edge appearance.</p>
+<h3 id="how-to-prevent-texture-bleeding">How to Prevent Texture
+Bleeding</h3>
+<ul>
+<li><strong>Snap to Whole Pixels:</strong> Right-click the source,
+select <strong>Transform</strong>, and ensure the position and size
+values are set to whole numbers without decimals.</li>
+<li><strong>Adjust the Scale Filter:</strong> Right-click the source, go
+to <strong>Scale Filtering</strong>, and test different algorithms.
+Setting the scale filter to <strong>Point</strong> eliminates filtering
+entirely by using nearest-neighbor sampling, removing edge bleeding at
+the cost of smooth scaling. <strong>Area</strong> filtering also
+provides cleaner edge preservation for downscaled sources.</li>
+<li><strong>Pre-Crop Assets:</strong> Crop the source image to its exact
+dimensions in an image editor prior to importing it into OBS Studio,
+ensuring the canvas borders match the actual graphic boundaries.</li>
+<li><strong>Clean Alpha Channels:</strong> Export images with
+premultiplied alpha or ensure transparent areas have clean, neutral RGB
+data to prevent contrasting color halos.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

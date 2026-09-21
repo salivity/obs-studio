@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix OBS Audio Cutting Out When Connecting VR Headset - obs-studio</title>
+    <meta name="description" content="When connecting a virtual reality (VR) headset to your PC, OBS Studio can suddenly lose all audio input and output. This conflict usually happens because Windows or your VR runtime software automatically redirects the system's default audio device to the">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/fix-obs-audio-cutting-out-when-connecting-vr-headset">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Fix OBS Audio Cutting Out When Connecting VR Headset - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/fix-obs-audio-cutting-out-when-connecting-vr-headset" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When connecting a virtual reality (VR) headset to your PC, OBS Studio can suddenly lose all audio input and output. This conflict usually happens because Windows or your VR runtime software automatically redirects the system's default audio device to the" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="fix-obs-audio-cutting-out-when-connecting-vr-headset">Fix OBS
+Audio Cutting Out When Connecting VR Headset</h1>
+<p>When connecting a virtual reality (VR) headset to your PC, OBS Studio
+can suddenly lose all audio input and output. This conflict usually
+happens because Windows or your VR runtime software automatically
+redirects the system's default audio device to the headset, causing OBS
+to lose its active audio streams. This guide provides a direct,
+step-by-step solution to resolve this conflict by adjusting Windows
+sound settings, configuring VR software behavior, matching audio sample
+rates, and locking your audio sources in OBS Studio.</p>
+<h2
+id="step-1-change-obs-audio-settings-from-default-to-specific-devices">Step
+1: Change OBS Audio Settings from "Default" to Specific Devices</h2>
+<p>By default, OBS Studio is set to capture the "Default" Windows
+playback device. When you connect a VR headset, Windows changes the
+default device, causing OBS to lose the audio track.</p>
+<ol type="1">
+<li>Open <strong>OBS Studio</strong>.</li>
+<li>Click on <strong>Settings</strong> in the bottom-right corner (or go
+to <strong>File</strong> &gt; <strong>Settings</strong>).</li>
+<li>Select the <strong>Audio</strong> tab on the left.</li>
+<li>Under the <strong>Global Audio Devices</strong> section, locate
+<strong>Desktop Audio</strong>.</li>
+<li>Change the dropdown menu from <strong>Default</strong> to your
+actual physical speakers or headphones (e.g., <em>Realtek High
+Definition Audio</em>).</li>
+<li>Locate your <strong>Mic/Auxiliary Audio</strong> and change it from
+<strong>Default</strong> to your specific physical microphone.</li>
+<li>Click <strong>Apply</strong> and <strong>OK</strong>.</li>
+</ol>
+<p>By selecting specific hardware devices instead of "Default," OBS will
+continue to capture your desktop and microphone audio even if Windows
+shifts its default output to the VR headset.</p>
+<h2 id="step-2-disable-automatic-audio-switching-in-vr-software">Step 2:
+Disable Automatic Audio Switching in VR Software</h2>
+<p>VR platforms like SteamVR and Meta Quest Link are designed to hijack
+your PC’s audio as soon as the headset connects. You can disable this
+behavior in their respective settings.</p>
+<h3 id="for-steamvr">For SteamVR:</h3>
+<ol type="1">
+<li>Launch <strong>SteamVR</strong> with your headset connected.</li>
+<li>Open the SteamVR menu on your desktop and select
+<strong>Settings</strong>.</li>
+<li>Go to the <strong>Audio</strong> tab.</li>
+<li>Set <strong>Audio output device when SteamVR is active</strong> to
+your regular desktop audio device instead of your headset, or choose to
+mirror the audio so it plays through both devices simultaneously.</li>
+</ol>
+<h3 id="for-meta-quest-link-oculus">For Meta Quest Link (Oculus):</h3>
+<ol type="1">
+<li>Open the <strong>Oculus Desktop App</strong> on your PC.</li>
+<li>Click on <strong>Devices</strong> in the left sidebar and select
+your headset.</li>
+<li>Toggle off <strong>Hear VR Audio from Computer</strong> and
+<strong>Hear Computer Audio in VR</strong> if you prefer to manage the
+routing manually, or ensure the virtual audio device is not overriding
+your primary Windows device.</li>
+</ol>
+<h2 id="step-3-match-audio-sample-rates">Step 3: Match Audio Sample
+Rates</h2>
+<p>If OBS and your VR headset are running at different sample rates
+(e.g., one at 44.1 kHz and the other at 48 kHz), the audio subsystem can
+crash when the headset initializes, resulting in total silence.</p>
+<ol type="1">
+<li>Right-click the speaker icon in your Windows system tray and select
+<strong>Sound settings</strong> (or open the <strong>Control
+Panel</strong> and go to <strong>Sound</strong>).</li>
+<li>Click on <strong>More sound settings</strong> to open the legacy
+Sound Control Panel.</li>
+<li>Under the <strong>Playback</strong> tab, double-click your primary
+desktop audio device.</li>
+<li>Go to the <strong>Advanced</strong> tab and note the sample rate
+under <strong>Default Format</strong> (e.g., <em>24 bit, 48000
+Hz</em>).</li>
+<li>Repeat this process for your VR headset's audio device, ensuring it
+is set to the same sample rate (ideally <strong>48000 Hz / 48
+kHz</strong>).</li>
+<li>Open <strong>OBS Studio</strong>, go to <strong>Settings</strong>
+&gt; <strong>Audio</strong>, and ensure the <strong>Sample Rate</strong>
+at the top matches this same value (48 kHz is highly recommended for VR
+streaming).</li>
+<li>Restart your PC to apply the changes.</li>
+</ol>
+<h2 id="step-4-use-application-audio-capture-beta-in-obs">Step 4: Use
+Application Audio Capture (BETA) in OBS</h2>
+<p>If you only want to capture the audio of a specific game and avoid
+system-wide routing issues altogether, use OBS Studio's dedicated
+application audio capture source.</p>
+<ol type="1">
+<li>In OBS, go to your active scene and click the <strong>+
+(Add)</strong> button under the <strong>Sources</strong> dock.</li>
+<li>Select <strong>Application Audio Capture (BETA)</strong>.</li>
+<li>Name the source and click <strong>OK</strong>.</li>
+<li>In the properties window, select the executable file of the VR game
+you want to capture from the <strong>Window</strong> dropdown menu.</li>
+<li>Click <strong>OK</strong>.</li>
+</ol>
+<p>This captures the game's audio directly from the application process,
+completely bypassing Windows default device switches.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

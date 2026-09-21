@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio NDI Tally Light Signaling Explained - obs-studio</title>
+    <meta name="description" content="OBS Studio uses Network Device Interface (NDI) integration to automate tally light signaling, alerting on-screen talent and camera operators when a video feed is live or in preview. By transmitting real-time metadata back across the local network to conn">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-ndi-tally-light-signaling-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio NDI Tally Light Signaling Explained - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-ndi-tally-light-signaling-explained" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio uses Network Device Interface (NDI) integration to automate tally light signaling, alerting on-screen talent and camera operators when a video feed is live or in preview. By transmitting real-time metadata back across the local network to conn" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-ndi-tally-light-signaling-explained">OBS Studio NDI
+Tally Light Signaling Explained</h1>
+<p>OBS Studio uses Network Device Interface (NDI) integration to
+automate tally light signaling, alerting on-screen talent and camera
+operators when a video feed is live or in preview. By transmitting
+real-time metadata back across the local network to connected
+NDI-enabled devices, OBS Studio triggers hardware tally lights—typically
+turning them red for Program (live) or green for Preview (on-deck). This
+article breaks down how OBS Studio generates these signals, the network
+mechanics involved, and the key configurations required to maintain an
+accurate tally system.</p>
+<h3 id="the-role-of-the-obs-ndi-plugin">The Role of the OBS-NDI
+Plugin</h3>
+<p>OBS Studio does not support NDI natively; it relies on third-party
+plugins, most notably <code>obs-ndi</code>, which integrates the
+official NDI Software Development Kit (SDK). When you add an NDI source
+(such as a PTZ camera, a mobile device running an NDI camera app, or a
+hardware converter) to an OBS scene, the plugin opens a two-way
+communication channel across your local area network (LAN).</p>
+<h3 id="bidirectional-metadata-communication">Bidirectional Metadata
+Communication</h3>
+<p>While video and audio stream downstream from the camera to OBS
+Studio, NDI is inherently bidirectional. The NDI SDK continuously sends
+lightweight metadata packets upstream from OBS Studio back to the
+transmitting device.</p>
+<p>Tally information is packaged within this metadata stream as simple
+state flags:</p>
+<ul>
+<li><strong>Program State (Live):</strong> When a source is visible in
+the active Program output, OBS sends a metadata flag instructing the
+device's tally system to illuminate red.</li>
+<li><strong>Preview State (Standby):</strong> When a source is loaded
+into Preview (via Studio Mode) but is not yet live, the metadata
+instructs the device to illuminate green.</li>
+<li><strong>Inactive State:</strong> If a source is neither in Program
+nor Preview, the tally metadata tells the device to turn the indicator
+off.</li>
+</ul>
+<p>Because NDI operates over standard IP networks using TCP and UDP,
+these state changes transmit with negligible latency, ensuring the tally
+indicator updates simultaneously with scene transitions in OBS.</p>
+<h3 id="the-importance-of-studio-mode">The Importance of Studio
+Mode</h3>
+<p>For tally signaling to function with both Preview and Program
+indicators, OBS Studio must be operating in <strong>Studio
+Mode</strong>.</p>
+<p>In standard mode, OBS Studio only features a single output monitor.
+In this state, any active scene is automatically live, meaning tally
+lights will only ever toggle between off and red (Program). Enabling
+Studio Mode creates a dual-canvas workflow, allowing the
+<code>obs-ndi</code> plugin to differentiate between a camera waiting in
+queue (green tally) and a camera actively broadcasting to viewers or
+recordings (red tally).</p>
+<h3 id="network-and-device-requirements">Network and Device
+Requirements</h3>
+<p>For OBS tally signals to successfully reach talent-facing
+devices:</p>
+<ul>
+<li><strong>Bidirectional Network Traffic:</strong> Firewalls on the OBS
+host machine must allow both incoming video streams and outgoing tally
+metadata packets across standard NDI ports (typically beginning at port
+5960).</li>
+<li><strong>Hardware Support:</strong> The physical camera or NDI
+converter must have built-in tally LEDs or tally output ports configured
+to interpret standard NDI tally commands.</li>
+<li><strong>Scene Visibility:</strong> OBS Studio triggers tally based
+on visibility. If an NDI source is inside an active scene but hidden via
+the eye icon in the Sources list, OBS reports the source as inactive,
+keeping the tally light off.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Studio Captures X11 Desktop Regions - obs-studio</title>
+    <meta name="description" content="This article examines how OBS Studio interacts with the X11 composite manager to capture desktop regions on Linux systems. When desktop composition is active, window rendering is redirected to off-screen buffers before being drawn to the screen, fundamen">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-studio-captures-x-11-desktop-regions">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Studio Captures X11 Desktop Regions - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-studio-captures-x-11-desktop-regions" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines how OBS Studio interacts with the X11 composite manager to capture desktop regions on Linux systems. When desktop composition is active, window rendering is redirected to off-screen buffers before being drawn to the screen, fundamen" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-studio-captures-x11-desktop-regions">How OBS Studio
+Captures X11 Desktop Regions</h1>
+<p>This article examines how OBS Studio interacts with the X11 composite
+manager to capture desktop regions on Linux systems. When desktop
+composition is active, window rendering is redirected to off-screen
+buffers before being drawn to the screen, fundamentally altering how
+desktop images are exposed. OBS Studio navigates this environment by
+interfacing with core X11 extensions—primarily XComposite, MIT-SHM, and
+the Composite Overlay Window—to acquire, read, and process display
+pixels reliably without causing visual tearing or interface
+corruption.</p>
+<h3 id="the-role-of-the-x11-composite-manager">The Role of the X11
+Composite Manager</h3>
+<p>In a traditional, uncomposited X11 environment, all client
+applications draw directly to the shared front buffer (the root window).
+Overlapping windows clip each other, and capturing a desktop region
+requires reading directly from the root window's framebuffer.</p>
+<p>When a composite manager (such as Picom, Mutter, or KWin) is active,
+it claims ownership of screen redirection using the
+<strong>XComposite</strong> extension. The X server redirects every
+top-level window's drawing calls into individual off-screen pixmaps
+stored in video memory (VRAM). The composite manager then reads these
+independent pixmaps, applies visual effects (like shadows, transparency,
+and transformations), and draws the final composed desktop onto either
+the root window or a specialized hardware-level surface called the
+<strong>Composite Overlay Window (COW)</strong>.</p>
+<h3 id="how-obs-studio-accesses-the-composed-scene">How OBS Studio
+Accesses the Composed Scene</h3>
+<p>When you configure OBS Studio to capture a desktop display or a
+specific region on an X11 desktop, it primarily relies on the
+<strong>XSHM (MIT Shared Memory Extension)</strong> capture plugin
+(<code>linux-capture</code>). The interaction unfolds through specific
+mechanisms:</p>
+<ol type="1">
+<li><strong>Targeting the Framebuffer:</strong> Because the composite
+manager draws the unified desktop image onto the root window or the
+Composite Overlay Window, OBS Studio targets this top-level drawable to
+capture multiple overlapping windows simultaneously.</li>
+<li><strong>Buffer Allocation with MIT-SHM:</strong> Rather than
+transferring large chunks of pixel data across the standard X11 network
+socket protocol—which would cause heavy CPU and I/O bottlenecks—OBS
+Studio allocates a shared memory segment accessible by both the X server
+and the OBS process using the <code>XShmCreateImage</code> API.</li>
+<li><strong>Reading the Region:</strong> To capture a designated
+bounding box, OBS issues <code>XShmGetImage</code>. The X server copies
+the requested rectangular pixel coordinates from the composite manager’s
+composed target buffer directly into the shared memory segment.</li>
+<li><strong>Uploading to the GPU Canvas:</strong> Once the raw pixels
+reside in system memory, OBS Studio uploads the frame to its rendering
+subsystem (typically using OpenGL via GLX or EGL) to be scaled,
+composited into the OBS canvas, and encoded.</li>
+</ol>
+<h3 id="window-specific-capture-vs-region-capture">Window-Specific
+Capture vs. Region Capture</h3>
+<p>While desktop region capture relies on reading back the composited
+root surface, capturing an individual, isolated window involves a
+different interaction with the composite manager.</p>
+<p>Through the XComposite extension, OBS Studio can query the X server
+directly for the named window’s off-screen pixmap
+(<code>XCompositeNameWindowPixmap</code>). By using the
+<code>glXBindTexImageEXT</code> extension, OBS can bind that off-screen
+pixmap directly as an OpenGL texture. This bypasses the composite
+manager's rendering pass entirely, enabling zero-copy,
+hardware-accelerated capture of an isolated application window, even if
+it is occluded or minimized.</p>
+<p>For continuous desktop regions spanning multiple windows, however,
+OBS cannot simply bind a single application pixmap. It must read the
+composite manager's final output from the root or overlay plane.</p>
+<h3 id="performance-and-synchronization-implications">Performance and
+Synchronization Implications</h3>
+<p>The presence of a composite manager introduces distinct trade-offs
+during desktop region capture:</p>
+<ul>
+<li><strong>Tear-Free Capture:</strong> Because modern composite
+managers synchronize their redraws with the vertical refresh rate
+(V-Sync) using double or triple buffering, capturing the composed
+desktop prevents the screen tearing that often plagues uncomposited X11
+captures.</li>
+<li><strong>VRAM-to-RAM Bottlenecks:</strong> When OBS calls
+<code>XShmGetImage</code> to capture a desktop region, the graphics
+hardware must copy the composited image from GPU memory back to system
+RAM. For high-resolution displays (such as 1440p or 4K) running at 60
+FPS, this round-trip transfer creates measurable PCI-e bandwidth usage
+and CPU overhead.</li>
+<li><strong>Compositor Pausing (Unredirect):</strong> Fullscreen
+applications often trigger an "unredirect fullscreen" optimization in
+composite managers to reduce latency during gaming. When this happens,
+the compositor stops handling the display, returning raw control of the
+screen to the fullscreen application. OBS must handle this state
+transition dynamically to prevent the capture from freezing or rendering
+black frames while reading the root surface.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

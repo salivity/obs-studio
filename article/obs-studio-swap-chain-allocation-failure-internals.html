@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Swap Chain Allocation Failure Internals - obs-studio</title>
+    <meta name="description" content="When a swap chain allocation fails during runtime, OBS Studio's graphics abstraction layer intercepts the error to prevent immediate crashes, isolates the failure to the affected display viewport, and logs the underlying API error code. Because OBS decou">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-swap-chain-allocation-failure-internals">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Swap Chain Allocation Failure Internals - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-swap-chain-allocation-failure-internals" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When a swap chain allocation fails during runtime, OBS Studio's graphics abstraction layer intercepts the error to prevent immediate crashes, isolates the failure to the affected display viewport, and logs the underlying API error code. Because OBS decou" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-swap-chain-allocation-failure-internals">OBS Studio
+Swap Chain Allocation Failure Internals</h1>
+<p>When a swap chain allocation fails during runtime, OBS Studio's
+graphics abstraction layer intercepts the error to prevent immediate
+crashes, isolates the failure to the affected display viewport, and logs
+the underlying API error code. Because OBS decouples its core rendering
+and encoding pipelines from individual display presentation surfaces, a
+runtime swap chain failure—typically caused by VRAM exhaustion, display
+resolution changes, or graphics device loss—results in aborted render
+target bindings and suppressed presentation calls while keeping the
+internal compositing engine and active broadcast outputs running
+whenever possible.</p>
+<h3 id="error-detection-in-the-graphics-abstraction-layer">Error
+Detection in the Graphics Abstraction Layer</h3>
+<p>OBS Studio interacts with system hardware through its graphics
+abstraction library (<code>libobs/graphics</code>), which routes calls
+to platform-specific backends such as Direct3D 11 (<code>d3d11</code>)
+or OpenGL. Swap chains are managed via abstract structures
+(<code>gs_swapchain_t</code>) and instantiated through functions like
+<code>gs_swapchain_create</code> or resized via internal device
+re-allocation routines.</p>
+<p>When an allocation failure occurs—such as Windows'
+<code>IDXGIFactory::CreateSwapChain</code> or
+<code>IDXGISwapChain::ResizeBuffers</code> returning an HRESULT like
+<code>E_OUTOFMEMORY</code>, <code>DXGI_ERROR_INVALID_CALL</code>, or
+<code>DXGI_ERROR_DEVICE_REMOVED</code>—the backend captures the failure
+immediately. The graphics API implementation validates the return code,
+logs a descriptive error through the internal logger
+(<code>blog(LOG_ERROR, ...)</code>), and returns a null pointer
+(<code>NULL</code>) or a failure boolean back to the calling subsystem
+rather than returning an uninitialized handle.</p>
+<h3 id="impact-on-obs_display_t-and-viewport-binding">Impact on
+<code>obs_display_t</code> and Viewport Binding</h3>
+<p>OBS Studio associates swap chains with display surfaces via the
+<code>obs_display_t</code> object, which manages rendering for the main
+preview window, multiview, and auxiliary projector windows.</p>
+<p>If swap chain creation or resizing returns <code>NULL</code>:</p>
+<ol type="1">
+<li><strong>Context Invalidation:</strong> The target
+<code>obs_display_t</code> instance retains an invalid or null reference
+to its swap chain.</li>
+<li><strong>Skipped Render Loops:</strong> During the graphics tick, the
+display rendering function checks the validity of the associated swap
+chain. If the swap chain pointer is invalid, the thread skips setting
+the render target (<code>gs_set_render_target</code>) and bypasses
+drawing routines for that frame.</li>
+<li><strong>Suppressed Swap Calls:</strong> The call to
+<code>gs_present()</code> is never executed for the affected display,
+preventing low-level graphics driver exceptions that would otherwise
+cause an access violation crash.</li>
+</ol>
+<p>As a result, the relevant UI viewport ceases updating, frequently
+freezing on the last successfully presented frame or turning black.</p>
+<h3 id="separation-of-display-and-core-compositing">Separation of
+Display and Core Compositing</h3>
+<p>Crucially, OBS Studio maintains a strict architectural boundary
+between the presentation swap chains (used for UI viewports) and the
+internal render pipeline:</p>
+<ul>
+<li><strong>Internal Canvas Pipeline:</strong> The primary mixing
+pipeline renders scenes and sources directly to off-screen surfaces
+(<code>gs_stagesurf_t</code> and <code>gs_texture_t</code>) at the
+configured base and output resolutions.</li>
+<li><strong>Display Output:</strong> UI viewports simply sample from
+these internal textures and project them onto window-backed swap
+chains.</li>
+</ul>
+<p>Because of this separation, an allocation failure in a viewport's
+swap chain does not immediately halt scene compositing, audio
+processing, or video encoding. The stream or local recording output
+continues to generate and encode frames from the internal staging
+textures, even if the user-facing preview fails to present.</p>
+<h3 id="handling-graphics-device-loss">Handling Graphics Device
+Loss</h3>
+<p>If the swap chain allocation fails due to a hardware-level event—such
+as a driver crash, GPU timeout detection and recovery (TDR), or physical
+disconnection of a display adapter—the failure code indicates device
+loss (e.g., <code>DXGI_ERROR_DEVICE_RESET</code> or
+<code>DXGI_ERROR_DEVICE_REMOVED</code>).</p>
+<p>In this scenario:</p>
+<ol type="1">
+<li>The underlying backend flags the entire <code>gs_device_t</code> as
+invalidated.</li>
+<li>Subsequent allocation attempts across all surfaces fail
+unconditionally.</li>
+<li>The graphics thread recognizes that device-wide context has been
+destroyed. Because direct state reconstruction mid-stream presents race
+conditions across complex shader and texture graphs, OBS Studio
+typically logs a critical error indicating device loss and safely halts
+the graphics thread, terminating the rendering loop cleanly rather than
+triggering an unhandled memory fault.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

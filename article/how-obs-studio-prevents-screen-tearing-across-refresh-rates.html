@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Studio Prevents Screen Tearing Across Refresh Rates - obs-studio</title>
+    <meta name="description" content="This article explains the technical pipeline OBS Studio uses to eliminate screen tearing when capturing and rendering frames at a framerate that differs from your monitor's native vertical refresh rate (V-Sync). It covers the decoupled rendering architec">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-studio-prevents-screen-tearing-across-refresh-rates">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Studio Prevents Screen Tearing Across Refresh Rates - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-studio-prevents-screen-tearing-across-refresh-rates" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains the technical pipeline OBS Studio uses to eliminate screen tearing when capturing and rendering frames at a framerate that differs from your monitor's native vertical refresh rate (V-Sync). It covers the decoupled rendering architec" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-studio-prevents-screen-tearing-across-refresh-rates">How
+OBS Studio Prevents Screen Tearing Across Refresh Rates</h1>
+<p>This article explains the technical pipeline OBS Studio uses to
+eliminate screen tearing when capturing and rendering frames at a
+framerate that differs from your monitor's native vertical refresh rate
+(V-Sync). It covers the decoupled rendering architecture, off-screen GPU
+framebuffers, DirectX Graphics Infrastructure (DXGI) capture methods,
+and how the composited canvas is safely handed off to the video encoder
+without scanline artifacts.</p>
+<h3 id="the-decoupled-render-loop">The Decoupled Render Loop</h3>
+<p>Traditional screen tearing occurs on physical displays when a GPU
+pushes a new frame to the monitor's front buffer while the display is
+mid-scanout, resulting in parts of two different frames showing at once.
+OBS Studio bypasses this hardware limitation because its internal canvas
+does not directly drive physical display hardware.</p>
+<p>Instead, OBS Studio operates a completely independent graphics thread
+with a decoupled timing loop:</p>
+<ul>
+<li><strong>High-Resolution Clock:</strong> OBS uses precision platform
+timers to trigger render ticks at exact mathematical intervals (for
+example, every 16.66 milliseconds for a 60 FPS canvas), entirely
+independent of whether the host display runs at 60 Hz, 144 Hz, 240 Hz,
+or a variable refresh rate (G-Sync/FreeSync).</li>
+<li><strong>Off-Screen Memory Buffering:</strong> The canvas renders
+strictly to internal VRAM textures rather than the monitor's active
+scanout buffers. Because memory writes occur within bounded off-screen
+framebuffers, monitor scanlines do not dictate frame generation.</li>
+</ul>
+<h3 id="source-ingestion-via-shared-gpu-textures">Source Ingestion via
+Shared GPU Textures</h3>
+<p>When capturing sources such as games or secondary applications, OBS
+Studio accesses finished frames rather than partial rasterizations:</p>
+<ol type="1">
+<li><strong>DirectX/Vulkan Hooking:</strong> When using Game Capture,
+OBS injects a hook into the target process that listens for presentation
+calls (such as <code>IDXGISwapChain::Present</code>).</li>
+<li><strong>Copying Completed Surfaces:</strong> The hook grabs a handle
+to the back buffer only after the application finishes drawing the
+frame. If the game runs at 120 FPS and OBS runs at 60 FPS, OBS simply
+polls the latest fully completed texture when its own internal tick
+arrives, dropping or skipping the intermediate frames entirely.</li>
+<li><strong>Shared Surfaces:</strong> Through cross-adapter or
+cross-process texture sharing
+(<code>IDXGIResource::GetSharedHandle</code>), the frame moves within
+GPU VRAM directly into OBS Studio’s rendering engine without
+intermediate memory tearing.</li>
+</ol>
+<h3 id="double-and-triple-buffering-on-the-canvas">Double and Triple
+Buffering on the Canvas</h3>
+<p>OBS Studio applies multi-buffering to its scene rendering pipeline.
+When a new tick begins:</p>
+<ul>
+<li><strong>Compositing:</strong> The graphics subsystem draws each
+active source (game feeds, webcams, browser overlays) onto an internal
+back-buffer texture.</li>
+<li><strong>Atomic Swaps:</strong> Once compositing is 100% complete,
+OBS performs an atomic buffer swap. The newly composited frame is marked
+as ready for encoding, while the previous frame is retired. If a source
+updates while OBS is mid-composite, OBS ignores that partial update
+until the subsequent canvas tick, ensuring incomplete frames are never
+merged into the final canvas.</li>
+</ul>
+<h3 id="the-hand-off-to-hardware-encoders">The Hand-Off to Hardware
+Encoders</h3>
+<p>Once the internal canvas frame is complete, it must be sent to the
+video encoder (NVENC, QuickSync, AMF, or CPU/x264). Because the canvas
+texture is fully realized in VRAM:</p>
+<ul>
+<li>The encoder accesses the complete, sealed texture surface directly
+through an asynchronous memory copy or hardware-level pointer
+handoff.</li>
+<li>The encoder processes the surface as a static image slice. Scanline
+desynchronization cannot occur inside the encoder because it reads from
+a fixed memory address containing a single, cohesive frame.</li>
+</ul>
+<h3 id="rendering-the-preview-on-mismatched-displays">Rendering the
+Preview on Mismatched Displays</h3>
+<p>If the native monitor has an active V-Sync rate distinct from the
+canvas (e.g., viewing a 60 FPS OBS preview on a 144 Hz screen), OBS
+relies on the operating system’s compositor (such as the Desktop Window
+Manager, or DWM, on Windows):</p>
+<ul>
+<li>The DWM acts as an intermediary, treating the OBS Studio preview
+window as an application surface.</li>
+<li>The DWM composites the application window into the desktop's native
+presentation rate using its own multi-buffering, preventing tearing on
+the local monitor during live operation, even if frame-pacing judder
+occurs due to non-integer frame rate divisions.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

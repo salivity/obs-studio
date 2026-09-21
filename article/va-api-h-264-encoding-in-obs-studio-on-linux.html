@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VA-API H.264 Encoding in OBS Studio on Linux - obs-studio</title>
+    <meta name="description" content="The Video Acceleration API (VA-API) serves as the critical bridge between OBS Studio and your graphics hardware on Linux, offloading H.264 video compression from the CPU to the GPU's dedicated silicon. Configuring VA-API correctly dramatically reduces sy">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/va-api-h-264-encoding-in-obs-studio-on-linux">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="VA-API H.264 Encoding in OBS Studio on Linux - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/va-api-h-264-encoding-in-obs-studio-on-linux" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Video Acceleration API (VA-API) serves as the critical bridge between OBS Studio and your graphics hardware on Linux, offloading H.264 video compression from the CPU to the GPU's dedicated silicon. Configuring VA-API correctly dramatically reduces sy" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="va-api-h264-encoding-in-obs-studio-on-linux">VA-API H.264
+Encoding in OBS Studio on Linux</h1>
+<p>The Video Acceleration API (VA-API) serves as the critical bridge
+between OBS Studio and your graphics hardware on Linux, offloading H.264
+video compression from the CPU to the GPU's dedicated silicon.
+Configuring VA-API correctly dramatically reduces system resource
+consumption, prevents dropped frames during high-demand tasks like
+gaming, and ensures stable streaming and recording performance.
+Understanding its role involves looking at how it interfaces with system
+drivers, offloads processing tasks, and integrates directly into the OBS
+Studio encoding pipeline.</p>
+<h3 id="what-va-api-does-in-linux">What VA-API Does in Linux</h3>
+<p>VA-API is an open-source application programming interface designed
+to grant software access to hardware-accelerated video capabilities. On
+Linux, OBS Studio cannot directly communicate with raw GPU hardware.
+Instead, OBS sends raw video frames to the VA-API driver, which
+translates these requests into instructions that the graphics card's
+dedicated encoding blocks—such as Intel Quick Sync Video or AMD Video
+Core Next (VCN)—can execute.</p>
+<h3 id="offloading-cpu-workload-to-the-gpu">Offloading CPU Workload to
+the GPU</h3>
+<p>When encoding H.264 using software encoders such as x264, the system
+CPU performs every compression calculation. This process consumes
+substantial processing power, resulting in elevated temperatures,
+potential frame stutter, and reduced performance for other running
+applications.</p>
+<p>By selecting the VA-API H.264 encoder in OBS Studio, encoding tasks
+bypass general-purpose CPU cores. The dedicated video engine on the GPU
+handles the complex algorithms required for H.264 compression, freeing
+up the CPU for system processes and running games.</p>
+<h3 id="driver-dependencies-and-system-communication">Driver
+Dependencies and System Communication</h3>
+<p>The efficiency and availability of VA-API in OBS Studio depend
+directly on the installed driver stack:</p>
+<ul>
+<li><strong>Intel Systems:</strong> Modern Intel integrated and discrete
+graphics utilize the <code>intel-media-driver</code> (non-free/free iHD
+driver), while legacy platforms rely on the older
+<code>libva-intel-driver</code> (i965).</li>
+<li><strong>AMD Systems:</strong> AMD GPUs rely on Mesa's built-in
+VA-API implementation (<code>mesa-va-drivers</code>).</li>
+</ul>
+<p>Without the correct underlying hardware driver, OBS Studio will fail
+to list VA-API options or will throw an initialization error upon
+starting a stream or recording. Utilities such as <code>vainfo</code>
+allow users to verify that the driver is exposing H.264 encoding entry
+points (<code>VAProfileH264Main</code>, <code>VAProfileH264High</code>)
+to the system.</p>
+<h3 id="configuration-in-obs-studio">Configuration in OBS Studio</h3>
+<p>Inside OBS Studio, configuring VA-API requires setting the Output
+Mode to "Advanced" and choosing the VA-API H.264 encoder. Within these
+settings, the driver dictates available options:</p>
+<ul>
+<li><strong>Rate Control:</strong> Common methods like CBR (Constant
+Bitrate) for streaming or CQP (Constant Quantization Parameter) for
+local recording are executed directly at the driver level.</li>
+<li><strong>Device Path:</strong> On systems with multiple graphics
+adapters, the VA-API driver path (typically
+<code>/dev/dri/renderD128</code>) specifies which physical GPU executes
+the encoding task.</li>
+<li><strong>Quality Profiles and Presets:</strong> The driver
+communicates supported H.264 profiles (Baseline, Main, High) and
+optimization presets directly to OBS, balancing visual quality against
+hardware latency.</li>
+</ul>
+<p>Proper configuration requires that the active user belongs to the
+appropriate Linux user groups (typically <code>render</code> or
+<code>video</code>) to ensure OBS Studio has direct read and write
+permissions to the render node.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

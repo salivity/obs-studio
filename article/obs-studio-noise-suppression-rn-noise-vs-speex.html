@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Noise Suppression: RNNoise vs Speex - obs-studio</title>
+    <meta name="description" content="OBS Studio offers two primary software-based noise suppression filters to clean up background audio: Speex and RNNoise. While both aim to eliminate unwanted ambient sounds like PC fans, keyboard clicks, or air conditioning, they use fundamentally differe">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-noise-suppression-rn-noise-vs-speex">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Noise Suppression: RNNoise vs Speex - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-noise-suppression-rn-noise-vs-speex" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio offers two primary software-based noise suppression filters to clean up background audio: Speex and RNNoise. While both aim to eliminate unwanted ambient sounds like PC fans, keyboard clicks, or air conditioning, they use fundamentally differe" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-noise-suppression-rnnoise-vs-speex">OBS Studio Noise
+Suppression: RNNoise vs Speex</h1>
+<p>OBS Studio offers two primary software-based noise suppression
+filters to clean up background audio: Speex and RNNoise. While both aim
+to eliminate unwanted ambient sounds like PC fans, keyboard clicks, or
+air conditioning, they use fundamentally different technologies to
+achieve this. This article explains the functional differences between
+Speex and RNNoise, helping you choose the best option for your streaming
+or recording setup based on CPU usage, audio quality, and configuration
+needs.</p>
+<h2 id="speex-low-cpu-usage-algorithmic">Speex: Low CPU Usage
+(Algorithmic)</h2>
+<p>Speex is a traditional, algorithmic noise suppression method. It
+works by analyzing the frequency spectrum of your audio and subtracting
+frequencies that match a steady-state noise profile.</p>
+<ul>
+<li><strong>Manual Configuration:</strong> Speex requires manual
+adjustment. It provides a slider measured in decibels (dB) that allows
+you to set the suppression threshold (typically ranging from -30 dB to 0
+dB). You must manually tune this slider to find the balance between
+blocking background noise and keeping your voice clear.</li>
+<li><strong>Performance:</strong> It is extremely lightweight and
+consumes virtually no CPU resources. This makes it ideal for older
+computers, budget laptops, or systems running highly demanding games
+where every frame counts.</li>
+<li><strong>Limitations:</strong> Speex is designed for static,
+continuous background noise (like a steady hum). It struggles with
+dynamic noises like keyboard clicks, barking dogs, or sudden movements.
+If the suppression level is set too high, it can make your voice sound
+metallic, robotic, or muffled.</li>
+</ul>
+<h2 id="rnnoise-high-quality-ai-driven">RNNoise: High Quality
+(AI-Driven)</h2>
+<p>RNNoise is a modern, deep-learning-based noise suppression filter. It
+utilizes a recurrent neural network (RNN) trained on thousands of hours
+of clean voice and noisy audio samples to distinguish between human
+speech and background noise in real-time.</p>
+<ul>
+<li><strong>Automatic Operation:</strong> Unlike Speex, RNNoise requires
+no manual tuning or sliders. It automatically detects what is speech and
+what is noise, muting everything that does not match the profile of a
+human voice.</li>
+<li><strong>Audio Quality:</strong> RNNoise offers significantly better
+audio quality and suppression capabilities. It is highly effective at
+removing both static noises (like fans) and non-static, unpredictable
+noises (like mechanical keyboard typing, paper rustling, and mouse
+clicks) without distorting your voice.</li>
+<li><strong>Performance:</strong> Because it uses an AI model, RNNoise
+requires more processing power than Speex. While modern CPUs handle this
+easily, it can occasionally cause audio stuttering or increased latency
+on low-end or heavily taxed hardware.</li>
+</ul>
+<h2 id="quick-comparison">Quick Comparison</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Speex</th>
+<th style="text-align: left;">RNNoise</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Technology</strong></td>
+<td style="text-align: left;">Algorithmic (Spectral Subtraction)</td>
+<td style="text-align: left;">AI / Recurrent Neural Network</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Control</strong></td>
+<td style="text-align: left;">Manual (slider adjustment required)</td>
+<td style="text-align: left;">Fully Automatic (no configuration)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>CPU Usage</strong></td>
+<td style="text-align: left;">Negligible (extremely low)</td>
+<td style="text-align: left;">Moderate</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Best For</strong></td>
+<td style="text-align: left;">Lower-end PCs, steady hums</td>
+<td style="text-align: left;">Modern PCs, dynamic noises, best voice
+quality</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Handling of
+Clicks/Claps</strong></td>
+<td style="text-align: left;">Poor</td>
+<td style="text-align: left;">Excellent</td>
+</tr>
+</tbody>
+</table>
+<h2 id="which-one-should-you-choose">Which One Should You Choose?</h2>
+<p>For the vast majority of creators, <strong>RNNoise is the superior
+choice</strong> because it provides much cleaner audio and handles
+real-world background noises like keyboard typing automatically.
+However, if you notice audio lag, robotic stuttering, or high CPU usage
+warnings in OBS, switching to <strong>Speex</strong> and manually
+adjusting the slider is the best way to reclaim system resources while
+still maintaining basic noise reduction.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

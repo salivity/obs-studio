@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Render Delay Guide - obs-studio</title>
+    <meta name="description" content="This article explains what the Render Delay filter is in OBS Studio, how it functions, and the specific scenarios where you need to use it to synchronize your video sources with your audio for a professional broadcast. The Render Delay filter is a built-">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-render-delay-guide">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Render Delay Guide - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-render-delay-guide" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains what the Render Delay filter is in OBS Studio, how it functions, and the specific scenarios where you need to use it to synchronize your video sources with your audio for a professional broadcast. The Render Delay filter is a built-" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-render-delay-guide">OBS Studio Render Delay
+Guide</h1>
+<p>This article explains what the Render Delay filter is in OBS Studio,
+how it functions, and the specific scenarios where you need to use it to
+synchronize your video sources with your audio for a professional
+broadcast.</p>
+<h2 id="what-is-the-render-delay-filter-in-obs">What is the Render Delay
+Filter in OBS?</h2>
+<p>The Render Delay filter is a built-in tool in OBS Studio that pauses
+the rendering of a specific video source for a designated amount of
+time, measured in milliseconds. By buffering the video frames of a
+source—such as a webcam, camera, or capture card—it temporarily holds
+back the visual output before displaying it on your canvas or
+stream.</p>
+<p>While OBS Studio allows a maximum delay of 500 milliseconds per
+filter, you can stack multiple Render Delay filters on a single source
+if your setup requires a longer delay.</p>
+<h2 id="when-is-the-render-delay-filter-necessary">When is the Render
+Delay Filter Necessary?</h2>
+<p>You need to use the Render Delay filter primarily to solve
+synchronization issues between different inputs. Here are the most
+common scenarios where it is necessary:</p>
+<h3 id="1-synchronizing-multiple-cameras">1. Synchronizing Multiple
+Cameras</h3>
+<p>If you use multiple cameras in your stream—such as a high-end DSLR
+connected via a capture card alongside a standard USB webcam—the cameras
+will likely have different processing speeds. The DSLR passing through a
+capture card will often have more latency than the USB webcam. Applying
+a Render Delay to the faster USB webcam allows you to match the latency
+of the slower DSLR, making camera cuts look natural.</p>
+<h3 id="2-aligning-webcam-reactions-with-gameplay">2. Aligning Webcam
+Reactions with Gameplay</h3>
+<p>Some external capture cards introduce a noticeable hardware delay
+when capturing console gameplay. If your webcam and microphone are in
+real-time but the gameplay is lagging behind by a fraction of a second,
+your live reactions will appear on stream before the event actually
+happens in the game. Applying a Render Delay to your webcam (along with
+an offset to your microphone) aligns your face and voice with the
+delayed gameplay.</p>
+<h3 id="3-fixing-audio-and-video-desynchronization">3. Fixing Audio and
+Video Desynchronization</h3>
+<p>If your microphone audio is processed faster than your webcam video,
+viewers will hear you speak before they see your mouth move. While you
+can delay audio directly in the Advanced Audio Properties, you can also
+use the Render Delay filter on a faster video source to align it with
+slower, post-processed audio feeds, ensuring perfect lip-syncing.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

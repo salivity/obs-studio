@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Encoder Stall with High-Bitrate HEVC - obs-studio</title>
+    <meta name="description" content="An encoder stall error in OBS Studio occurs when the software's encoding pipeline is forced to halt because it cannot offload encoded video data fast enough to keep up with real-time rendering. When streaming or recording high-bitrate HEVC (H.265) direct">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-encoder-stall-with-high-bitrate-hevc">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Encoder Stall with High-Bitrate HEVC - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-encoder-stall-with-high-bitrate-hevc" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="An encoder stall error in OBS Studio occurs when the software's encoding pipeline is forced to halt because it cannot offload encoded video data fast enough to keep up with real-time rendering. When streaming or recording high-bitrate HEVC (H.265) direct" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-encoder-stall-with-high-bitrate-hevc">OBS Studio
+Encoder Stall with High-Bitrate HEVC</h1>
+<p>An encoder stall error in OBS Studio occurs when the software's
+encoding pipeline is forced to halt because it cannot offload encoded
+video data fast enough to keep up with real-time rendering. When
+streaming or recording high-bitrate HEVC (H.265) directly to an external
+storage drive, the combination of dense frame compression, sudden data
+throughput bursts, and external hardware throughput limitations
+frequently creates a bottleneck. This article examines the primary
+hardware, protocol, and configuration causes behind encoder stalls when
+writing high-bitrate HEVC streams to external media.</p>
+<h3 id="storage-write-speed-and-cache-exhaustion">Storage Write Speed
+and Cache Exhaustion</h3>
+<p>The most frequent hardware cause of an encoder stall is the external
+drive's inability to maintain a sustained write speed. Many portable
+SSDs and flash drives rely on pseudo-SLC (Single-Level Cell) write
+caches to deliver high advertised speeds.</p>
+<p>During high-bitrate HEVC recording:</p>
+<ul>
+<li><strong>Cache Depletion:</strong> Once the drive's rapid SLC cache
+fills up, write speeds often plummet to native TLC or QLC
+speeds—sometimes dropping as low as 30 to 80 MB/s.</li>
+<li><strong>Buffer Backlog:</strong> If the instantaneous write speed
+falls below the bitrate demand of the stream, the OBS internal output
+buffer fills to capacity.</li>
+<li><strong>Pipeline Halt:</strong> Once the RAM buffer is exhausted,
+OBS must pause the hardware encoder to prevent memory corruption or
+software crashes, throwing the encoder stall error.</li>
+</ul>
+<p>Mechanical external hard drives (HDDs) are especially vulnerable to
+this, as their maximum sequential write speeds rarely exceed 120–140
+MB/s and fall significantly during concurrent operations or head
+repositioning.</p>
+<h3 id="hevc-bitrate-spikes-and-keyframe-density">HEVC Bitrate Spikes
+and Keyframe Density</h3>
+<p>HEVC is an exceptionally dense, complex compression format. While it
+offers roughly 50% better compression efficiency than H.264 at identical
+visual quality, high-bitrate HEVC presents distinct challenges:</p>
+<ul>
+<li><strong>I-Frame (Keyframe) Surges:</strong> In scenes with intense
+motion or complete scene changes, HEVC keyframes generate massive data
+bursts. If using Variable Bitrate (VBR) or Constant Quality (CQP) modes,
+an instantaneous spike can exceed the average bitrate by three to four
+times.</li>
+<li><strong>Storage Ingestion Latency:</strong> If the external
+interface cannot immediately absorb this sudden volume of data, the
+frame queue backs up into the encoder immediately.</li>
+</ul>
+<h3 id="usb-bus-contention-and-protocol-limitations">USB Bus Contention
+and Protocol Limitations</h3>
+<p>How the drive connects to the host computer plays a decisive role in
+whether the data pipeline stalls:</p>
+<ul>
+<li><strong>Shared Host Controller Bandwidth:</strong> External drives
+connected via standard USB ports often share a single internal root hub
+with other high-bandwidth devices, such as USB capture cards,
+high-resolution webcams, and audio interfaces. When total bandwidth
+saturates, the operating system introduces packet latency, delaying
+write acknowledgments.</li>
+<li><strong>UASP vs. BOT Protocols:</strong> Inexpensive drive
+enclosures running the legacy Bulk-Only Transport (BOT) protocol can
+only handle one command at a time. Drives using USB Attached SCSI
+Protocol (UASP) queue multiple commands simultaneously. Without UASP,
+high-bitrate streaming triggers command queuing delays.</li>
+<li><strong>Cable and Port Throttling:</strong> Using USB 3.0 (5 Gbps)
+ports instead of USB 3.2 Gen 2 (10 Gbps) or Thunderbolt connections
+narrows overall throughput and increases bus latency under heavy
+load.</li>
+</ul>
+<h3 id="operating-system-and-file-system-overhead">Operating System and
+File System Overhead</h3>
+<p>Software-level communication between OBS Studio and the external
+drive can also trigger stalls:</p>
+<ul>
+<li><strong>exFAT File System Latency:</strong> Many external drives
+ship pre-formatted as exFAT for cross-platform compatibility. exFAT
+lacks efficient allocation metadata handling and journaling. As file
+sizes expand during multi-gigabyte HEVC captures, file allocation table
+update delays can block write operations.</li>
+<li><strong>USB Power Management:</strong> Operating system features
+like USB Selective Suspend or aggressive drive sleep policies can
+momentarily reduce power to the drive or controller during minor lulls
+in activity, causing a sudden multi-second I/O lock when data
+resumes.</li>
+</ul>
+<h3 id="preventing-encoder-stalls-in-obs">Preventing Encoder Stalls in
+OBS</h3>
+<p>To eliminate encoder stalls during high-bitrate HEVC recording to
+external storage:</p>
+<ol type="1">
+<li><strong>Record Internally First:</strong> Set OBS to record to an
+internal NVMe SSD, then configure an automated script or tool to move
+completed recordings to external drives.</li>
+<li><strong>Use High-Sustained-Write SSDs:</strong> If direct external
+recording is mandatory, use an external NVMe enclosure supporting UASP
+over USB 3.2 Gen 2 or Thunderbolt, equipped with a drive featuring high
+sustained TLC write performance.</li>
+<li><strong>Format to NTFS or APFS:</strong> Reformat external drives to
+the native file system of your operating system (NTFS on Windows, APFS
+on macOS) instead of exFAT.</li>
+<li><strong>Isolate USB Ports:</strong> Ensure the storage drive is
+connected directly to a motherboard rear I/O port tied to an unshared
+USB controller.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

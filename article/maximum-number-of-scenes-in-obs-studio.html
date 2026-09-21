@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maximum Number of Scenes in OBS Studio - obs-studio</title>
+    <meta name="description" content="This article explains the limitations on the number of scenes you can create within an OBS Studio scene collection. While OBS Studio does not impose a strict, hardcoded limit on your scenes, your computer's hardware resources and the complexity of your s">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/maximum-number-of-scenes-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Maximum Number of Scenes in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/maximum-number-of-scenes-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains the limitations on the number of scenes you can create within an OBS Studio scene collection. While OBS Studio does not impose a strict, hardcoded limit on your scenes, your computer's hardware resources and the complexity of your s" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="maximum-number-of-scenes-in-obs-studio">Maximum Number of Scenes
+in OBS Studio</h1>
+<p>This article explains the limitations on the number of scenes you can
+create within an OBS Studio scene collection. While OBS Studio does not
+impose a strict, hardcoded limit on your scenes, your computer's
+hardware resources and the complexity of your sources establish a
+practical limit. Below, we break down how OBS handles large scene
+collections, the performance impacts of having too many scenes, and how
+to optimize your setup.</p>
+<h2 id="the-theoretical-vs-practical-limit">The Theoretical vs.
+Practical Limit</h2>
+<p>From a software development standpoint, <strong>OBS Studio has no
+official maximum limit on the number of scenes</strong> you can add to a
+single scene collection. You can theoretically create hundreds, or even
+thousands, of scenes.</p>
+<p>However, the practical limit is dictated entirely by your computer’s
+hardware—specifically your CPU, GPU, and RAM.</p>
+<h2 id="how-scenes-affect-performance">How Scenes Affect
+Performance</h2>
+<p>Every scene you add to OBS Studio increases the size of your scene
+collection configuration file. More importantly, the sources
+<em>inside</em> those scenes consume system resources. Even if a scene
+is not currently active or visible on your stream, OBS may still load
+and keep certain sources active in the background.</p>
+<p>Having an excessive number of scenes can lead to several performance
+issues:</p>
+<ul>
+<li><strong>Slower Startup Times:</strong> OBS Studio must load and
+parse the entire scene collection database when launching. A massive
+collection will cause the software to take significantly longer to
+open.</li>
+<li><strong>Increased RAM Usage:</strong> Each source (especially
+browser sources, media files, and image slideshows) cached in your
+scenes consumes system memory.</li>
+<li><strong>UI Lag and Stuttering:</strong> As the list of scenes grows,
+the OBS user interface can become laggy and unresponsive, making it
+difficult to switch scenes quickly during a live broadcast.</li>
+<li><strong>High CPU/GPU Idle Usage:</strong> Some sources continue to
+render or run in the background even when their parent scene is
+inactive, draining resources that should be allocated to your game or
+stream encoding.</li>
+</ul>
+<h2 id="best-practices-for-managing-large-numbers-of-scenes">Best
+Practices for Managing Large Numbers of Scenes</h2>
+<p>If your broadcast requires a complex setup, use the following
+strategies to keep OBS running smoothly:</p>
+<h3 id="1-use-multiple-scene-collections">1. Use Multiple Scene
+Collections</h3>
+<p>Instead of keeping every scene you have ever created in a single
+list, utilize the <strong>Scene Collection</strong> menu at the top of
+OBS. You can create separate collections for different games, shows, or
+streaming setups. This keeps your active list short and resource usage
+low.</p>
+<h3 id="2-leverage-nested-scenes">2. Leverage Nested Scenes</h3>
+<p>Instead of creating dozens of unique scenes with repetitive elements
+(like overlays, alerts, or cameras), use "nested scenes" (adding one
+scene as a source inside another scene). This reduces the total number
+of individual sources OBS has to load.</p>
+<h3 id="3-deactivate-sources-when-not-showing">3. Deactivate Sources
+When Not Showing</h3>
+<p>For heavy sources like browser overlays or media files, open the
+source properties and check the boxes for <strong>"Shutdown source when
+not visible"</strong> or <strong>"Unload image when not
+showing."</strong> This frees up RAM and CPU cycles when those scenes
+are not active.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

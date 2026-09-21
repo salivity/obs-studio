@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Best OBS Downscale Filter for Video Quality - obs-studio</title>
+    <meta name="description" content="Choosing the right downscale filter in OBS Studio is crucial for delivering a crisp, professional stream or recording when your output resolution is lower than your base canvas resolution. This article breaks down the four primary downscale filters avail">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/best-obs-downscale-filter-for-video-quality">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Best OBS Downscale Filter for Video Quality - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/best-obs-downscale-filter-for-video-quality" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Choosing the right downscale filter in OBS Studio is crucial for delivering a crisp, professional stream or recording when your output resolution is lower than your base canvas resolution. This article breaks down the four primary downscale filters avail" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="best-obs-downscale-filter-for-video-quality">Best OBS Downscale
+Filter for Video Quality</h1>
+<p>Choosing the right downscale filter in OBS Studio is crucial for
+delivering a crisp, professional stream or recording when your output
+resolution is lower than your base canvas resolution. This article
+breaks down the four primary downscale filters available in
+OBS—Bilinear, Area, Bicubic, and Lanczos—evaluating their performance
+impact and visual quality to help you select the absolute best setting
+for your specific streaming or recording setup.</p>
+<p>When you scale down your video (for example, scaling a 1440p or 1080p
+game down to a 720p stream), OBS must use an algorithm to recalculate
+the pixels. How it does this depends entirely on the filter you select
+in your settings.</p>
+<h2 id="bilinear-fastest-but-blurry">Bilinear (Fastest, but Blurry)</h2>
+<p>Bilinear is the most basic and lightweight filter available in OBS.
+It requires the least amount of processing power, making it ideal for
+low-end systems or older hardware. However, this speed comes at a cost:
+it produces a blurry, soft image, especially during fast-paced motion.
+You should only use Bilinear if your system is severely struggling with
+GPU/CPU overload and you need to save resources at all costs.</p>
+<h2 id="area-good-for-specific-scaling">Area (Good for Specific
+Scaling)</h2>
+<p>Area downscaling uses a weighted sum of pixels to resize the image.
+It performs best when downscaling by non-standard or fractional amounts.
+While it can look decent for retro gaming, static screens, or simple
+desktop captures, it is generally not recommended for modern,
+high-motion gameplay as it lacks the sharpness and clarity of Bicubic or
+Lanczos.</p>
+<h2 id="bicubic-the-balanced-choice">Bicubic (The Balanced Choice)</h2>
+<p>Bicubic utilizes 16 samples to calculate the resized image. It
+strikes a perfect balance between visual fidelity and system
+performance. Bicubic offers a significantly sharper and cleaner video
+than Bilinear with only a marginal increase in GPU usage. For the vast
+majority of streamers and content creators, Bicubic is the safest and
+most reliable option.</p>
+<h2 id="lanczos-the-best-quality">Lanczos (The Best Quality)</h2>
+<p>Lanczos is the highest-quality downscale filter in OBS Studio. It
+uses 36 samples to meticulously calculate the resized frame, delivering
+the sharpest details, cleanest lines, and best overall image clarity.
+However, Lanczos is computationally expensive. If your graphics card or
+processor is already running near maximum capacity, enabling Lanczos can
+result in rendering lag or dropped frames.</p>
+<h2 id="recommendation-which-should-you-choose">Recommendation: Which
+Should You Choose?</h2>
+<ul>
+<li><strong>Choose Lanczos</strong> if you have a modern, high-end
+gaming PC with plenty of hardware headroom. It provides the absolute
+best, crispest video quality, which is especially noticeable in
+fast-paced action games and first-person shooters.</li>
+<li><strong>Choose Bicubic</strong> if you have a mid-range PC or want
+to play it safe. It delivers excellent visual quality that is nearly
+indistinguishable from Lanczos during a live stream, but without the
+risk of overloading your system.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

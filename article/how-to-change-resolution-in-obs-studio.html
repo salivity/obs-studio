@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Change Resolution in OBS Studio - obs-studio</title>
+    <meta name="description" content="This guide provides a straightforward, step-by-step walkthrough on how to change both the Base (Canvas) Resolution and the Output (Scaled) Resolution in OBS Studio. Understanding and configuring these two settings is essential for optimizing your stream">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-change-resolution-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Change Resolution in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-change-resolution-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide provides a straightforward, step-by-step walkthrough on how to change both the Base (Canvas) Resolution and the Output (Scaled) Resolution in OBS Studio. Understanding and configuring these two settings is essential for optimizing your stream" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-change-resolution-in-obs-studio">How to Change Resolution
+in OBS Studio</h1>
+<p>This guide provides a straightforward, step-by-step walkthrough on
+how to change both the Base (Canvas) Resolution and the Output (Scaled)
+Resolution in OBS Studio. Understanding and configuring these two
+settings is essential for optimizing your stream layout, maintaining
+high video quality, and reducing the performance load on your
+computer.</p>
+<h2 id="understanding-base-vs-output-resolution">Understanding Base vs.
+Output Resolution</h2>
+<p>Before changing the settings, it is important to understand what each
+resolution control does:</p>
+<ul>
+<li><strong>Base (Canvas) Resolution:</strong> This is the size of your
+virtual workspace in OBS. It should match the resolution of your primary
+monitor or the game you are capturing (typically 1920x1080 for
+1080p).</li>
+<li><strong>Output (Scaled) Resolution:</strong> This is the final
+resolution of the video that is streamed to platforms like Twitch and
+YouTube, or saved to your hard drive. If this is lower than your Base
+resolution, OBS will shrink (downscale) the video to save bandwidth and
+processing power.</li>
+</ul>
+<h2 id="steps-to-change-the-resolutions">Steps to Change the
+Resolutions</h2>
+<p>To adjust these settings, follow these steps:</p>
+<ol type="1">
+<li><strong>Open Settings:</strong> Launch OBS Studio. In the
+bottom-right corner of the screen, click on the
+<strong>Settings</strong> button (or go to <strong>File</strong> &gt;
+<strong>Settings</strong> in the top menu).</li>
+<li><strong>Navigate to Video:</strong> In the Settings window, click on
+the <strong>Video</strong> tab in the left-hand sidebar.</li>
+<li><strong>Set Base (Canvas) Resolution:</strong> Click the dropdown
+menu next to <strong>Base (Canvas) Resolution</strong>. Select your
+desired resolution, or manually type it in (e.g.,
+<code>1920x1080</code>).</li>
+<li><strong>Set Output (Scaled) Resolution:</strong> Click the dropdown
+menu next to <strong>Output (Scaled) Resolution</strong>. Select the
+resolution you want to stream or record in (e.g., <code>1280x720</code>
+for a 720p stream).</li>
+<li><strong>Select a Downscale Filter:</strong> If your Output
+resolution is lower than your Base resolution, choose a
+<strong>Downscale Filter</strong>. <em>Bicubic</em> is a good balanced
+option, while <em>Lanczos</em> offers the sharpest quality at the cost
+of slightly more CPU/GPU usage.</li>
+<li><strong>Apply Changes:</strong> Click <strong>Apply</strong> in the
+bottom-right corner, then click <strong>OK</strong> to close the
+settings window.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

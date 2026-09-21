@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix OBS Studio Audio Monitoring Latency - obs-studio</title>
+    <meta name="description" content="Audio monitoring latency in OBS Studio can disrupt live streams and recordings, making it difficult to monitor your own voice or game audio in real time. This article provides a straightforward guide on how to minimize and eliminate this delay by adjusti">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/fix-obs-studio-audio-monitoring-latency">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Fix OBS Studio Audio Monitoring Latency - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/fix-obs-studio-audio-monitoring-latency" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Audio monitoring latency in OBS Studio can disrupt live streams and recordings, making it difficult to monitor your own voice or game audio in real time. This article provides a straightforward guide on how to minimize and eliminate this delay by adjusti" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="fix-obs-studio-audio-monitoring-latency">Fix OBS Studio Audio
+Monitoring Latency</h1>
+<p>Audio monitoring latency in OBS Studio can disrupt live streams and
+recordings, making it difficult to monitor your own voice or game audio
+in real time. This article provides a straightforward guide on how to
+minimize and eliminate this delay by adjusting OBS audio settings,
+matching system sample rates, and utilizing low-latency audio drivers
+like ASIO or WASAPI.</p>
+<h2 id="step-1-match-audio-sample-rates">Step 1: Match Audio Sample
+Rates</h2>
+<p>The most common cause of audio latency and crackling is a mismatch
+between the sample rates of your operating system and OBS Studio.</p>
+<ol type="1">
+<li>In OBS, go to <strong>Settings</strong> &gt;
+<strong>Audio</strong>.</li>
+<li>Note the <strong>Sample Rate</strong> (typically 44.1 kHz or 48
+kHz).</li>
+<li>In Windows, right-click the sound icon in your taskbar, select
+<strong>Sounds</strong> (or <strong>Sound Settings</strong> &gt;
+<strong>More sound settings</strong>), go to the
+<strong>Playback</strong> and <strong>Recording</strong> tabs,
+double-click your active devices, and under the
+<strong>Advanced</strong> tab, ensure the default format matches the
+sample rate set in OBS.</li>
+</ol>
+<h2 id="step-2-use-wasapi-or-asio-drivers">Step 2: Use WASAPI or ASIO
+Drivers</h2>
+<p>By default, Windows uses standard audio drivers that introduce
+noticeable delay to protect against audio dropouts. To bypass this
+processing lag:</p>
+<ul>
+<li><strong>Use WASAPI Exclusive Mode:</strong> Ensure your monitoring
+device in OBS is set to use a WASAPI interface where possible.</li>
+<li><strong>Install ASIO Drivers:</strong> If you use a USB audio
+interface (like a Focusrite Scarlett or Behringer), install the official
+ASIO drivers from the manufacturer. You can then use the "OBS-ASIO"
+plugin to capture and monitor audio with virtually zero latency.</li>
+</ul>
+<h2 id="step-3-change-the-obs-audio-monitoring-device">Step 3: Change
+the OBS Audio Monitoring Device</h2>
+<p>Using the wrong monitoring device can route audio through slow
+Windows software pipelines.</p>
+<ol type="1">
+<li>In OBS, go to <strong>Settings</strong> &gt; <strong>Audio</strong>
+&gt; <strong>Advanced</strong>.</li>
+<li>Set the <strong>Monitoring Device</strong> specifically to your
+headphones or audio interface rather than "Default."</li>
+<li>Avoid monitoring through HDMI-connected monitors or Bluetooth
+headphones, as Bluetooth naturally introduces 150–300ms of latency.</li>
+</ol>
+<h2 id="step-4-adjust-the-audio-sync-offset-for-stream-alignment">Step
+4: Adjust the Audio Sync Offset (For Stream Alignment)</h2>
+<p>If your microphone audio is perfectly timed for you, but out of sync
+on the actual stream or recording, you need to adjust the Sync
+Offset.</p>
+<ol type="1">
+<li>Click the three dots next to any audio source in the <strong>Audio
+Mixer</strong> and select <strong>Advanced Audio
+Properties</strong>.</li>
+<li>Locate your microphone or desktop audio source.</li>
+<li>Adjust the <strong>Sync Offset (ms)</strong>. If the audio is ahead
+of the video, add a positive delay (e.g., <code>200</code> ms). If the
+audio is behind, you may need to add a delay to your webcam/video
+capture source instead.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

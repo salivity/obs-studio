@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio LUT Color Clipping Thresholds Explained - obs-studio</title>
+    <meta name="description" content="OBS Studio manages color transforms by passing video frames through dedicated GPU pixel shaders, where Look-Up Table (LUT) application relies on strict mathematical clipping thresholds bounded between 0.0 and 1.0 in normalized floating-point space. When">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-lut-color-clipping-thresholds-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio LUT Color Clipping Thresholds Explained - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-lut-color-clipping-thresholds-explained" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio manages color transforms by passing video frames through dedicated GPU pixel shaders, where Look-Up Table (LUT) application relies on strict mathematical clipping thresholds bounded between 0.0 and 1.0 in normalized floating-point space. When" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-lut-color-clipping-thresholds-explained">OBS Studio
+LUT Color Clipping Thresholds Explained</h1>
+<p>OBS Studio manages color transforms by passing video frames through
+dedicated GPU pixel shaders, where Look-Up Table (LUT) application
+relies on strict mathematical clipping thresholds bounded between 0.0
+and 1.0 in normalized floating-point space. When processing out-of-gamut
+or high-dynamic-range color data, any values that fall below 0.0 or
+exceed 1.0 are hard-clamped, preventing coordinate sampling errors
+outside the mapped dimensions of the LUT texture.</p>
+<h3 id="the-mathematical-bounds-00-and-10">The Mathematical Bounds: 0.0
+and 1.0</h3>
+<p>OBS Studio processes visual sources in a standardized normalized
+floating-point color pipeline. Under this model:</p>
+<ul>
+<li><strong>Lower Threshold (Black Point):</strong> <code>0.0</code>
+(corresponding to integer value <code>0</code> in 8-bit sRGB).</li>
+<li><strong>Upper Threshold (White Point):</strong> <code>1.0</code>
+(corresponding to integer value <code>255</code> in 8-bit sRGB).</li>
+</ul>
+<p>When a source produces out-of-gamut data—such as negative color
+values resulting from color space conversions or values exceeding
+standard dynamic range (SDR) limits—the underlying HLSL shader enforces
+these limits using the <code>saturate()</code> function or
+hardware-level <code>clamp()</code> texture addressing modes.</p>
+<h3 id="how-the-lut-shader-handles-out-of-gamut-pixels">How the LUT
+Shader Handles Out-of-Gamut Pixels</h3>
+<p>The standard LUT filter in OBS Studio reads an input pixel's red,
+green, and blue components to determine the coordinates needed to sample
+the LUT image (typically a flattened 2D representation of a 3D color
+cube, such as a 512×512 or 256×16 texture).</p>
+<p>Before calculating the 2D UV texture coordinates, the shader clamps
+the RGB components:</p>
+<p><span class="math display">\[\text{Clamped Color} =
+\min(\max(\text{Color}, 0.0), 1.0)\]</span></p>
+<p>If an input color channel contains an out-of-gamut value such as
+<span class="math inline">\(-0.15\)</span> or <span
+class="math inline">\(1.40\)</span>, it is truncated directly to <span
+class="math inline">\(0.0\)</span> and <span
+class="math inline">\(1.0\)</span>, respectively.</p>
+<p>Furthermore, the sampler state configured in the graphics pipeline
+employs the <code>Clamp</code> address mode:</p>
+<ul>
+<li><code>AddressU = Clamp;</code></li>
+<li><code>AddressV = Clamp;</code></li>
+</ul>
+<p>This ensures that even if mathematical floating-point imprecision
+occurs at the borders of the LUT texture, the GPU fetches the outermost
+valid edge pixels rather than wrapping around or extrapolating beyond
+the texture boundary.</p>
+<h3 id="consequences-for-production-workflows">Consequences for
+Production Workflows</h3>
+<p>Because OBS Studio imposes a hard threshold at <span
+class="math inline">\([0.0, 1.0]\)</span>, wide-gamut (e.g., Rec. 2020)
+and high-dynamic-range (HDR) sources will experience immediate highlight
+clipping and shadow crushing if passed through standard 8-bit or
+standard SDR LUT filters without prior tone-mapping. Any color
+information residing outside standard SDR boundaries is discarded at the
+threshold stage rather than rolled off smoothly. Colorists targeting OBS
+Studio must ensure input footage is converted and tone-mapped to fit
+strictly within the normalized <span class="math inline">\(0.0\)</span>
+to <span class="math inline">\(1.0\)</span> range before the LUT filter
+is executed.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

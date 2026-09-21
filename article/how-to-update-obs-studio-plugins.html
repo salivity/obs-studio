@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Update OBS Studio Plugins - obs-studio</title>
+    <meta name="description" content="When a new version of OBS Studio is released, compatibility issues can cause your installed plugins to stop working or crash the software. This article provides a clear, step-by-step guide on how to safely check for, download, and install updates for you">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-update-obs-studio-plugins">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Update OBS Studio Plugins - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-update-obs-studio-plugins" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When a new version of OBS Studio is released, compatibility issues can cause your installed plugins to stop working or crash the software. This article provides a clear, step-by-step guide on how to safely check for, download, and install updates for you" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-update-obs-studio-plugins">How to Update OBS Studio
+Plugins</h1>
+<p>When a new version of OBS Studio is released, compatibility issues
+can cause your installed plugins to stop working or crash the software.
+This article provides a clear, step-by-step guide on how to safely check
+for, download, and install updates for your OBS Studio plugins to ensure
+a seamless transition to the latest version of the software.</p>
+<h2 id="step-1-back-up-your-obs-configuration">Step 1: Back Up Your OBS
+Configuration</h2>
+<p>Before updating OBS Studio or any plugins, create a backup of your
+current settings. This ensures you can restore your setup if an update
+fails.</p>
+<ol type="1">
+<li>Open OBS Studio.</li>
+<li>In the top menu, click on <strong>Profile</strong> and select
+<strong>Export</strong> to save your profile settings.</li>
+<li>Click on <strong>Scene Collection</strong> and select
+<strong>Export</strong> to save your scene layouts.</li>
+<li>Save these files to a secure folder on your computer.</li>
+</ol>
+<h2 id="step-2-check-which-plugins-need-updates">Step 2: Check Which
+Plugins Need Updates</h2>
+<p>Unlike some software, OBS Studio does not always update third-party
+plugins automatically. You must check for updates manually:</p>
+<ol type="1">
+<li><strong>Check OBS startup logs:</strong> Go to <strong>Help</strong>
+&gt; <strong>Log Files</strong> &gt; <strong>View Current Log</strong>.
+Scroll through the log to see if any plugins failed to load due to
+version incompatibility.</li>
+<li><strong>Visit the OBS Resources portal:</strong> Go to the official
+OBS Project website's forum or resources section where you originally
+downloaded the plugins. Developers usually release updates within days
+of a major OBS Studio release.</li>
+<li><strong>Use GitHub:</strong> Many popular plugins (like OBS
+websocket or StreamFX) host their releases on GitHub. Check the
+"Releases" section of the plugin's repository for the latest version
+compatible with your new OBS version.</li>
+</ol>
+<h2 id="step-3-install-the-updated-plugins">Step 3: Install the Updated
+Plugins</h2>
+<p>Once you have downloaded the compatible version of the plugin,
+install it using one of the two methods below.</p>
+<h3 id="method-a-using-an-installer-recommended">Method A: Using an
+Installer (Recommended)</h3>
+<p>If the plugin developer provides an executable installer (e.g.,
+<code>.exe</code> for Windows or <code>.pkg</code> for macOS):</p>
+<ol type="1">
+<li>Close OBS Studio completely.</li>
+<li>Run the downloaded installer file.</li>
+<li>Follow the on-screen prompts. The installer will automatically
+locate your OBS directory and overwrite the old plugin files.</li>
+</ol>
+<h3 id="method-b-manual-installation-zip-files">Method B: Manual
+Installation (Zip Files)</h3>
+<p>If the plugin is provided as a <code>.zip</code> archive:</p>
+<ol type="1">
+<li>Close OBS Studio.</li>
+<li>Extract the downloaded <code>.zip</code> file.</li>
+<li>Locate your OBS Studio installation folder (typically
+<code>C:\Program Files\obs-studio</code> on Windows).</li>
+<li>Copy the <code>obs-plugins</code> and <code>data</code> folders from
+the extracted zip file and paste them directly into the main
+<code>obs-studio</code> directory. Click "Replace files in the
+destination" when prompted.</li>
+</ol>
+<h2 id="step-4-verify-the-installation">Step 4: Verify the
+Installation</h2>
+<p>After installing the updates, verify that the plugins are functioning
+correctly:</p>
+<ol type="1">
+<li>Launch OBS Studio.</li>
+<li>Go to <strong>Help</strong> &gt; <strong>Log Files</strong> &gt;
+<strong>View Current Log</strong> and check for any initialization
+errors.</li>
+<li>Test the specific features of your updated plugins (such as
+transition effects, filters, or source types) to confirm they work as
+expected.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Studio Allocates CPU Threads for Audio DSP - obs-studio</title>
+    <meta name="description" content="This article examines how OBS Studio architectures its internal audio digital signal processing (DSP) pipeline to maintain low-latency, glitch-free audio. By decoupling audio from video loops, assigning dedicated high-priority worker threads, utilizing l">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-studio-allocates-cpu-threads-for-audio-dsp">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Studio Allocates CPU Threads for Audio DSP - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-studio-allocates-cpu-threads-for-audio-dsp" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines how OBS Studio architectures its internal audio digital signal processing (DSP) pipeline to maintain low-latency, glitch-free audio. By decoupling audio from video loops, assigning dedicated high-priority worker threads, utilizing l" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-studio-allocates-cpu-threads-for-audio-dsp">How OBS
+Studio Allocates CPU Threads for Audio DSP</h1>
+<p>This article examines how OBS Studio architectures its internal audio
+digital signal processing (DSP) pipeline to maintain low-latency,
+glitch-free audio. By decoupling audio from video loops, assigning
+dedicated high-priority worker threads, utilizing lock-free circular
+buffers, and budgeting fixed sample blocks for filter chains, OBS Studio
+prevents buffer underruns even when system resources are under heavy
+graphical loads.</p>
+<h3 id="decoupling-audio-from-the-video-pipeline">Decoupling Audio from
+the Video Pipeline</h3>
+<p>OBS Studio enforces strict architectural separation between its video
+rendering and audio processing engines. Video rendering operates on an
+event-driven or vsync-locked frame loop
+(<code>obs_graphics_thread</code>), which is subject to micro-stutters,
+render lag, or GPU bottlenecks.</p>
+<p>To prevent these stalls from affecting audio playback and encoding,
+OBS Studio isolates the audio subsystem into its own subsystem
+(<code>audio-io</code>). Audio is driven by an independent, dedicated
+audio thread rather than piggybacking on rendering ticks. This isolation
+guarantees that even if video drops frames or encounters heavy 3D
+composition overhead, the audio pipeline continues to pump data on a
+deterministic clock.</p>
+<h3 id="os-level-thread-prioritization">OS-Level Thread
+Prioritization</h3>
+<p>Audio pipelines have low tolerance for scheduling latency. A delay of
+just a few milliseconds can empty an audio output buffer, leading to
+audible clicks, pops, or complete buffer underruns.</p>
+<p>To mitigate this, OBS Studio assigns elevated execution priority to
+its core audio thread upon initialization:</p>
+<ul>
+<li><strong>Windows:</strong> The audio thread requests elevated
+scheduling via <code>SetThreadPriority</code>, typically designating the
+thread as <code>THREAD_PRIORITY_HIGHEST</code> or
+<code>THREAD_PRIORITY_TIME_CRITICAL</code>. It may also leverage
+Multimedia Class Scheduler Service (MMCSS) characteristics to ensure the
+Windows kernel prioritizes it over normal background user-space
+processes.</li>
+<li><strong>macOS &amp; Linux:</strong> The engine sets appropriate
+real-time POSIX thread attributes, utilizing policies such as
+<code>SCHED_RR</code> (Round Robin) or high-priority niceness, depending
+on process privileges.</li>
+</ul>
+<p>This OS-level elevation ensures that the audio thread preempts
+lower-priority tasks whenever audio buffers require replenishment.</p>
+<h3 id="thread-isolation-between-capture-dsp-and-mixing">Thread
+Isolation Between Capture, DSP, and Mixing</h3>
+<p>OBS Studio does not process the entire audio chain on a single
+thread. Instead, it partitions work across three distinct operational
+layers:</p>
+<ol type="1">
+<li><strong>Input Capture Threads:</strong> Each audio capture source
+(e.g., WASAPI, CoreAudio, ALSA, PulseAudio, or auxiliary plugins) runs
+its own hardware-driven capture callback or thread. This thread reads
+raw PCM frames directly from the hardware endpoint and deposits them
+into source-specific buffers.</li>
+<li><strong>The Audio Processing Thread
+(<code>audio_thread</code>):</strong> This is the master clock of the
+DSP engine. It executes at regular intervals determined by the
+configured sample rate (typically 44.1 kHz or 48 kHz) and internal frame
+size. It pulls data from individual source buffers, runs per-source DSP
+filter chains, applies volume and balance adjustments, and downmixes the
+audio channels.</li>
+<li><strong>Encoder/Output Threads:</strong> Once mixed, processed audio
+blocks are dispatched to separate encoding threads (such as
+FFmpeg/libfdk-aac) or output services (such as RTMP streaming or local
+recording threads), keeping heavy compression algorithms off the primary
+DSP processing path.</li>
+</ol>
+<h3 id="lock-free-buffering-and-thread-synchronization">Lock-Free
+Buffering and Thread Synchronization</h3>
+<p>Passing audio data between disparate capture threads and the central
+audio DSP thread introduces the risk of lock contention. Traditional
+mutex locks can cause priority inversion, where a low-priority thread
+holds a lock needed by the high-priority audio thread, causing the
+pipeline to miss its deadline.</p>
+<p>OBS Studio circumvents this by using circular ring buffers (FIFOs)
+for incoming PCM data. These buffers allow lock-free or minimal-lock
+read and write operations:</p>
+<ul>
+<li>Capture devices write newly acquired samples to the head of the
+buffer.</li>
+<li>The DSP thread reads blocks of samples from the tail of the
+buffer.</li>
+<li>Resampling and channel matrix conversions occur before insertion
+into the mixer buffer if the input device does not match the canvas
+sample rate or layout.</li>
+</ul>
+<p>By relying on ring buffers, the DSP thread does not wait on external
+hardware devices to complete I/O operations, virtually eliminating
+underruns caused by thread contention.</p>
+<h3 id="deterministic-filter-execution-and-time-budgeting">Deterministic
+Filter Execution and Time Budgeting</h3>
+<p>When filters (such as noise suppression, compressors, equalizers, or
+third-party VSTs) are inserted onto a source, they execute sequentially
+within the audio thread's tick. To prevent complex DSP operations from
+overrunning the time window:</p>
+<ul>
+<li><strong>Fixed Block Processing:</strong> OBS Studio processes audio
+in fixed-size sample chunks (typically 1024 samples per frame,
+representing roughly 21.3 milliseconds of audio at 48 kHz).</li>
+<li><strong>Synchronous Source Filtering:</strong> Filters process each
+1024-sample block in-place. If an individual filter chain takes longer
+than the available frame window to compute, OBS Studio is forced to skip
+or pad the buffer. However, because individual sources are processed
+within the lightweight, dedicated audio thread rather than the video
+thread, modern multicore CPUs easily clear the DSP pipeline well under
+the 21ms execution ceiling.</li>
+</ul>
+<h3 id="underrun-prevention-via-padding-and-drift-compensation">Underrun
+Prevention via Padding and Drift Compensation</h3>
+<p>Even with prioritized threading, clock drift between independent
+hardware devices (e.g., an external USB microphone and an internal
+soundcard) can cause one device to produce samples faster or slower than
+the master audio thread expects.</p>
+<p>OBS Studio monitors input buffer levels continuously:</p>
+<ul>
+<li><strong>Buffer Starvation (Underrun):</strong> If a capture thread
+fails to deliver enough samples to the ring buffer before the DSP thread
+ticks, OBS Studio inserts silence or pads the remaining frame window.
+This preserves downstream encoder synchronization without stalling the
+audio thread.</li>
+<li><strong>Buffer Overflow:</strong> If an input device pushes samples
+too quickly, the buffer drops excess older samples or applies dynamic
+resampling (timestamp-based drift correction) to pull the stream back
+into alignment.</li>
+</ul>
+<p>Through the combination of real-time thread priorities, dedicated
+core audio loops, lock-free data structures, and decoupled encoder
+handoffs, OBS Studio guarantees that internal DSP tasks finish execution
+well within deterministic hardware deadlines.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

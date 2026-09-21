@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Output Raw Transport Stream TS in OBS - obs-studio</title>
+    <meta name="description" content="This guide provides a step-by-step walkthrough on how to configure OBS Studio to record and output video in the raw transport stream (.ts) file format using the advanced output container settings. You will learn how to access the advanced recording setti">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-output-raw-transport-stream-ts-in-obs">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Output Raw Transport Stream TS in OBS - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-output-raw-transport-stream-ts-in-obs" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide provides a step-by-step walkthrough on how to configure OBS Studio to record and output video in the raw transport stream (.ts) file format using the advanced output container settings. You will learn how to access the advanced recording setti" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-output-raw-transport-stream-ts-in-obs">How to Output Raw
+Transport Stream TS in OBS</h1>
+<p>This guide provides a step-by-step walkthrough on how to configure
+OBS Studio to record and output video in the raw transport stream (.ts)
+file format using the advanced output container settings. You will learn
+how to access the advanced recording settings, select the FFmpeg custom
+output, and configure the container to ensure your recordings are saved
+directly as .ts files, which are highly resilient to crashes and ideal
+for broadcast workflows.</p>
+<h3 id="step-1-open-output-settings">Step 1: Open Output Settings</h3>
+<ol type="1">
+<li>Launch <strong>OBS Studio</strong>.</li>
+<li>Click on <strong>Settings</strong> in the bottom-right
+<em>Controls</em> dock, or go to <strong>File</strong> &gt;
+<strong>Settings</strong> in the top menu.</li>
+<li>In the Settings window, click on the <strong>Output</strong> tab in
+the-left hand sidebar.</li>
+</ol>
+<h3 id="step-2-switch-to-advanced-output-mode">Step 2: Switch to
+Advanced Output Mode</h3>
+<ol type="1">
+<li>Locate the <strong>Output Mode</strong> dropdown menu at the top of
+the Output settings page.</li>
+<li>Change the selection from <strong>Simple</strong> to
+<strong>Advanced</strong>. This unlocks additional recording and
+encoding options.</li>
+</ol>
+<h3 id="step-3-configure-custom-ffmpeg-output">Step 3: Configure Custom
+FFmpeg Output</h3>
+<ol type="1">
+<li>Click on the <strong>Recording</strong> tab at the top of the
+window.</li>
+<li>Find the <strong>Type</strong> dropdown menu and change it from
+<em>Standard</em> to <strong>Custom Output (FFmpeg)</strong>. This
+allows you to manually define the container and muxer settings.</li>
+<li>In the <strong>Container Format</strong> dropdown, scroll through
+the list and select <strong>mpegts</strong> (which stands for MPEG
+Transport Stream).</li>
+<li>In the <strong>File Extension</strong> box, ensure it is set to
+<strong>ts</strong>.</li>
+</ol>
+<h3 id="step-4-define-bitrates-and-encoders-optional">Step 4: Define
+Bitrates and Encoders (Optional)</h3>
+<p>While the container handles the <code>.ts</code> format, you must
+define how the video and audio are compressed inside it:</p>
+<ul>
+<li><strong>Video Encoder:</strong> Select your preferred encoder (e.g.,
+<code>libx264</code> for CPU encoding or <code>h264_nvenc</code> for
+NVIDIA graphics cards).</li>
+<li><strong>Video Bitrate:</strong> Input your desired bitrate (e.g.,
+<code>6000 Kbps</code> for high-quality 1080p).</li>
+<li><strong>Audio Encoder:</strong> Select <code>aac</code> or
+<code>mp3</code>.</li>
+</ul>
+<h3 id="step-5-save-and-apply-settings">Step 5: Save and Apply
+Settings</h3>
+<ol type="1">
+<li>Click <strong>Apply</strong> in the bottom-right corner of the
+Settings window.</li>
+<li>Click <strong>OK</strong> to close the window.</li>
+</ol>
+<p>Your OBS Studio is now configured. When you click <strong>Start
+Recording</strong>, OBS will encode your video directly into a raw
+transport stream (.ts) file saved to your designated recording path.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

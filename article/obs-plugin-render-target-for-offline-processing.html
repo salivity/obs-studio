@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Plugin Render Target for Offline Processing - obs-studio</title>
+    <meta name="description" content="Creating an isolated render target for offline processing or offscreen rendering in an OBS Studio plugin is achieved using the gstexrendercreate function from the libobs graphics subsystem. This function allocates an isolated texture render target (gstex">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-plugin-render-target-for-offline-processing">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Plugin Render Target for Offline Processing - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-plugin-render-target-for-offline-processing" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Creating an isolated render target for offline processing or offscreen rendering in an OBS Studio plugin is achieved using the gstexrendercreate function from the libobs graphics subsystem. This function allocates an isolated texture render target (gstex" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-plugin-render-target-for-offline-processing">OBS Plugin
+Render Target for Offline Processing</h1>
+<p>Creating an isolated render target for offline processing or
+offscreen rendering in an OBS Studio plugin is achieved using the
+<code>gs_texrender_create</code> function from the <code>libobs</code>
+graphics subsystem. This function allocates an isolated texture render
+target (<code>gs_texrender_t</code>), enabling developers to redirect
+rendering passes into an independent buffer rather than the main output
+canvas. This guide explains how <code>gs_texrender_create</code> works,
+how to manage its lifecycle, and how to use it alongside staging
+surfaces for offline pixel manipulation.</p>
+<h3 id="the-core-function-gs_texrender_create">The Core Function:
+<code>gs_texrender_create</code></h3>
+<p>The primary graphics function for setting up an offscreen rendering
+surface is:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>gs_texrender_t <span class="op">*</span>gs_texrender_create<span class="op">(</span><span class="kw">enum</span> gs_color_format format<span class="op">,</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                                   <span class="kw">enum</span> gs_zstencil_format zsformat<span class="op">);</span></span></code></pre></div>
+<ul>
+<li><strong><code>format</code></strong>: Specifies the pixel format of
+the target texture (such as <code>GS_RGBA</code>, <code>GS_BGRA</code>,
+or <code>GS_RGBA16F</code>).</li>
+<li><strong><code>zsformat</code></strong>: Defines the depth/stencil
+buffer format (such as <code>GS_ZS_NONE</code> if depth testing is not
+needed, or <code>GS_Z16</code>, <code>GS_Z24_S8</code>, etc.).</li>
+</ul>
+<p>This function returns a pointer to a <code>gs_texrender_t</code>
+structure that manages the underlying texture and framebuffers across
+different graphics backends (Direct3D 11 or OpenGL).</p>
+<h3 id="the-render-target-workflow">The Render Target Workflow</h3>
+<p>To render graphics into this isolated target, use the following
+operational lifecycle within the graphics thread:</p>
+<ol type="1">
+<li><strong>Initialization</strong>: Call
+<code>gs_texrender_create</code> during plugin initialization or inside
+the source's video render callback.</li>
+<li><strong>Begin Capture</strong>: Call
+<code>gs_texrender_begin(gs_texrender_t *trs, uint32_t cx, uint32_t cy)</code>
+to set the render target and clear the viewport to the specified width
+(<code>cx</code>) and height (<code>cy</code>).</li>
+<li><strong>Execute Draw Calls</strong>: Perform standard drawing
+commands, such as applying shaders, rendering text, or drawing primitive
+geometry.</li>
+<li><strong>End Capture</strong>: Call
+<code>gs_texrender_end(gs_texrender_t *trs)</code> to restore the
+previous render target and finalize the offscreen pass.</li>
+<li><strong>Access the Texture</strong>: Retrieve the resulting rendered
+texture using
+<code>gs_texrender_get_texture(const gs_texrender_t *trs)</code>. This
+returns a <code>gs_texture_t*</code> that can be mapped to materials or
+sampled in subsequent rendering passes.</li>
+<li><strong>Destruction</strong>: Call
+<code>gs_texrender_destroy(gs_texrender_t *trs)</code> when the target
+is no longer needed to prevent GPU memory leaks.</li>
+</ol>
+<h3 id="offline-cpu-readback">Offline CPU Readback</h3>
+<p>If "offline processing" requires copying the rendered frames from GPU
+memory to CPU system memory (such as for AI inference, custom encoding,
+or image analysis):</p>
+<ol type="1">
+<li>Create a staging surface using
+<code>gs_stagesurf_create(uint32_t width, uint32_t height, enum gs_color_format color_format)</code>.</li>
+<li>Copy the texture from the render target to the staging surface using
+<code>gs_stage_texture(gs_stagesurf_t *dst, gs_texture_t *src)</code>.</li>
+<li>Map the staging surface using
+<code>gs_stagesurf_map(gs_stagesurf_t *surf, uint8_t **data, uint32_t *linesize)</code>
+to access the raw pixel byte array.</li>
+<li>Process the data, then call
+<code>gs_stagesurf_unmap(gs_stagesurf_t *surf)</code>.</li>
+<li>Release the staging surface using
+<code>gs_stagesurf_destroy(gs_stagesurf_t *surf)</code> upon
+shutdown.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

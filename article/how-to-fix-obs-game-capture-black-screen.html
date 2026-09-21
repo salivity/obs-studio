@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Fix OBS Game Capture Black Screen - obs-studio</title>
+    <meta name="description" content="Getting a black screen when using the Game Capture source in OBS Studio is a common issue that usually occurs due to software conflicts, permission restrictions, or incorrect graphics settings. This article explains the primary causes behind this problem">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-fix-obs-game-capture-black-screen">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Fix OBS Game Capture Black Screen - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-fix-obs-game-capture-black-screen" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Getting a black screen when using the Game Capture source in OBS Studio is a common issue that usually occurs due to software conflicts, permission restrictions, or incorrect graphics settings. This article explains the primary causes behind this problem" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-fix-obs-game-capture-black-screen">How to Fix OBS Game
+Capture Black Screen</h1>
+<p>Getting a black screen when using the Game Capture source in OBS
+Studio is a common issue that usually occurs due to software conflicts,
+permission restrictions, or incorrect graphics settings. This article
+explains the primary causes behind this problem—such as lack of
+administrator privileges, multi-GPU conflicts, and incompatible display
+modes—and provides straightforward, step-by-step solutions to resolve
+them quickly.</p>
+<h2 id="run-obs-studio-as-administrator">Run OBS Studio as
+Administrator</h2>
+<p>Many modern games run with elevated privileges to prevent cheating
+and optimize performance. If OBS Studio does not have the same level of
+authorization, it will be blocked from hooking into the game window,
+resulting in a black screen.</p>
+<ol type="1">
+<li>Close OBS Studio completely.</li>
+<li>Right-click the <strong>OBS Studio</strong> shortcut on your desktop
+or in the Start menu.</li>
+<li>Select <strong>Run as administrator</strong>.</li>
+<li>Launch your game and check if the Game Capture source is now
+working.</li>
+</ol>
+<p>To make this change permanent, right-click the OBS shortcut, go to
+<strong>Properties</strong> &gt; <strong>Compatibility</strong>, check
+the box for <strong>Run this program as an administrator</strong>, and
+click <strong>Apply</strong>.</p>
+<h2 id="match-gpu-settings-laptop-users">Match GPU Settings (Laptop
+Users)</h2>
+<p>If you are using a laptop with dual graphics cards (an integrated
+Intel/AMD CPU chip and a dedicated NVIDIA/AMD GPU), OBS and your game
+might be running on different processors. They must run on the same
+graphics card for Game Capture to function.</p>
+<ol type="1">
+<li>Open the Windows <strong>Settings</strong> menu and navigate to
+<strong>System</strong> &gt; <strong>Display</strong> &gt;
+<strong>Graphics</strong>.</li>
+<li>Locate <strong>OBS Studio</strong> in the list (if it is not there,
+click <strong>Browse</strong> and find the <code>obs64.exe</code>
+file).</li>
+<li>Click on OBS Studio and select <strong>Options</strong>.</li>
+<li>Set the graphics preference to <strong>High performance</strong>
+(this forces OBS to use your dedicated GPU, which games also use).</li>
+<li>Save the settings and restart OBS.</li>
+</ol>
+<h2 id="change-the-games-display-mode">Change the Game's Display
+Mode</h2>
+<p>Some games utilize rendering engines that prevent external software
+from capturing them in exclusive fullscreen mode.</p>
+<ol type="1">
+<li>Open the in-game video/graphics settings.</li>
+<li>Change the display mode from <strong>Fullscreen</strong> to
+<strong>Borderless Windowed</strong> or <strong>Windowed</strong>.</li>
+<li>In OBS, double-click your <strong>Game Capture</strong> source and
+ensure the Mode is set to <strong>Capture any fullscreen
+application</strong> or <strong>Capture specific window</strong> (and
+select your game from the list).</li>
+</ol>
+<h2 id="enable-anti-cheat-compatibility-hook">Enable Anti-Cheat
+Compatibility Hook</h2>
+<p>Certain games employ strict anti-cheat systems that block OBS from
+hooking into the game engine. OBS has a built-in feature to bypass this
+safely.</p>
+<ol type="1">
+<li>Double-click your <strong>Game Capture</strong> source in the OBS
+Sources list to open its properties.</li>
+<li>Scroll down and check the box next to <strong>Use anti-cheat
+compatibility hook</strong>.</li>
+<li>Click <strong>OK</strong> and restart both the game and OBS.</li>
+</ol>
+<h2 id="disable-conflicting-overlays">Disable Conflicting Overlays</h2>
+<p>Third-party software overlays can conflict with the OBS hook
+mechanism. If you are running overlays, disable them one by one to find
+the culprit. Common overlays include:</p>
+<ul>
+<li>Discord Overlay</li>
+<li>Steam Overlay</li>
+<li>GeForce Experience In-Game Overlay</li>
+<li>AMD Radeon Software Overlay</li>
+</ul>
+<h2 id="alternative-use-window-capture">Alternative: Use Window
+Capture</h2>
+<p>If a specific game refuses to work with Game Capture due to strict
+engine limitations (such as <em>Destiny 2</em> or <em>Counter-Strike
+2</em>), you can use Window Capture as a reliable workaround.</p>
+<ol type="1">
+<li>In OBS, click the <strong>+</strong> icon in the Sources dock.</li>
+<li>Select <strong>Window Capture</strong> and click
+<strong>OK</strong>.</li>
+<li>Set the <strong>Window</strong> dropdown to your running game.</li>
+<li>Set the <strong>Capture Method</strong> to <strong>Windows 10 (1903
+and up)</strong> for the best performance and compatibility.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

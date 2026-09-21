@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Webcam Freeze: USB Power or Driver Deadlock - obs-studio</title>
+    <meta name="description" content="When a webcam freezes in OBS Studio, determining whether the culprit is an aggressive USB power-saving state or a driver deadlock is critical for implementing the correct fix. This guide outlines how to inspect OBS log files, analyze Windows Event Viewer">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-webcam-freeze-usb-power-or-driver-deadlock">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Webcam Freeze: USB Power or Driver Deadlock - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-webcam-freeze-usb-power-or-driver-deadlock" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When a webcam freezes in OBS Studio, determining whether the culprit is an aggressive USB power-saving state or a driver deadlock is critical for implementing the correct fix. This guide outlines how to inspect OBS log files, analyze Windows Event Viewer" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-webcam-freeze-usb-power-or-driver-deadlock">OBS Webcam
+Freeze: USB Power or Driver Deadlock</h1>
+<p>When a webcam freezes in OBS Studio, determining whether the culprit
+is an aggressive USB power-saving state or a driver deadlock is critical
+for implementing the correct fix. This guide outlines how to inspect OBS
+log files, analyze Windows Event Viewer, and evaluate system behavior to
+reliably differentiate between power-management interruptions and
+driver-level concurrency lockups.</p>
+<h2 id="key-differences-at-a-glance">Key Differences at a Glance</h2>
+<ul>
+<li><strong>USB Power-Saving State (Selective Suspend):</strong> Windows
+or the USB controller transitions the device into a low-power mode (such
+as D2 or D3) due to misreported activity, system idle triggers, or PCIe
+link power limits. The camera effectively disconnects or stops
+responding on the USB bus.</li>
+<li><strong>Driver Deadlock:</strong> The camera hardware remains fully
+powered, but the driver (such as <code>usbvideo.sys</code> or a
+proprietary vendor driver) enters an unrecoverable state where two or
+more threads are waiting on the same synchronization primitives, halting
+frame delivery.</li>
+</ul>
+<hr />
+<h2 id="method-1-analyze-the-obs-studio-log-file">Method 1: Analyze the
+OBS Studio Log File</h2>
+<p>OBS Studio records detailed hardware communication states. To view
+your current log, open OBS and go to <strong>Help &gt; Log Files &gt;
+View Current/Last Log</strong>.</p>
+<h3 id="signs-of-a-usb-power-saving-state">Signs of a USB Power-Saving
+State</h3>
+<ul>
+<li><strong>Sudden Device Removal:</strong> The log will show sudden
+teardown calls, such as:
+<pre class="text"><code>User removed source &#39;Video Capture Device&#39;</code></pre>
+or direct DirectShow disconnect notifications:
+<pre class="text"><code>[DShow Device: &#39;Your Webcam&#39;] Device lost, attempting reconnect...</code></pre></li>
+<li><strong>Bus Resets:</strong> You may see error codes indicating the
+endpoint is no longer accessible, such as <code>0x8007001F</code>
+(<code>ERROR_GEN_FAILURE</code>) or <code>0x80070079</code>
+(<code>ERROR_SEM_TIMEOUT</code>), followed by repeated failed attempts
+to reinitialize until the user manually reconnects or cycles power.</li>
+</ul>
+<h3 id="signs-of-a-driver-deadlock">Signs of a Driver Deadlock</h3>
+<ul>
+<li><strong>Silent Freezes (Thread Stalls):</strong> The OBS log shows
+no disconnect events. Frames simply stop arriving without a device
+removal trigger:
+<pre class="text"><code>[DShow Device: &#39;Your Webcam&#39;] Video buffer empty / frame delivery timed out</code></pre></li>
+<li><strong>UI Lockup on Teardown:</strong> If you open the properties
+of the Video Capture Device source or try to close OBS, OBS completely
+freezes. This happens because OBS sends an API call (like
+<code>Release()</code> or <code>Stop()</code>) to the driver, and the
+deadlocked driver thread never returns the call.</li>
+</ul>
+<hr />
+<h2 id="method-2-check-windows-event-viewer">Method 2: Check Windows
+Event Viewer</h2>
+<p>Windows tracks both power management transitions and hardware driver
+failures in the Event Viewer (<code>eventvwr.msc</code>).</p>
+<h3 id="identifying-usb-power-management-events">Identifying USB Power
+Management Events</h3>
+<ol type="1">
+<li>Open <strong>Event Viewer</strong> and navigate to <strong>Windows
+Logs &gt; System</strong>.</li>
+<li>Filter the log for the source <strong>Kernel-Power</strong> or
+<strong>USBHUB3</strong>.</li>
+<li>Look for events indicating transitions:
+<ul>
+<li>Event messages specifying that a USB hub or host controller has
+suspended or transitioned into an energy-efficient state.</li>
+<li>If a device drops due to power limits, look for warnings stating
+that the port power was negotiated down or the hub shut down an
+over-current/low-power port.</li>
+</ul></li>
+</ol>
+<h3 id="identifying-driver-deadlocks">Identifying Driver Deadlocks</h3>
+<ol type="1">
+<li>Navigate to <strong>Applications and Services Logs &gt; Microsoft
+&gt; Windows &gt; DriverFrameworks-UserMode &gt; Operational</strong>
+(if using a UMDF driver).</li>
+<li>Alternatively, check <strong>Windows Logs &gt; System</strong> for
+<strong>Kernel-PnP</strong> or the camera vendor’s driver service
+name.</li>
+<li>Look for:
+<ul>
+<li><strong>Event ID 10110</strong> or <strong>10111</strong> (Driver
+Frameworks): "A problem has occurred with one or more user-mode drivers
+and the hosting process has been terminated."</li>
+<li>Timeouts referencing I/O Request Packets (IRPs) that were cancelled
+or timed out after 30–60 seconds without completion.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="method-3-physical-and-hardware-diagnostics">Method 3: Physical
+and Hardware Diagnostics</h2>
+<p>Examining the physical behavior of the webcam provides immediate
+confirmation of its internal state:</p>
+<ul>
+<li><strong>Activity Indicator LED:</strong>
+<ul>
+<li><strong>Driver Deadlock:</strong> The webcam's hardware LED usually
+stays solid on. The camera hardware still considers itself in an active
+stream capture loop, even though no data is moving up the driver
+stack.</li>
+<li><strong>Power-Saving State:</strong> The LED usually turns off
+completely, or rapidly flashes off and on as the USB controller attempts
+to wake the device from a suspended D-state.</li>
+</ul></li>
+<li><strong>Process Explorer / Task Manager Check:</strong>
+<ul>
+<li>Open <strong>Process Explorer</strong> (from Sysinternals) and
+inspect the threads inside the <code>obs64.exe</code> process.</li>
+<li>Sort by thread state. If a thread tied to <code>ks.sys</code>,
+<code>usbvideo.sys</code>, or your vendor’s <code>.dll</code> remains
+permanently stuck in <code>Wait:Execution</code> or
+<code>Wait:UserRequest</code> and cannot be killed without restarting
+the computer, it is a driver deadlock.</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="summary-of-corrective-actions">Summary of Corrective
+Actions</h2>
+<ul>
+<li><strong>If it is a USB Power State:</strong> Disable <strong>USB
+Selective Suspend</strong> in your Windows Power Plan, uncheck
+<strong>"Allow the computer to turn off this device to save
+power"</strong> in the properties of all USB Root Hubs inside Device
+Manager, and disable PCIe Link State Power Management.</li>
+<li><strong>If it is a Driver Deadlock:</strong> Switch the camera to
+the generic <strong>USB Video Device (UVC)</strong> driver instead of
+the proprietary vendor software, disable software-level frame
+manipulation (e.g., virtual backgrounds, digital zoom suites), update
+the camera's internal firmware, or connect the camera to an alternate
+USB host controller that uses a different chip architecture.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

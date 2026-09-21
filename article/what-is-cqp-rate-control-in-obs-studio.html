@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What is CQP Rate Control in OBS Studio? - obs-studio</title>
+    <meta name="description" content="This article explains the Constant QP (CQP) rate control method used for video recording in OBS Studio. You will learn how CQP works, why it is highly recommended for local recording, how to choose the ideal quality values, and how it compares to other r">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/what-is-cqp-rate-control-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="What is CQP Rate Control in OBS Studio? - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/what-is-cqp-rate-control-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains the Constant QP (CQP) rate control method used for video recording in OBS Studio. You will learn how CQP works, why it is highly recommended for local recording, how to choose the ideal quality values, and how it compares to other r" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="what-is-cqp-rate-control-in-obs-studio">What is CQP Rate Control
+in OBS Studio?</h1>
+<p>This article explains the Constant QP (CQP) rate control method used
+for video recording in OBS Studio. You will learn how CQP works, why it
+is highly recommended for local recording, how to choose the ideal
+quality values, and how it compares to other rate control options like
+CBR.</p>
+<h2 id="understanding-cqp-constant-quantization-parameter">Understanding
+CQP (Constant Quantization Parameter)</h2>
+<p>CQP stands for <strong>Constant Quantization Parameter</strong>. It
+is a rate control method that instructs your hardware encoder (such as
+NVIDIA NVENC, AMD AMF, or Intel Quick Sync) to apply a fixed amount of
+compression to every frame of your video.</p>
+<p>Unlike other rate control methods that target a specific bitrate (the
+amount of data processed per second), CQP targets a specific, consistent
+level of visual quality.</p>
+<h2 id="how-cqp-works">How CQP Works</h2>
+<p>In video encoding, "quantization" is the process of discarding visual
+data that the human eye is less likely to notice in order to reduce file
+size.</p>
+<p>When you use CQP, you set a fixed compression level (the QP
+value).</p>
+<ul>
+<li><strong>In simple scenes</strong> (like a static desktop or a paused
+game), the encoder needs very little data to maintain your chosen
+compression level, resulting in a tiny file size.</li>
+<li><strong>In complex scenes</strong> (like fast-paced gameplay,
+explosions, or moving grass), the encoder will automatically allocate
+more data to maintain that exact same level of visual clarity.</li>
+</ul>
+<p>Because of this, CQP ensures your video never suffers from pixelation
+or compression artifacts during high-motion moments, but it does not
+waste storage space during slow or static moments.</p>
+<h2 id="recommended-cqp-values-for-obs-studio">Recommended CQP Values
+for OBS Studio</h2>
+<p>In OBS Studio, the CQP scale typically ranges from <strong>0 to
+51</strong>, where <strong>lower numbers represent higher
+quality</strong> (less compression) and <strong>higher numbers represent
+lower quality</strong> (more compression).</p>
+<ul>
+<li><strong>CQP 0 (Lossless):</strong> Do not use this unless you have a
+specific scientific need. It results in massive file sizes that can
+overwhelm your storage drive and cause lagging recordings.</li>
+<li><strong>CQP 14 – 16 (Near Lossless):</strong> Ideal for professional
+video editing where you need the absolute highest quality before
+rendering. File sizes will be very large.</li>
+<li><strong>CQP 18 – 20 (Excellent Quality):</strong> The sweet spot for
+most content creators. The visual quality is virtually indistinguishable
+from lossless, and file sizes remain manageable.</li>
+<li><strong>CQP 22 – 24 (Good Quality):</strong> A great option if you
+have limited storage space. The quality is still very good, but file
+sizes are significantly smaller.</li>
+</ul>
+<p>To set this up, go to <strong>Settings &gt; Output</strong>, set the
+Output Mode to <strong>Advanced</strong>, navigate to the
+<strong>Recording</strong> tab, choose your hardware encoder, and select
+<strong>CQP</strong> as your Rate Control.</p>
+<h2 id="why-cqp-is-preferred-for-recording-but-not-streaming">Why CQP is
+Preferred for Recording (But Not Streaming)</h2>
+<h3 id="why-it-is-great-for-local-recording">Why it is great for local
+recording:</h3>
+<ul>
+<li><strong>Consistent Quality:</strong> You will never get blurry or
+pixelated footage during intense action.</li>
+<li><strong>Efficiency:</strong> It only uses the exact amount of
+storage space required to maintain your target quality.</li>
+<li><strong>Lower CPU/GPU Overhead:</strong> Because the encoder does
+not have to calculate how to fit the video into a strict bitrate limit,
+it requires less processing power.</li>
+</ul>
+<h3 id="why-it-should-not-be-used-for-streaming">Why it should not be
+used for streaming:</h3>
+<p>Streaming platforms like Twitch and YouTube require a stable,
+predictable flow of data (using <strong>CBR</strong> or Constant
+Bitrate). If you attempt to stream using CQP, a sudden high-motion scene
+in your game will cause your bitrate to spike massively, exceeding your
+upload bandwidth and causing your stream to lag or disconnect.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

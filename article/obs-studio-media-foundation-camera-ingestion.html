@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Media Foundation Camera Ingestion - obs-studio</title>
+    <meta name="description" content="This article examines how OBS Studio utilizes the Windows Media Foundation (MF) API to discover, configure, and ingest video feeds from hardware cameras. It breaks down the initialization pipeline, from hardware enumeration and media source activation to">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-media-foundation-camera-ingestion">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Media Foundation Camera Ingestion - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-media-foundation-camera-ingestion" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines how OBS Studio utilizes the Windows Media Foundation (MF) API to discover, configure, and ingest video feeds from hardware cameras. It breaks down the initialization pipeline, from hardware enumeration and media source activation to" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-media-foundation-camera-ingestion">OBS Studio Media
+Foundation Camera Ingestion</h1>
+<p>This article examines how OBS Studio utilizes the Windows Media
+Foundation (MF) API to discover, configure, and ingest video feeds from
+hardware cameras. It breaks down the initialization pipeline, from
+hardware enumeration and media source activation to media type
+negotiation, asynchronous sample capture, and frame conversion for the
+OBS rendering pipeline.</p>
+<h2 id="device-enumeration-and-activation">Device Enumeration and
+Activation</h2>
+<p>OBS Studio interfaces with Windows camera hardware primarily through
+the Windows Media Foundation framework when configured for modern
+capture drivers. The process begins with hardware enumeration:</p>
+<ol type="1">
+<li><strong>Attribute Setup</strong>: OBS creates an attribute store
+using <code>MFCreateAttributes</code> and sets the source type attribute
+to <code>MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID</code> to target
+physical video capture devices.</li>
+<li><strong>Device Discovery</strong>: It calls
+<code>MFEnumDeviceSources</code> to return an array of
+<code>IMFActivate</code> pointers, representing connected Universal
+Video Class (UVC) cameras, capture cards, and virtual video
+devices.</li>
+<li><strong>Hardware Selection</strong>: OBS inspects symbolic links and
+human-readable device names
+(<code>MF_DEVSOURCE_ATTRIBUTE_FRIENDLY_NAME</code>) to match the user's
+selected camera source.</li>
+<li><strong>Source Instantiation</strong>: Once identified, OBS calls
+<code>IMFActivate::ActivateObject</code> with the
+<code>IID_IMFMediaSource</code> interface identifier to create the
+concrete <code>IMFMediaSource</code> instance for the device.</li>
+</ol>
+<h2 id="initializing-the-source-reader">Initializing the Source
+Reader</h2>
+<p>Rather than managing direct topology nodes or manual pipeline
+construction, OBS Studio employs the high-level
+<code>IMFSourceReader</code> interface to simplify ingestion:</p>
+<ul>
+<li><strong>Low Latency Attributes</strong>: Before creating the reader,
+OBS constructs an attribute dictionary enabling low-latency operation
+(<code>MF_LOW_LATENCY</code>) and configuring internal buffering
+behavior to minimize frame delivery delay.</li>
+<li><strong>Reader Creation</strong>: OBS calls
+<code>MFCreateSourceReaderFromMediaSource</code>, passing the active
+<code>IMFMediaSource</code> and configured attributes.</li>
+<li><strong>Stream Selection</strong>: The reader enables the primary
+first video stream (<code>MF_SOURCE_READER_FIRST_VIDEO_STREAM</code>)
+and deselects all other auxiliary or audio streams provided by the video
+capture source.</li>
+</ul>
+<h2 id="media-type-negotiation">Media Type Negotiation</h2>
+<p>To support flexible user configurations (resolution, framerate, and
+color format), OBS queries and selects suitable media formats directly
+from the hardware:</p>
+<ol type="1">
+<li><strong>Querying Native Formats</strong>: OBS iterates through
+available formats using
+<code>IMFSourceReader::GetNativeMediaType</code>. It enumerates
+supported combinations of dimensions (width/height), frame rates
+(expressed as rational fractions via <code>MF_MT_FRAME_RATE</code>), and
+pixel formats (such as NV12, YUY2, or MJPEG).</li>
+<li><strong>Matching Properties</strong>: When a user specifies custom
+capture parameters, OBS searches for the exact media type match. If the
+user selects "Device Default", OBS retrieves the hardware's preferred
+native format.</li>
+<li><strong>Setting the Target Format</strong>: OBS locks the stream
+configuration by calling
+<code>IMFSourceReader::SetCurrentMediaType</code>. If the camera
+supplies compressed streams like MJPEG, Media Foundation can
+automatically bind an internal hardware- or software-accelerated decoder
+transform (MFT) to output uncompressed video buffers.</li>
+</ol>
+<h2 id="frame-acquisition-and-asynchronous-processing">Frame Acquisition
+and Asynchronous Processing</h2>
+<p>OBS configures capture execution to avoid blocking the main rendering
+or encoding threads:</p>
+<ul>
+<li><strong>Callback Mechanism</strong>: OBS initializes the
+<code>IMFSourceReader</code> in asynchronous mode by providing an
+implementation of the <code>IMFSourceReaderCallback</code> interface
+within the reader attributes.</li>
+<li><strong>Sample Request Loop</strong>: When
+<code>IMFSourceReaderCallback::OnReadSample</code> triggers, OBS
+processes the newly arrived frame and immediately issues a request for
+the subsequent frame via <code>IMFSourceReader::ReadSample</code>,
+maintaining a continuous capture loop.</li>
+<li><strong>Timestamp Handling</strong>: Hardware timestamps attached to
+each <code>IMFSample</code> (<code>IMFSample::GetSampleTime</code>) are
+mapped to the high-resolution OBS internal monotonic clock to maintain
+audio-video synchronization and detect dropped frames.</li>
+</ul>
+<h2 id="data-extraction-into-the-obs-graphics-pipeline">Data Extraction
+into the OBS Graphics Pipeline</h2>
+<p>Once an <code>IMFSample</code> arrives via the callback, OBS maps the
+underlying media buffer to its internal rendering engine:</p>
+<ol type="1">
+<li><strong>Buffer Access</strong>: OBS calls
+<code>IMFSample::ConvertToContiguousBuffer</code> (or retrieves the
+primary <code>IMFMediaBuffer</code>) and locks the memory using
+<code>IMFMediaBuffer::Lock</code> (or <code>IMF2DBuffer::Lock2D</code>
+for strided image data).</li>
+<li><strong>Format Translation</strong>: The raw memory pointers, stride
+offsets, and dimensions are mapped into an <code>obs_source_frame</code>
+struct. Formats like NV12 or YUY2 are linked to their corresponding OBS
+internal color types.</li>
+<li><strong>Pipeline Ingestion</strong>: OBS hands off the populated
+frame structure to the OBS core engine via
+<code>obs_source_output_video</code>.</li>
+<li><strong>Buffer Release</strong>: The media buffer is unlocked, the
+reference count on the <code>IMFSample</code> is decremented, and the
+memory returns to the Media Foundation driver pool for reuse.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

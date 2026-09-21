@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio with Ross openGear Capture Cards - obs-studio</title>
+    <meta name="description" content="This article explains how commercial television studios interface OBS Studio with Ross Video openGear modular infrastructure for streaming, monitoring, and auxiliary production. While openGear frames house broadcast-grade signal processing and routing ca">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-with-ross-open-gear-capture-cards">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio with Ross openGear Capture Cards - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-with-ross-open-gear-capture-cards" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how commercial television studios interface OBS Studio with Ross Video openGear modular infrastructure for streaming, monitoring, and auxiliary production. While openGear frames house broadcast-grade signal processing and routing ca" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-with-ross-opengear-capture-cards">OBS Studio with
+Ross openGear Capture Cards</h1>
+<p>This article explains how commercial television studios interface OBS
+Studio with Ross Video openGear modular infrastructure for streaming,
+monitoring, and auxiliary production. While openGear frames house
+broadcast-grade signal processing and routing cards, OBS Studio operates
+as an encoding and software-mixing layer. Integrating the two systems
+relies on converting openGear baseband or network streams into
+computer-ingestible protocols through physical capture hardware, IP
+transport layers, and centralized DashBoard control integration.</p>
+<p>In a commercial broadcast facility, the openGear chassis serves as a
+centralized 2RU modular frame supplying redundant power, cooling, and
+network communication to up to 20 processing cards. Unlike consumer USB
+or PCIe capture cards installed directly into a host PC, openGear cards
+reside in an equipment rack and handle tasks like SDI distribution,
+frame synchronization, color correction, and scan conversion. Because
+openGear cards output broadcast standard signals rather than USB video
+class (UVC) feeds, an intermediate transport layer is required to bridge
+the frame to the host computer running OBS Studio.</p>
+<p>The most common method to bring openGear video into OBS Studio is
+through intermediate baseband SDI ingest. The openGear frame routes
+processed 3G-SDI, 12G-SDI, or HDMI outputs directly into a dedicated
+workstation equipped with multi-channel PCIe capture cards, such as
+Blackmagic DeckLink or AJA KONA. OBS Studio accesses these feeds
+natively using the DeckLink Video Capture source or through standard
+DirectShow drivers. This configuration allows commercial facilities to
+utilize openGear's heavy-duty processing—such as
+up/down/cross-conversion and audio embedding—before delivering pristine,
+low-latency video into OBS Studio for secondary digital feeds, clean
+recording, or client review streams.</p>
+<p>A growing number of broadcast facilities use IP-based conversion
+cards within the openGear chassis to bypass physical workstation capture
+cards entirely. Modular cards designed for the openGear ecosystem,
+including SDI-to-NDI or SMPTE ST 2110 gateway cards, encode baseband SDI
+feeds directly into network packets at the rack level. OBS Studio
+captures these streams over a 10GbE or 25GbE local production network
+using the obs-ndi plugin or native network media inputs (SRT, UDP,
+RTSP). This approach eliminates the distance limitations of SDI cables
+and allows multiple OBS instances on the facility network to ingest the
+same openGear card output simultaneously.</p>
+<p>Control room automation ties the hardware and software layers
+together using Ross DashBoard, the open-architecture network control and
+management software for openGear. Broadcast engineers configure,
+monitor, and route the openGear cards via DashBoard CustomPanels. By
+leveraging DashBoard's network scripting alongside the OBS Studio
+WebSocket API or third-party broadcast automation tools, engineers can
+synchronize openGear signal routes with OBS scene changes, automated
+tallies, and stream start/stop commands, delivering a unified workflow
+in commercial broadcast environments.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

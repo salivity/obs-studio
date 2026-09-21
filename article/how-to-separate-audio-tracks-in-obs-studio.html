@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Separate Audio Tracks in OBS Studio - obs-studio</title>
+    <meta name="description" content="Configuring OBS Studio to output separate audio tracks allows you to deliver a clean audio mix to your live stream, capture isolated audio channels in your recordings for easier video editing, and monitor specific sounds in your headphones without causin">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-separate-audio-tracks-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Separate Audio Tracks in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-separate-audio-tracks-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Configuring OBS Studio to output separate audio tracks allows you to deliver a clean audio mix to your live stream, capture isolated audio channels in your recordings for easier video editing, and monitor specific sounds in your headphones without causin" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-separate-audio-tracks-in-obs-studio">How to Separate
+Audio Tracks in OBS Studio</h1>
+<p>Configuring OBS Studio to output separate audio tracks allows you to
+deliver a clean audio mix to your live stream, capture isolated audio
+channels in your recordings for easier video editing, and monitor
+specific sounds in your headphones without causing echoes. This guide
+provides a direct, step-by-step walkthrough to configure your output
+settings, route your audio sources using the Advanced Audio Properties
+matrix, and set up localized monitoring.</p>
+<h2 id="step-1-enable-advanced-output-settings">Step 1: Enable Advanced
+Output Settings</h2>
+<p>To split your audio into multiple tracks, you must first switch OBS
+Studio from Simple to Advanced output mode.</p>
+<ol type="1">
+<li>Open OBS Studio and click <strong>Settings</strong> in the
+bottom-right corner.</li>
+<li>Select the <strong>Output</strong> tab from the left-hand menu.</li>
+<li>At the top of the window, change the <strong>Output Mode</strong>
+dropdown from <em>Simple</em> to <strong>Advanced</strong>.</li>
+</ol>
+<h2 id="step-2-configure-streaming-and-recording-tracks">Step 2:
+Configure Streaming and Recording Tracks</h2>
+<p>Once in Advanced mode, you can assign which tracks are sent to your
+live stream and which are saved to your local recording file.</p>
+<ol type="1">
+<li>Click on the <strong>Streaming</strong> tab. Locate the
+<strong>Audio Track</strong> setting and select <strong>Track
+1</strong>. This will be your master stream mix. If you are streaming to
+Twitch and want to use the Twitch VOD Track feature to keep music out of
+your clips, check <strong>Twitch VOD Track</strong> and set it to
+<strong>Track 6</strong>.</li>
+<li>Click on the <strong>Recording</strong> tab. Under the <strong>Audio
+Track</strong> section, check the boxes for the tracks you want to
+record (for example, tracks <strong>2, 3, and 4</strong>).
+<ul>
+<li><em>Tip: Avoid checking Track 1 for recording if you want your
+recorded audio sources to remain completely separated on their own
+individual channels in your editing software.</em></li>
+</ul></li>
+<li>Ensure your <strong>Container Format</strong> (like MKV or MP4)
+supports multiple audio tracks.</li>
+</ol>
+<h2 id="step-3-route-audio-sources-in-advanced-audio-properties">Step 3:
+Route Audio Sources in Advanced Audio Properties</h2>
+<p>Now you must assign your physical audio inputs (mic, game, desktop,
+music) to the specific tracks you enabled.</p>
+<ol type="1">
+<li>Locate the <strong>Audio Mixer</strong> dock in the main OBS
+window.</li>
+<li>Click the gear icon next to any audio source, or right-click inside
+the mixer, and select <strong>Advanced Audio Properties</strong>.</li>
+<li>On the right side of the window, you will see a grid labeled
+<strong>Tracks</strong> numbered 1 through 6.</li>
+<li>Route your sources by checking or unchecking the boxes:
+<ul>
+<li><strong>Track 1 (Stream Mix):</strong> Check every source you want
+your live audience to hear (Mic, Game, Discord, Music).</li>
+<li><strong>Track 2 (Microphone Only):</strong> Check <em>only</em> your
+Microphone source. Uncheck all other sources.</li>
+<li><strong>Track 3 (Game/System Only):</strong> Check <em>only</em>
+your Desktop or Game audio source.</li>
+<li><strong>Track 4 (Discord/Chat Only):</strong> Check <em>only</em>
+your communication software source.</li>
+<li><strong>Track 6 (Twitch VOD Track, optional):</strong> Check only
+the sources you want saved to your Twitch VOD (uncheck your music source
+to prevent copyright strikes).</li>
+</ul></li>
+</ol>
+<h2 id="step-4-configure-localized-audio-monitoring">Step 4: Configure
+Localized Audio Monitoring</h2>
+<p>Audio monitoring allows you to hear certain OBS sources (like alert
+sounds or soundboards) through your headphones without routing your
+microphone back into your ears.</p>
+<ol type="1">
+<li>Go back to OBS <strong>Settings</strong> and select the
+<strong>Audio</strong> tab.</li>
+<li>Scroll down to the <strong>Advanced</strong> section and locate
+<strong>Monitoring Device</strong>. Select your headphones or primary
+audio interface from the dropdown menu. Click <strong>Apply</strong> and
+<strong>OK</strong>.</li>
+<li>Open <strong>Advanced Audio Properties</strong> again.</li>
+<li>Locate the <strong>Audio Monitoring</strong> column for your
+sources:
+<ul>
+<li><strong>Monitor Off:</strong> Set this for sources you can already
+hear naturally through your computer (like your game and Discord).</li>
+<li><strong>Monitor and Output:</strong> Set this for sources you cannot
+hear unless OBS plays them (like stream alerts, browser sources, or a
+soundboard). This sends the audio to your headphones <em>and</em> to
+your stream/recording.</li>
+<li><strong>Monitor Only (Mute Output):</strong> Use this if you want to
+hear a source in your headphones, but do not want it broadcasted to your
+stream or recorded.</li>
+</ul></li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Log USB Controller Bandwidth Exhaustion - obs-studio</title>
+    <meta name="description" content="When multiple high-throughput USB devices—such as 4K capture cards, uncompressed webcams, and multi-channel audio interfaces—share a single USB root hub, the controller can run out of isochronous bandwidth. This article outlines the specific hardware">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-log-usb-controller-bandwidth-exhaustion">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Log USB Controller Bandwidth Exhaustion - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-log-usb-controller-bandwidth-exhaustion" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When multiple high-throughput USB devices—such as 4K capture cards, uncompressed webcams, and multi-channel audio interfaces—share a single USB root hub, the controller can run out of isochronous bandwidth. This article outlines the specific hardware" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-log-usb-controller-bandwidth-exhaustion">OBS Log USB
+Controller Bandwidth Exhaustion</h1>
+<p>When multiple high-throughput USB devices—such as 4K capture cards,
+uncompressed webcams, and multi-channel audio interfaces—share a single
+USB root hub, the controller can run out of isochronous bandwidth. This
+article outlines the specific hardware indicators, error codes, and
+behavioral patterns that appear in an OBS Studio log file when USB host
+controller bandwidth is exhausted, allowing you to quickly diagnose
+hardware-level bottlenecks.</p>
+<h2 id="directshow-error-codes-0x800705aa-and-0x8007001f">DirectShow
+Error Codes (0x800705AA and 0x8007001F)</h2>
+<p>The most direct indicators of USB bandwidth saturation appear in
+lines initialized by the DirectShow (DShow) capture subsystem. Windows
+returns system-level HRESULT codes when a device fails to negotiate
+required bandwidth with the USB host controller.</p>
+<p>Look for these specific errors in the log:</p>
+<ul>
+<li><strong><code>0x800705AA</code>
+(<code>ERROR_NO_SYSTEM_RESOURCES</code>)</strong>: This is the primary
+indicator of USB bandwidth exhaustion. It occurs when a video capture
+device requests an isochronous transfer endpoint, but the host
+controller cannot allocate the required bandwidth slots. The log will
+typically display: <code>DShow: Run failed (0x800705AA)</code> or
+<code>DShow: Failed to set video format: 0x800705AA</code>.</li>
+<li><strong><code>0x8007001F</code>
+(<code>ERROR_GEN_FAILURE</code>)</strong>: Indicates that "A device
+attached to the system is not functioning." In the context of USB
+saturation, this happens when a device abruptly disconnects mid-stream
+because the USB controller timed out packet delivery.</li>
+</ul>
+<h2 id="capture-device-reset-loops-and-topology-spam">Capture Device
+Reset Loops and Topology Spam</h2>
+<p>When a USB host controller drops packets, devices frequently stall,
+drop off the USB bus, and attempt to re-enumerate. In an OBS Studio log,
+this creates repetitive device initialization cycles:</p>
+<ul>
+<li><strong>Continuous Add/Remove Events</strong>: Sequential entries
+showing <code>DShow: Device '[Device Name]' removed</code> followed
+moments later by <code>DShow: Device '[Device Name]' added</code>.</li>
+<li><strong>Format Negotiation Failures</strong>: Repeated entries where
+OBS tries to restart the capture stream with default video
+configurations (e.g., falling back from YUY2 to MJPEG or lower
+resolutions) because the requested data rate was rejected by the
+bus.</li>
+</ul>
+<h2 id="audio-subsystem-desynchronization-and-wasapi-invalidation">Audio
+Subsystem Desynchronization and WASAPI Invalidation</h2>
+<p>Audio interfaces sharing a saturated USB controller suffer packet
+loss, leading to buffer degradation or hardware invalidation in OBS
+Studio's audio monitoring pipeline:</p>
+<ul>
+<li><strong><code>WASAPI: Device invalidated</code></strong>: Occurs
+when the Windows Audio Session API loses communication with the USB
+audio device because the host controller dropped the connection.</li>
+<li><strong><code>Max audio buffering reached!</code></strong>: While
+this can occur due to general system stalls, a cluster of these warnings
+paired with capture device drops indicates that audio packets from a USB
+source are arriving late, forcing OBS to pad the buffer until it hits
+its hard ceiling.</li>
+</ul>
+<h2
+id="source-level-frame-freezes-vs-encodingrendering-lag">Source-Level
+Frame Freezes vs. Encoding/Rendering Lag</h2>
+<p>OBS Studio logs provide clear summaries at the end of a session
+distinguishing between different types of performance issues:</p>
+<ul>
+<li><strong>Rendering Lag</strong>: Logged as
+<code>Number of frames dropped due to rendering lag</code> (GPU
+overload).</li>
+<li><strong>Encoding Lag</strong>: Logged as
+<code>Number of frames dropped due to encoding lag</code> (CPU/GPU
+encoder overload).</li>
+<li><strong>USB Bandwidth Saturation</strong>: Does <strong>not</strong>
+appear as rendering or encoding lag. Instead, the total rendered frames
+and output frames may show 0% dropped, but the captured video stream
+itself freezes or stutters. The log will show normal encoder
+performance, but specific capture source threads will log timeouts, such
+as <code>[source_name]: Timed out waiting for frame</code> or repeated
+timestamp synchronization jumps.</li>
+</ul>
+<h2 id="how-to-resolve-usb-bandwidth-saturation">How to Resolve USB
+Bandwidth Saturation</h2>
+<ol type="1">
+<li><strong>Separate Host Controllers</strong>: Move one or more
+high-bandwidth devices (such as a capture card) to a different USB
+controller. Motherboards often have different physical ports wired to
+the CPU controller versus the chipset controller.</li>
+<li><strong>Change Video Formats</strong>: In OBS, change the video
+capture format from uncompressed (YUY2 or NV12) to compressed (MJPEG).
+This drastically reduces the data payload transmitted over the USB
+bus.</li>
+<li><strong>Install a Dedicated PCIe USB Card</strong>: Adding a
+discrete PCIe USB expansion card provides a separate, dedicated host
+controller and independent bandwidth channel for capture hardware.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

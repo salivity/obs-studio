@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Stream Dolby Digital Audio in OBS Studio - obs-studio</title>
+    <meta name="description" content="This guide provides a straightforward walkthrough on how to configure OBS Studio to stream multi-channel Dolby Digital (AC-3) audio to compatible broadcast servers. You will learn how to set up your operating system's audio configuration, adjust OBS chan">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-stream-dolby-digital-audio-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Stream Dolby Digital Audio in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-stream-dolby-digital-audio-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide provides a straightforward walkthrough on how to configure OBS Studio to stream multi-channel Dolby Digital (AC-3) audio to compatible broadcast servers. You will learn how to set up your operating system's audio configuration, adjust OBS chan" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-stream-dolby-digital-audio-in-obs-studio">How to Stream
+Dolby Digital Audio in OBS Studio</h1>
+<p>This guide provides a straightforward walkthrough on how to configure
+OBS Studio to stream multi-channel Dolby Digital (AC-3) audio to
+compatible broadcast servers. You will learn how to set up your
+operating system's audio configuration, adjust OBS channel settings,
+route your surround sound inputs, and configure the streaming encoder to
+deliver immersive multi-channel sound to your viewers.</p>
+<h2 id="step-1-configure-your-operating-system-audio">Step 1: Configure
+Your Operating System Audio</h2>
+<p>Before configuring OBS Studio, your operating system must recognize
+your audio interface or playback device as a multi-channel system.</p>
+<ol type="1">
+<li><strong>Windows:</strong> Right-click the speaker icon in your
+system tray and select <strong>Sounds</strong> (or open <strong>Control
+Panel &gt; Sound</strong>).</li>
+<li>Select your playback device, click <strong>Configure</strong>, and
+choose <strong>5.1 Surround</strong> or <strong>7.1
+Surround</strong>.</li>
+<li>Complete the speaker configuration wizard to ensure all channels are
+active.</li>
+<li><strong>macOS:</strong> Open <strong>Audio MIDI Setup</strong>,
+select your multi-channel output device, click <strong>Configure
+Speakers</strong>, and set it to <strong>5.1</strong> or <strong>7.1
+Rear Surround</strong>.</li>
+</ol>
+<h2 id="step-2-set-obs-studio-channels-to-multi-channel">Step 2: Set OBS
+Studio Channels to Multi-Channel</h2>
+<p>Next, you need to change OBS Studio's default stereo output to a
+surround sound configuration.</p>
+<ol type="1">
+<li>Open OBS Studio.</li>
+<li>Go to <strong>Settings</strong> &gt; <strong>Audio</strong>.</li>
+<li>Under the <strong>General</strong> section, locate the
+<strong>Channels</strong> dropdown.</li>
+<li>Change <strong>Stereo</strong> to <strong>5.1</strong> (or
+<strong>7.1</strong> depending on your audio setup).</li>
+<li>Click <strong>Apply</strong> and then restart OBS Studio if prompted
+to apply the channel changes.</li>
+</ol>
+<h2 id="step-3-map-your-audio-sources">Step 3: Map Your Audio
+Sources</h2>
+<p>With multi-channel audio enabled, you must route your audio inputs to
+the correct surround sound channels.</p>
+<ol type="1">
+<li>In the <strong>Audio Mixer</strong> dock, click the gear icon (or
+three dots) next to any audio source and select <strong>Advanced Audio
+Properties</strong>.</li>
+<li>Locate the audio source you want to configure.</li>
+<li>Use the <strong>Balance</strong> slider to pan the audio, or use
+specialized surround-sound plugins if you need to map specific inputs
+(like microphones) to individual channels (e.g., the Center
+channel).</li>
+<li>In the <strong>Tracks</strong> matrix on the right, ensure your main
+stream track (usually Track 1) is selected for all sources you want to
+include in the multi-channel mix.</li>
+</ol>
+<h2 id="step-4-configure-the-encoder-for-dolby-digital-ac-3">Step 4:
+Configure the Encoder for Dolby Digital (AC-3)</h2>
+<p>Standard RTMP streaming often restricts audio to stereo AAC. To
+stream Dolby Digital (AC-3), you must use either <strong>Enhanced
+RTMP</strong> (supported by YouTube) or <strong>SRT/RIST</strong>
+protocols, or utilize OBS's Custom Output (FFmpeg).</p>
+<h3 id="option-a-using-custom-output-ffmpeg-for-srtrtmp">Option A: Using
+Custom Output (FFmpeg) for SRT/RTMP</h3>
+<ol type="1">
+<li>Go to <strong>Settings</strong> &gt; <strong>Output</strong>.</li>
+<li>Change the <strong>Output Mode</strong> dropdown to
+<strong>Advanced</strong>.</li>
+<li>Go to the <strong>Recording</strong> or <strong>Streaming</strong>
+tab (depending on your setup) and change the <strong>Type</strong> to
+<strong>Custom Output (FFmpeg)</strong>.</li>
+<li>Set the <strong>Container Format</strong> to <strong>mpegts</strong>
+or <strong>flv</strong> (depending on server requirements).</li>
+<li>Set the <strong>Audio Encoder</strong> to <strong>ac3</strong>
+(Dolby Digital) or <strong>eac3</strong> (Dolby Digital Plus).</li>
+<li>Set the <strong>Audio Bitrate</strong> to at least <strong>448
+Kbps</strong> (for 5.1 audio) or <strong>640 Kbps</strong> for optimal
+quality.</li>
+</ol>
+<h3 id="option-b-using-enhanced-rtmp--srt">Option B: Using Enhanced RTMP
+/ SRT</h3>
+<p>If your destination server supports Enhanced RTMP or SRT
+natively:</p>
+<ol type="1">
+<li>Go to <strong>Settings</strong> &gt; <strong>Stream</strong>.</li>
+<li>Set your Service to <strong>Custom</strong> and enter your server's
+SRT or RTMP URL.</li>
+<li>Go to <strong>Settings</strong> &gt; <strong>Output</strong> &gt;
+<strong>Streaming</strong>.</li>
+<li>Set the <strong>Audio Encoder</strong> to an encoder that supports
+multi-channel output. While native OBS AAC can encode 5.1 audio, check
+with your broadcast server to ensure they accept multi-channel AAC or
+require transcoded AC-3.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capture Windows Virtual Desktops in OBS Studio - obs-studio</title>
+    <meta name="description" content="This article explains how to successfully capture and isolate a single virtual desktop workspace in Windows using OBS Studio. Because the standard "Display Capture" tool mirrors your physical monitor and displays any active workspace you switch to, captu">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/capture-windows-virtual-desktops-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Capture Windows Virtual Desktops in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/capture-windows-virtual-desktops-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how to successfully capture and isolate a single virtual desktop workspace in Windows using OBS Studio. Because the standard "Display Capture" tool mirrors your physical monitor and displays any active workspace you switch to, captu" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="capture-windows-virtual-desktops-in-obs-studio">Capture Windows
+Virtual Desktops in OBS Studio</h1>
+<p>This article explains how to successfully capture and isolate a
+single virtual desktop workspace in Windows using OBS Studio. Because
+the standard "Display Capture" tool mirrors your physical monitor and
+displays any active workspace you switch to, capturing a single virtual
+desktop requires specific configurations. Below, you will learn how to
+use Windows Graphics Capture and virtual display workarounds to stream
+or record a designated virtual workspace without accidental
+interruptions.</p>
+<h2 id="the-limitation-of-standard-display-capture">The Limitation of
+Standard Display Capture</h2>
+<p>By default, the "Display Capture" source in OBS Studio records the
+physical output of your monitor. If you use Windows Virtual Desktops
+(accessible via <code>Win + Tab</code>) and switch between them, OBS
+will continue to record whatever physical screen is currently visible to
+you. To lock OBS to a specific virtual workspace, you must use
+alternative capture methods.</p>
+<h2
+id="method-1-use-window-capture-with-windows-graphics-capture">Method 1:
+Use Window Capture with Windows Graphics Capture</h2>
+<p>The most efficient way to capture applications on a specific virtual
+desktop—without recording your main workspace—is by using the Window
+Capture tool configured with the correct capture API.</p>
+<ol type="1">
+<li><strong>Create your Virtual Desktop:</strong> Press
+<code>Win + Tab</code>, click <strong>New desktop</strong>, and open the
+applications you want to record on that second desktop.</li>
+<li><strong>Open OBS Studio:</strong> Keep OBS open on your primary
+virtual desktop.</li>
+<li><strong>Add a Window Capture Source:</strong> In the
+<strong>Sources</strong> dock, click the <strong>+</strong> icon and
+select <strong>Window Capture</strong>. Name the source and click
+<strong>OK</strong>.</li>
+<li><strong>Select the Target Window:</strong> In the properties window,
+select the application running on your secondary virtual desktop from
+the <strong>Window</strong> dropdown menu.</li>
+<li><strong>Change the Capture Method:</strong> Change the
+<strong>Capture Method</strong> dropdown from "Automatic" to
+<strong>Windows 10 (1903 and up)</strong> (also known as Windows
+Graphics Capture).</li>
+</ol>
+<p>This method allows OBS to lock onto the specific application window.
+Even if you switch virtual desktops on your physical monitor, OBS will
+continue to record only that application in the background.</p>
+<h2
+id="method-2-create-a-virtual-monitor-for-true-display-capture">Method
+2: Create a Virtual Monitor for True Display Capture</h2>
+<p>If you need to capture an entire desktop workspace (including the
+taskbar, desktop icons, and multiple changing windows) rather than just
+a single app, you must create a virtual display.</p>
+<ol type="1">
+<li><strong>Install a Virtual Display Driver:</strong> Download and
+install a free virtual display driver (such as <em>IddSampleDriver</em>
+or <em>spacedesk</em>) to trick Windows into thinking you have a second
+or third physical monitor plugged in.</li>
+<li><strong>Extend Your Display:</strong> Go to <strong>Windows Settings
+&gt; System &gt; Display</strong> and ensure your desktop is set to
+"Extend these displays."</li>
+<li><strong>Configure the Virtual Workspace:</strong> Move the windows
+you want to record to the newly created virtual screen.</li>
+<li><strong>Set Up OBS Display Capture:</strong> In OBS Studio, add a
+<strong>Display Capture</strong> source. In the properties menu, set the
+<strong>Display</strong> dropdown to target the newly created virtual
+monitor.</li>
+</ol>
+<p>By recording the virtual monitor, you can switch between your
+physical virtual desktops freely while OBS continuously and cleanly
+captures the dedicated virtual screen.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control OBS Color Source Brightness with MIDI Slider - obs-studio</title>
+    <meta name="description" content="This guide explains how to connect a physical MIDI controller slider to OBS Studio to smoothly dim and control the brightness of a specific color source. By using a dedicated OBS MIDI plugin and a Color Correction filter, you can map your physical faders">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/control-obs-color-source-brightness-with-midi-slider">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Control OBS Color Source Brightness with MIDI Slider - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/control-obs-color-source-brightness-with-midi-slider" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide explains how to connect a physical MIDI controller slider to OBS Studio to smoothly dim and control the brightness of a specific color source. By using a dedicated OBS MIDI plugin and a Color Correction filter, you can map your physical faders" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="control-obs-color-source-brightness-with-midi-slider">Control
+OBS Color Source Brightness with MIDI Slider</h1>
+<p>This guide explains how to connect a physical MIDI controller slider
+to OBS Studio to smoothly dim and control the brightness of a specific
+color source. By using a dedicated OBS MIDI plugin and a Color
+Correction filter, you can map your physical faders for real-time,
+precise tactile control over your stream's visual elements.</p>
+<h3 id="step-1-install-the-obs-midi-utility-plugin">Step 1: Install the
+OBS-MIDI-Utility Plugin</h3>
+<p>To bridge the gap between your physical MIDI controller and OBS
+Studio, you need to use an integration plugin.</p>
+<ol type="1">
+<li>Download the latest version of the <strong>OBS-MIDI-Utility</strong>
+plugin from the official OBS Resources website or its GitHub releases
+page.</li>
+<li>Install the plugin by placing the files into your OBS Studio
+installation directory.</li>
+<li>Restart OBS Studio to load the plugin.</li>
+</ol>
+<h3 id="step-2-set-up-the-color-source-and-filter">Step 2: Set Up the
+Color Source and Filter</h3>
+<p>Because OBS does not have a native "brightness" slider directly on
+color sources, you must use a filter to control the opacity or
+brightness level.</p>
+<ol type="1">
+<li>In the OBS <strong>Sources</strong> dock, click the
+<strong>+</strong> icon and select <strong>Color Source</strong> to
+create your color block.</li>
+<li>Right-click the newly created Color Source and select
+<strong>Filters</strong>.</li>
+<li>Click the <strong>+</strong> icon in the Effect Filters box and
+choose <strong>Color Correction</strong>.</li>
+<li>In the filter properties, locate the <strong>Opacity</strong> or
+<strong>Brightness</strong> slider. The <strong>Opacity</strong> slider
+is ideal for dimming, as sliding it to 0 makes the color source
+completely transparent.</li>
+</ol>
+<h3 id="step-3-configure-the-midi-controller-in-obs">Step 3: Configure
+the MIDI Controller in OBS</h3>
+<ol type="1">
+<li>Connect your physical MIDI controller to your computer.</li>
+<li>In OBS, go to the top menu and select <strong>Tools</strong> &gt;
+<strong>OBS-MIDI-Utility</strong>.</li>
+<li>In the plugin window, navigate to the <strong>Devices</strong>
+tab.</li>
+<li>Locate your MIDI controller in the list and check the box to enable
+it for input.</li>
+</ol>
+<h3 id="step-4-map-the-physical-slider-to-the-filter">Step 4: Map the
+Physical Slider to the Filter</h3>
+<ol type="1">
+<li>Switch to the <strong>Bindings</strong> tab in the OBS-MIDI-Utility
+window.</li>
+<li>Physically move the slider on your MIDI controller. The plugin will
+instantly detect the incoming MIDI Control Change (CC) message.</li>
+<li>Click <strong>Add Binding</strong> for the detected MIDI input.</li>
+<li>Set the target action to control a source filter.</li>
+<li>Select your target <strong>Scene</strong>, choose the <strong>Color
+Source</strong>, and select the <strong>Color Correction</strong> filter
+you created in Step 2.</li>
+<li>Select the <strong>Opacity</strong> (or <strong>Brightness</strong>)
+parameter.</li>
+<li>Configure the value range from <code>0.00</code> (fully dimmed) to
+<code>1.00</code> (full brightness) to match the slider's physical
+travel.</li>
+<li>Click <strong>Save</strong> to apply the binding.</li>
+</ol>
+<h3 id="step-5-test-the-setup">Step 5: Test the Setup</h3>
+<p>Move your physical MIDI slider up and down. The opacity of the color
+source in your OBS viewport should smoothly transition between fully
+bright and completely dark in real-time.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

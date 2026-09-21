@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why OBS Browser Dock Audio Echoes in Video Calls - obs-studio</title>
+    <meta name="description" content="Loading a web-based video conferencing room into an OBS Studio custom browser dock frequently results in disruptive audio echoing and feedback loops. This article explains the technical causes behind this issue, focusing on how OBS handles embedded brows">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/why-obs-browser-dock-audio-echoes-in-video-calls">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why OBS Browser Dock Audio Echoes in Video Calls - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/why-obs-browser-dock-audio-echoes-in-video-calls" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Loading a web-based video conferencing room into an OBS Studio custom browser dock frequently results in disruptive audio echoing and feedback loops. This article explains the technical causes behind this issue, focusing on how OBS handles embedded brows" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-obs-browser-dock-audio-echoes-in-video-calls">Why OBS
+Browser Dock Audio Echoes in Video Calls</h1>
+<p>Loading a web-based video conferencing room into an OBS Studio custom
+browser dock frequently results in disruptive audio echoing and feedback
+loops. This article explains the technical causes behind this issue,
+focusing on how OBS handles embedded browser audio, the interaction
+between system playback and desktop capture, and common configuration
+mistakes that create unintended audio loops.</p>
+<h2 id="chromium-direct-audio-output">Chromium Direct Audio Output</h2>
+<p>OBS Studio browser docks operate via the Chromium Embedded Framework
+(CEF). Unlike standard Browser Sources added directly to a scene, custom
+browser docks function as independent interface windows. By default, CEF
+routes audio directly to your operating system's default playback
+device, completely bypassing the OBS Audio Mixer. Because the audio is
+sent straight to your headphones or speakers without passing through OBS
+controls, you cannot natively mute, monitor, or manage the dock's audio
+levels within the software.</p>
+<h2 id="desktop-audio-capture-loops">Desktop Audio Capture Loops</h2>
+<p>The primary cause of the echo is a classic feedback loop created by
+OBS Studio's "Desktop Audio" capture:</p>
+<ol type="1">
+<li>The video conference inside the browser dock outputs incoming
+participant audio to your default Windows or macOS audio device.</li>
+<li>The global "Desktop Audio" capture in OBS records everything playing
+on that default device, including the conference call.</li>
+<li>If you route your OBS master output, virtual audio cable, or OBS
+Virtual Camera back into the conference call as your microphone input,
+the incoming audio is transmitted straight back into the meeting
+room.</li>
+<li>Participants hear their own voices returned to them after a short
+processing delay, creating an echo.</li>
+</ol>
+<h2 id="running-dual-instances-of-the-call">Running Dual Instances of
+the Call</h2>
+<p>Echoes also occur when users inadvertently load the conference call
+twice. Streamers often open the conference in a Custom Browser Dock to
+interact with controls or see participants, while simultaneously adding
+the same URL as a Browser Source in a scene to capture video.</p>
+<p>Because both instances join the room independently:</p>
+<ul>
+<li>Both instances receive and decode incoming audio streams.</li>
+<li>The Browser Source outputs sound (either to the desktop or the OBS
+mixer).</li>
+<li>The Browser Dock outputs sound directly to the system audio
+device.</li>
+<li>The slight latency difference between the two renders creates a
+hollow, duplicated echo effect.</li>
+</ul>
+<h2 id="lack-of-native-acoustic-echo-cancellation-aec">Lack of Native
+Acoustic Echo Cancellation (AEC)</h2>
+<p>Standard web browsers like Google Chrome or Microsoft Edge apply
+software-based Acoustic Echo Cancellation (AEC) and noise suppression
+when you join a meeting via their native interfaces. When a conference
+platform runs inside an OBS browser dock, it often lacks access to these
+native browser audio processing layers or hardware acceleration hooks.
+Without AEC active, any sound leaking from open-back headphones or
+desktop speakers into your open microphone is captured and rebroadcast
+into the room.</p>
+<h2 id="how-to-eliminate-the-echo">How to Eliminate the Echo</h2>
+<p>To prevent audio echoing when using browser docks for video
+conferencing:</p>
+<ul>
+<li><strong>Mute the Docked Tab:</strong> If the web platform provides
+an in-room speaker mute option, mute it inside the dock window so it
+produces no sound, and rely on an isolated capture method for stream
+audio.</li>
+<li><strong>Avoid Capturing Global Desktop Audio:</strong> Replace
+global Desktop Audio capture in OBS with the "Application Audio Output
+Capture" (available on Windows 10/11) to capture only the specific
+software programs you want your stream to hear.</li>
+<li><strong>Isolate Virtual Audio Cables:</strong> When sending OBS
+audio back into the meeting via a virtual microphone, ensure that
+Desktop Audio and the conference monitor are excluded from the virtual
+output track in OBS Advanced Audio Properties.</li>
+<li><strong>Do Not Double-Load Rooms:</strong> Use the dock strictly for
+monitoring/management without an active audio output, or capture the
+video via Window Capture from a standard, standalone browser instead of
+running both a dock and a Browser Source.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

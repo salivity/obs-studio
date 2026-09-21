@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Remux OBS Recordings via Command Line - obs-studio</title>
+    <meta name="description" content="This article explains how to automate the process of converting OBS Studio recordings from MKV to MP4 using command-line scripting. Because OBS Studio does not feature a native, standalone command-line argument specifically for its GUI remuxing tool, thi">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-remux-obs-recordings-via-command-line">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Remux OBS Recordings via Command Line - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-remux-obs-recordings-via-command-line" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how to automate the process of converting OBS Studio recordings from MKV to MP4 using command-line scripting. Because OBS Studio does not feature a native, standalone command-line argument specifically for its GUI remuxing tool, thi" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-remux-obs-recordings-via-command-line">How to Remux OBS
+Recordings via Command Line</h1>
+<p>This article explains how to automate the process of converting OBS
+Studio recordings from MKV to MP4 using command-line scripting. Because
+OBS Studio does not feature a native, standalone command-line argument
+specifically for its GUI remuxing tool, this guide covers the two most
+efficient workarounds: using FFmpeg (the engine powering OBS's remuxer)
+to batch-remux via scripts, and triggering OBS's auto-remux feature
+using command-line arguments.</p>
+<hr />
+<h2 id="method-1-command-line-remuxing-with-ffmpeg-recommended">Method
+1: Command-Line Remuxing with FFmpeg (Recommended)</h2>
+<p>OBS Studio performs remuxing internally using the FFmpeg library. To
+automate this process without opening the OBS GUI, you can call FFmpeg
+directly via a command-line script. This allows you to copy the video
+and audio streams instantly from <code>.mkv</code> to <code>.mp4</code>
+without re-encoding.</p>
+<h3 id="step-1-install-ffmpeg">Step 1: Install FFmpeg</h3>
+<p>Ensure you have FFmpeg installed and added to your system's PATH
+variable.</p>
+<h3 id="step-2-the-remux-command">Step 2: The Remux Command</h3>
+<p>To remux a single file, open your terminal or command prompt and
+run:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ffmpeg</span> <span class="at">-i</span> input.mkv <span class="at">-c</span> copy output.mp4</span></code></pre></div>
+<ul>
+<li><code>-i input.mkv</code>: Specifies the source file.</li>
+<li><code>-c copy</code>: Tells FFmpeg to copy the video and audio
+streams directly without re-encoding, preserving original quality and
+finishing the process in seconds.</li>
+</ul>
+<h3 id="step-3-automated-batch-scripting">Step 3: Automated Batch
+Scripting</h3>
+<h4 id="for-windows-batch-script---bat">For Windows (Batch Script -
+<code>.bat</code>):</h4>
+<p>Create a text file named <code>batch_remux.bat</code> in your
+recording directory and paste the following code to convert all MKV
+files to MP4 automatically:</p>
+<pre class="batch"><code>@echo off
+for %%i in (*.mkv) do (
+    ffmpeg -i &quot;%%i&quot; -c copy &quot;%%~ni.mp4&quot;
+)
+pause</code></pre>
+<h4 id="for-linux--macos-bash-script---sh">For Linux / macOS (Bash
+Script - <code>.sh</code>):</h4>
+<p>Create a script named <code>batch_remux.sh</code>, make it executable
+(<code>chmod +x batch_remux.sh</code>), and run it:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> file <span class="kw">in</span> <span class="pp">*</span>.mkv<span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="ex">ffmpeg</span> <span class="at">-i</span> <span class="st">&quot;</span><span class="va">$file</span><span class="st">&quot;</span> <span class="at">-c</span> copy <span class="st">&quot;</span><span class="va">${file</span><span class="op">%</span>.mkv<span class="va">}</span><span class="st">.mp4&quot;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code></pre></div>
+<hr />
+<h2 id="method-2-triggering-obs-auto-remux-via-command-line">Method 2:
+Triggering OBS Auto-Remux via Command Line</h2>
+<p>If you want OBS Studio to handle the remuxing automatically upon
+finishing a recording session initiated from the command line, you can
+leverage OBS's built-in "Auto-Remux" feature alongside OBS command-line
+launch arguments.</p>
+<h3 id="step-1-enable-auto-remux-in-obs">Step 1: Enable Auto-Remux in
+OBS</h3>
+<ol type="1">
+<li>Open OBS Studio.</li>
+<li>Go to <strong>Settings</strong> &gt; <strong>Advanced</strong>.</li>
+<li>Under the <strong>Recording</strong> section, check the box for
+<strong>Automatically remux to mp4</strong>.</li>
+<li>Click <strong>Apply</strong> and close OBS.</li>
+</ol>
+<h3 id="step-2-command-line-automation">Step 2: Command-Line
+Automation</h3>
+<p>You can now script the startup and shutdown of OBS recordings. When
+OBS is commanded to stop recording via CLI or hotkey, it will
+automatically execute the remux function before closing.</p>
+<h4 id="windows-command-prompt">Windows Command Prompt:</h4>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">start</span> <span class="st">&quot;&quot;</span> <span class="st">&quot;C:\Program Files\obs-studio\bin\64bit\obs64.exe&quot;</span> -<span class="at">-startrecording</span> -<span class="at">-headless</span></span></code></pre></div>
+<h4 id="linux-terminal">Linux Terminal:</h4>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">obs</span> <span class="at">--startrecording</span> <span class="at">--headless</span></span></code></pre></div>
+<ul>
+<li><code>--startrecording</code>: Launches OBS and immediately begins
+recording.</li>
+<li><code>--headless</code>: Runs OBS without bringing up the main user
+interface (available in OBS Studio v29.1 and newer), allowing for
+seamless background scripting.</li>
+</ul>
+<p>Once the recording is stopped (either by killing the process safely
+or using an OBS WebSocket script), the software will automatically
+generate the corresponding <code>.mp4</code> file in your designated
+recording folder.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

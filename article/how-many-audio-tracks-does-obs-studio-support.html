@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Many Audio Tracks Does OBS Studio Support? - obs-studio</title>
+    <meta name="description" content="This article covers the maximum audio track limits within OBS Studio, detailing how many independent discrete output tracks the recording engine supports and how they function. By understanding this capability, creators can properly route separate audio">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-many-audio-tracks-does-obs-studio-support">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Many Audio Tracks Does OBS Studio Support? - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-many-audio-tracks-does-obs-studio-support" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article covers the maximum audio track limits within OBS Studio, detailing how many independent discrete output tracks the recording engine supports and how they function. By understanding this capability, creators can properly route separate audio" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-many-audio-tracks-does-obs-studio-support">How Many Audio
+Tracks Does OBS Studio Support?</h1>
+<p>This article covers the maximum audio track limits within OBS Studio,
+detailing how many independent discrete output tracks the recording
+engine supports and how they function. By understanding this capability,
+creators can properly route separate audio sources—such as gameplay,
+microphones, and voice chat—into isolated channels for streamlined
+post-production editing.</p>
+<p>The OBS Studio recording core supports a maximum of <strong>6
+independent discrete audio output tracks</strong>. While live streaming
+output is typically limited to a single audio track (with an optional
+secondary track designated for Twitch VODs), the recording engine allows
+simultaneous capture of all six distinct tracks into a single video
+file.</p>
+<h3 id="supported-file-formats-for-multitrack-recording">Supported File
+Formats for Multitrack Recording</h3>
+<p>To utilize multiple discrete audio tracks, the output recording
+format must support multitrack audio containers. Formats capable of
+recording multiple discrete tracks include:</p>
+<ul>
+<li><strong>Matroska (.mkv):</strong> Highly recommended due to its
+crash-resilience.</li>
+<li><strong>MP4 (.mp4):</strong> Widely compatible with video editing
+software, though files can corrupt if OBS crashes mid-record.</li>
+<li><strong>QuickTime (.mov):</strong> Ideal for macOS environments and
+Apple ProRes workflows.</li>
+</ul>
+<p>Standard formats like FLV do not support multitrack audio and will
+restrict recording to a single track.</p>
+<h3 id="how-to-enable-multiple-audio-tracks-in-obs">How to Enable
+Multiple Audio Tracks in OBS</h3>
+<ol type="1">
+<li>Navigate to <strong>Settings</strong> &gt;
+<strong>Output</strong>.</li>
+<li>Set the <strong>Output Mode</strong> dropdown to
+<strong>Advanced</strong>.</li>
+<li>Select the <strong>Recording</strong> tab.</li>
+<li>Under the <strong>Audio Track</strong> section, check the boxes for
+tracks <strong>1 through 6</strong> depending on how many discrete
+channels are needed.</li>
+<li>Click <strong>Apply</strong> and <strong>OK</strong>.</li>
+</ol>
+<h3 id="assigning-audio-sources-to-discrete-tracks">Assigning Audio
+Sources to Discrete Tracks</h3>
+<p>Once enabled in the output settings, sources must be mapped to their
+respective tracks:</p>
+<ol type="1">
+<li>Locate the <strong>Audio Mixer</strong> dock in the main OBS
+interface.</li>
+<li>Click the gear icon or right-click any audio source and select
+<strong>Advanced Audio Properties</strong>.</li>
+<li>On the right side of the window, locate the <strong>Tracks</strong>
+matrix.</li>
+<li>Check the corresponding box (1–6) for each source to assign it to
+that specific discrete track.</li>
+</ol>
+<p>A common workflow is assigning a composite mix of all audio to Track
+1, your microphone to Track 2, desktop/game audio to Track 3, voice
+communication (e.g., Discord) to Track 4, and background music or alerts
+to Tracks 5 and 6. This setup ensures full editing flexibility in
+non-linear video editors like Adobe Premiere Pro, DaVinci Resolve, or
+Final Cut Pro.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Isolate Game Audio in OBS with Application Audio Capture - obs-studio</title>
+    <meta name="description" content="This guide provides a step-by-step walkthrough on how to use the "Application Audio Capture" feature in OBS Studio to isolate your game audio on Windows. By targeting specific software executables, you can stream or record your gameplay sounds and music">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/isolate-game-audio-in-obs-with-application-audio-capture">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Isolate Game Audio in OBS with Application Audio Capture - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/isolate-game-audio-in-obs-with-application-audio-capture" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide provides a step-by-step walkthrough on how to use the "Application Audio Capture" feature in OBS Studio to isolate your game audio on Windows. By targeting specific software executables, you can stream or record your gameplay sounds and music" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1
+id="isolate-game-audio-in-obs-with-application-audio-capture">Isolate
+Game Audio in OBS with Application Audio Capture</h1>
+<p>This guide provides a step-by-step walkthrough on how to use the
+"Application Audio Capture" feature in OBS Studio to isolate your game
+audio on Windows. By targeting specific software executables, you can
+stream or record your gameplay sounds and music without capturing
+background audio from Discord, web browsers, music players, or Windows
+system notifications.</p>
+<h2 id="step-1-open-your-game-and-obs-studio">Step 1: Open Your Game and
+OBS Studio</h2>
+<p>To successfully target your game, it must be running in the
+background. Launch the game you wish to stream or record, and then open
+OBS Studio (ensure you are running OBS Studio version 28.0 or newer, as
+this feature is natively integrated into these versions).</p>
+<h2 id="step-2-add-the-application-audio-capture-source">Step 2: Add the
+Application Audio Capture Source</h2>
+<ol type="1">
+<li>Navigate to the <strong>Sources</strong> dock at the bottom of the
+OBS window.</li>
+<li>Click the <strong>+ (Add)</strong> icon at the bottom of the
+dock.</li>
+<li>Select <strong>Application Audio Capture (BETA)</strong> from the
+dropdown list.</li>
+<li>Name the source something recognizable (e.g., "Game Audio") and
+click <strong>OK</strong>.</li>
+</ol>
+<h2 id="step-3-target-the-game-executable">Step 3: Target the Game
+Executable</h2>
+<ol type="1">
+<li>In the properties window that automatically opens, locate the
+<strong>Window</strong> dropdown menu.</li>
+<li>Click the dropdown and select the executable process of your running
+game (for example, <code>[steam.exe]: Cyberpunk 2077</code> or
+<code>[valheim.exe]: Valheim</code>).</li>
+<li>Under <strong>Window Match Priority</strong>, leave it at the
+default <strong>Match title, otherwise find window of same type</strong>
+to ensure OBS automatically finds the game the next time you launch
+it.</li>
+<li>Click <strong>OK</strong> to save the settings.</li>
+</ol>
+<h2 id="step-4-disable-default-desktop-audio">Step 4: Disable Default
+Desktop Audio</h2>
+<p>To prevent OBS from capturing duplicate audio (once from the
+game-specific capture and once from your overall system audio), you must
+disable your master desktop audio.</p>
+<ol type="1">
+<li>Go to <strong>Settings</strong> in the bottom-right corner of
+OBS.</li>
+<li>Click the <strong>Audio</strong> tab on the left.</li>
+<li>Under the <strong>Global Audio Devices</strong> section, set
+<strong>Desktop Audio</strong> to <strong>Disabled</strong>.</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong>.</li>
+</ol>
+<h2 id="step-5-test-and-adjust-levels">Step 5: Test and Adjust
+Levels</h2>
+<p>With the setup complete, make some noise in your game. Look at the
+<strong>Audio Mixer</strong> dock in OBS. You should see the volume bar
+for your new "Game Audio" source moving in response to the game, while
+other programs like Discord or Spotify remain completely silent in your
+stream or recording. Adjust the volume slider as needed to balance your
+game volume with your microphone.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

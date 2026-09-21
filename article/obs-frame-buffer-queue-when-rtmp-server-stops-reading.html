@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Frame Buffer Queue When RTMP Server Stops Reading - obs-studio</title>
+    <meta name="description" content="When an RTMP ingest server stops reading incoming TCP packets, a cascade of network backpressure occurs that directly impacts OBS Studio. Because TCP guarantees reliable, in-order delivery, unread data causes system network buffers to fill, which subsequ">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-frame-buffer-queue-when-rtmp-server-stops-reading">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Frame Buffer Queue When RTMP Server Stops Reading - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-frame-buffer-queue-when-rtmp-server-stops-reading" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When an RTMP ingest server stops reading incoming TCP packets, a cascade of network backpressure occurs that directly impacts OBS Studio. Because TCP guarantees reliable, in-order delivery, unread data causes system network buffers to fill, which subsequ" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-frame-buffer-queue-when-rtmp-server-stops-reading">OBS Frame
+Buffer Queue When RTMP Server Stops Reading</h1>
+<p>When an RTMP ingest server stops reading incoming TCP packets, a
+cascade of network backpressure occurs that directly impacts OBS Studio.
+Because TCP guarantees reliable, in-order delivery, unread data causes
+system network buffers to fill, which subsequently forces OBS Studio's
+internal output buffer queue to saturate. This article breaks down the
+step-by-step technical process of what happens inside OBS Studio, from
+TCP window exhaustion and internal queue accumulation to network frame
+drops and eventual stream disconnection.</p>
+<h3 id="1-tcp-flow-control-and-backpressure">1. TCP Flow Control and
+Backpressure</h3>
+<p>The process begins at the transport layer:</p>
+<ul>
+<li><strong>TCP Receive Buffer Saturation:</strong> As the RTMP server
+application stops reading from its local socket, its operating system's
+TCP receive buffer fills to capacity.</li>
+<li><strong>Zero Window State:</strong> In response, the server's TCP
+stack sends TCP ACK packets with a Receive Window (Win) size of zero to
+the streaming machine, signaling that it can no longer accept new
+data.</li>
+<li><strong>Client Send Buffer Saturation:</strong> The operating system
+running OBS Studio respects the Zero Window update and ceases network
+transmission, causing the local OS-level TCP send socket buffer
+(<code>SO_SNDBUF</code>) to rapidly fill with outgoing RTMP data.</li>
+<li><strong>Socket Non-Writable:</strong> Once the local socket buffer
+is completely full, non-blocking write operations on the RTMP socket
+fail, returning <code>EWOULDBLOCK</code> or <code>EAGAIN</code>.</li>
+</ul>
+<h3 id="2-obs-internal-queue-accumulation">2. OBS Internal Queue
+Accumulation</h3>
+<p>OBS Studio decouples video and audio encoding from network
+transmission. The encoder continues to produce encoded video and audio
+frames at the configured framerate and bitrate, pushing them to the RTMP
+output module (<code>rtmp-stream</code>).</p>
+<p>Under normal operation, a dedicated network output thread
+continuously pulls frames from this internal queue and writes them to
+the socket. When the socket becomes non-writable due to TCP
+backpressure:</p>
+<ul>
+<li>The send thread cannot dispatch packets to the operating
+system.</li>
+<li>The internal packet queue begins buffering all newly encoded audio
+and video packets in memory.</li>
+<li>If enabled, dynamic bitrate algorithms will attempt to drop the
+encoder bitrate to zero, but without the ability to flush bytes to the
+wire, data continues to pile up.</li>
+</ul>
+<h3 id="3-buffer-saturation-and-dropped-frames-network">3. Buffer
+Saturation and "Dropped Frames (Network)"</h3>
+<p>OBS Studio imposes limits on its internal packet buffer to prevent
+unbounded RAM consumption:</p>
+<ul>
+<li><strong>Buffer Thresholds:</strong> OBS monitors the age and
+quantity of un-transmitted packets waiting in the queue.</li>
+<li><strong>Packet Discarding:</strong> Once the internal queue reaches
+its memory limit or transmission latency threshold, OBS Studio begins
+discarding frames directly from the queue. Video packets (especially
+B-frames and P-frames) are discarded first to maintain audio
+synchronization.</li>
+<li><strong>UI Status Indication:</strong> In the OBS Studio interface,
+discarded packets are registered as <strong>"Dropped Frames
+(Network)"</strong>. The bitrate indicator in the bottom status bar
+drops to 0 kb/s, and the status square changes from green to red.</li>
+</ul>
+<h3 id="4-connection-timeout-and-disconnection">4. Connection Timeout
+and Disconnection</h3>
+<p>If the RTMP server continues to reject or ignore incoming TCP
+traffic, the stream will terminate:</p>
+<ul>
+<li><strong>TCP Keep-Alive / Retransmission Failure:</strong> The client
+OS sends TCP Keep-Alive or Zero Window Probe packets. If these go
+unacknowledged, or if the connection remains completely stalled,
+standard TCP retransmission timeouts occur.</li>
+<li><strong>RTMP Write Timeout:</strong> OBS Studio's output
+implementation tracks write attempts. When writes block beyond a defined
+socket timeout period (typically between 10 to 30 seconds), OBS flags
+the connection as dead.</li>
+<li><strong>Socket Destruction:</strong> OBS closes the socket, flushes
+the remaining unsent buffer queue to free system memory, and triggers a
+disconnect event. If the "Automatic Reconnect" setting is enabled in
+OBS, it will begin attempting a fresh handshake sequence on a new TCP
+connection.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

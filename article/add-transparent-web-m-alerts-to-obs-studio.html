@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Transparent WebM Alerts to OBS Studio - obs-studio</title>
+    <meta name="description" content="Using transparent WebM video files as alerts is an excellent way to elevate the production value of your live streams. This guide provides a straightforward, step-by-step walkthrough on how to import, configure, and optimize transparent WebM files as ale">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/add-transparent-web-m-alerts-to-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Add Transparent WebM Alerts to OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/add-transparent-web-m-alerts-to-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Using transparent WebM video files as alerts is an excellent way to elevate the production value of your live streams. This guide provides a straightforward, step-by-step walkthrough on how to import, configure, and optimize transparent WebM files as ale" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="add-transparent-webm-alerts-to-obs-studio">Add Transparent WebM
+Alerts to OBS Studio</h1>
+<p>Using transparent WebM video files as alerts is an excellent way to
+elevate the production value of your live streams. This guide provides a
+straightforward, step-by-step walkthrough on how to import, configure,
+and optimize transparent WebM files as alert overlays in OBS Studio,
+ensuring your custom stream alerts trigger seamlessly during your
+broadcasts.</p>
+<h2 id="step-1-add-a-media-source-to-obs">Step 1: Add a Media Source to
+OBS</h2>
+<p>To display a local WebM video file in OBS Studio, you need to use a
+Media Source.</p>
+<ol type="1">
+<li>Open OBS Studio and navigate to the <strong>Scenes</strong> dock.
+Select the scene where you want the alert to appear.</li>
+<li>Go to the <strong>Sources</strong> dock, click the <strong>+
+(Add)</strong> button at the bottom, and select <strong>Media
+Source</strong>.</li>
+<li>Give the source a descriptive name (e.g., "Subscriber Alert Video")
+and click <strong>OK</strong>.</li>
+</ol>
+<h2 id="step-2-configure-the-file-settings">Step 2: Configure the File
+Settings</h2>
+<p>Once the properties window opens, configure the settings to ensure
+the video plays correctly as an alert:</p>
+<ol type="1">
+<li>Keep the <strong>Local File</strong> box checked.</li>
+<li>Click <strong>Browse</strong>, locate your transparent WebM file on
+your computer, and select it.</li>
+<li><strong>Uncheck "Loop"</strong>: Alerts should usually only play
+once per trigger.</li>
+<li><strong>Check "Restart playback when source becomes
+active"</strong>: This ensures that every time the alert is triggered
+(by toggling its visibility), it starts playing from the very
+beginning.</li>
+<li><strong>Check "Show nothing when playback ends"</strong>: This
+automatically hides the video once the alert finishes playing.</li>
+<li>Click <strong>OK</strong> to save the settings.</li>
+</ol>
+<h2 id="step-3-position-and-scale-the-overlay">Step 3: Position and
+Scale the Overlay</h2>
+<p>With the source added, you can now position it on your stream
+canvas:</p>
+<ol type="1">
+<li>Select the Media Source in your Sources list.</li>
+<li>Click and drag the red bounding box in the preview window to resize
+and position the alert to your desired location.</li>
+<li>To test the placement, toggle the eye icon next to the source off
+and on again in the Sources dock. This will trigger the WebM file to
+play from the start.</li>
+</ol>
+<h2 id="integrating-webm-alerts-with-stream-platforms">Integrating WebM
+Alerts with Stream Platforms</h2>
+<p>If you are using an alert management service like Streamlabs or
+StreamElements instead of manually triggering a local file:</p>
+<ol type="1">
+<li>Log into your alert platform dashboard.</li>
+<li>Navigate to your <strong>Alert Box</strong> settings and select the
+specific alert category (e.g., Follows, Subs).</li>
+<li>Under the media/image settings, upload your transparent WebM
+file.</li>
+<li>Copy the unique <strong>Widget URL</strong> provided by the
+platform.</li>
+<li>In OBS Studio, add a <strong>Browser Source</strong> instead of a
+Media Source, paste the Widget URL, and set the width and height to
+match your stream resolution (usually 1920x1080).</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

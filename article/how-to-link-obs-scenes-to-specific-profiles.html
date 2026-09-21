@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Link OBS Scenes to Specific Profiles - obs-studio</title>
+    <meta name="description" content="This article explains how to link your OBS Studio profiles and scene collections so they load together automatically. While OBS Studio natively treats profiles (which control settings like resolution and stream keys) and scene collections (which hold you">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-link-obs-scenes-to-specific-profiles">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Link OBS Scenes to Specific Profiles - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-link-obs-scenes-to-specific-profiles" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how to link your OBS Studio profiles and scene collections so they load together automatically. While OBS Studio natively treats profiles (which control settings like resolution and stream keys) and scene collections (which hold you" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-link-obs-scenes-to-specific-profiles">How to Link OBS
+Scenes to Specific Profiles</h1>
+<p>This article explains how to link your OBS Studio profiles and scene
+collections so they load together automatically. While OBS Studio
+natively treats profiles (which control settings like resolution and
+stream keys) and scene collections (which hold your actual scenes and
+sources) as separate entities, you can easily force them to load
+together using custom desktop shortcuts.</p>
+<h3 id="why-obs-separates-profiles-and-scene-collections">Why OBS
+Separates Profiles and Scene Collections</h3>
+<p>In OBS Studio, <strong>Profiles</strong> store your encoding,
+broadcasting, and audio settings. <strong>Scene Collections</strong>
+store your actual layout, overlays, and capture sources. Because they
+are managed in separate menus, changing one does not automatically
+change the other. The most efficient way to link them is by creating
+custom desktop shortcuts using launch parameters.</p>
+<h3
+id="step-by-step-link-profiles-and-scenes-with-desktop-shortcuts">Step-by-Step:
+Link Profiles and Scenes with Desktop Shortcuts</h3>
+<p>By creating custom shortcuts, you can click a single icon (e.g.,
+"Twitch Stream" or "YouTube Recording") and OBS will launch with both
+the correct profile and scene collection pre-loaded.</p>
+<ol type="1">
+<li><p><strong>Get the Exact Names:</strong> Open OBS Studio. Note down
+the exact spelling and capitalization of the <strong>Profile</strong>
+and the <strong>Scene Collection</strong> you want to link.</p></li>
+<li><p><strong>Create a New Shortcut:</strong> Go to your desktop,
+right-click an empty space, select <strong>New</strong>, and then click
+<strong>Shortcut</strong>.</p></li>
+<li><p><strong>Locate the OBS Executable:</strong> Click
+<strong>Browse</strong> and navigate to your OBS Studio installation
+path (usually
+<code>C:\Program Files\obs-studio\bin\64bit\obs64.exe</code>). Click
+<strong>Next</strong> and then <strong>Finish</strong>.</p></li>
+<li><p><strong>Open Shortcut Properties:</strong> Right-click your newly
+created shortcut and select <strong>Properties</strong>.</p></li>
+<li><p><strong>Modify the Target Field:</strong> In the
+<strong>Shortcut</strong> tab, look at the <strong>Target</strong>
+field. It will look like this:
+<code>"C:\Program Files\obs-studio\bin\64bit\obs64.exe"</code></p></li>
+<li><p><strong>Add the Launch Parameters:</strong> At the very end of
+the Target path (after the closing quotation mark), add a space and
+input the following parameters, replacing the placeholder text with your
+actual profile and scene collection names:
+<code>--profile "Your Profile Name" --collection "Your Scene Collection Name"</code></p>
+<p><em>Example of a completed Target field:</em>
+<code>"C:\Program Files\obs-studio\bin\64bit\obs64.exe" --profile "Twitch Streaming" --collection "Main Overlay Setup"</code></p></li>
+<li><p><strong>Save and Rename:</strong> Click <strong>Apply</strong>,
+then click <strong>OK</strong>. Right-click the shortcut, select
+<strong>Rename</strong>, and name it something recognizable, like
+"Launch Twitch OBS."</p></li>
+</ol>
+<p>You can repeat this process to create multiple shortcuts for
+different setups, such as one shortcut for recording offline videos and
+another for live broadcasting, ensuring the correct settings and scenes
+always load together.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

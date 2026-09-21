@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Projector Tearing With Mismatched Refresh Rates - obs-studio</title>
+    <meta name="description" content="When using OBS Studio's fullscreen projector on a monitor that does not share the same refresh rate as your canvas or primary display, horizontal visual artifacts known as frame tearing frequently occur. This article explains the technical mechanics behi">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-projector-tearing-with-mismatched-refresh-rates">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Projector Tearing With Mismatched Refresh Rates - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-projector-tearing-with-mismatched-refresh-rates" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When using OBS Studio's fullscreen projector on a monitor that does not share the same refresh rate as your canvas or primary display, horizontal visual artifacts known as frame tearing frequently occur. This article explains the technical mechanics behi" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-projector-tearing-with-mismatched-refresh-rates">OBS
+Projector Tearing With Mismatched Refresh Rates</h1>
+<p>When using OBS Studio's fullscreen projector on a monitor that does
+not share the same refresh rate as your canvas or primary display,
+horizontal visual artifacts known as frame tearing frequently occur.
+This article explains the technical mechanics behind this issue,
+detailing how asynchronous render loops, GPU buffer flips, and Windows
+Desktop Window Manager (DWM) limitations interact to disrupt smooth
+video output across mixed-refresh-rate setups.</p>
+<h3 id="understanding-screen-tearing">Understanding Screen Tearing</h3>
+<p>Screen tearing occurs when a display receives a new video frame while
+it is actively scanning out the previous frame from top to bottom.
+Because the monitor draws the image line by line, presenting a new frame
+halfway through this process results in the top half showing the older
+frame and the bottom half showing the newer frame. The boundary where
+these two frames collide appears as a horizontal split or "tear."</p>
+<h3 id="how-mismatched-refresh-rates-cause-projector-tearing">How
+Mismatched Refresh Rates Cause Projector Tearing</h3>
+<p>When OBS Studio outputs a fullscreen projector to a secondary display
+with a different refresh rate, several synchronization breakdowns happen
+simultaneously:</p>
+<h4 id="1-decoupled-frame-delivery-and-vertical-blanking-vblank">1.
+Decoupled Frame Delivery and Vertical Blanking (VBLANK)</h4>
+<p>OBS renders its internal video pipeline at a fixed frame rate set in
+your settings (commonly 60 FPS). If the target monitor runs at an
+asynchronous or non-multiple refresh rate—such as 75Hz, 144Hz, or even
+59.94Hz versus 60Hz—the intervals at which OBS finishes a frame will not
+align with the monitor's vertical blanking interval (VBLANK). Without
+hardware-level synchronization, the GPU pushes the updated buffer
+mid-scan, producing visible tears.</p>
+<h4 id="2-projector-window-presentation-mode">2. Projector Window
+Presentation Mode</h4>
+<p>The OBS fullscreen projector is not an exclusive fullscreen
+application; it is a borderless, border-stripped window managed by the
+operating system's windowing system. Unlike full 3D applications that
+can command exclusive hardware V-Sync or variable refresh rate
+(G-Sync/FreeSync) pipelines, the projector window relies on standard
+desktop swap chains. If the graphics driver cannot negotiate a unified
+vertical sync across monitors running at distinct clock speeds, it drops
+synchronization on the secondary output to prevent stalling the primary
+display.</p>
+<h4 id="3-desktop-window-manager-dwm-desynchronization">3. Desktop
+Window Manager (DWM) Desynchronization</h4>
+<p>On modern Windows systems, the Desktop Window Manager handles
+compositing for all connected displays. When displays run at mixed
+refresh rates, DWM historically struggles to sync to multiple hardware
+refresh intervals simultaneously. If your primary monitor runs at 144Hz
+and your projector runs at 60Hz, DWM must dynamically adapt its
+compositing clock. When prioritizing the higher-refresh primary monitor,
+DWM often flips the frame buffer for the 60Hz secondary display out of
+sync with that panel’s hardware refresh cycle, leading directly to
+tearing.</p>
+<h4 id="4-asymmetrical-frame-pacing">4. Asymmetrical Frame Pacing</h4>
+<p>If OBS renders at 60 FPS and projects to a 144Hz monitor, 144 is not
+cleanly divisible by 60. Even if frames do not physically tear at the
+hardware scanout level, the irregular delivery pattern (frame pacing
+jitter) creates micro-stutter and duplicate frame presentation that
+visually mimics tearing artifacts during fast-motion scenes.</p>
+<h3 id="resolving-the-issue">Resolving the Issue</h3>
+<p>To eliminate frame tearing caused by mismatched rates:</p>
+<ul>
+<li><strong>Match Multiples:</strong> Set all displays to matching
+refresh rates or strict integer multiples (for example, setting the
+projector screen and OBS canvas to 60Hz, or setting the display to 120Hz
+for a 60 FPS canvas).</li>
+<li><strong>Enable Hardware-Accelerated GPU Scheduling (HAGS):</strong>
+In Windows Graphics Settings, turning on HAGS improves DWM’s ability to
+manage independent frame pacing across multi-monitor setups.</li>
+<li><strong>Cap OBS FPS Correctly:</strong> Align the internal OBS
+framerate with the exact refresh rate of the destination screen (e.g.,
+set OBS to 59.94 FPS if outputting to a broadcast display running at
+59.94Hz).</li>
+<li><strong>Adjust Variable Refresh Rate Settings:</strong> Disable
+G-Sync or FreeSync on the display receiving the fullscreen projector, as
+variable refresh rates can conflict with fixed-framerate desktop
+windows.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

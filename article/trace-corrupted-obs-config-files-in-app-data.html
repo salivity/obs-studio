@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trace Corrupted OBS Config Files in AppData - obs-studio</title>
+    <meta name="description" content="An unexpected power outage can interrupt disk write operations, leaving OBS Studio with truncated or corrupted configuration files that prevent the application from launching properly. This guide explains how to locate the OBS Studio AppData directory, r">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/trace-corrupted-obs-config-files-in-app-data">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Trace Corrupted OBS Config Files in AppData - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/trace-corrupted-obs-config-files-in-app-data" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="An unexpected power outage can interrupt disk write operations, leaving OBS Studio with truncated or corrupted configuration files that prevent the application from launching properly. This guide explains how to locate the OBS Studio AppData directory, r" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="trace-corrupted-obs-config-files-in-appdata">Trace Corrupted OBS
+Config Files in AppData</h1>
+<p>An unexpected power outage can interrupt disk write operations,
+leaving OBS Studio with truncated or corrupted configuration files that
+prevent the application from launching properly. This guide explains how
+to locate the OBS Studio AppData directory, review crash and session
+logs to pinpoint broken files, identify zero-byte or malformed
+configuration assets, and restore your settings from automatic
+backups.</p>
+<h3 id="step-1-open-the-obs-studio-appdata-directory">Step 1: Open the
+OBS Studio AppData Directory</h3>
+<p>OBS Studio stores its global settings, profiles, and scene
+collections inside the Windows roaming profile directory.</p>
+<ol type="1">
+<li>Press <code>Windows Key + R</code> to open the Run dialog.</li>
+<li>Type <code>%appdata%\obs-studio</code> and press
+<strong>Enter</strong>.</li>
+<li>Keep this folder open, as all target configuration files and logs
+are located within this directory tree.</li>
+</ol>
+<h3 id="step-2-review-obs-studio-log-files">Step 2: Review OBS Studio
+Log Files</h3>
+<p>Log files typically state the exact file path and line number where a
+configuration load failed.</p>
+<ol type="1">
+<li>Inside <code>%appdata%\obs-studio</code>, open the <code>logs</code>
+folder.</li>
+<li>Sort the files by <strong>Date modified</strong> and open the most
+recent text file in a text editor like Notepad.</li>
+<li>Scroll to the bottom of the log or search for terms such as
+<code>error</code>, <code>failed to load</code>,
+<code>parse error</code>, or <code>JSON</code>.</li>
+<li>If OBS crashes instantly upon launch, check the <code>crashes</code>
+folder in <code>%appdata%\obs-studio</code> instead. Look for crash logs
+that reference invalid pointers or exceptions in <code>obs.dll</code>
+during startup initialization.</li>
+</ol>
+<h3 id="step-3-scan-for-truncated-and-zero-byte-files">Step 3: Scan for
+Truncated and Zero-Byte Files</h3>
+<p>When a power outage cuts disk writes mid-process, Windows often
+leaves the affected file as an empty 0 KB file.</p>
+<ol type="1">
+<li>Check the primary global configuration file:
+<code>%appdata%\obs-studio\global.ini</code>. Right-click it, select
+<strong>Properties</strong>, and ensure its size is greater than 0
+KB.</li>
+<li>Navigate to <code>%appdata%\obs-studio\basic\scenes</code>. Look at
+the <strong>Size</strong> column for any <code>.json</code> files that
+register as <code>0 KB</code>.</li>
+<li>Navigate to <code>%appdata%\obs-studio\basic\profiles</code>. Open
+each profile folder and check if <code>basic.ini</code> or
+<code>streamEncoder.json</code> are empty.</li>
+<li>Any 0 KB file located in these directories is corrupted and must be
+repaired or replaced.</li>
+</ol>
+<h3 id="step-4-validate-json-syntax-in-configuration-files">Step 4:
+Validate JSON Syntax in Configuration Files</h3>
+<p>If a file contains data but was only partially written, the JSON
+formatting will be broken.</p>
+<ol type="1">
+<li>Open suspected <code>.json</code> scene files in an editor such as
+Notepad++ or VS Code, or paste the content into an online JSON
+validator.</li>
+<li>Look at the end of the file. A healthy OBS scene configuration
+always concludes with closing curly brackets (<code>}</code>) or square
+brackets (<code>]</code>). If the file ends abruptly mid-string, it is
+truncated.</li>
+</ol>
+<h3 id="step-5-restore-from-automatic-backups">Step 5: Restore from
+Automatic Backups</h3>
+<p>OBS Studio automatically creates backup copies of scene collections
+during regular operation.</p>
+<ol type="1">
+<li>In <code>%appdata%\obs-studio\basic\scenes</code>, look for files
+ending with <code>.json.bak</code>.</li>
+<li>Delete or move the corrupted <code>.json</code> file out of the
+directory.</li>
+<li>Rename the corresponding <code>.json.bak</code> file by removing the
+<code>.bak</code> extension so that it becomes a standard
+<code>.json</code> file.</li>
+<li>If <code>global.ini</code> was the corrupted file and no backup
+exists, delete <code>global.ini</code>. OBS Studio will generate a clean
+version on the next startup, though basic preferences (such as language
+and general UI layout) will need to be reconfigured.</li>
+</ol>
+<h3 id="step-6-verify-the-fix">Step 6: Verify the Fix</h3>
+<p>Launch OBS Studio. If the application starts normally, your scene
+collections, sources, and stream settings are recovered. If an error
+persists, return to Step 2 and check the newest log file to identify any
+secondary files damaged during the shutdown.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

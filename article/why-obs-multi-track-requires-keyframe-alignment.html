@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why OBS Multi-Track Requires Keyframe Alignment - obs-studio</title>
+    <meta name="description" content="When using multi-track broadcasting in OBS Studio to send multiple bitrate variants of a stream simultaneously, aligning the keyframe interval across all tracks is a mandatory technical requirement. This alignment ensures that every encoded variant inser">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/why-obs-multi-track-requires-keyframe-alignment">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why OBS Multi-Track Requires Keyframe Alignment - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/why-obs-multi-track-requires-keyframe-alignment" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When using multi-track broadcasting in OBS Studio to send multiple bitrate variants of a stream simultaneously, aligning the keyframe interval across all tracks is a mandatory technical requirement. This alignment ensures that every encoded variant inser" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-obs-multi-track-requires-keyframe-alignment">Why OBS
+Multi-Track Requires Keyframe Alignment</h1>
+<p>When using multi-track broadcasting in OBS Studio to send multiple
+bitrate variants of a stream simultaneously, aligning the keyframe
+interval across all tracks is a mandatory technical requirement. This
+alignment ensures that every encoded variant inserts an Instantaneous
+Decoder Refresh (IDR) frame at the exact same presentation timestamp,
+enabling video players to switch dynamically between resolutions without
+buffering, visual corruption, or playback failure.</p>
+<h3 id="enabling-seamless-adaptive-bitrate-abr-switching">Enabling
+Seamless Adaptive Bitrate (ABR) Switching</h3>
+<p>Modern video players use Adaptive Bitrate Streaming (ABR) to adjust
+playback quality according to the viewer's internet connection. When
+bandwidth drops, the player switches to a lower bitrate track, and when
+bandwidth recovers, it steps back up to a higher quality. Video decoders
+can only switch to a new track at a keyframe (specifically an IDR
+frame), because keyframes contain a complete image and do not rely on
+previous frames to decode. If Track A has a keyframe at second 2.0 and
+Track B has its keyframe at second 3.5, a player attempting to switch
+between them will experience a delay, frame drops, or playback stalling
+while waiting for the next valid entry point.</p>
+<h3 id="maintaining-segment-synchronization">Maintaining Segment
+Synchronization</h3>
+<p>Live streaming delivery architectures—such as HLS, MPEG-DASH, and
+low-latency CMAF—slice continuous video into discrete, playable segments
+(typically lasting between 1 and 2 seconds). The beginning of every
+segment must correspond to an IDR keyframe. When OBS Studio outputs
+multiple variants with identical keyframe intervals (for example, fixed
+at exactly 2 seconds), the segments across all tracks share uniform
+start and end times. Misaligned keyframes lead to mismatched segment
+boundaries, breaking the player's manifest coordination and making it
+impossible for delivery networks to package the tracks
+synchronously.</p>
+<h3 id="preventing-decoder-crashes-and-artifacts">Preventing Decoder
+Crashes and Artifacts</h3>
+<p>Inter-frame compression uses P-frames and B-frames that only store
+changes relative to previous or future frames. If a video player
+attempts to switch tracks at an arbitrary non-keyframe point, the
+decoder attempts to render new frames using reference data from an
+entirely different resolution or bitrate. This results in severe
+macroblocking, green screen artifacts, and complete decoder crashes.
+Aligning keyframes guarantees that whenever a switch occurs, the
+decoder's reference buffer resets cleanly, preventing visual
+artifacts.</p>
+<h3 id="preserving-audio-video-sync">Preserving Audio-Video Sync</h3>
+<p>Audio is delivered as a continuous stream across track switches. If
+video tracks have varying Group of Pictures (GOP) lengths and
+unsynchronized keyframes, track transitions introduce variable video
+frame latency relative to the audio clock. This drift creates noticeable
+lip-sync errors and audio stuttering whenever the player adapts to
+network fluctuations.</p>
+<h3 id="optimizing-edge-ingest-processing">Optimizing Edge Ingest
+Processing</h3>
+<p>Technologies like Twitch Enhanced Broadcasting rely on OBS Studio to
+perform client-side encoding for multiple qualities rather than having
+cloud servers transcode a single input. Ingest servers process these
+incoming tracks in parallel. When all tracks share identical keyframe
+cadences, the server can multiplex, repackage, and distribute the
+streams with minimal processing overhead and virtually zero buffer
+latency, ensuring consistent broadcast performance for all viewers.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why OBS Studio Media Source Displays a Gray Screen - obs-studio</title>
+    <meta name="description" content="When importing video files or media sources into OBS Studio, users sometimes encounter a blank gray screen instead of their expected video playback. This article explains the primary causes behind the OBS Studio gray screen issue—including hardware acc">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/why-obs-studio-media-source-displays-a-gray-screen">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why OBS Studio Media Source Displays a Gray Screen - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/why-obs-studio-media-source-displays-a-gray-screen" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When importing video files or media sources into OBS Studio, users sometimes encounter a blank gray screen instead of their expected video playback. This article explains the primary causes behind the OBS Studio gray screen issue—including hardware acc" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-obs-studio-media-source-displays-a-gray-screen">Why OBS
+Studio Media Source Displays a Gray Screen</h1>
+<p>When importing video files or media sources into OBS Studio, users
+sometimes encounter a blank gray screen instead of their expected video
+playback. This article explains the primary causes behind the OBS Studio
+gray screen issue—including hardware acceleration conflicts, unsupported
+video codecs, and GPU configuration errors—and provides direct solutions
+to restore your video preview.</p>
+<h2 id="1-hardware-decoding-conflicts">1. Hardware Decoding
+Conflicts</h2>
+<p>The most common cause of a gray screen is the "Hardware Decoding"
+feature in OBS. When enabled, OBS attempts to use your graphics card
+(GPU) to decode the video file to save CPU resources. If there is a
+compatibility issue between your GPU drivers and the video format, the
+rendering fails, resulting in a solid gray frame.</p>
+<p><strong>How to fix it:</strong></p>
+<ol type="1">
+<li>Double-click the problematic <strong>Media Source</strong> in your
+OBS Sources list to open its Properties.</li>
+<li>Scroll down and locate the option <strong>"Use hardware decoding
+when available"</strong>.</li>
+<li><strong>Uncheck</strong> this box.</li>
+<li>Click <strong>OK</strong> and restart OBS Studio.</li>
+</ol>
+<h2 id="2-missing-or-unsupported-video-codecs">2. Missing or Unsupported
+Video Codecs</h2>
+<p>OBS Studio relies on built-in libraries (such as FFmpeg) to decode
+media files. If your media source uses a modern or proprietary
+codec—such as HEVC (H.265), GoPro CineForm, or certain ProRes
+variants—and your system lacks the decoder, OBS will fail to render the
+visual track, displaying a gray screen while sometimes still playing the
+audio.</p>
+<p><strong>How to fix it:</strong></p>
+<ul>
+<li><strong>Convert the video:</strong> Use a free transcoding tool like
+HandBrake to convert the video file into a highly compatible format,
+such as <strong>H.264 MP4</strong> or <strong>AAC audio</strong>, before
+importing it into OBS.</li>
+<li><strong>Install codecs:</strong> For Windows users, installing the
+K-Lite Codec Pack or official HEVC Video Extensions from the Microsoft
+Store can resolve system-wide decoding issues.</li>
+</ul>
+<h2 id="3-multi-gpu-and-laptop-conflicts">3. Multi-GPU and Laptop
+Conflicts</h2>
+<p>Laptops and high-end desktops often feature dual graphics processors:
+an energy-efficient integrated GPU (Intel/AMD) and a powerful discrete
+GPU (NVIDIA/AMD Radeon). If OBS Studio is running on one graphics card
+while the media decoding process or display output is routed through the
+other, a communication breakdown occurs, leading to a gray preview
+window.</p>
+<p><strong>How to fix it:</strong></p>
+<ol type="1">
+<li>Open the Windows <strong>Graphics Settings</strong> (type "Graphics
+settings" in the Windows search bar).</li>
+<li>Under "Graphics performance preference," browse and select the
+<strong>obs64.exe</strong> executable.</li>
+<li>Click <strong>Options</strong> and set it to <strong>High
+performance</strong> (to force OBS to use your dedicated GPU).</li>
+<li>Save the settings and restart your computer.</li>
+</ol>
+<h2 id="4-corrupted-cache-or-temporary-files">4. Corrupted Cache or
+Temporary Files</h2>
+<p>Occasionally, OBS Studio's internal render cache can become
+corrupted, especially after a sudden software crash or a major Windows
+update. This corruption prevents media files from loading their visual
+frames properly.</p>
+<p><strong>How to fix it:</strong> Restarting OBS Studio as an
+Administrator can override permission-based caching issues. Right-click
+the OBS Studio shortcut and select <strong>Run as
+administrator</strong>. If the issue persists, recreating the scene and
+adding the media source as a fresh input often clears the glitch.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loop Scenes on Timer with OBS Advanced Scene Switcher - obs-studio</title>
+    <meta name="description" content="This guide provides a step-by-step walkthrough on how to configure the "Advanced Scene Switcher" plugin in OBS Studio to automatically loop a specific sequence of scenes using a timer. You will learn how to create the necessary macro rules to transition">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/loop-scenes-on-timer-with-obs-advanced-scene-switcher">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Loop Scenes on Timer with OBS Advanced Scene Switcher - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/loop-scenes-on-timer-with-obs-advanced-scene-switcher" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide provides a step-by-step walkthrough on how to configure the "Advanced Scene Switcher" plugin in OBS Studio to automatically loop a specific sequence of scenes using a timer. You will learn how to create the necessary macro rules to transition" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="loop-scenes-on-timer-with-obs-advanced-scene-switcher">Loop
+Scenes on Timer with OBS Advanced Scene Switcher</h1>
+<p>This guide provides a step-by-step walkthrough on how to configure
+the "Advanced Scene Switcher" plugin in OBS Studio to automatically loop
+a specific sequence of scenes using a timer. You will learn how to
+create the necessary macro rules to transition between your chosen
+scenes at set intervals, creating a hands-free, continuous rotation for
+your live stream or recording.</p>
+<h3 id="step-1-open-the-advanced-scene-switcher">Step 1: Open the
+Advanced Scene Switcher</h3>
+<p>First, ensure you have downloaded and installed the Advanced Scene
+Switcher plugin for OBS Studio.</p>
+<ol type="1">
+<li>Launch OBS Studio.</li>
+<li>In the top menu bar, click on <strong>Tools</strong>.</li>
+<li>Select <strong>Advanced Scene Switcher</strong> from the dropdown
+menu.</li>
+</ol>
+<h3 id="step-2-enable-the-plugin">Step 2: Enable the Plugin</h3>
+<p>Before configuring the loop, you need to ensure the plugin is
+active.</p>
+<ol type="1">
+<li>In the Advanced Scene Switcher window, navigate to the
+<strong>General</strong> tab.</li>
+<li>Click the <strong>Start</strong> button at the top to activate the
+switcher. If it is already running, you will see a "Stop" button
+instead.</li>
+</ol>
+<h3 id="step-3-create-the-scene-transition-macros">Step 3: Create the
+Scene Transition Macros</h3>
+<p>To create a continuous loop, you will configure a sequence of macros
+where each scene triggers the next one after a specified duration.</p>
+<p>For this example, we will loop three scenes: <strong>Scene
+A</strong>, <strong>Scene B</strong>, and <strong>Scene C</strong>.</p>
+<h4 id="configure-the-first-transition-scene-a-to-scene-b">Configure the
+First Transition (Scene A to Scene B):</h4>
+<ol type="1">
+<li>Click on the <strong>Macro</strong> tab at the top of the Advanced
+Scene Switcher window.</li>
+<li>Click the <strong>+</strong> (plus) button at the bottom left to
+create a new macro and name it "Scene A to B".</li>
+<li>In the <strong>Conditions</strong> section (the "If" statement),
+configure the dropdowns to read:
+<ul>
+<li><strong>Scene</strong> -&gt; <strong>[Scene A]</strong> -&gt;
+<strong>is active</strong> -&gt; <strong>for at least</strong> -&gt;
+<strong>[Desired Time, e.g., 10] seconds</strong>.</li>
+</ul></li>
+<li>In the <strong>Actions</strong> section (the "Then" statement),
+configure the dropdowns to read:
+<ul>
+<li><strong>Scene</strong> -&gt; <strong>Switch scene</strong> -&gt;
+<strong>[Scene B]</strong>.</li>
+</ul></li>
+</ol>
+<h4 id="configure-the-second-transition-scene-b-to-scene-c">Configure
+the Second Transition (Scene B to Scene C):</h4>
+<ol type="1">
+<li>Click the <strong>+</strong> button to create another macro and name
+it "Scene B to C".</li>
+<li>Set the <strong>Conditions</strong> to:
+<ul>
+<li><strong>Scene</strong> -&gt; <strong>[Scene B]</strong> -&gt;
+<strong>is active</strong> -&gt; <strong>for at least</strong> -&gt;
+<strong>[Desired Time, e.g., 10] seconds</strong>.</li>
+</ul></li>
+<li>Set the <strong>Actions</strong> to:
+<ul>
+<li><strong>Scene</strong> -&gt; <strong>Switch scene</strong> -&gt;
+<strong>[Scene C]</strong>.</li>
+</ul></li>
+</ol>
+<h4
+id="configure-the-final-transition-scene-c-back-to-scene-a">Configure
+the Final Transition (Scene C back to Scene A):</h4>
+<ol type="1">
+<li>Click the <strong>+</strong> button to create a final macro and name
+it "Scene C to A".</li>
+<li>Set the <strong>Conditions</strong> to:
+<ul>
+<li><strong>Scene</strong> -&gt; <strong>[Scene C]</strong> -&gt;
+<strong>is active</strong> -&gt; <strong>for at least</strong> -&gt;
+<strong>[Desired Time, e.g., 10] seconds</strong>.</li>
+</ul></li>
+<li>Set the <strong>Actions</strong> to:
+<ul>
+<li><strong>Scene</strong> -&gt; <strong>Switch scene</strong> -&gt;
+<strong>[Scene A]</strong>.</li>
+</ul></li>
+</ol>
+<h3 id="step-4-test-the-loop">Step 4: Test the Loop</h3>
+<p>Close the Advanced Scene Switcher window. In your main OBS Studio
+interface, manually select <strong>Scene A</strong>. After your
+specified time duration (e.g., 10 seconds), the plugin will
+automatically switch to <strong>Scene B</strong>, then to <strong>Scene
+C</strong>, and finally back to <strong>Scene A</strong>, repeating this
+sequence indefinitely until you stop the switcher plugin.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

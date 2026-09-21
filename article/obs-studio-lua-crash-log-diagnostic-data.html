@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Lua Crash Log Diagnostic Data - obs-studio</title>
+    <meta name="description" content="When an unhandled exception occurs within an OBS Studio Lua script hook, the application's built-in crash handler generates a detailed crash log file to diagnose the point of failure. This article covers the specific diagnostic data written to the OBS St">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-lua-crash-log-diagnostic-data">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Lua Crash Log Diagnostic Data - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-lua-crash-log-diagnostic-data" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When an unhandled exception occurs within an OBS Studio Lua script hook, the application's built-in crash handler generates a detailed crash log file to diagnose the point of failure. This article covers the specific diagnostic data written to the OBS St" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-lua-crash-log-diagnostic-data">OBS Studio Lua Crash
+Log Diagnostic Data</h1>
+<p>When an unhandled exception occurs within an OBS Studio Lua script
+hook, the application's built-in crash handler generates a detailed
+crash log file to diagnose the point of failure. This article covers the
+specific diagnostic data written to the OBS Studio crash log during such
+an event, explaining the sections recorded by the crash reporter,
+including system metadata, exception codes, thread call stacks, register
+states, and loaded modules.</p>
+<h3
+id="distinction-between-script-errors-and-crash-exceptions">Distinction
+Between Script Errors and Crash Exceptions</h3>
+<p>Standard Lua syntax or runtime errors (such as attempting to index a
+<code>nil</code> value) are typically handled internally by the
+<code>obs-scripting</code> module via protected calls
+(<code>pcall</code>), outputting error messages and stack traces
+directly to the standard OBS application log. An unhandled exception
+that generates an OBS <strong>crash log</strong> occurs when a Lua hook
+triggers a native-level fault—such as an invalid memory access via
+LuaJIT's Foreign Function Interface (FFI), a stack overflow, or memory
+corruption.</p>
+<h3 id="exception-information">Exception Information</h3>
+<p>At the top of the crash log, the handler outputs the primary
+technical attributes of the failure:</p>
+<ul>
+<li><strong>Exception Code:</strong> The platform-specific exception
+identifier (for example, <code>0xC0000005</code> for an Access Violation
+on Windows).</li>
+<li><strong>Fault Address:</strong> The exact memory address where the
+instruction attempted an illegal operation.</li>
+<li><strong>Execution Flags:</strong> Indicators regarding whether the
+exception is continuable or fatal.</li>
+</ul>
+<h3 id="faulting-thread-stack-trace">Faulting Thread Stack Trace</h3>
+<p>The crash log isolates the thread executing the Lua hook at the time
+of the fault and generates a reverse call stack. This section
+contains:</p>
+<ul>
+<li><strong>Module Names and Offsets:</strong> The binary files
+executing code, typically referencing <code>obs-scripting.dll</code>,
+<code>luajit-5.1.dll</code> (or <code>lua51.dll</code>), and core engine
+binaries like <code>obs.dll</code>.</li>
+<li><strong>Symbolic Function Names:</strong> If debug symbols (PDBs)
+are accessible, the trace resolves function calls, highlighting the
+internal C-wrapper functions responsible for dispatching Lua hooks
+(e.g., <code>call_func</code>, <code>obs_lua_callback</code>, or custom
+FFI target functions).</li>
+<li><strong>Instruction Pointers:</strong> The exact offsets within the
+involved dynamic link libraries.</li>
+</ul>
+<h3 id="cpu-registers">CPU Registers</h3>
+<p>The state of the CPU registers at the exact millisecond of the crash
+is dumped in the log:</p>
+<ul>
+<li><strong>Instruction Pointer:</strong> <code>RIP</code> (64-bit) or
+<code>EIP</code> (32-bit), identifying the exact assembly instruction
+that faulted.</li>
+<li><strong>Stack Pointers:</strong> <code>RSP</code>/<code>ESP</code>
+and <code>RBP</code>/<code>EBP</code>, detailing the stack memory
+boundaries.</li>
+<li><strong>General-Purpose Registers:</strong> Values for
+<code>RAX</code>, <code>RBX</code>, <code>RCX</code>, <code>RDX</code>,
+<code>RSI</code>, <code>RDI</code>, and extended registers
+(<code>R8</code>–<code>R15</code>), which help identify malformed
+pointers passed between the Lua state and native C functions.</li>
+</ul>
+<h3 id="loaded-modules-list">Loaded Modules List</h3>
+<p>A complete inventory of all shared libraries and executable modules
+loaded into the OBS Studio process space is appended. Each entry
+includes:</p>
+<ul>
+<li><strong>Base Address and Memory Range:</strong> The start and end
+locations of the module in memory.</li>
+<li><strong>File Path and Version:</strong> The exact disk path to the
+executable or DLL, verifying whether custom Lua runtime binaries,
+external C extensions, or specific OBS plugin versions were loaded.</li>
+</ul>
+<h3 id="environment-and-system-metadata">Environment and System
+Metadata</h3>
+<p>The log header provides contextual system details to establish the
+operating environment:</p>
+<ul>
+<li><strong>OBS Studio Version and Architecture:</strong> The exact
+build version (e.g., 30.x.x) and bitness (x64/arm64).</li>
+<li><strong>Operating System Details:</strong> The OS version, build
+number, and kernel release.</li>
+<li><strong>Hardware Information:</strong> CPU model, physical thread
+count, and available system memory.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

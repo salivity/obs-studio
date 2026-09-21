@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Add 3D Transform Effects in OBS Studio - obs-studio</title>
+    <meta name="description" content="This guide provides a straightforward, step-by-step walkthrough on how to apply 3D transform effects to your sources in OBS Studio. By using a popular, free plugin, you will learn how to tilt, rotate, and add realistic depth and perspective to your webca">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-add-3-d-transform-effects-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Add 3D Transform Effects in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-add-3-d-transform-effects-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide provides a straightforward, step-by-step walkthrough on how to apply 3D transform effects to your sources in OBS Studio. By using a popular, free plugin, you will learn how to tilt, rotate, and add realistic depth and perspective to your webca" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-add-3d-transform-effects-in-obs-studio">How to Add 3D
+Transform Effects in OBS Studio</h1>
+<p>This guide provides a straightforward, step-by-step walkthrough on
+how to apply 3D transform effects to your sources in OBS Studio. By
+using a popular, free plugin, you will learn how to tilt, rotate, and
+add realistic depth and perspective to your webcams, gameplay capture,
+overlays, and other scene sources.</p>
+<p>To achieve true 3D rotation and perspective warping in OBS Studio,
+you need to use a dedicated plugin, as OBS does not have these advanced
+3D controls built-in. The most reliable and widely used tool for this is
+the <strong>3D Effect</strong> plugin by developer Exeldro.</p>
+<h3 id="step-1-install-the-3d-effect-plugin">Step 1: Install the 3D
+Effect Plugin</h3>
+<ol type="1">
+<li>Close OBS Studio if it is currently running.</li>
+<li>Search for the <strong>OBS 3D Effect</strong> plugin on the official
+OBS Studio Resources website.</li>
+<li>Download the installer compatible with your operating system
+(Windows, macOS, or Linux).</li>
+<li>Run the installer and follow the prompts to complete the setup.</li>
+<li>Reopen OBS Studio.</li>
+</ol>
+<h3 id="step-2-apply-the-3d-effect-filter">Step 2: Apply the 3D Effect
+Filter</h3>
+<ol type="1">
+<li>Go to the <strong>Sources</strong> dock in OBS and locate the source
+you want to transform (e.g., your camera or gameplay capture).</li>
+<li>Right-click on the source and select <strong>Filters</strong>.</li>
+<li>In the Filters window, click the <strong>+ (plus)</strong> icon in
+the bottom-left corner under the <strong>Effect Filters</strong>
+section.</li>
+<li>Select <strong>3D Effect</strong> from the list, give it a name, and
+click <strong>OK</strong>.</li>
+</ol>
+<h3 id="step-3-configure-the-3d-controls">Step 3: Configure the 3D
+Controls</h3>
+<p>Once the filter is applied, you will see several sliders in the
+properties window. Adjust these settings to achieve your desired 3D
+look:</p>
+<ul>
+<li><strong>Rotation (X, Y, Z):</strong>
+<ul>
+<li><strong>X-Rotation:</strong> Tilts the source forward or
+backward.</li>
+<li><strong>Y-Rotation:</strong> Rotates the source left or right (ideal
+for a "slanted" or angled sidebar look).</li>
+<li><strong>Z-Rotation:</strong> Spins the source clockwise or
+counter-clockwise on a flat plane.</li>
+</ul></li>
+<li><strong>Perspective:</strong> Adjusts the intensity of the 3D depth.
+Higher values make the parts of the source closer to the camera appear
+much larger than the parts further away.</li>
+<li><strong>Position (X, Y, Z):</strong> Shifts the source along the
+horizontal, vertical, and depth axes.</li>
+<li><strong>Scale:</strong> Adjusts the overall size of the source
+within the 3D space.</li>
+<li><strong>Camera Distance:</strong> Changes how far the virtual
+viewing camera is from the source, which alters how dramatic the
+perspective distortion is.</li>
+</ul>
+<h3 id="step-4-fine-tune-and-save">Step 4: Fine-tune and Save</h3>
+<ol type="1">
+<li>Drag the sliders slowly to preview the changes in real-time.</li>
+<li>If you want to start over, click the <strong>Reset</strong> button
+next to any slider to return to the default flat state.</li>
+<li>Once you are satisfied with the 3D angle, click
+<strong>Close</strong> on the Filters window.</li>
+</ol>
+<p>You can now reposition and resize the entire transformed source on
+your canvas just like any standard OBS source.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

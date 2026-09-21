@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Sub-Pixel Accuracy in Text Scaling - obs-studio</title>
+    <meta name="description" content="This article explains how OBS Studio maintains visual fidelity and sub-pixel precision when applying incremental scale transformations to vector text assets. Through the combination of floating-point transformation matrices, specialized GPU texture sampl">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-sub-pixel-accuracy-in-text-scaling">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Sub-Pixel Accuracy in Text Scaling - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-sub-pixel-accuracy-in-text-scaling" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how OBS Studio maintains visual fidelity and sub-pixel precision when applying incremental scale transformations to vector text assets. Through the combination of floating-point transformation matrices, specialized GPU texture sampl" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-sub-pixel-accuracy-in-text-scaling">OBS Studio
+Sub-Pixel Accuracy in Text Scaling</h1>
+<p>This article explains how OBS Studio maintains visual fidelity and
+sub-pixel precision when applying incremental scale transformations to
+vector text assets. Through the combination of floating-point
+transformation matrices, specialized GPU texture sampling shaders, and
+high-resolution dynamic rasterization pipelines, OBS Studio prevents
+positional jitter, rounding drift, and aliasing artifacts during
+continuous scaling operations.</p>
+<h3 id="floating-point-scene-transformations">Floating-Point Scene
+Transformations</h3>
+<p>OBS Studio decouples the logical position and scale of scene items
+from the discrete pixel grid of the output canvas. Internally,
+transforms applied to a text source are represented using 32-bit
+single-precision floating-point matrices (<code>struct matrix4</code> in
+<code>libobs</code>).</p>
+<p>When an incremental scale transformation is applied—such as through
+animations or programmatic script updates—the transformation values are
+multiplied continuously without rounding to whole-number screen
+coordinates. This preserves fractional coordinate data across multiple
+frames, preventing cumulative rounding errors that would otherwise cause
+visual stuttering or geometric distortion.</p>
+<h3 id="dynamic-glyph-rasterization">Dynamic Glyph Rasterization</h3>
+<p>OBS Studio does not transform raw vector paths directly on the final
+compositing canvas for every frame. Instead, it relies on underlying
+text rendering engines (such as FreeType on Linux/macOS or
+GDI+/DirectWrite on Windows) to rasterize glyph outlines into a
+dedicated offscreen texture buffer.</p>
+<p>When text source properties are altered natively (such as changing
+the font size directly), the engine re-evaluates the vector curves using
+sub-pixel hinting and anti-aliasing to generate fresh alpha masks.
+However, when an item-level scale transformation is applied to the scene
+node, OBS Studio maps the pre-rasterized text texture to a quad on the
+GPU, avoiding the performance penalty of re-evaluating vector contours
+on every incremental step.</p>
+<h3 id="texture-sampling-and-sub-pixel-interpolation">Texture Sampling
+and Sub-Pixel Interpolation</h3>
+<p>To maintain sub-pixel accuracy when the quad is scaled to non-integer
+pixel dimensions or positions, OBS Studio delegates sampling to GPU
+fragment shaders.</p>
+<ol type="1">
+<li><strong>UV Coordinate Mapping:</strong> Vertex shaders calculate
+normalized floating-point texture coordinates (<span
+class="math inline">\(U, V \in [0, 1]\)</span>) for each vertex of the
+text quad. As the quad scales incrementally, these coordinates align to
+fractional offsets on the target render surface.</li>
+<li><strong>Scale Filtering Algorithms:</strong> OBS Studio provides
+selectable scale filtering modes that determine how the GPU reconstructs
+the image across fractional boundaries:
+<ul>
+<li><strong>Bicubic and Lanczos Filtering:</strong> These algorithms
+sample a multi-tap grid of surrounding texels, weighting their
+contributions via cubic or sinc-based kernel functions according to the
+exact fractional sub-pixel offset. This prevents harsh stair-stepping
+and softens edge movement.</li>
+<li><strong>Area Scaling:</strong> For downscaling, area averaging
+accumulates color contributions across the contracted fractional
+footprint, preserving thin vector strokes.</li>
+<li><strong>Bilinear Filtering:</strong> Hardware-accelerated linear
+interpolation evaluates texel values based on the fractional distance
+between adjacent pixel centers.</li>
+</ul></li>
+</ol>
+<h3 id="prevention-of-temporal-aliasing">Prevention of Temporal
+Aliasing</h3>
+<p>During fine-grained, incremental scaling, nearest-neighbor rounding
+can cause "pixel popping," where an edge abruptly snaps from one pixel
+row to the next. By utilizing floating-point quad vertices combined with
+higher-order texture filtering, OBS Studio smoothly redistributes
+luminance across neighboring boundary pixels. This continuous shift in
+alpha transparency mimics continuous vector motion at a sub-pixel level,
+ensuring smooth rendering across varying output resolutions.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

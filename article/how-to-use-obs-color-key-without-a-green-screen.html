@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Use OBS Color Key Without a Green Screen - obs-studio</title>
+    <meta name="description" content="This article provides a step-by-step guide on how to use the "Color Key" filter in OBS Studio to clean up or remove a low-contrast background when you do not have a professional green screen. You will learn how to select a custom background color, adjust">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-use-obs-color-key-without-a-green-screen">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Use OBS Color Key Without a Green Screen - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-use-obs-color-key-without-a-green-screen" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides a step-by-step guide on how to use the "Color Key" filter in OBS Studio to clean up or remove a low-contrast background when you do not have a professional green screen. You will learn how to select a custom background color, adjust" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-use-obs-color-key-without-a-green-screen">How to Use OBS
+Color Key Without a Green Screen</h1>
+<p>This article provides a step-by-step guide on how to use the "Color
+Key" filter in OBS Studio to clean up or remove a low-contrast
+background when you do not have a professional green screen. You will
+learn how to select a custom background color, adjust the filter
+sensitivity, and fine-tune your settings to achieve a cleaner, more
+professional webcam feed.</p>
+<h2 id="step-1-access-the-filters-menu-in-obs-studio">Step 1: Access the
+Filters Menu in OBS Studio</h2>
+<p>To apply the Color Key filter, you must first navigate to your video
+source's filter settings.</p>
+<ol type="1">
+<li>Open <strong>OBS Studio</strong> and locate your webcam or camera
+source in the <strong>Sources</strong> dock.</li>
+<li>Right-click on your video capture device source and select
+<strong>Filters</strong> from the context menu.</li>
+<li>A new window will appear. In the bottom-left corner of this window,
+under the <strong>Effect Filters</strong> section, click the <strong>+
+(plus)</strong> icon.</li>
+<li>Select <strong>Color Key</strong> from the list, name the filter
+(e.g., "Background Cleanup"), and click <strong>OK</strong>.</li>
+</ol>
+<h2 id="step-2-select-your-custom-background-color">Step 2: Select Your
+Custom Background Color</h2>
+<p>Because you are not using a standard green screen, you need to tell
+OBS exactly which color in your low-contrast background you want to
+target.</p>
+<ol type="1">
+<li>In the Color Key properties, locate the <strong>Key Color
+Type</strong> dropdown menu.</li>
+<li>Change this setting from "Green" to <strong>Custom
+Color</strong>.</li>
+<li>Click the <strong>Select Color</strong> button that appears.</li>
+<li>Click <strong>Pick Screen Color</strong> and move your cursor over
+to your live camera preview. Click on the most dominant or average color
+of the background you wish to remove or clean up.</li>
+</ol>
+<h2 id="step-3-adjust-the-filter-sliders-for-low-contrast">Step 3:
+Adjust the Filter Sliders for Low Contrast</h2>
+<p>Low-contrast backgrounds require precise calibration because the
+background color is often very close to your clothing, hair, or skin
+tone.</p>
+<ul>
+<li><strong>Similarity (1 to 1,000):</strong> Slowly drag this slider to
+the right. This control determines how closely a color must match your
+selected custom color to be filtered out. Increase it until the
+background begins to disappear, but stop before your own face or
+clothing starts to become transparent.</li>
+<li><strong>Smoothness (1 to 1,000):</strong> Use this slider to soften
+the edges of the keyed area. Higher smoothness helps blend the boundary
+between you and the background, which is crucial for low-contrast setups
+where the transition edges are fuzzy.</li>
+<li><strong>Spill Reduction (1 to 1,000):</strong> If the background
+color is reflecting onto your skin or hair, raise the spill reduction
+slider slightly to neutralize that reflected tint.</li>
+</ul>
+<h2 id="step-4-fine-tune-with-color-correction">Step 4: Fine-Tune with
+Color Correction</h2>
+<p>If you struggle to separate yourself from the background due to a
+lack of contrast, adjusting the image contrast directly within the
+filter can help.</p>
+<ol type="1">
+<li>Scroll down to the bottom of the Color Key filter settings to find
+the <strong>Contrast</strong>, <strong>Brightness</strong>, and
+<strong>Gamma</strong> sliders.</li>
+<li>Slightly increase the <strong>Contrast</strong> to create a sharper
+visual distinction between yourself and your background.</li>
+<li>Adjust the <strong>Opacity</strong> slider if you want to make the
+background semi-transparent rather than fully invisible, which can help
+mask imperfections in low-contrast environments.</li>
+</ol>
+<h2 id="tips-for-better-results-without-a-green-screen">Tips for Better
+Results Without a Green Screen</h2>
+<ul>
+<li><strong>Increase Lighting Separation:</strong> Position a light
+source close to your face and keep the background as dim as possible.
+This artificial contrast makes it much easier for the Color Key filter
+to distinguish between you and the wall.</li>
+<li><strong>Wear Contrasting Clothing:</strong> Ensure you are wearing
+colors that are highly different from your background wall. If your wall
+is light gray, wear a dark blue or black shirt to assist the OBS filter
+algorithm.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

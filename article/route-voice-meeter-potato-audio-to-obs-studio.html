@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route VoiceMeeter Potato Audio to OBS Studio - obs-studio</title>
+    <meta name="description" content="This guide provides a straightforward, step-by-step walkthrough on how to route audio from VoiceMeeter Potato into OBS Studio. You will learn how to map your microphone, system sounds, and discord/music channels to VoiceMeeter's virtual outputs and confi">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/route-voice-meeter-potato-audio-to-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Route VoiceMeeter Potato Audio to OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/route-voice-meeter-potato-audio-to-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide provides a straightforward, step-by-step walkthrough on how to route audio from VoiceMeeter Potato into OBS Studio. You will learn how to map your microphone, system sounds, and discord/music channels to VoiceMeeter's virtual outputs and confi" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="route-voicemeeter-potato-audio-to-obs-studio">Route VoiceMeeter
+Potato Audio to OBS Studio</h1>
+<p>This guide provides a straightforward, step-by-step walkthrough on
+how to route audio from VoiceMeeter Potato into OBS Studio. You will
+learn how to map your microphone, system sounds, and discord/music
+channels to VoiceMeeter's virtual outputs and configure OBS Studio to
+capture these sources on separate audio tracks for maximum control over
+your stream or recording volume.</p>
+<h3 id="step-1-understand-voicemeeter-potato-virtual-outputs">Step 1:
+Understand VoiceMeeter Potato Virtual Outputs</h3>
+<p>VoiceMeeter Potato features three virtual output buses, which act as
+virtual microphones that Windows and OBS Studio can listen to.</p>
+<ul>
+<li><strong>B1</strong> corresponds to <strong>VoiceMeeter
+Output</strong> (VAIO)</li>
+<li><strong>B2</strong> corresponds to <strong>VoiceMeeter AUX
+Output</strong> (AUX VAIO)</li>
+<li><strong>B3</strong> corresponds to <strong>VoiceMeeter VAIO 3
+Output</strong> (VAIO 3)</li>
+</ul>
+<h3 id="step-2-route-inputs-to-virtual-buses-in-voicemeeter">Step 2:
+Route Inputs to Virtual Buses in VoiceMeeter</h3>
+<p>To send your audio from VoiceMeeter to OBS, you must assign your
+hardware and software inputs to these virtual buses.</p>
+<ol type="1">
+<li><strong>Your Microphone (Physical Input):</strong> Locate your
+microphone under <em>Hardware Input 1</em>. Click the
+<strong>B1</strong> button to route your microphone to the B1 virtual
+output. Deselect A1 (your headphones) so you do not hear your own voice
+echoing.</li>
+<li><strong>System/Game Audio (Virtual Input):</strong> Locate the
+<em>VoiceMeeter VAIO</em> virtual input channel. Click the
+<strong>B2</strong> button to route your game and system audio to the B2
+virtual output.</li>
+<li><strong>Discord/Communications (Virtual Input):</strong> Locate the
+<em>VoiceMeeter AUX</em> virtual input channel. Click the
+<strong>B3</strong> button to route your voice chat to the B3 virtual
+output.</li>
+</ol>
+<p><em>(Note: Ensure the physical monitoring button, usually
+<strong>A1</strong>, is active on your virtual inputs so you can still
+hear your game and Discord in your headphones).</em></p>
+<h3 id="step-3-configure-obs-studio-audio-settings">Step 3: Configure
+OBS Studio Audio Settings</h3>
+<p>Now that VoiceMeeter is sending audio to its virtual outputs, you
+need to configure OBS Studio to receive them.</p>
+<ol type="1">
+<li>Open <strong>OBS Studio</strong>.</li>
+<li>Click on <strong>Settings</strong> in the bottom right corner, then
+select the <strong>Audio</strong> tab.</li>
+<li>Under the <strong>Global Audio Devices</strong> section, disable the
+default "Desktop Audio" and "Mic/Auxiliary Audio" to prevent duplicate
+sound.</li>
+<li>Map the virtual devices as follows:
+<ul>
+<li>Set <strong>Mic/Auxiliary Audio</strong> to <strong>VoiceMeeter
+Output (VB-Audio VoiceMeeter VAIO)</strong>. (This is your microphone
+from B1).</li>
+<li>Set <strong>Mic/Auxiliary Audio 2</strong> to <strong>VoiceMeeter
+AUX Output (VB-Audio VoiceMeeter AUX VAIO)</strong>. (This is your
+system/game audio from B2).</li>
+<li>Set <strong>Mic/Auxiliary Audio 3</strong> to <strong>VoiceMeeter 3
+Output (VB-Audio VoiceMeeter Virtual VAIO 3)</strong>. (This is your
+Discord/communications from B3).</li>
+</ul></li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong>.</li>
+</ol>
+<h3 id="step-4-verify-and-label-your-audio-sources">Step 4: Verify and
+Label Your Audio Sources</h3>
+<p>After applying the settings, you will see three distinct volume
+meters in the OBS Audio Mixer panel.</p>
+<p>To keep your workspace organized, click the three dots next to each
+new audio source in the OBS Mixer, select <strong>Rename</strong>, and
+label them accordingly (e.g., "Microphone", "Game Audio", and
+"Discord"). You can now control, mute, or apply filters to each audio
+source independently within OBS Studio.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

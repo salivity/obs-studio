@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Twitch Activity Feed to OBS Studio Custom Docks - obs-studio</title>
+    <meta name="description" content="Keeping track of your stream’s interactions is crucial for engaging with your audience in real-time. This guide provides a straightforward, step-by-step walkthrough on how to integrate your Twitch activity feed directly into OBS Studio using custom bro">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/add-twitch-activity-feed-to-obs-studio-custom-docks">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Add Twitch Activity Feed to OBS Studio Custom Docks - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/add-twitch-activity-feed-to-obs-studio-custom-docks" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Keeping track of your stream’s interactions is crucial for engaging with your audience in real-time. This guide provides a straightforward, step-by-step walkthrough on how to integrate your Twitch activity feed directly into OBS Studio using custom bro" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="add-twitch-activity-feed-to-obs-studio-custom-docks">Add Twitch
+Activity Feed to OBS Studio Custom Docks</h1>
+<p>Keeping track of your stream’s interactions is crucial for engaging
+with your audience in real-time. This guide provides a straightforward,
+step-by-step walkthrough on how to integrate your Twitch activity feed
+directly into OBS Studio using custom browser docks, allowing you to
+monitor follows, subscriptions, bits, and raids without ever leaving
+your streaming software interface.</p>
+<h2 id="step-1-copy-your-twitch-activity-feed-url">Step 1: Copy Your
+Twitch Activity Feed URL</h2>
+<p>To display your Twitch activity feed in OBS, you first need to
+retrieve its unique popout URL from your Twitch dashboard.</p>
+<ol type="1">
+<li>Open your web browser, go to Twitch, and log into your account.</li>
+<li>Click on your profile picture in the top-right corner and select
+<strong>Creator Dashboard</strong>.</li>
+<li>On the dashboard, locate your <strong>Activity Feed</strong>
+tile.</li>
+<li>Click the <strong>three vertical dots</strong> (options icon) in the
+top-right corner of the Activity Feed tile.</li>
+<li>Click <strong>Popout</strong>.</li>
+<li>A new, isolated browser window containing only your activity feed
+will open. Copy the entire URL from the address bar of this new
+window.</li>
+</ol>
+<h2 id="step-2-create-a-custom-browser-dock-in-obs-studio">Step 2:
+Create a Custom Browser Dock in OBS Studio</h2>
+<p>Once you have the URL, you can embed it directly into the OBS Studio
+user interface.</p>
+<ol type="1">
+<li>Launch <strong>OBS Studio</strong>.</li>
+<li>In the top menu bar, click on <strong>Docks</strong> and select
+<strong>Custom Browser Docks...</strong> from the dropdown menu.</li>
+<li>A new window will appear with two columns: <em>Dock Name</em> and
+<em>URL</em>.</li>
+<li>Under <strong>Dock Name</strong>, type a clear name for your dock,
+such as <code>Twitch Activity Feed</code>.</li>
+<li>Under <strong>URL</strong>, paste the popout URL you copied from
+Twitch in Step 1.</li>
+<li>Click <strong>Apply</strong> and then close the window.</li>
+</ol>
+<h2 id="step-3-position-and-authenticate-your-new-dock">Step 3: Position
+and Authenticate Your New Dock</h2>
+<p>Your new custom dock will now appear as a floating window inside OBS
+Studio.</p>
+<ol type="1">
+<li>If the dock displays a Twitch login screen, click <strong>Log
+In</strong> and enter your Twitch credentials. This is a secure,
+one-time authentication process required because the dock functions as
+an isolated browser.</li>
+<li>Once logged in, your live activity feed will populate.</li>
+<li>Click and hold the title bar of the
+<code>Twitch Activity Feed</code> dock.</li>
+<li>Drag the window toward any edge of the OBS interface (such as next
+to your chat or preview window) until a blue highlight appears, then
+release the mouse to snap it into place.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

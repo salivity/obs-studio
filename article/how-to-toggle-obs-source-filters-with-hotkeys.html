@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Toggle OBS Source Filters with Hotkeys - obs-studio</title>
+    <meta name="description" content="Controlling your audio and video sources on the fly is crucial for a seamless live stream or recording. This guide provides a straightforward, step-by-step walkthrough on how to map a specific hotkey to toggle individual source filters—such as chroma k">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-toggle-obs-source-filters-with-hotkeys">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Toggle OBS Source Filters with Hotkeys - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-toggle-obs-source-filters-with-hotkeys" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Controlling your audio and video sources on the fly is crucial for a seamless live stream or recording. This guide provides a straightforward, step-by-step walkthrough on how to map a specific hotkey to toggle individual source filters—such as chroma k" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-toggle-obs-source-filters-with-hotkeys">How to Toggle OBS
+Source Filters with Hotkeys</h1>
+<p>Controlling your audio and video sources on the fly is crucial for a
+seamless live stream or recording. This guide provides a
+straightforward, step-by-step walkthrough on how to map a specific
+hotkey to toggle individual source filters—such as chroma key, color
+correction, or noise suppression—directly within OBS Studio using native
+settings.</p>
+<h3 id="step-1-add-the-filter-to-your-source">Step 1: Add the Filter to
+Your Source</h3>
+<p>Before you can map a hotkey, ensure the filter is active on your
+desired source:</p>
+<ol type="1">
+<li>Right-click the source (e.g., your camera or microphone) in the
+<strong>Sources</strong> dock.</li>
+<li>Select <strong>Filters</strong>.</li>
+<li>Click the <strong>+</strong> icon to add your desired filter,
+configure it, and close the window.</li>
+</ol>
+<h3 id="step-2-open-obs-hotkeys-settings">Step 2: Open OBS Hotkeys
+Settings</h3>
+<ol type="1">
+<li>Click on <strong>File</strong> in the top-left menu of OBS
+Studio.</li>
+<li>Select <strong>Settings</strong>.</li>
+<li>Click on the <strong>Hotkeys</strong> tab in the left-hand
+sidebar.</li>
+</ol>
+<h3 id="step-3-locate-your-source-and-filter">Step 3: Locate Your Source
+and Filter</h3>
+<ol type="1">
+<li>Use the <strong>Filter</strong> search bar at the top of the Hotkeys
+menu to search for the name of your specific source.</li>
+<li>Scroll down to find the section dedicated to that source.</li>
+<li>Under the source name, look for the options labeled <strong>Show
+[Filter Name]</strong> and <strong>Hide [Filter Name]</strong>.</li>
+</ol>
+<h3 id="step-4-map-the-toggle-hotkey">Step 4: Map the Toggle Hotkey</h3>
+<p>OBS requires you to bind the hotkey to both the "Show" and "Hide"
+actions to function as a toggle:</p>
+<ol type="1">
+<li>Click inside the input field next to <strong>Show [Filter
+Name]</strong>.</li>
+<li>Press the key combination on your keyboard or macro pad that you
+want to use (e.g., <code>Ctrl + F1</code>).</li>
+<li>Click inside the input field next to <strong>Hide [Filter
+Name]</strong>.</li>
+<li>Press the exact same key combination (<code>Ctrl + F1</code>).</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong> to save
+your changes.</li>
+</ol>
+<h3 id="step-5-test-the-shortcut">Step 5: Test the Shortcut</h3>
+<p>Return to your main OBS screen and press your chosen hotkey. The
+filter will now turn on and off with each press, allowing you to control
+your effects instantly during live broadcasts.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

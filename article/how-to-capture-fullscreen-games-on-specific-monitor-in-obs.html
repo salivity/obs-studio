@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Capture Fullscreen Games on Specific Monitor in OBS - obs-studio</title>
+    <meta name="description" content="Capturing a game running in exclusive fullscreen mode on a specific monitor using OBS Studio can be challenging due to how Windows prioritizes graphics resources. This guide provides a direct, step-by-step walkthrough on how to configure OBS Studio to su">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-capture-fullscreen-games-on-specific-monitor-in-obs">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Capture Fullscreen Games on Specific Monitor in OBS - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-capture-fullscreen-games-on-specific-monitor-in-obs" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Capturing a game running in exclusive fullscreen mode on a specific monitor using OBS Studio can be challenging due to how Windows prioritizes graphics resources. This guide provides a direct, step-by-step walkthrough on how to configure OBS Studio to su" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-capture-fullscreen-games-on-specific-monitor-in-obs">How
+to Capture Fullscreen Games on Specific Monitor in OBS</h1>
+<p>Capturing a game running in exclusive fullscreen mode on a specific
+monitor using OBS Studio can be challenging due to how Windows
+prioritizes graphics resources. This guide provides a direct,
+step-by-step walkthrough on how to configure OBS Studio to successfully
+capture gameplay from a designated display, utilizing Game Capture,
+Display Capture, and key troubleshooting steps to resolve common black
+screen issues.</p>
+<h2 id="method-1-use-game-capture-recommended">Method 1: Use Game
+Capture (Recommended)</h2>
+<p>Game Capture is the most efficient way to capture exclusive
+fullscreen games. It hooks directly into the game's graphics pipeline,
+bypassing the desktop window manager, which saves system resources and
+avoids monitor-specific capture issues.</p>
+<ol type="1">
+<li>Open OBS Studio and go to the <strong>Sources</strong> dock at the
+bottom.</li>
+<li>Click the <strong>+</strong> (Add) icon and select <strong>Game
+Capture</strong>.</li>
+<li>Name the source and click <strong>OK</strong>.</li>
+<li>In the properties window, change the <strong>Mode</strong> dropdown
+to <strong>Capture specific window</strong>.</li>
+<li>Launch your game. Once the game is running, alt-tab back to
+OBS.</li>
+<li>In the <strong>Window</strong> dropdown, select your game's
+executable file (e.g., <code>[game.exe]: Game Title</code>).</li>
+<li>Click <strong>OK</strong>.</li>
+</ol>
+<p>OBS will now capture only that game, regardless of which monitor it
+is displayed on.</p>
+<h2 id="method-2-use-display-capture-for-a-specific-monitor">Method 2:
+Use Display Capture for a Specific Monitor</h2>
+<p>If Game Capture does not work, or if you need to capture the entire
+monitor (including overlays or desktop elements), you can use Display
+Capture.</p>
+<ol type="1">
+<li>In the <strong>Sources</strong> dock, click the <strong>+</strong>
+(Add) icon and select <strong>Display Capture</strong>.</li>
+<li>Name the source and click <strong>OK</strong>.</li>
+<li>In the properties window, locate the <strong>Display</strong>
+dropdown menu.</li>
+<li>Select the specific monitor (e.g., <em>Display 1</em> or <em>Display
+2</em>) where your game is running.</li>
+<li>Click <strong>OK</strong>.</li>
+</ol>
+<p><em>Note: If the game is in "Exclusive Fullscreen" mode, Display
+Capture may show a black screen. If this happens, follow the steps
+below.</em></p>
+<h2 id="how-to-fix-black-screens-in-exclusive-fullscreen">How to Fix
+Black Screens in Exclusive Fullscreen</h2>
+<p>Exclusive fullscreen mode grants the game total control over the
+monitor’s graphics output, which can block OBS from capturing it. If you
+experience a black screen, apply these adjustments:</p>
+<h3 id="1-switch-the-game-to-borderless-windowed-mode">1. Switch the
+Game to Borderless Windowed Mode</h3>
+<p>The easiest and most reliable fix is to change the game's internal
+video settings.</p>
+<ul>
+<li>Open the game's in-game graphics/video menu.</li>
+<li>Change the display mode from <strong>Fullscreen (Exclusive)</strong>
+to <strong>Borderless Windowed</strong> or <strong>Windowed
+Fullscreen</strong>.</li>
+<li>This allows OBS Display Capture to see the game while maintaining
+the visual appearance of a fullscreen game.</li>
+</ul>
+<h3 id="2-run-obs-studio-as-administrator">2. Run OBS Studio as
+Administrator</h3>
+<p>Exclusive fullscreen games often block third-party software hooks
+unless the software has administrator privileges.</p>
+<ul>
+<li>Close OBS Studio.</li>
+<li>Right-click the OBS Studio shortcut on your desktop or Start
+Menu.</li>
+<li>Select <strong>Run as administrator</strong>.</li>
+<li>Try capturing the game again using Game Capture.</li>
+</ul>
+<h3 id="3-match-gpu-resources-laptops--multi-gpu-systems">3. Match GPU
+Resources (Laptops &amp; Multi-GPU Systems)</h3>
+<p>If your monitor is plugged into a different graphics card (e.g., an
+integrated GPU vs. a dedicated GPU), OBS might not be able to see the
+monitor's output.</p>
+<ul>
+<li>Open Windows <strong>Graphics Settings</strong> (search for it in
+the Windows Start Menu).</li>
+<li>Click <strong>Browse</strong> and locate the OBS executable file
+(usually in
+<code>C:\Program Files\obs-studio\bin\64bit\obs64.exe</code>).</li>
+<li>Click <strong>Options</strong> under OBS Studio and set it to
+<strong>High Performance</strong> to ensure it runs on the same
+dedicated GPU as your game.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

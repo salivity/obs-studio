@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Handles Ethernet to Wi-Fi Disconnection - obs-studio</title>
+    <meta name="description" content="When an active Ethernet cable is disconnected during a live broadcast, OBS Studio cannot perform a seamless, hitless network handoff to Wi-Fi due to the fundamental constraints of standard streaming protocols. Instead, the sudden disconnection invalidate">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-handles-ethernet-to-wi-fi-disconnection">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Handles Ethernet to Wi-Fi Disconnection - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-handles-ethernet-to-wi-fi-disconnection" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When an active Ethernet cable is disconnected during a live broadcast, OBS Studio cannot perform a seamless, hitless network handoff to Wi-Fi due to the fundamental constraints of standard streaming protocols. Instead, the sudden disconnection invalidate" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-handles-ethernet-to-wi-fi-disconnection">How OBS Handles
+Ethernet to Wi-Fi Disconnection</h1>
+<p>When an active Ethernet cable is disconnected during a live
+broadcast, OBS Studio cannot perform a seamless, hitless network handoff
+to Wi-Fi due to the fundamental constraints of standard streaming
+protocols. Instead, the sudden disconnection invalidates the active
+socket, prompting the operating system to reroute traffic through the
+wireless adapter, which in turn forces OBS Studio to drop the current
+connection and initiate an automated reconnection sequence over the new
+network path.</p>
+<h3 id="the-underlying-network-constraint">The Underlying Network
+Constraint</h3>
+<p>OBS Studio primarily streams using protocols built on top of TCP
+(such as RTMP) or UDP (such as SRT). Every active network connection is
+defined by a socket pairing: a source IP address and port, and a
+destination IP address and port.</p>
+<p>When your computer is connected via Ethernet, it has an IP address
+assigned specifically to that physical Network Interface Card (NIC). The
+Wi-Fi adapter has its own distinct MAC address and receives a different
+local IP address. When the Ethernet cable is unplugged:</p>
+<ol type="1">
+<li>The Ethernet NIC reports a "carrier lost" or link-down state to the
+operating system.</li>
+<li>The operating system immediately tears down the local IP
+configuration associated with the Ethernet interface.</li>
+<li>The active TCP/UDP socket bound to the Ethernet IP is broken.</li>
+</ol>
+<p>Because standard RTMP does not support multi-path transmission or
+dynamic IP migration, the stream cannot instantly "glide" from one IP to
+another without breaking the transport layer session.</p>
+<h3 id="the-operating-system-routing-shift">The Operating System Routing
+Shift</h3>
+<p>Once the physical disconnection occurs, the operating system's
+routing table changes:</p>
+<ul>
+<li><strong>Route Metric Adjustment:</strong> The operating system
+assigns metrics (priorities) to network adapters. Ethernet usually has a
+lower metric (higher priority) than Wi-Fi. With Ethernet unavailable,
+the operating system promotes the Wi-Fi adapter's default gateway as the
+primary route for all outbound internet traffic.</li>
+<li><strong>Socket Invalidation:</strong> Any attempt by OBS to continue
+sending packets via the old socket results in a network error (such as
+<code>WSAECONNABORTED</code>, <code>WSAENETUNREACHED</code>, or
+<code>ECONNRESET</code>), terminating the transmission pipeline.</li>
+</ul>
+<h3 id="how-obs-responds">How OBS Responds</h3>
+<p>How OBS Studio behaves during this transition depends largely on your
+network configuration settings within the software.</p>
+<h4 id="1-network-binding-settings">1. Network Binding Settings</h4>
+<p>Located in <strong>Settings &gt; Advanced &gt; Network &gt; Bind to
+IP</strong>:</p>
+<ul>
+<li><strong>Default (Recommended for Failover):</strong> OBS binds its
+sockets to <code>0.0.0.0</code> (INADDR_ANY), allowing the operating
+system to determine which interface routes the traffic. When the cable
+is pulled and OBS drops the stream, the subsequent reconnection attempt
+will naturally route through the newly active Wi-Fi adapter.</li>
+<li><strong>Specific IP/Interface Selection:</strong> If you manually
+set OBS to bind exclusively to the Ethernet adapter’s IP address, OBS
+will refuse to use Wi-Fi. The stream will terminate and fail to
+reconnect until the Ethernet cable is reconnected.</li>
+</ul>
+<h4 id="2-the-auto-reconnect-engine">2. The Auto-Reconnect Engine</h4>
+<p>When the connection drops, OBS relies on its internal reconnection
+logic:</p>
+<ul>
+<li>OBS enters a <strong>"Reconnecting"</strong> state (configured under
+<strong>Settings &gt; Advanced &gt; Network &gt; Automatically
+Reconnect</strong>).</li>
+<li>It waits for the specified retry delay (default is typically 2 to 10
+seconds).</li>
+<li>Once the timer elapses, OBS initializes a completely new socket
+connection. Assuming "Bind to IP" is set to Default, the operating
+system routes this new request through the Wi-Fi adapter.</li>
+<li>OBS performs a fresh handshake with the ingest server (e.g., Twitch,
+YouTube, or Kick), authenticates the stream key, and resumes
+broadcasting.</li>
+</ul>
+<h3 id="viewer-impact-and-mitigation">Viewer Impact and Mitigation</h3>
+<p>From the viewer's perspective, this handoff is not invisible. The
+broadcast will freeze or show a buffering wheel for several seconds
+while the socket fails, the OS updates its routing table, and OBS
+completes the re-handshake and sends a fresh keyframe (I-frame).</p>
+<p>To achieve a truly seamless transition without stream interruption,
+standard OBS cannot rely on basic OS switching alone. It requires
+packet-level bonding solutions—such as hardware bonding encoders,
+specialized dual-WAN routers, or software aggregation tools—which
+present a single, virtual network adapter to OBS while managing data
+distribution across Ethernet and Wi-Fi simultaneously in the
+background.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

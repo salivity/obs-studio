@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Syncs Sources with Mismatched Frame Rates - obs-studio</title>
+    <meta name="description" content="This article explores how OBS Studio synchronizes video sources running at varying refresh rates within its core rendering pipeline. It details the interaction between OBS Studio's master rendering clock, asynchronous capture threads, GPU texture bufferi">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-syncs-sources-with-mismatched-frame-rates">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Syncs Sources with Mismatched Frame Rates - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-syncs-sources-with-mismatched-frame-rates" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores how OBS Studio synchronizes video sources running at varying refresh rates within its core rendering pipeline. It details the interaction between OBS Studio's master rendering clock, asynchronous capture threads, GPU texture bufferi" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-syncs-sources-with-mismatched-frame-rates">How OBS Syncs
+Sources with Mismatched Frame Rates</h1>
+<p>This article explores how OBS Studio synchronizes video sources
+running at varying refresh rates within its core rendering pipeline. It
+details the interaction between OBS Studio's master rendering clock,
+asynchronous capture threads, GPU texture buffering, and timestamp-based
+sampling. By decoupling source capture from canvas compositing, OBS
+Studio seamlessly resolves mismatched framerates by dropping or
+duplicating frames on demand, ensuring a smooth, unified output stream
+without pipeline stalls or audio desynchronization.</p>
+<h2 id="the-master-render-clock">The Master Render Clock</h2>
+<p>OBS Studio relies on a central render loop driven by a master clock
+defined in the user settings (such as 60 FPS or 59.94 FPS). Rather than
+synchronizing to any incoming video hardware or software feed, the core
+graphics thread operates on a fixed tick interval—for example, exactly
+16.667 milliseconds for a standard 60 FPS canvas.</p>
+<p>Every cycle, the render thread executes the compositing pipeline: it
+clears the canvas, traverses the active scene hierarchy, requests the
+latest visual data from each source, renders them onto the final surface
+using the native graphics API (Direct3D 11 on Windows, Metal on macOS,
+or OpenGL on Linux), and hands the composited frame over to the video
+encoder.</p>
+<h2 id="decoupled-capture-threads-and-shared-surfaces">Decoupled Capture
+Threads and Shared Surfaces</h2>
+<p>Video sources in OBS Studio do not render directly onto the canvas.
+Instead, sources operate on independent, asynchronous threads tailored
+to their specific capture mechanisms:</p>
+<ul>
+<li><strong>Hardware capture cards and webcams</strong> push frames
+based on the device’s internal hardware clock (e.g., 30 Hz or 59.94
+Hz).</li>
+<li><strong>Game Capture and Window Capture</strong> inject hooks or use
+OS-level APIs (such as DirectX Graphics Infrastructure or Windows
+Graphics Capture) that fire whenever the target application presents a
+frame, which could be 144 Hz, 240 Hz, or variable via
+G-Sync/FreeSync.</li>
+<li><strong>Media files and network streams</strong> decode frames
+according to container timebases.</li>
+</ul>
+<p>When a source captures a new video frame, it processes the raw data,
+updates its internal state, and uploads the texture to VRAM (or updates
+a pointer to a shared DirectX/Metal surface). This capture process
+happens completely independently of the master render loop.</p>
+<h2 id="timestamp-based-sampling-tick-and-render">Timestamp-Based
+Sampling (Tick and Render)</h2>
+<p>Synchronization occurs through a pull-based sampling model rather
+than an event-driven push model. When the master render loop begins its
+tick, it calculates the current presentation timestamp using a
+high-precision monotonic clock (<code>os_gettime_ns</code>).</p>
+<p>Each source implementation exposes two primary video callbacks to the
+core engine:</p>
+<ol type="1">
+<li><strong><code>video_tick</code></strong>: Updates the logical state
+of the source based on elapsed time, recalculating animations,
+transitions, or media playback positions.</li>
+<li><strong><code>video_render</code></strong>: Binds the active texture
+and draws the source geometry to the canvas.</li>
+</ol>
+<p>When <code>video_render</code> is called, the source simply provides
+the most recent texture that corresponds to the current tick's
+timestamp. OBS Studio does not force the source thread and the rendering
+thread to wait for one another. Instead, thread-safe memory exchange is
+managed using double- or triple-buffering techniques, allowing the
+render loop to sample the latest completed frame without blocking the
+capture thread.</p>
+<h2 id="handling-framerate-discrepancies">Handling Framerate
+Discrepancies</h2>
+<p>Because the canvas composition operates independently of source
+capture intervals, mismatched refresh rates naturally resolve into frame
+dropping or frame duplication:</p>
+<h3
+id="sources-faster-than-the-canvas-eg-144-fps-game-onto-a-60-fps-canvas">Sources
+Faster Than the Canvas (e.g., 144 FPS Game onto a 60 FPS Canvas)</h3>
+<p>When a source generates frames faster than the master clock, multiple
+frames may arrive between consecutive render ticks. The source
+continually updates its internal buffer pointer to the newest frame.
+When the master render thread executes its tick, it draws the latest
+available frame and ignores the intermediate ones. This effectively
+drops redundant frames without causing buffer bloat, micro-stutter, or
+rendering delays.</p>
+<h3
+id="sources-slower-than-the-canvas-eg-30-fps-camera-onto-a-60-fps-canvas">Sources
+Slower Than the Canvas (e.g., 30 FPS Camera onto a 60 FPS Canvas)</h3>
+<p>When a source produces frames slower than the master render clock,
+the render thread will tick before a new frame has been delivered to
+that source's texture buffer. In this scenario, the source presents the
+existing texture from the previous frame. This results in frame
+duplication, ensuring the canvas maintains its target frame rate while
+the slower source plays back at its native cadence.</p>
+<h3
+id="fractional-and-variable-framerates-eg-5994-hz-vfr-or-g-sync">Fractional
+and Variable Framerates (e.g., 59.94 Hz, VFR, or G-Sync)</h3>
+<p>Fractional differences often lead to phase drift between the source
+capture cadence and the render loop cadence. OBS Studio handles this
+without frame tear or pipeline stalling: it always pulls whichever
+completed frame is ready at the exact moment of rendering. If drift
+accumulates to the equivalent of an entire frame interval, OBS will
+naturally sample a frame twice or skip one frame seamlessly to maintain
+overall timing integrity.</p>
+<h2 id="audio-synchronization-alignment">Audio Synchronization
+Alignment</h2>
+<p>While the video pipeline resolves mismatched refresh rates by
+sampling the most recent texture buffer, audio cannot be dropped or
+duplicated frame-by-frame without introducing audible pops, clicks, or
+pitch shifts.</p>
+<p>To preserve synchronization between out-of-sync video and continuous
+audio streams, OBS Studio timestamps every incoming audio packet with
+the same monotonic system clock used by the video pipeline. Audio frames
+are routed through an internal buffer where they are mixed and resampled
+to match the global audio sample rate (typically 48 kHz). OBS then
+dynamically aligns the audio timestamps with the video frame timestamps
+during the multiplexing stage before sending the interleaved stream to
+the encoder.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

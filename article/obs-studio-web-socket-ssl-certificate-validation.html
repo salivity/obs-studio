@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio WebSocket SSL Certificate Validation - obs-studio</title>
+    <meta name="description" content="This article provides a technical overview of how OBS Studio validates SSL/TLS certificates when establishing secure WebSocket (WSS) connections to cloud-based alert services and streaming widgets. In OBS Studio, these real-time notifications are predomi">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-web-socket-ssl-certificate-validation">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio WebSocket SSL Certificate Validation - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-web-socket-ssl-certificate-validation" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides a technical overview of how OBS Studio validates SSL/TLS certificates when establishing secure WebSocket (WSS) connections to cloud-based alert services and streaming widgets. In OBS Studio, these real-time notifications are predomi" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-websocket-ssl-certificate-validation">OBS Studio
+WebSocket SSL Certificate Validation</h1>
+<p>This article provides a technical overview of how OBS Studio
+validates SSL/TLS certificates when establishing secure WebSocket (WSS)
+connections to cloud-based alert services and streaming widgets. In OBS
+Studio, these real-time notifications are predominantly driven through
+the Chromium Embedded Framework (CEF) within Browser Sources or handled
+natively via integrated networking libraries. The system enforces
+cryptographic security by negotiating modern TLS handshakes, verifying
+certificate chains against trusted root stores, checking hostname
+authenticity, and terminating connections that fail cryptographic
+validation.</p>
+<h3 id="the-role-of-chromium-embedded-framework-cef">The Role of
+Chromium Embedded Framework (CEF)</h3>
+<p>Most cloud-based alert systems—such as those from Streamlabs,
+StreamElements, or Twitch—run inside OBS Studio as Browser Sources. The
+Browser Source plugin embeds the Chromium Embedded Framework (CEF) to
+render web pages and manage network activity.</p>
+<p>When an alert widget opens a secure WebSocket (<code>wss://</code>)
+connection, CEF handles the underlying network stack. CEF uses
+Chromium's network engine (<code>net/</code>), which performs automated,
+strict TLS verification equivalent to standard Google Chrome browser
+instances.</p>
+<h3 id="root-store-and-chain-of-trust-verification">Root Store and Chain
+of Trust Verification</h3>
+<p>During the initial TLS handshake with a WebSocket endpoint, the
+remote server presents its digital certificate alongside any
+intermediate certificates. CEF and OBS Studio validate this chain of
+trust by verifying the following:</p>
+<ol type="1">
+<li><strong>Root Certificate Authority (CA):</strong> The root
+certificate must terminate in a recognized, trusted CA. Depending on the
+operating system and Chromium version, CEF queries the operating
+system’s native certificate store (Windows CryptoAPI/Schannel, macOS
+Keychain, or Linux system stores like <code>/etc/ssl/certs</code>) or
+Chromium’s internal Chrome Root Store.</li>
+<li><strong>Signature Verification:</strong> Each certificate in the
+path must be cryptographically signed by the issuer above it, proving
+the chain has not been tampered with.</li>
+<li><strong>Validity Period:</strong> OBS checks that the current system
+time falls between the certificate's <code>Not Before</code> and
+<code>Not After</code> timestamp attributes.</li>
+</ol>
+<h3 id="hostname-matching-and-sni">Hostname Matching and SNI</h3>
+<p>To prevent Man-in-the-Middle (MITM) attacks, OBS Studio enforces
+strict hostname validation. During the handshake:</p>
+<ul>
+<li><strong>Server Name Indication (SNI):</strong> The client indicates
+the target server name during the TLS Client Hello phase.</li>
+<li><strong>SAN/CN Verification:</strong> Once the server returns its
+certificate, the network stack confirms that the domain specified in the
+WebSocket URL strictly matches an entry in the certificate’s Subject
+Alternative Name (SAN) extension (or the legacy Common Name field). If a
+mismatch occurs, the connection is immediately aborted.</li>
+</ul>
+<h3 id="revocation-and-security-policy-enforcement">Revocation and
+Security Policy Enforcement</h3>
+<p>OBS Studio's embedded browser inherits Chromium’s security policies
+regarding certificate integrity:</p>
+<ul>
+<li><strong>Revocation Checking:</strong> The networking layer queries
+Online Certificate Status Protocol (OCSP) stapling or revocation lists
+to verify that neither the leaf nor intermediate certificates have been
+revoked by the issuing CA.</li>
+<li><strong>Cryptographic Standards:</strong> Connections utilizing
+deprecated protocols (such as SSLv3, TLS 1.0, or TLS 1.1) or weak cipher
+suites (such as RC4, 3DES, or MD5/SHA-1 signatures) are rejected. OBS
+requires TLS 1.2 or TLS 1.3 with secure AEAD ciphers.</li>
+</ul>
+<h3 id="native-plugins-and-custom-websockets">Native Plugins and Custom
+WebSockets</h3>
+<p>When third-party OBS plugins or native tools connect to WebSockets
+outside of the Browser Source (for instance, internal API integrators
+utilizing <code>libcurl</code>, <code>Qt WebSockets</code>, or
+<code>libwebsockets</code>), validation depends on the underlying
+compiled library.</p>
+<p>Most native OBS modules utilize the system's default OpenSSL,
+mbedTLS, or OS-native TLS layers configured with standard peer
+verification flags (<code>SSL_VERIFY_PEER</code>). Unless a developer
+explicitly disables certificate checking in custom code, the connection
+applies standard system CA-bundle checks identical to traditional
+HTTPS/WSS standards.</p>
+<h3 id="handling-invalid-certificates">Handling Invalid
+Certificates</h3>
+<p>If an alert system presents an expired, self-signed, or untrusted
+certificate, OBS Studio silences the alert connection by default. Unlike
+a standard desktop browser, the OBS Browser Source does not display
+interactive security warnings or "Proceed Anyway" bypass screens. As a
+result, any SSL validation failure silently halts the WebSocket
+handshake, causing the alert widget to disconnect or fail to load until
+a valid, publicly trusted certificate is provisioned on the host
+server.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

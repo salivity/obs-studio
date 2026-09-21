@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Pause and Resume Recording in OBS Studio - obs-studio</title>
+    <meta name="description" content="Yes, OBS Studio allows you to pause and resume your local recordings, a highly useful feature that helps you avoid unnecessary editing by keeping your footage in a single, continuous file. This article will show you how to use the pause function directly">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-pause-and-resume-recording-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Pause and Resume Recording in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-pause-and-resume-recording-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Yes, OBS Studio allows you to pause and resume your local recordings, a highly useful feature that helps you avoid unnecessary editing by keeping your footage in a single, continuous file. This article will show you how to use the pause function directly" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-pause-and-resume-recording-in-obs-studio">How to Pause
+and Resume Recording in OBS Studio</h1>
+<p>Yes, OBS Studio allows you to pause and resume your local recordings,
+a highly useful feature that helps you avoid unnecessary editing by
+keeping your footage in a single, continuous file. This article will
+show you how to use the pause function directly from the user interface,
+how to set up convenient hotkeys for seamless control, and how to
+troubleshoot the issue if your pause button is greyed out or
+missing.</p>
+<h2 id="how-to-pause-and-resume-using-the-interface">How to Pause and
+Resume Using the Interface</h2>
+<p>Once you start recording in OBS Studio, a pause icon (represented by
+two vertical parallel lines) will appear immediately to the right of the
+<strong>Stop Recording</strong> button in the bottom-right Controls
+dock.</p>
+<p>To pause your recording, simply click this icon. The icon will turn
+into a play symbol, and the status bar at the bottom of the OBS window
+will display "PAUSED" in yellow text. To resume recording, click the
+icon again.</p>
+<h2 id="how-to-set-up-hotkeys-for-pausing">How to Set Up Hotkeys for
+Pausing</h2>
+<p>Using hotkeys allows you to pause and resume your recording without
+needing to tab out of your game or application. To set this up:</p>
+<ol type="1">
+<li>Open OBS Studio and click on <strong>Settings</strong> in the
+bottom-right corner.</li>
+<li>Select the <strong>Hotkeys</strong> tab from the left-hand
+menu.</li>
+<li>In the search bar at the top, type "Pause".</li>
+<li>Locate the <strong>Pause Recording</strong> and <strong>Unpause
+Recording</strong> fields.</li>
+<li>Click inside the empty fields and press the keys you want to assign
+(for example, <code>F9</code> to pause and <code>F10</code> to unpause,
+or assign the same key to both to toggle).</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong> to save
+your changes.</li>
+</ol>
+<h2 id="why-is-the-pause-button-missing-or-greyed-out">Why is the Pause
+Button Missing or Greyed Out?</h2>
+<p>If you do not see the pause button, or if it is greyed out, it is
+almost always due to your output settings. OBS Studio cannot pause
+recordings if the recording quality is set to match the stream quality
+while streaming.</p>
+<p>To resolve this issue:</p>
+<ol type="1">
+<li>Go to <strong>Settings</strong> and click on the
+<strong>Output</strong> tab.</li>
+<li>Look at the <strong>Output Mode</strong> dropdown at the top. If it
+is set to <strong>Simple</strong>, find the <strong>Recording</strong>
+section and locate <strong>Recording Quality</strong>.</li>
+<li>If it is set to "Same as stream", change it to <strong>High Quality,
+Medium File Size</strong> or another preset.</li>
+<li>If your Output Mode is set to <strong>Advanced</strong>, ensure that
+your Recording tab is not sharing the exact same encoder settings as
+your Streaming tab if you plan to stream and record simultaneously.</li>
+<li>Click <strong>Apply</strong> and <strong>OK</strong>. The pause
+button will now be active during your recordings.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

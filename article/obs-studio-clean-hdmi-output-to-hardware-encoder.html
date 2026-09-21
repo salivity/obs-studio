@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Clean HDMI Output to Hardware Encoder - obs-studio</title>
+    <meta name="description" content="This article provides a step-by-step guide on how to route a clean, high-quality video and audio feed from OBS Studio directly to an external hardware encoder using your computer's HDMI output. By utilizing the OBS "Fullscreen Projector" feature and conf">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-clean-hdmi-output-to-hardware-encoder">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Clean HDMI Output to Hardware Encoder - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-clean-hdmi-output-to-hardware-encoder" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides a step-by-step guide on how to route a clean, high-quality video and audio feed from OBS Studio directly to an external hardware encoder using your computer's HDMI output. By utilizing the OBS "Fullscreen Projector" feature and conf" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-clean-hdmi-output-to-hardware-encoder">OBS Studio
+Clean HDMI Output to Hardware Encoder</h1>
+<p>This article provides a step-by-step guide on how to route a clean,
+high-quality video and audio feed from OBS Studio directly to an
+external hardware encoder using your computer's HDMI output. By
+utilizing the OBS "Fullscreen Projector" feature and configuring your OS
+display settings, you can output a dedicated feed free of software UI
+elements, overlays, or system cursors directly to your streaming or
+recording hardware.</p>
+<h2 id="step-1-connect-the-hardware-and-configure-windows">Step 1:
+Connect the Hardware and Configure Windows</h2>
+<p>Before configuring OBS, you must physically connect your computer to
+the hardware encoder and ensure your operating system recognizes it as a
+secondary display.</p>
+<ol type="1">
+<li>Connect an HDMI cable from your computer’s graphics card (GPU) HDMI
+output port to the HDMI input port on your external hardware
+encoder.</li>
+<li>On your PC, right-click the desktop and select <strong>Display
+settings</strong>.</li>
+<li>Under the Multiple Displays dropdown, select <strong>Extend these
+displays</strong>. Do not use "Duplicate" or "Clone" mode, as this will
+mirror your main monitor and display the OBS interface itself.</li>
+<li>Select the virtual display that represents your hardware encoder and
+set its resolution (typically 1920x1080) and refresh rate (typically
+60Hz) to match your encoder’s optimal input specifications.</li>
+</ol>
+<h2 id="step-2-output-the-clean-video-feed-from-obs">Step 2: Output the
+Clean Video Feed from OBS</h2>
+<p>Once the hardware encoder is recognized as an extended display, you
+can project a clean feed of your OBS Program mix to it.</p>
+<ol type="1">
+<li>Open OBS Studio.</li>
+<li>Locate the <strong>Program</strong> preview window (the right-side
+window if you are in Studio Mode, or the main preview window if you are
+not).</li>
+<li>Right-click anywhere inside the preview window.</li>
+<li>Hover your mouse over <strong>Fullscreen Projector
+(Program)</strong>.</li>
+<li>A list of available monitors will appear. Select the monitor that
+corresponds to your external hardware encoder (e.g., "Display 2").</li>
+</ol>
+<p>OBS will immediately send a full-screen, clean video feed of your
+program output to the hardware encoder, bypassing all user interface
+elements, docks, and menus.</p>
+<h2 id="step-3-route-audio-to-the-hdmi-output">Step 3: Route Audio to
+the HDMI Output</h2>
+<p>To ensure your audio accompanies the video feed through the HDMI
+cable to the encoder, you must configure your OBS audio monitoring
+settings.</p>
+<ol type="1">
+<li>In OBS Studio, click on <strong>Settings</strong> in the
+bottom-right corner, then select the <strong>Audio</strong> tab on the
+left.</li>
+<li>Scroll down to the <strong>Advanced</strong> section.</li>
+<li>Locate the <strong>Monitoring Device</strong> dropdown and select
+the audio output associated with your HDMI connection (this is often
+labeled with your GPU name, your encoder name, or "Intel/NVIDIA/AMD High
+Definition Audio"). Click <strong>Apply</strong> and then
+<strong>OK</strong>.</li>
+<li>In the main OBS window, look at the <strong>Audio Mixer</strong>
+dock. Click the three dots (or gear icon) next to any audio source you
+want to send to the encoder and select <strong>Advanced Audio
+Properties</strong>.</li>
+<li>Find the audio tracks you want to send and change their
+<strong>Audio Monitoring</strong> status from "Monitor Off" to
+<strong>Monitor and Output</strong> (or "Monitor Only").</li>
+</ol>
+<p>Your selected audio sources will now be mixed and embedded directly
+into the HDMI video signal being sent to your external hardware
+encoder.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Simple vs Advanced Output: What is the Difference? - obs-studio</title>
+    <meta name="description" content="OBS Studio offers two distinct output modes for streaming and recording: Simple and Advanced. While the Simple mode provides a streamlined, plug-and-play setup ideal for beginners, the Advanced mode unlocks granular control over encoders, bitrates, audio">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-simple-vs-advanced-output-what-is-the-difference">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Simple vs Advanced Output: What is the Difference? - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-simple-vs-advanced-output-what-is-the-difference" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio offers two distinct output modes for streaming and recording: Simple and Advanced. While the Simple mode provides a streamlined, plug-and-play setup ideal for beginners, the Advanced mode unlocks granular control over encoders, bitrates, audio" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-simple-vs-advanced-output-what-is-the-difference">OBS Simple
+vs Advanced Output: What is the Difference?</h1>
+<p>OBS Studio offers two distinct output modes for streaming and
+recording: Simple and Advanced. While the Simple mode provides a
+streamlined, plug-and-play setup ideal for beginners, the Advanced mode
+unlocks granular control over encoders, bitrates, audio tracks, and
+custom settings. This article breaks down the key differences between
+these two modes to help you decide which configuration is best for your
+streaming and recording needs.</p>
+<h2 id="simple-output-mode">Simple Output Mode</h2>
+<p>Simple Output Mode is the default setting in OBS Studio. It is
+designed to get your stream or recording running as quickly as possible
+without requiring deep technical knowledge of video encoding.</p>
+<ul>
+<li><strong>Streamlined Settings:</strong> You only need to configure a
+few basic options, such as video bitrate, audio bitrate, and your
+preferred hardware encoder (e.g., NVENC, x264, or AMF).</li>
+<li><strong>Preset Recording Quality:</strong> Instead of choosing
+specific bitrates for recording, Simple mode offers predefined quality
+presets, such as "High Quality, Medium File Size" or "Indistinguishable
+Quality, Large File Size."</li>
+<li><strong>Ease of Use:</strong> It minimizes the risk of choosing
+conflicting settings that could cause lag, dropped frames, or crashed
+streams.</li>
+</ul>
+<p>Simple mode is best for casual streamers, beginners, or those who
+want a reliable, hassle-free setup.</p>
+<h2 id="advanced-output-mode">Advanced Output Mode</h2>
+<p>Advanced Output Mode splits your output settings into four dedicated
+tabs: Streaming, Recording, Audio, and Replay Buffer. This mode is
+designed for users who want total control over their system's
+performance and output quality.</p>
+<ul>
+<li><strong>Detailed Encoder Settings:</strong> You can manually adjust
+advanced encoder parameters such as Rate Control (CBR, VBR, CQP),
+Keyframe Intervals, B-frames, and CPU usage presets.</li>
+<li><strong>Independent Stream and Record Settings:</strong> Advanced
+mode allows you to use completely different encoders, resolutions, and
+bitrates for streaming and recording at the same time. For example, you
+can stream at a low bitrate using x264 while recording a high-quality
+copy using NVIDIA NVENC.</li>
+<li><strong>Multiple Audio Tracks:</strong> Unlike Simple mode, which
+mixes all audio into a single track, Advanced mode allows you to split
+your microphone, game audio, and voice chat into up to six separate
+audio tracks. This is crucial for video editing, as it allows you to
+adjust or mute individual audio sources in post-production.</li>
+</ul>
+<p>Advanced mode is best for professional content creators, esports
+broadcasters, and editors who require multi-track audio and precise
+encoding optimization.</p>
+<h2 id="key-differences-at-a-glance">Key Differences at a Glance</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Simple Mode</th>
+<th style="text-align: left;">Advanced Mode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Target Audience</strong></td>
+<td style="text-align: left;">Beginners &amp; casual users</td>
+<td style="text-align: left;">Professionals &amp; power users</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Audio Tracks</strong></td>
+<td style="text-align: left;">Supports 1 audio track</td>
+<td style="text-align: left;">Supports up to 6 separate audio
+tracks</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Recording Quality</strong></td>
+<td style="text-align: left;">General quality presets</td>
+<td style="text-align: left;">Exact bitrate and custom encoder
+control</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Simultaneous
+Profiles</strong></td>
+<td style="text-align: left;">Shared settings for stream/recording</td>
+<td style="text-align: left;">Independent settings for
+stream/recording</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Fine-Tuning</strong></td>
+<td style="text-align: left;">Limited to basic presets</td>
+<td style="text-align: left;">Full control over B-frames, keyframes, and
+rate control</td>
+</tr>
+</tbody>
+</table>
+<h2 id="which-mode-should-you-choose">Which Mode Should You Choose?</h2>
+<p>Choose <strong>Simple Output Mode</strong> if you are new to content
+creation, have a single-PC setup, and want to start streaming or
+recording immediately without worrying about technical glitches.</p>
+<p>Choose <strong>Advanced Output Mode</strong> if you need to record
+separate audio tracks for video editing, want to stream and record at
+different quality levels simultaneously, or need to optimize OBS to get
+the absolute best performance out of high-end hardware.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

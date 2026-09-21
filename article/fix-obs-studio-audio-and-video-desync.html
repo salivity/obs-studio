@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix OBS Studio Audio and Video Desync - obs-studio</title>
+    <meta name="description" content="Having your audio and video out of sync in OBS Studio can ruin the quality of your live streams and recordings. This guide provides direct, step-by-step solutions to resolve OBS audio desync issues, including adjusting sync offsets, matching sample rates">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/fix-obs-studio-audio-and-video-desync">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Fix OBS Studio Audio and Video Desync - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/fix-obs-studio-audio-and-video-desync" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Having your audio and video out of sync in OBS Studio can ruin the quality of your live streams and recordings. This guide provides direct, step-by-step solutions to resolve OBS audio desync issues, including adjusting sync offsets, matching sample rates" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="fix-obs-studio-audio-and-video-desync">Fix OBS Studio Audio and
+Video Desync</h1>
+<p>Having your audio and video out of sync in OBS Studio can ruin the
+quality of your live streams and recordings. This guide provides direct,
+step-by-step solutions to resolve OBS audio desync issues, including
+adjusting sync offsets, matching sample rates across your system,
+toggling device timestamps, and reducing hardware lag to ensure your
+stream runs perfectly.</p>
+<h2 id="step-1-adjust-the-audio-sync-offset">Step 1: Adjust the Audio
+Sync Offset</h2>
+<p>If your audio is consistently ahead of or behind your video by a set
+amount of time, you can easily correct this using OBS Studio's built-in
+offset tool.</p>
+<ol type="1">
+<li>Locate the <strong>Audio Mixer</strong> dock in OBS.</li>
+<li>Click the <strong>gear icon</strong> (or the three vertical dots)
+next to your active audio source (e.g., Mic/Aux or Desktop Audio) and
+select <strong>Advanced Audio Properties</strong>.</li>
+<li>Find your audio source in the list and locate the <strong>Sync
+Offset (ms)</strong> column.</li>
+<li>Enter a value in milliseconds to shift the audio:
+<ul>
+<li><strong>Positive value (e.g., 200):</strong> Delays the audio (use
+this if the audio is playing <em>before</em> the video).</li>
+<li><strong>Negative value (e.g., -200):</strong> Speeds up the audio
+(use this if the audio is playing <em>after</em> the video).</li>
+</ul></li>
+<li>Close the window and test your recording to see if the sync is
+corrected.</li>
+</ol>
+<h2 id="step-2-match-audio-sample-rates">Step 2: Match Audio Sample
+Rates</h2>
+<p>A mismatch in sample rates between your microphone, Windows operating
+system, and OBS Studio is the most common cause of audio drifting out of
+sync over time.</p>
+<ol type="1">
+<li><strong>Check OBS settings:</strong> Go to <strong>Settings</strong>
+&gt; <strong>Audio</strong> and check the <strong>Sample Rate</strong>
+(usually 44.1 kHz or 48 kHz).</li>
+<li><strong>Check Windows settings:</strong>
+<ul>
+<li>Press <code>Windows Key + R</code>, type <code>mmsys.cpl</code>, and
+press <strong>Enter</strong> to open the Sound Control Panel.</li>
+<li>Under the <strong>Playback</strong> tab, right-click your default
+device and select <strong>Properties</strong>.</li>
+<li>Go to the <strong>Advanced</strong> tab and note the default format
+(e.g., 24-bit, 48000 Hz).</li>
+<li>Repeat this process for your microphone under the
+<strong>Recording</strong> tab.</li>
+</ul></li>
+<li><strong>Align the rates:</strong> Ensure that OBS, your playback
+device, and your recording device are all set to the exact same rate
+(either 44100 Hz / 44.1 kHz or 48000 Hz / 48 kHz).</li>
+</ol>
+<h2 id="step-3-toggle-device-timestamps">Step 3: Toggle Device
+Timestamps</h2>
+<p>Sometimes, your computer's hardware clock conflicts with OBS, causing
+the audio to gradually desync during long sessions.</p>
+<ol type="1">
+<li>Go to the <strong>Audio Mixer</strong> in OBS.</li>
+<li>Click the gear icon next to your microphone or capture card and
+select <strong>Properties</strong>.</li>
+<li>Look for the <strong>Use Device Timestamps</strong> checkbox.</li>
+<li>If it is checked, uncheck it. If it is unchecked, check it.</li>
+<li>Test your stream. Different hardware devices react differently to
+this setting, so toggling it often resolves persistent drift.</li>
+</ol>
+<h2 id="step-4-fix-gpu-overload-and-render-lag">Step 4: Fix GPU Overload
+and Render Lag</h2>
+<p>If your computer is struggling to render your game or video source,
+the video will lag behind the audio. This is a video lag issue
+masquerading as an audio sync issue.</p>
+<ol type="1">
+<li><strong>Run OBS as Administrator:</strong> Right-click the OBS
+Studio shortcut and select <strong>Run as administrator</strong>. This
+gives OBS GPU priority, preventing video frames from dropping.</li>
+<li><strong>Enable Windows Game Mode:</strong> Go to Windows Settings
+&gt; Gaming &gt; Game Mode, and turn it <strong>On</strong>.</li>
+<li><strong>Lower OBS Settings:</strong> If your GPU usage is at 100%,
+lower your output resolution (e.g., from 1080p to 720p) or reduce your
+frame rate from 60 FPS to 30 FPS.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

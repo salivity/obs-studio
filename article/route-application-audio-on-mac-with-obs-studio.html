@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Application Audio on Mac with OBS Studio - obs-studio</title>
+    <meta name="description" content="This guide explains how to route audio from specific applications directly into OBS Studio on macOS without using third-party virtual audio cables. By leveraging native features introduced in OBS Studio 28 and later, Mac users can easily capture independ">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/route-application-audio-on-mac-with-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Route Application Audio on Mac with OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/route-application-audio-on-mac-with-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide explains how to route audio from specific applications directly into OBS Studio on macOS without using third-party virtual audio cables. By leveraging native features introduced in OBS Studio 28 and later, Mac users can easily capture independ" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="route-application-audio-on-mac-with-obs-studio">Route
+Application Audio on Mac with OBS Studio</h1>
+<p>This guide explains how to route audio from specific applications
+directly into OBS Studio on macOS without using third-party virtual
+audio cables. By leveraging native features introduced in OBS Studio 28
+and later, Mac users can easily capture independent audio from sources
+like Discord, web browsers, or music players, allowing for precise
+control over stream and recording audio levels.</p>
+<h3 id="system-requirements">System Requirements</h3>
+<p>To use native application audio capture, you must meet the following
+system requirements:</p>
+<ul>
+<li><strong>macOS 13 Ventura</strong> or newer.</li>
+<li><strong>OBS Studio version 28.0</strong> or newer.</li>
+</ul>
+<h3 id="step-by-step-guide-to-native-audio-routing">Step-by-Step Guide
+to Native Audio Routing</h3>
+<p>Follow these steps to capture and route audio from a single
+application:</p>
+<h4 id="1-add-the-application-audio-capture-source">1. Add the
+Application Audio Capture Source</h4>
+<ol type="1">
+<li>Launch OBS Studio on your Mac.</li>
+<li>Navigate to the <strong>Sources</strong> dock at the bottom of the
+screen.</li>
+<li>Click the <strong>+ (Add)</strong> button.</li>
+<li>Select <strong>Application Audio Capture</strong> from the
+list.</li>
+<li>Give the source a clear name (e.g., "Spotify Audio" or "Discord
+Sound") and click <strong>OK</strong>.</li>
+</ol>
+<h4 id="2-configure-the-source-settings">2. Configure the Source
+Settings</h4>
+<ol type="1">
+<li>In the properties window that appears, locate the
+<strong>Application</strong> dropdown menu.</li>
+<li>Select the specific application you want to capture. The application
+must currently be running to appear in this list.</li>
+<li>Keep the <strong>Match window priority</strong> set to the default
+option unless you have specific window-matching needs.</li>
+<li>Click <strong>OK</strong> to save the settings.</li>
+</ol>
+<h4 id="3-manage-the-audio-in-the-mixer">3. Manage the Audio in the
+Mixer</h4>
+<ol type="1">
+<li>Look at the <strong>Audio Mixer</strong> dock in OBS. You will now
+see a dedicated volume slider for the application you just added.</li>
+<li>You can now adjust the volume, mute, or apply audio filters (such as
+Noise Suppression or Limiter) to this specific application without
+affecting your microphone or general system audio.</li>
+</ol>
+<h3 id="disabling-global-desktop-audio">Disabling Global Desktop
+Audio</h3>
+<p>To avoid capturing duplicate audio (once from your specific
+application source and once from your overall system audio), you should
+disable the global desktop audio:</p>
+<ol type="1">
+<li>Open OBS <strong>Settings</strong> (Command + ,).</li>
+<li>Click on the <strong>Audio</strong> tab.</li>
+<li>Under the <strong>Global Audio Devices</strong> section, set
+<strong>Desktop Audio</strong> to <strong>Disabled</strong>.</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong>.</li>
+</ol>
+<p>You can repeat the "Application Audio Capture" process for as many
+individual applications as your stream requires, giving you a completely
+customized and clean audio mix natively on macOS.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a Moving Grid Background in OBS Studio - obs-studio</title>
+    <meta name="description" content="This article provides a step-by-step guide on how to use the "Scroll" filter in OBS Studio to create an endless, moving background grid for your streams or recordings. You will learn how to prepare a tileable grid image, import it into OBS, apply the Scr">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/create-a-moving-grid-background-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Create a Moving Grid Background in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/create-a-moving-grid-background-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides a step-by-step guide on how to use the "Scroll" filter in OBS Studio to create an endless, moving background grid for your streams or recordings. You will learn how to prepare a tileable grid image, import it into OBS, apply the Scr" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="create-a-moving-grid-background-in-obs-studio">Create a Moving
+Grid Background in OBS Studio</h1>
+<p>This article provides a step-by-step guide on how to use the "Scroll"
+filter in OBS Studio to create an endless, moving background grid for
+your streams or recordings. You will learn how to prepare a tileable
+grid image, import it into OBS, apply the Scroll filter, and configure
+the settings to achieve a seamless, continuous scrolling effect.</p>
+<h3 id="step-1-obtain-a-seamless-grid-image">Step 1: Obtain a Seamless
+Grid Image</h3>
+<p>To create an endless scrolling effect, you need a seamless (tileable)
+grid image. A PNG file with a transparent background works best, as it
+allows you to place custom colors or gradients behind the grid. Ensure
+the edges of the grid match up perfectly so there are no visible seams
+when the image repeats.</p>
+<h3 id="step-2-add-the-grid-image-to-obs">Step 2: Add the Grid Image to
+OBS</h3>
+<ol type="1">
+<li>Open OBS Studio.</li>
+<li>In the <strong>Sources</strong> dock, click the <strong>+</strong>
+(plus) icon and select <strong>Image</strong>.</li>
+<li>Name the source (e.g., "Grid Background") and click
+<strong>OK</strong>.</li>
+<li>Click <strong>Browse</strong>, locate your seamless grid image, and
+click <strong>Open</strong>.</li>
+<li>Click <strong>OK</strong> to add the image to your canvas.</li>
+</ol>
+<h3 id="step-3-apply-the-scroll-filter">Step 3: Apply the Scroll
+Filter</h3>
+<ol type="1">
+<li>Right-click your newly added Grid Background source in the
+<strong>Sources</strong> list.</li>
+<li>Select <strong>Filters</strong> from the context menu.</li>
+<li>In the Filters window, click the <strong>+</strong> icon in the
+bottom-left corner of the <strong>Effect Filters</strong> section.</li>
+<li>Select <strong>Scroll</strong> from the list and click
+<strong>OK</strong>.</li>
+</ol>
+<h3 id="step-4-configure-tiling-and-speed">Step 4: Configure Tiling and
+Speed</h3>
+<p>By default, the Scroll filter will only scroll the image within its
+original dimensions. To make the grid repeat infinitely across your
+entire screen:</p>
+<ol type="1">
+<li>In the Scroll filter properties, check the boxes for <strong>Limit
+Width</strong> and <strong>Limit Height</strong>.</li>
+<li>Set the width and height values to match your OBS canvas resolution
+(e.g., 1920 for width and 1080 for height). This forces the seamless
+grid texture to repeat and fill the entire screen.</li>
+<li>Adjust the <strong>Horizontal Speed</strong> and <strong>Vertical
+Speed</strong> sliders to control the movement of your grid. Moving the
+sliders to the right makes the grid move left/up, while moving them to
+the left moves the grid right/down.</li>
+<li>Keep the speeds relatively low (between 10 and 50) for a smooth,
+non-distracting background effect.</li>
+</ol>
+<p>Close the Filters window once you are happy with the speed and
+direction. Your endless moving background grid is now active and ready
+for your stream.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

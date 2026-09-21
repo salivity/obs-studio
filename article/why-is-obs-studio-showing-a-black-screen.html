@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why is OBS Studio Showing a Black Screen? - obs-studio</title>
+    <meta name="description" content="Experiencing a black screen in OBS Studio is a common frustration, but it is usually easy to fix. This article explores the primary reasons behind this issue—including graphics card conflicts, lack of administrative privileges, and incorrect capture se">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/why-is-obs-studio-showing-a-black-screen">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why is OBS Studio Showing a Black Screen? - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/why-is-obs-studio-showing-a-black-screen" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Experiencing a black screen in OBS Studio is a common frustration, but it is usually easy to fix. This article explores the primary reasons behind this issue—including graphics card conflicts, lack of administrative privileges, and incorrect capture se" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-is-obs-studio-showing-a-black-screen">Why is OBS Studio
+Showing a Black Screen?</h1>
+<p>Experiencing a black screen in OBS Studio is a common frustration,
+but it is usually easy to fix. This article explores the primary reasons
+behind this issue—including graphics card conflicts, lack of
+administrative privileges, and incorrect capture settings—and provides
+straightforward solutions to get your sources displaying correctly
+again.</p>
+<h2 id="1-graphics-card-conflict-multi-gpu-systems">1. Graphics Card
+Conflict (Multi-GPU Systems)</h2>
+<p>If you are using a laptop or a desktop with both integrated and
+dedicated graphics cards, OBS might be running on a different GPU than
+the application or desktop you are trying to capture.</p>
+<p><strong>How to fix it:</strong></p>
+<ul>
+<li>Open your Windows <strong>Graphics Settings</strong> (search for it
+in the Start menu).</li>
+<li>Click <strong>Browse</strong> and locate the OBS Studio executable
+file (usually in
+<code>C:\Program Files\obs-studio\bin\64bit\obs64.exe</code>).</li>
+<li>Once added, click on OBS Studio and select
+<strong>Options</strong>.</li>
+<li>Choose <strong>Power Saving</strong> if you want to capture your
+display/desktop, or <strong>High Performance</strong> if you want to
+capture high-demand video games.</li>
+</ul>
+<h2 id="2-lack-of-administrative-privileges">2. Lack of Administrative
+Privileges</h2>
+<p>Some games and applications restrict background software from
+capturing their screen to prevent cheating or resource hogging. Running
+OBS without administrator rights can result in a black screen.</p>
+<p><strong>How to fix it:</strong></p>
+<ul>
+<li>Right-click on your OBS Studio shortcut.</li>
+<li>Select <strong>Properties</strong>, then go to the
+<strong>Compatibility</strong> tab.</li>
+<li>Check the box that says <strong>Run this program as an
+administrator</strong>.</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong>.</li>
+</ul>
+<h2 id="3-incorrect-capture-source-selected">3. Incorrect Capture Source
+Selected</h2>
+<p>Using the wrong capture source is a frequent cause of black screens.
+For example, trying to capture a full-screen game using "Window Capture"
+instead of "Game Capture" often fails.</p>
+<p><strong>How to fix it:</strong></p>
+<ul>
+<li><strong>Game Capture:</strong> Use this specifically for full-screen
+video games.</li>
+<li><strong>Window Capture:</strong> Use this for specific applications
+like browsers, Discord, or Excel. If it shows a black screen,
+double-click the source in OBS and change the <strong>Capture
+Method</strong> from "Automatic" to "Windows 10 (1903 and up)".</li>
+<li><strong>Display Capture:</strong> Use this to record your entire
+monitor.</li>
+</ul>
+<h2 id="4-conflict-with-game-anti-cheat-software">4. Conflict with Game
+Anti-Cheat Software</h2>
+<p>Certain games use aggressive anti-cheat software that blocks OBS from
+hooking into the game's engine.</p>
+<p><strong>How to fix it:</strong></p>
+<ul>
+<li>Double-click your <strong>Game Capture</strong> source in the OBS
+Sources dock.</li>
+<li>Scroll down and ensure the box for <strong>Use anti-cheat
+compatibility hook</strong> is checked.</li>
+<li>If the black screen persists, try switching your game's display
+settings from "Full Screen" to "Borderless Windowed" and use
+<strong>Window Capture</strong> instead.</li>
+</ul>
+<h2 id="5-outdated-graphics-drivers">5. Outdated Graphics Drivers</h2>
+<p>Outdated or corrupted graphics drivers can prevent OBS from properly
+communicating with your operating system's display APIs.</p>
+<p><strong>How to fix it:</strong></p>
+<ul>
+<li>Identify your graphics card manufacturer (NVIDIA, AMD, or
+Intel).</li>
+<li>Visit their official website to download and install the latest
+drivers for your specific GPU.</li>
+<li>Restart your computer after the installation is complete.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

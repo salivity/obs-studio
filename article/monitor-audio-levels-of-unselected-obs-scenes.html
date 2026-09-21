@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor Audio Levels of Unselected OBS Scenes - obs-studio</title>
+    <meta name="description" content="This article explains how to configure OBS Studio to monitor audio levels for multiple unselected scenes while using the Multi-view projector window. Since the Multi-view window natively only displays video previews, you will learn how to configure your">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/monitor-audio-levels-of-unselected-obs-scenes">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Monitor Audio Levels of Unselected OBS Scenes - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/monitor-audio-levels-of-unselected-obs-scenes" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how to configure OBS Studio to monitor audio levels for multiple unselected scenes while using the Multi-view projector window. Since the Multi-view window natively only displays video previews, you will learn how to configure your" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="monitor-audio-levels-of-unselected-obs-scenes">Monitor Audio
+Levels of Unselected OBS Scenes</h1>
+<p>This article explains how to configure OBS Studio to monitor audio
+levels for multiple unselected scenes while using the Multi-view
+projector window. Since the Multi-view window natively only displays
+video previews, you will learn how to configure your audio sources and
+workspace layout so you can visually check audio meters for all your
+scenes simultaneously in real-time.</p>
+<h3 id="the-limitation-of-obs-multi-view">The Limitation of OBS
+Multi-view</h3>
+<p>The OBS Studio Multi-view projector (both fullscreen and windowed) is
+designed strictly for video monitoring. It does not display audio dB
+meters on the individual scene preview boxes. Furthermore, by default,
+the OBS Audio Mixer only displays audio sources that are active in your
+currently selected scene.</p>
+<p>To check audio levels across multiple unselected scenes while using
+Multi-view, you must configure your audio sources to remain active
+globally and position your Audio Mixer dock alongside your Multi-view
+window.</p>
+<h3 id="step-1-make-audio-sources-globally-active">Step 1: Make Audio
+Sources Globally Active</h3>
+<p>To see audio meters for scenes you do not have selected, those audio
+sources must be configured to load globally so they never disappear from
+the Audio Mixer.</p>
+<ol type="1">
+<li>Open OBS Studio and click <strong>Settings</strong> (bottom right)
+or go to <strong>File &gt; Settings</strong>.</li>
+<li>Click on the <strong>Audio</strong> tab in the left menu.</li>
+<li>Under the <strong>Global Audio Devices</strong> section, map your
+various audio inputs (like microphones, desktop audio, or auxiliary
+inputs) to the available slots.</li>
+<li>Click <strong>Apply</strong> and <strong>OK</strong>.</li>
+</ol>
+<p><em>Alternative Method (for capture cards or media sources):</em> If
+your audio comes from specific scene sources (like a media file or
+console capture card), create an "Audio Master" scene. Add all these
+audio sources to this single scene. Right-click each source in the
+mixer, go to <strong>Advanced Audio Properties</strong>, and set their
+<strong>Audio Monitoring</strong> to <em>Monitor Only</em> or
+<em>Monitor and Output</em>. You can then nest this "Audio Master" scene
+into your other scenes, keeping the audio meters active at all
+times.</p>
+<h3 id="step-2-configure-the-audio-mixer-dock">Step 2: Configure the
+Audio Mixer Dock</h3>
+<p>Once your sources are global or constantly active, you need to ensure
+they are visible in your mixer interface.</p>
+<ol type="1">
+<li>Look at your <strong>Audio Mixer</strong> dock in the main OBS
+window.</li>
+<li>Right-click anywhere inside the Audio Mixer dock.</li>
+<li>Ensure that <strong>Unhide All</strong> is selected so no active
+audio meters are hidden from your view.</li>
+<li>(Optional) Right-click the mixer again and select <strong>Vertical
+Layout</strong> if you prefer vertical dB meters, which can be easier to
+read side-by-side.</li>
+</ol>
+<h3 id="step-3-arrange-the-multi-view-and-audio-mixer-windows">Step 3:
+Arrange the Multi-view and Audio Mixer Windows</h3>
+<p>Now that your Audio Mixer is displaying all levels simultaneously,
+you can set up your screen layout to monitor both video and audio.</p>
+<ol type="1">
+<li>In the top menu of OBS, click on <strong>View &gt; Multiview
+(Windowed)</strong>.</li>
+<li>Drag the Windowed Multiview projector to your preferred
+monitor.</li>
+<li>Resize the main OBS Studio window (which contains your Audio Mixer
+dock) and place it directly adjacent to or below your Multiview
+window.</li>
+<li>You can now use the Multiview window to watch your video feeds,
+while referencing the constantly active Audio Mixer dock to check the
+audio levels of your unselected scenes.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

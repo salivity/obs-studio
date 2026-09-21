@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio 3-Band Equalizer Frequencies and Q Factor - obs-studio</title>
+    <meta name="description" content="The 3-band equalizer filter in OBS Studio is a simplified audio tool designed to adjust tone across low, middle, and high frequency ranges without requiring complex parametric configuration. Under the hood, OBS defines these frequency ranges and their re">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-3-band-equalizer-frequencies-and-q-factor">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio 3-Band Equalizer Frequencies and Q Factor - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-3-band-equalizer-frequencies-and-q-factor" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The 3-band equalizer filter in OBS Studio is a simplified audio tool designed to adjust tone across low, middle, and high frequency ranges without requiring complex parametric configuration. Under the hood, OBS defines these frequency ranges and their re" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-3-band-equalizer-frequencies-and-q-factor">OBS Studio
+3-Band Equalizer Frequencies and Q Factor</h1>
+<p>The 3-band equalizer filter in OBS Studio is a simplified audio tool
+designed to adjust tone across low, middle, and high frequency ranges
+without requiring complex parametric configuration. Under the hood, OBS
+defines these frequency ranges and their resonance through hardcoded
+biquad filter structures rather than dynamic crossover networks. This
+article details how the filter sets its crossover points, calculates its
+Q-factor values, and applies standard IIR digital filtering across its
+three frequency bands.</p>
+<h3 id="filter-architecture-and-crossover-frequencies">Filter
+Architecture and Crossover Frequencies</h3>
+<p>Unlike dynamic crossover filters that split the incoming audio stream
+into separate frequency bands using crossover networks (such as
+Linkwitz-Riley filters), the OBS Studio 3-band equalizer employs three
+cascaded second-order IIR (infinite impulse response) biquad filters in
+series:</p>
+<ol type="1">
+<li><strong>Low Band:</strong> Implemented as a second-order low-shelf
+filter. Its transition cutoff frequency is fixed around 300 Hz. Signals
+below this point are boosted or cut based on the user's slider value,
+while frequencies significantly above it pass through unmodified.</li>
+<li><strong>Mid Band:</strong> Implemented as a second-order peaking
+(bell) filter. It is centered at 1,000 Hz (1 kHz) to cover the primary
+vocal and presence frequencies.</li>
+<li><strong>High Band:</strong> Implemented as a second-order high-shelf
+filter. Its corner frequency is fixed around 3,200 Hz to 4,000 Hz,
+applying gain adjustments to higher harmonics, sibilance, and air.</li>
+</ol>
+<p>Because the equalizer operates via serial shelving and peaking
+stages, the "crossover" points are not sharp division lines. Instead,
+they are acoustic crossover zones where the roll-off of the low-shelf
+filter smoothly overlaps with the skirt of the mid-peaking filter, and
+the upper skirt of the mid-peaking filter overlaps with the onset of the
+high-shelf filter.</p>
+<h3 id="q-factor-definitions">Q-Factor Definitions</h3>
+<p>The Quality factor (Q) in OBS Studio’s equalizer is internally static
+and not exposed in the user interface. It governs the sharpness,
+bandwidth, and resonance around the specified frequencies:</p>
+<ul>
+<li><strong>Shelving Filters (Low and High):</strong> The low-shelf and
+high-shelf filters are designed with a standard Butterworth Q-factor of
+approximately <span class="math inline">\(0.707\)</span> (<span
+class="math inline">\(1 / \sqrt{2}\)</span>). This value ensures a
+maximally flat response with no resonant peaks or dips near the cutoff
+frequencies when the filter gain is applied, preventing unwanted
+frequency hyping at the boundary points.</li>
+<li><strong>Mid-Band Peaking Filter:</strong> The mid-band peaking
+filter utilizes a moderate Q-factor set close to <span
+class="math inline">\(1.0\)</span> (corresponding to a bandwidth of
+roughly 1.4 octaves). This broad bandwidth ensures a smooth transition
+between the low and high shelving stages, minimizing phase cancellation
+and steep notches across the midrange.</li>
+</ul>
+<h3 id="operational-characteristics">Operational Characteristics</h3>
+<p>When all sliders (Low, Mid, High) are set to 0.0 dB, the biquad
+equations evaluate to unity gain, resulting in a completely flat
+frequency response with transparent audio throughput. Because the
+Q-factors and center frequencies are fixed, the filter behaves like a
+classic broad-band DJ mixer EQ. For tasks requiring steep crossovers,
+adjustable bandwidths, or surgical frequency correction, users typically
+integrate specialized VST 2.x plugins into OBS Studio rather than using
+the built-in 3-band filter.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

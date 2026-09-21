@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record Voiceover in OBS Studio While Watching Video - obs-studio</title>
+    <meta name="description" content="Recording a voiceover while watching video playback in OBS Studio is a powerful way to create reaction videos, tutorials, and video commentaries. This guide provides a straightforward, step-by-step walkthrough on how to import your video, configure your">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/record-voiceover-in-obs-studio-while-watching-video">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Record Voiceover in OBS Studio While Watching Video - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/record-voiceover-in-obs-studio-while-watching-video" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Recording a voiceover while watching video playback in OBS Studio is a powerful way to create reaction videos, tutorials, and video commentaries. This guide provides a straightforward, step-by-step walkthrough on how to import your video, configure your" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="record-voiceover-in-obs-studio-while-watching-video">Record
+Voiceover in OBS Studio While Watching Video</h1>
+<p>Recording a voiceover while watching video playback in OBS Studio is
+a powerful way to create reaction videos, tutorials, and video
+commentaries. This guide provides a straightforward, step-by-step
+walkthrough on how to import your video, configure your microphone, set
+up audio monitoring so you can hear the playback without it bleeding
+into your recording, and capture your voiceover successfully.</p>
+<h2 id="step-1-add-your-video-playback-source">Step 1: Add Your Video
+Playback Source</h2>
+<p>To watch a video while recording your voiceover, you must first
+import the video file into OBS Studio.</p>
+<ol type="1">
+<li>Open OBS Studio and navigate to the <strong>Sources</strong>
+dock.</li>
+<li>Click the <strong>+</strong> (plus) icon and select <strong>Media
+Source</strong>.</li>
+<li>Name the source (e.g., "Playback Video") and click
+<strong>OK</strong>.</li>
+<li>Click <strong>Browse</strong>, locate your video file on your
+computer, and select it.</li>
+<li>If you want the video to pause when you are not recording, check the
+box for <strong>Show nothing when playback ends</strong>. Leave "Loop"
+unchecked unless you want the video to repeat. Click
+<strong>OK</strong>.</li>
+</ol>
+<h2 id="step-2-add-your-microphone">Step 2: Add Your Microphone</h2>
+<p>Next, you need to ensure OBS Studio is capturing your voice.</p>
+<ol type="1">
+<li>In the <strong>Sources</strong> dock, click the <strong>+</strong>
+icon and select <strong>Audio Input Capture</strong>.</li>
+<li>Name the source (e.g., "Voiceover Mic") and click
+<strong>OK</strong>.</li>
+<li>In the device dropdown menu, select your microphone and click
+<strong>OK</strong>.</li>
+<li>Speak into your mic and verify that the volume meter for "Voiceover
+Mic" in the <strong>Audio Mixer</strong> dock is moving.</li>
+</ol>
+<h2 id="step-3-configure-audio-monitoring">Step 3: Configure Audio
+Monitoring</h2>
+<p>To sync your voiceover with the video, you need to hear the video's
+audio through your headphones without letting that audio feedback into
+your microphone. <strong>Always wear headphones for this
+process.</strong></p>
+<ol type="1">
+<li>Click the gear icon next to any source in the <strong>Audio
+Mixer</strong> and select <strong>Advanced Audio
+Properties</strong>.</li>
+<li>Locate your <strong>Playback Video</strong> (Media Source) in the
+list.</li>
+<li>Under the <strong>Audio Monitoring</strong> column, change the
+setting from <em>Monitor Off</em> to <strong>Monitor and Output</strong>
+(if you want the video's original audio in the final recording) or
+<strong>Monitor Only (mute output)</strong> (if you only want to hear
+the video for timing but do not want its sound in the final file).</li>
+<li>For your <strong>Voiceover Mic</strong>, ensure the monitoring is
+set to <strong>Monitor Off</strong> to avoid hearing an annoying echo of
+your own voice while speaking.</li>
+</ol>
+<p><em>Note: If you cannot hear the video audio, go to OBS Settings &gt;
+Audio &gt; Advanced, and ensure the "Monitoring Device" is set to your
+headphones.</em></p>
+<h2 id="step-4-record-your-voiceover">Step 4: Record Your Voiceover</h2>
+<p>With your sources and audio configured, you are ready to record.</p>
+<ol type="1">
+<li>In the <strong>Sources</strong> list, click on your <strong>Playback
+Video</strong> and click the <strong>Stop</strong> button (square) in
+the media controls below the preview window to reset the video to the
+beginning.</li>
+<li>Click <strong>Start Recording</strong> in the
+<strong>Controls</strong> dock on the bottom right.</li>
+<li>Click the <strong>Play</strong> button under your video source to
+start the video playback.</li>
+<li>Deliver your voiceover as you watch the video play in the OBS
+preview window.</li>
+<li>Once finished, click <strong>Stop Recording</strong>. Your video and
+synchronized voiceover will be saved to your designated OBS output
+folder.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

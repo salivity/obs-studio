@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why OBS Mutes Audio When Hiding Sources - obs-studio</title>
+    <meta name="description" content="In OBS Studio, toggling the visibility of a source by clicking the eye icon often cuts off its accompanying audio feed because the software treats visibility as an operational state rather than a purely visual layer. By default, OBS connects audio proces">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/why-obs-mutes-audio-when-hiding-sources">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why OBS Mutes Audio When Hiding Sources - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/why-obs-mutes-audio-when-hiding-sources" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In OBS Studio, toggling the visibility of a source by clicking the eye icon often cuts off its accompanying audio feed because the software treats visibility as an operational state rather than a purely visual layer. By default, OBS connects audio proces" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-obs-mutes-audio-when-hiding-sources">Why OBS Mutes Audio
+When Hiding Sources</h1>
+<p>In OBS Studio, toggling the visibility of a source by clicking the
+eye icon often cuts off its accompanying audio feed because the software
+treats visibility as an operational state rather than a purely visual
+layer. By default, OBS connects audio processing to the active rendering
+of video frames to optimize system performance. Understanding this
+relationship between resource-saving settings, source properties, and
+audio monitoring paths clarifies why hidden sources go silent and how
+you can maintain continuous audio playback.</p>
+<h3 id="resource-management-and-source-deactivation">Resource Management
+and Source Deactivation</h3>
+<p>OBS Studio is designed to minimize CPU and GPU overhead during live
+broadcasts and recordings. To achieve this, several media and capture
+sources include performance flags that stop processing entirely when the
+source is not actively rendered on the canvas:</p>
+<ul>
+<li><strong>Deactivate When Not Showing:</strong> Common to Video
+Capture Devices (webcams and capture cards), this setting instructs OBS
+to disconnect or sleep the hardware interface the moment the visual
+layer is hidden. Because the hardware connection pauses, any embedded
+audio stream transmitted through that connection cuts out
+instantly.</li>
+<li><strong>Close File When Inactive:</strong> Found in Media Sources
+(video and audio files), this forces OBS to unload the media file from
+memory when the eye icon is toggled off. The playback halts, and audio
+output ceases.</li>
+<li><strong>Restart Playback When Source Becomes Active:</strong> Paired
+with file closing, this setting ensures media only starts over once made
+visible, confirming that playback is strictly bound to visual
+presentation.</li>
+</ul>
+<p>When these optimization flags are enabled, OBS terminates the
+processing pipeline for the source, cutting both visual rendering and
+audio generation simultaneously.</p>
+<h3 id="the-separation-of-render-and-audio-pipelines">The Separation of
+Render and Audio Pipelines</h3>
+<p>OBS Studio handles scene rendering through a visual hierarchy. If a
+source resides inside a scene and is hidden, the engine skips that
+source during the video composition phase. For sources that bundle video
+and audio together (such as Browser Sources, Capture Cards, and Media
+Sources), the audio stream frequently relies on the master tick of the
+video decoder.</p>
+<p>If the video frame loop stops because the source is hidden, the audio
+clock pauses alongside it. The audio engine does not independently poll
+the hidden source unless the source remains active in the
+background.</p>
+<h3 id="the-role-of-audio-monitoring-configurations">The Role of Audio
+Monitoring Configurations</h3>
+<p>OBS Studio features an Advanced Audio Properties panel where tracks
+can be set to <strong>Monitor Off</strong>, <strong>Monitor Only (mute
+output)</strong>, or <strong>Monitor and Output</strong>.</p>
+<p>When audio monitoring is active (either "Monitor Only" or "Monitor
+and Output"), OBS routes the feed through an independent monitoring
+device defined in your global audio settings. In certain configurations,
+assigning a source to actively monitor forces OBS to keep an active
+audio decoding thread alive, even if the primary scene renderer drops
+the video feed. However, if the underlying source property still tells
+the hardware or file to "deactivate," the audio will cut out regardless
+of monitoring settings because the source has completely stopped
+delivering data.</p>
+<h3 id="how-to-maintain-audio-while-hiding-visuals">How to Maintain
+Audio While Hiding Visuals</h3>
+<p>To keep the audio feed playing while concealing the video layer:</p>
+<ol type="1">
+<li><strong>Uncheck Deactivation Settings:</strong> Open the properties
+of your source (e.g., Video Capture Device or Media Source) and disable
+options like <strong>Deactivate when not showing</strong> or
+<strong>Close file when inactive</strong>. This forces OBS to render the
+audio track continuously in the background.</li>
+<li><strong>Decouple Audio from Video:</strong> Instead of relying on
+the embedded audio from a capture card or browser source, add a
+dedicated <strong>Audio Input Capture</strong> source pointing directly
+to the hardware. Because Audio Input Capture sources have no visual
+component to toggle, their feeds remain constant across all scene
+changes.</li>
+<li><strong>Use Source Filters Instead of Visibility Toggles:</strong>
+Apply a <strong>Color Correction</strong> filter with opacity set to 0%,
+or use a dedicated scene transition, to visually hide an element without
+triggering the engine-level deactivation caused by the eye icon
+toggle.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

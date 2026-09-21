@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS macOS Application Audio Capture Without KEXTs - obs-studio</title>
+    <meta name="description" content="This article explains how OBS Studio captures isolated, per-application audio on macOS natively, without requiring third-party kernel extensions (KEXTs) or virtual audio cables. By transitioning away from legacy driver-based workarounds, modern versions">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-mac-os-application-audio-capture-without-kex-ts">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS macOS Application Audio Capture Without KEXTs - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-mac-os-application-audio-capture-without-kex-ts" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how OBS Studio captures isolated, per-application audio on macOS natively, without requiring third-party kernel extensions (KEXTs) or virtual audio cables. By transitioning away from legacy driver-based workarounds, modern versions" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-macos-application-audio-capture-without-kexts">OBS macOS
+Application Audio Capture Without KEXTs</h1>
+<p>This article explains how OBS Studio captures isolated,
+per-application audio on macOS natively, without requiring third-party
+kernel extensions (KEXTs) or virtual audio cables. By transitioning away
+from legacy driver-based workarounds, modern versions of OBS Studio
+leverage Apple's native frameworks to tap into individual audio streams
+directly. The following sections break down the transition from
+kernel-level drivers to Apple's modern user-space APIs, how
+ScreenCaptureKit handles stream isolation, and how OBS processes these
+audio buffers.</p>
+<h2 id="the-shift-away-from-kernel-extensions">The Shift Away From
+Kernel Extensions</h2>
+<p>Historically, capturing desktop audio or specific application sound
+on macOS required third-party virtual audio loopback drivers, such as
+Soundflower or BlackHole, or legacy Kernel Extensions (KEXTs). Apple
+systematically deprecated KEXTs due to system stability, performance,
+and security concerns. Kernel-level code runs with unrestricted
+privileges, meaning a single fault in an audio driver could trigger a
+kernel panic and crash the entire operating system.</p>
+<p>To replace this approach, Apple introduced user-space audio and
+display capture APIs that provide secure, low-latency access to media
+streams without compromising the operating system's integrity.</p>
+<h2 id="screencapturekit-the-core-framework">ScreenCaptureKit: The Core
+Framework</h2>
+<p>The primary mechanism OBS Studio uses to capture per-application
+audio on macOS 13 (Ventura) and later is
+<strong>ScreenCaptureKit</strong>.</p>
+<p>ScreenCaptureKit is a high-performance framework designed to run
+entirely in user space. While primarily known for screen sharing and
+video capture, the framework includes robust support for system and
+application-level audio routing via its streaming pipeline.</p>
+<p>When configured:</p>
+<ol type="1">
+<li><strong>Application Discovery:</strong> OBS queries the system for
+running applications using <code>SCShareableContent</code>. This returns
+a list of active applications and display windows.</li>
+<li><strong>Target Filtering:</strong> When a user selects a specific
+application in the "Application Audio Capture" source, OBS creates an
+<code>SCContentFilter</code> targeting only that specific application's
+process identifier (PID) or bundle identifier.</li>
+<li><strong>Audio-Only Stream Creation:</strong> OBS initializes an
+<code>SCStreamConfiguration</code> object. It sets
+<code>capturesAudio = true</code> and excludes or minimizes video
+processing to save system resources.</li>
+<li><strong>Stream Execution:</strong> An <code>SCStream</code> instance
+is instantiated with the filter and configuration. The stream outputs
+raw audio samples directly from the targeted application.</li>
+</ol>
+<h2 id="how-the-audio-is-tapped-without-virtual-drivers">How the Audio
+is Tapped Without Virtual Drivers</h2>
+<p>Under the hood, macOS handles audio mixing via the Core Audio
+Hardware Abstraction Layer (HAL). When an application plays sound, it
+sends PCM buffers through Core Audio to the system's output device.</p>
+<p>Instead of intercepting these buffers at the hardware or kernel
+driver level, ScreenCaptureKit taps the audio session at the system
+compositor and window-server level. The operating system isolates the
+process’s audio graph, splits off a copy of the uncompressed PCM stream,
+and sends it directly to the authorized capture application (OBS Studio)
+via an asynchronous delegate callback
+(<code>stream(_:didOutputSampleBuffer:of:)</code>).</p>
+<p>Because this pipeline is managed entirely by Apple's system daemons,
+OBS receives the audio after the application renders it, but before it
+reaches the master output mix, ensuring zero bleed from other running
+software.</p>
+<h2 id="buffering-and-internal-routing-in-obs">Buffering and Internal
+Routing in OBS</h2>
+<p>Once ScreenCaptureKit delivers the audio sample buffers:</p>
+<ol type="1">
+<li><strong>Buffer Conversion:</strong> The incoming
+<code>CMSampleBuffer</code> containing Linear PCM audio is
+extracted.</li>
+<li><strong>Resampling:</strong> OBS Studio checks the sample rate and
+channel layout of the incoming stream and resamples the audio (using its
+internal <code>resampler</code> routines) to match the canvas's global
+audio settings (typically 44.1 kHz or 48 kHz).</li>
+<li><strong>Mixer Injection:</strong> The processed samples are fed into
+the standard OBS audio pipeline, where volume filters, noise
+suppression, and routing to specific output tracks (such as streaming
+and recording tracks) are applied.</li>
+</ol>
+<h2 id="permissions-and-user-space-security">Permissions and User Space
+Security</h2>
+<p>Because this process operates strictly within macOS's user space, it
+relies on the Transparency, Consent, and Control (TCC) framework rather
+than system extension approvals. To capture per-app audio, users simply
+grant OBS Studio permission under <strong>System Settings &gt; Privacy
+&amp; Security &gt; Screen &amp; System Audio Recording</strong>. Once
+authorized, OBS can capture audio from any targeted process without
+rebooting the system or lowering SIP (System Integrity Protection).</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

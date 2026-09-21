@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Are My OBS Studio Recordings Lagging? - obs-studio</title>
+    <meta name="description" content="If your OBS Studio recordings are choppy, stuttering, or lagging, it is usually caused by overloaded system hardware, incorrect OBS settings, or software conflicts. This article explains the primary reasons behind poor recording quality and provides dire">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/why-are-my-obs-studio-recordings-lagging">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Are My OBS Studio Recordings Lagging? - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/why-are-my-obs-studio-recordings-lagging" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="If your OBS Studio recordings are choppy, stuttering, or lagging, it is usually caused by overloaded system hardware, incorrect OBS settings, or software conflicts. This article explains the primary reasons behind poor recording quality and provides dire" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-are-my-obs-studio-recordings-lagging">Why Are My OBS Studio
+Recordings Lagging?</h1>
+<p>If your OBS Studio recordings are choppy, stuttering, or lagging, it
+is usually caused by overloaded system hardware, incorrect OBS settings,
+or software conflicts. This article explains the primary reasons behind
+poor recording quality and provides direct, actionable solutions to
+optimize your system and achieve smooth, high-quality video
+captures.</p>
+<h2 id="1-run-obs-studio-as-administrator">1. Run OBS Studio as
+Administrator</h2>
+<p>When Windows runs games or resource-intensive applications, it
+prioritizes hardware allocation to those programs over OBS Studio.
+Running OBS as an administrator forces Windows to allocate sufficient
+GPU resources to your recording software.</p>
+<ul>
+<li><strong>How to fix:</strong> Right-click the OBS Studio shortcut,
+select <strong>Run as administrator</strong>, and check if the lag
+persists. To make this permanent, right-click the shortcut, go to
+<strong>Properties</strong> &gt; <strong>Compatibility</strong>, and
+check <strong>Run this program as an administrator</strong>.</li>
+</ul>
+<h2 id="2-reduce-the-output-resolution-and-frame-rate">2. Reduce the
+Output Resolution and Frame Rate</h2>
+<p>Recording in high resolutions like 4K or 1080p at 60 FPS requires
+significant processing power. If your CPU or GPU cannot keep up, frames
+will be dropped, resulting in a choppy video.</p>
+<ul>
+<li><strong>How to fix:</strong> Go to <strong>Settings</strong> &gt;
+<strong>Video</strong>. Lower your <strong>Output (Scaled)
+Resolution</strong> (e.g., from 1080p to 720p) and reduce your
+<strong>Common FPS Values</strong> from 60 to 30.</li>
+</ul>
+<h2 id="3-switch-to-a-hardware-encoder">3. Switch to a Hardware
+Encoder</h2>
+<p>OBS offers different encoders to compress your video. The Software
+(x264) encoder uses your CPU, which can easily overload your system if
+you are gaming simultaneously. Hardware encoders offload this work to
+dedicated chips on your graphics card.</p>
+<ul>
+<li><strong>How to fix:</strong> Go to <strong>Settings</strong> &gt;
+<strong>Output</strong>. Change the Output Mode to
+<strong>Advanced</strong>, navigate to the <strong>Recording</strong>
+tab, and change the <strong>Video Encoder</strong> to a hardware encoder
+such as <strong>NVIDIA NVENC</strong>, <strong>AMD AMF</strong>, or
+<strong>Intel QuickSync</strong>.</li>
+</ul>
+<h2 id="4-lower-your-recording-bitrate">4. Lower Your Recording
+Bitrate</h2>
+<p>A bitrate that is too high for your storage drive or hardware to
+handle can cause encoding overload and stuttering.</p>
+<ul>
+<li><strong>How to fix:</strong> In <strong>Settings</strong> &gt;
+<strong>Output</strong> &gt; <strong>Recording</strong>, check your
+bitrate. For 1080p at 60 FPS, a bitrate of 10,000 to 15,000 Kbps is
+generally sufficient. If you are using CQP (Constant QP) rate control,
+set the CQ Level between 18 and 23.</li>
+</ul>
+<h2 id="5-enable-windows-game-mode">5. Enable Windows Game Mode</h2>
+<p>Windows Game Mode optimizes your PC for gaming, but in the past, it
+interfered with background recording software. Modern updates have fixed
+this, and keeping Game Mode enabled now helps Windows balance resources
+between your game and OBS Studio.</p>
+<ul>
+<li><strong>How to fix:</strong> Press the Windows Key, type
+<strong>Game Mode settings</strong>, and toggle <strong>Game
+Mode</strong> to <strong>On</strong>.</li>
+</ul>
+<h2 id="6-check-your-media-player">6. Check Your Media Player</h2>
+<p>Sometimes, the recording itself is perfectly smooth, but the media
+player you are using to watch the file cannot handle high-bitrate video
+playback, making it look choppy.</p>
+<ul>
+<li><strong>How to fix:</strong> Try playing the recorded file in a
+lightweight, robust media player like <strong>VLC Media Player</strong>
+or <strong>MPC-HC</strong> instead of the default Windows media
+player.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

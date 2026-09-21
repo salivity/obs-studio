@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS MTU Sizing for Cellular Bonding Streaming - obs-studio</title>
+    <meta name="description" content="Configuring OBS Studio for live field reporting over bonded mobile connections requires careful management of the Maximum Transmission Unit (MTU) to avoid packet fragmentation and frame drops. When multiple cellular uplinks are combined using bonding sof">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-mtu-sizing-for-cellular-bonding-streaming">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS MTU Sizing for Cellular Bonding Streaming - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-mtu-sizing-for-cellular-bonding-streaming" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Configuring OBS Studio for live field reporting over bonded mobile connections requires careful management of the Maximum Transmission Unit (MTU) to avoid packet fragmentation and frame drops. When multiple cellular uplinks are combined using bonding sof" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-mtu-sizing-for-cellular-bonding-streaming">OBS MTU Sizing
+for Cellular Bonding Streaming</h1>
+<p>Configuring OBS Studio for live field reporting over bonded mobile
+connections requires careful management of the Maximum Transmission Unit
+(MTU) to avoid packet fragmentation and frame drops. When multiple
+cellular uplinks are combined using bonding software or hardware
+routers, encapsulation overhead reduces the effective packet payload
+size. Understanding how cellular carrier networks, bonding tunnels, and
+transport protocols like SRT or RTMP interact enables field broadcasters
+to set optimal packet limits, ensuring low-latency, uninterrupted video
+feeds from the field.</p>
+<h3 id="the-problem-with-default-mtu-in-cellular-bonding">The Problem
+with Default MTU in Cellular Bonding</h3>
+<p>The standard MTU for local Ethernet networks is 1500 bytes. However,
+mobile broadband networks (4G LTE and 5G) rarely deliver a true
+1500-byte MTU. Carrier-grade NAT, IPv6 transition mechanisms (such as
+464XLAT), and radio access network headers routinely reduce the native
+cellular MTU to between 1420 and 1440 bytes.</p>
+<p>When live reporting involves bonding multiple cellular modems, an
+additional encapsulation layer is added. Whether using multi-WAN bonding
+proxies (like Speedify), dedicated bonding hardware, or custom tunnels
+(such as WireGuard or OpenVPN), each bonded packet is wrapped in new IP
+and tunnel headers. These headers consume an extra 28 to 80 bytes
+depending on the protocol used.</p>
+<p>If OBS Studio transmits full-sized packets, they will exceed the Path
+MTU (PMTU) of the bonded cellular link. This results in:</p>
+<ul>
+<li><strong>IP Fragmentation:</strong> Routers must split large packets
+into smaller fragments, multiplying network overhead and increasing
+packet drop risk over unpredictable wireless links.</li>
+<li><strong>Packet Dropping / Blackholing:</strong> Many cellular
+networks drop fragmented UDP packets or silently block ICMP "Packet Too
+Big" messages, causing catastrophic stream stalls without an obvious
+error.</li>
+<li><strong>Bufferbloat and Latency Spikes:</strong> Reassembling
+fragmented video frames on the receiving ingest server adds processing
+delay, negating the low-latency benefits of remote field reporting.</li>
+</ul>
+<h3 id="calculating-the-safe-mtu-target">Calculating the Safe MTU
+Target</h3>
+<p>To maintain stream stability across diverse cellular carriers (such
+as mixing AT&amp;T, Verizon, and T-Mobile), you must size your MTU to
+the lowest common denominator among all active SIM cards, minus the
+bonding overhead.</p>
+<p>A practical calculation formula for field reporting:</p>
+<ul>
+<li><strong>Base Carrier MTU:</strong> Assume a worst-case baseline of
+1420 bytes.</li>
+<li><strong>Bonding Tunnel Overhead:</strong> Subtract 40 to 80 bytes
+for bonding encapsulation (e.g., GRE, WireGuard, or custom aggregation
+headers).</li>
+<li><strong>Transport Layer Overhead:</strong> Account for the video
+protocol (RTMP/TCP requires 40 bytes for standard TCP/IP headers;
+SRT/UDP requires 28 bytes for UDP/IP plus 16 bytes for the SRT
+header).</li>
+</ul>
+<p>A universally safe target MTU for the bonded network adapter is
+between <strong>1340 and 1380 bytes</strong>. Setting your MTU within
+this threshold prevents fragmentation across nearly all commercial
+cellular carriers worldwide.</p>
+<h3 id="configuring-mtu-and-mss-for-obs-studio">Configuring MTU and MSS
+for OBS Studio</h3>
+<p>OBS Studio relies on the operating system’s network stack and the
+underlying stream protocol to govern packet sizing.</p>
+<h4 id="1-network-interface-tuning">1. Network Interface Tuning</h4>
+<p>If you are running software-based cellular bonding directly on your
+streaming laptop, configure the virtual bonding network adapter rather
+than the physical modems:</p>
+<ul>
+<li><strong>Windows:</strong> Use PowerShell to set the subinterface
+MTU:<br />
+<code>netsh interface ipv4 set subinterface "Bonded-Adapter-Name" mtu=1360 store=persistent</code></li>
+<li><strong>macOS / Linux:</strong> Set the MTU on the virtual
+interface:<br />
+<code>sudo ifconfig &lt;interface_name&gt; mtu 1360</code></li>
+</ul>
+<h4 id="2-configuring-srt-in-obs-studio">2. Configuring SRT in OBS
+Studio</h4>
+<p>Secure Reliable Transport (SRT) is the industry standard for cellular
+field broadcasting because of its resiliency over lossy connections. OBS
+Studio allows you to manually limit the Maximum Segment Size (MSS)
+directly via the SRT stream URL parameters in the OBS Output
+settings:</p>
+<pre class="text"><code>srt://ingest.example.com:9000?streamid=live/feed&amp;mss=1360</code></pre>
+<p>Setting <code>mss=1360</code> explicitly forces the SRT library
+inside OBS Studio to create UDP payloads that do not exceed 1360 bytes,
+completely bypassing interface-level fragmentation across bonded
+cellular interfaces.</p>
+<h4 id="3-configuring-rtmp--tcp-streams">3. Configuring RTMP / TCP
+Streams</h4>
+<p>If you must stream over standard RTMP (TCP), OBS Studio depends
+entirely on TCP Maximum Segment Size negotiation. When the MTU of your
+bonded adapter is lowered to 1360, the operating system automatically
+announces a reduced MSS (typically MTU minus 40 bytes, or 1320 bytes)
+during the TCP three-way handshake. If you are using a dedicated
+hardware bonding router, verify that "MSS Clamping" is enabled in the
+router's WAN settings to ensure outbound RTMP traffic matches the tunnel
+constraints.</p>
+<h3 id="field-verification-checklist">Field Verification Checklist</h3>
+<p>Before going live with remote reporting:</p>
+<ol type="1">
+<li><strong>Run a Path MTU Test:</strong> Use <code>ping</code> with the
+"Don't Fragment" flag enabled to test your bonded connection against
+your ingest server:
+<ul>
+<li>Windows: <code>ping ingest.example.com -f -l 1332</code> (1332
+payload + 28 bytes ICMP/IP header = 1360 MTU)</li>
+<li>macOS/Linux: <code>ping -D -s 1332 ingest.example.com</code></li>
+</ul></li>
+<li><strong>Monitor Carrier Swapping:</strong> If the bonding appliance
+switches primary traffic to a higher-latency or lower-MTU carrier,
+monitor OBS's dropped frame counter. If frame drops occur while bitrate
+remains below total upload bandwidth, reduce the MTU or SRT
+<code>mss</code> value by another 20 to 40 bytes.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

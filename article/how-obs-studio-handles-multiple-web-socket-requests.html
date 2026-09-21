@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Studio Handles Multiple WebSocket Requests - obs-studio</title>
+    <meta name="description" content="This article provides an overview of how OBS Studio manages simultaneous WebSocket connections and API requests coming from multiple third-party control surfaces, such as Elgato Stream Decks, Touch Portal, and Loupedeck consoles. It explores the underlyi">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-studio-handles-multiple-web-socket-requests">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Studio Handles Multiple WebSocket Requests - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-studio-handles-multiple-web-socket-requests" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of how OBS Studio manages simultaneous WebSocket connections and API requests coming from multiple third-party control surfaces, such as Elgato Stream Decks, Touch Portal, and Loupedeck consoles. It explores the underlyi" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-studio-handles-multiple-websocket-requests">How OBS
+Studio Handles Multiple WebSocket Requests</h1>
+<p>This article provides an overview of how OBS Studio manages
+simultaneous WebSocket connections and API requests coming from multiple
+third-party control surfaces, such as Elgato Stream Decks, Touch Portal,
+and Loupedeck consoles. It explores the underlying network architecture,
+thread synchronization mechanisms, event broadcasting, and conflict
+resolution strategies that ensure stability and data integrity across
+all connected devices.</p>
+<h3 id="underlying-websocket-architecture">Underlying WebSocket
+Architecture</h3>
+<p>Since OBS Studio version 28, the <code>obs-websocket</code> plugin
+has been integrated natively into the core application. The server runs
+on a dedicated network thread using an asynchronous I/O model (powered
+by modern C++ networking libraries like <code>asio</code>). Each
+connected control surface maintains its own persistent TCP socket and
+independent authentication session. Because network I/O is decoupled
+from the rendering pipeline, high-frequency network activity from
+multiple controllers does not inherently degrade video capture or
+encoding frame rates.</p>
+<h3 id="request-ingestion-and-queueing">Request Ingestion and
+Queueing</h3>
+<p>When multiple control surfaces send commands simultaneously—such as
+two devices attempting to switch scenes, toggle filters, or adjust audio
+levels at the exact same millisecond—the WebSocket server ingests these
+requests asynchronously:</p>
+<ol type="1">
+<li><strong>Independent Sockets:</strong> Each controller's payload is
+received and framed independently on the network thread.</li>
+<li><strong>Message Parsing:</strong> JSON-RPC-style payloads are
+validated and parsed into internal command structures.</li>
+<li><strong>Dispatch to Core:</strong> Once validated, commands are
+scheduled for execution against the core OBS API.</li>
+</ol>
+<h3 id="thread-synchronization-and-obs-core-safety">Thread
+Synchronization and OBS Core Safety</h3>
+<p>While network ingestion is asynchronous and concurrent, OBS Studio's
+internal state management relies on strict thread safety. Many
+operations—such as scene switching, audio source modifications, and
+output controls—must interact directly with the OBS main thread or
+invoke internal synchronization primitives (mutexes):</p>
+<ul>
+<li><strong>Serialized State Modification:</strong> Operations affecting
+the scene graph or rendering pipeline are marshaled onto the main OBS
+thread or guarded by locks. This serializes state changes, ensuring that
+conflicting requests are executed sequentially rather than
+concurrently.</li>
+<li><strong>Deterministic Execution:</strong> The command that secures
+the lock or arrives at the processing queue first is executed first. The
+subsequent command executes immediately afterward against the newly
+updated state.</li>
+</ul>
+<h3 id="conflict-resolution-example">Conflict Resolution Example</h3>
+<p>If Controller A sends a request to switch to "Scene 1" at the exact
+same moment Controller B requests a switch to "Scene 2", the execution
+operates on a strict first-come, first-served basis:</p>
+<ul>
+<li>The first command to be dequeued triggers the transition to Scene
+1.</li>
+<li>The second command is evaluated immediately following the first.
+Depending on whether a transition is already locked in progress, the
+second request will either trigger a secondary transition to Scene 2 or
+return an operational error (such as an active transition collision)
+back to Controller B.</li>
+</ul>
+<h3 id="real-time-event-broadcasting">Real-Time Event Broadcasting</h3>
+<p>To keep all control surfaces synchronized, <code>obs-websocket</code>
+uses an event-driven pub/sub architecture. Whenever a command alters the
+state of OBS Studio, the system fires an internal event. The WebSocket
+server captures this event and broadcasts it over every open connection
+that subscribed to that event category.</p>
+<p>For instance, if a user mutes a microphone using a physical button on
+a Stream Deck:</p>
+<ol type="1">
+<li>The Stream Deck sends the <code>SetInputMute</code> request.</li>
+<li>OBS updates the audio state.</li>
+<li>The server broadcasts an <code>InputMuteStateChanged</code> event to
+all connected devices.</li>
+<li>Touch Portal, MIDI controllers, and any secondary software
+interfaces immediately update their visual state to reflect the mute,
+preventing desynchronization across surfaces.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

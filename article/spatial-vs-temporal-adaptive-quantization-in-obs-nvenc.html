@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spatial vs Temporal Adaptive Quantization in OBS NVENC - obs-studio</title>
+    <meta name="description" content="This article explores how OBS Studio implements spatial and temporal adaptive quantization (AQ) within its NVENC encoder wrapper. It details the technical mechanics of both algorithms, explains how OBS communicates these configurations to NVIDIA's Video">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/spatial-vs-temporal-adaptive-quantization-in-obs-nvenc">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Spatial vs Temporal Adaptive Quantization in OBS NVENC - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/spatial-vs-temporal-adaptive-quantization-in-obs-nvenc" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores how OBS Studio implements spatial and temporal adaptive quantization (AQ) within its NVENC encoder wrapper. It details the technical mechanics of both algorithms, explains how OBS communicates these configurations to NVIDIA's Video" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="spatial-vs-temporal-adaptive-quantization-in-obs-nvenc">Spatial
+vs Temporal Adaptive Quantization in OBS NVENC</h1>
+<p>This article explores how OBS Studio implements spatial and temporal
+adaptive quantization (AQ) within its NVENC encoder wrapper. It details
+the technical mechanics of both algorithms, explains how OBS
+communicates these configurations to NVIDIA's Video Codec SDK, and
+clarifies how these quantization methods alter bit distribution to
+balance frame complexity, motion, and perceptual visual quality.</p>
+<h3 id="the-nvenc-wrapper-in-obs-studio">The NVENC Wrapper in OBS
+Studio</h3>
+<p>OBS Studio interfaces with NVIDIA hardware encoding through a
+dedicated wrapper (<code>obs-nvenc</code>) that calls the NVIDIA Video
+Codec SDK (<code>nvEncodeAPI</code>). When configuring an H.264 or
+HEVC/AV1 stream, OBS populates the <code>NV_ENC_CONFIG</code> and
+<code>NV_ENC_INITIALIZE_PARAMS</code> structures.</p>
+<p>Within these structures, bit distribution is controlled at the
+macroblock (or Coding Tree Unit) level via Adaptive Quantization. Rather
+than applying a uniform Quantization Parameter (QP) across an entire
+frame, AQ dynamically raises or lowers the QP for specific blocks based
+on perceptual relevance. OBS exposes and controls two distinct variants
+of this technology: Spatial AQ and Temporal AQ.</p>
+<h3 id="spatial-adaptive-quantization">Spatial Adaptive
+Quantization</h3>
+<p>Spatial AQ analyzes pixel complexity and spatial variance strictly
+<em>within</em> a single frame. In OBS Studio’s NVENC implementation,
+enabling spatial adaptive quantization maps to the SDK parameter:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>NV_ENC_CONFIG<span class="op">::</span>rcParams<span class="op">.</span>enableAQ <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span></code></pre></div>
+<p>When this flag is active, the NVENC hardware evaluates the spatial
+frequency of each block:</p>
+<ul>
+<li><strong>Flat and Gradient Areas:</strong> The human eye easily
+detects macroblocking and banding in smooth areas, such as skies,
+shadows, or flat walls. Spatial AQ lowers the QP (assigning more bits)
+to these blocks to preserve smooth transitions.</li>
+<li><strong>High-Detail Areas:</strong> Complex textures, like foliage
+or gravel, naturally mask compression artifacts. Spatial AQ increases
+the QP (assigning fewer bits) to high-detail areas, harvesting bits to
+spend on sensitive flat regions.</li>
+</ul>
+<p>In OBS Studio, this feature is typically exposed directly in the UI
+as the <strong>Spatial AQ</strong> or general <strong>Adaptive
+Quantization</strong> toggle.</p>
+<h3 id="temporal-adaptive-quantization">Temporal Adaptive
+Quantization</h3>
+<p>Temporal AQ examines pixel relationships and motion vectors
+<em>across</em> consecutive frames. In the OBS wrapper, this triggers
+the SDK parameter:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>NV_ENC_CONFIG<span class="op">::</span>rcParams<span class="op">.</span>enableTemporalAQ <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span></code></pre></div>
+<p>Temporal AQ modifies the quantization strategy based on motion
+predictability:</p>
+<ul>
+<li><strong>Static and Slow-Moving Content:</strong> Objects that remain
+stationary across frames benefit from sustained high quality, as the eye
+has time to scrutinize fine details. Temporal AQ lowers the QP on these
+regions.</li>
+<li><strong>High-Motion Content:</strong> Fast-moving scenes naturally
+mask low-level detail due to motion blur and the limitations of human
+visual tracking. Temporal AQ increases the QP on fast-moving
+macroblocks, diverting bitrate toward the more stable, reference-heavy
+segments of the stream.</li>
+</ul>
+<p>In OBS Studio, Temporal AQ has historically been bundled with or
+exposed under the <strong>Psycho Visual Tuning</strong> toggle in the
+NVENC settings, which also engages rate-distortion optimization (RDO)
+paths within the encoder.</p>
+<h3 id="spatial-vs-temporal-implementation-differences">Spatial vs.
+Temporal Implementation Differences</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Spatial AQ</th>
+<th style="text-align: left;">Temporal AQ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Analysis Scope</strong></td>
+<td style="text-align: left;">Intra-frame (single frame evaluation)</td>
+<td style="text-align: left;">Inter-frame (motion vector and temporal
+tracking)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>SDK Parameter</strong></td>
+<td style="text-align: left;"><code>enableAQ</code></td>
+<td style="text-align: left;"><code>enableTemporalAQ</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Primary Goal</strong></td>
+<td style="text-align: left;">Mitigates color banding and edge ringing
+in flat/gradient zones</td>
+<td style="text-align: left;">Prevents macroblocking and bitrate
+starvation during high motion</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>GPU Resource Impact</strong></td>
+<td style="text-align: left;">Minimal computational overhead</td>
+<td style="text-align: left;">Uses additional GPU cycles and internal
+encoder memory for temporal tracking</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OBS Setting Mapping</strong></td>
+<td style="text-align: left;">Spatial AQ / Adaptive Quantization</td>
+<td style="text-align: left;">Psycho Visual Tuning / Temporal AQ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="practical-bitrate-considerations">Practical Bitrate
+Considerations</h3>
+<p>In constrained streaming environments (such as low-bitrate CBR
+targets), enabling both Spatial and Temporal AQ requires careful
+balance.</p>
+<p>Spatial AQ improves the fidelity of static scenes and clean
+gradients, but it can starve high-motion frames if too many bits are
+allocated to background details. Conversely, Temporal AQ stabilizes the
+bitrate during rapid camera pans by sacrificing temporary detail that
+the eye cannot track. When configured concurrently via OBS Studio, the
+NVENC hardware blends both passes, optimizing bit allocation dynamically
+across both space and time before final packetization.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

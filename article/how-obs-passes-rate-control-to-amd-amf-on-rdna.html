@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Passes Rate Control to AMD AMF on RDNA - obs-studio</title>
+    <meta name="description" content="This article explains the technical pipeline through which OBS Studio translates user-defined rate control settings into low-level instructions executed by AMD’s Advanced Media Framework (AMF) on RDNA graphics architectures. It covers the abstraction l">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-passes-rate-control-to-amd-amf-on-rdna">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Passes Rate Control to AMD AMF on RDNA - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-passes-rate-control-to-amd-amf-on-rdna" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains the technical pipeline through which OBS Studio translates user-defined rate control settings into low-level instructions executed by AMD’s Advanced Media Framework (AMF) on RDNA graphics architectures. It covers the abstraction l" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-passes-rate-control-to-amd-amf-on-rdna">How OBS Passes
+Rate Control to AMD AMF on RDNA</h1>
+<p>This article explains the technical pipeline through which OBS Studio
+translates user-defined rate control settings into low-level
+instructions executed by AMD’s Advanced Media Framework (AMF) on RDNA
+graphics architectures. It covers the abstraction layers from the OBS
+user interface down to the Video Core Next (VCN) hardware block,
+detailing parameter mapping, runtime state transitions, and
+hardware-level rate enforcement.</p>
+<h3 id="1-configuration-mapping-in-obs-studio">1. Configuration Mapping
+in OBS Studio</h3>
+<p>When a user selects a rate control method (such as CBR, VBR, or CQP)
+and inputs bitrate values in OBS Studio, the application first packages
+these values into internal configuration structures. The OBS frontend
+passes these settings to its native AMF encoder module. The module acts
+as an intermediate bridge that translates generic OBS stream parameters
+into explicit AMF key-value property pairs recognized by the AMD
+driver.</p>
+<h3 id="2-translating-settings-to-the-amf-property-system">2.
+Translating Settings to the AMF Property System</h3>
+<p>The AMF software development kit relies on the
+<code>AMFPropertyStorage</code> interface to configure encoder
+components. The OBS AMF implementation assigns encoder parameters by
+calling <code>SetProperty()</code> using standardized AMF constants:</p>
+<ul>
+<li><strong>Rate Control Mode:</strong> OBS sets
+<code>AMF_VIDEO_ENCODER_RATE_CONTROL_METHOD</code> (or codec-specific
+variants for HEVC and AV1) to specific enumeration values such as
+<code>AMF_VIDEO_ENCODER_RATE_CONTROL_METHOD_CBR</code>,
+<code>VBR_PEAK</code>, or <code>CONSTANT_QP</code>.</li>
+<li><strong>Target and Peak Bitrates:</strong> For CBR and VBR modes,
+the software converts user-specified kilobits-per-second into
+bits-per-second, setting <code>AMF_VIDEO_ENCODER_TARGET_BITRATE</code>
+and <code>AMF_VIDEO_ENCODER_PEAK_BITRATE</code>. In pure CBR, both
+properties are typically locked to identical targets.</li>
+<li><strong>Quantization Parameters (QP):</strong> If CQP is selected,
+OBS maps minimum and maximum I-, P-, and B-frame quantization boundaries
+using <code>AMF_VIDEO_ENCODER_QP_I</code>,
+<code>AMF_VIDEO_ENCODER_QP_P</code>, and
+<code>AMF_VIDEO_ENCODER_QP_B</code>.</li>
+<li><strong>Buffer Sizing and Filler Data:</strong> OBS controls the
+Virtual Buffer Verifier (VBV) buffer size via
+<code>AMF_VIDEO_ENCODER_VBV_BUFFER_SIZE</code> and enforces strict
+streaming CBR compliance by enabling
+<code>AMF_VIDEO_ENCODER_FILLER_DATA_ENABLE</code> to prevent network
+drops during low-motion scenes.</li>
+</ul>
+<h3 id="3-encoder-initialization-and-dynamic-updates">3. Encoder
+Initialization and Dynamic Updates</h3>
+<p>Parameters are committed to the hardware session in one of two
+stages:</p>
+<ul>
+<li><strong>Initialization Phase:</strong> During stream or recording
+startup, properties set within the <code>AMFPropertyStorage</code>
+container are applied before invoking <code>AMFComponent::Init()</code>.
+AMF validates that the requested bitrate, profile, and rate control
+method comply with the hardware capabilities of the detected RDNA
+generation.</li>
+<li><strong>Dynamic Reconfiguration:</strong> If a user adjusts bitrates
+dynamically (such as through dynamic bitrate controls responding to
+network congestion), OBS updates the property values and re-submits them
+via <code>SetProperty()</code> during the active encoding loop. AMF
+allows dynamic updates to target bitrates and buffer targets on a
+per-frame basis without reinitializing the encoder context.</li>
+</ul>
+<h3 id="4-rdna-hardware-execution-via-video-core-next-vcn">4. RDNA
+Hardware Execution via Video Core Next (VCN)</h3>
+<p>Once AMF processes the properties in user-mode space, they are sent
+via the AMD kernel-mode driver directly to the RDNA GPU’s VCN ASIC
+block. RDNA architectures feature dedicated hardware microcode
+responsible for rate control calculations:</p>
+<ul>
+<li><strong>Token-Bucket Rate Allocation:</strong> The VCN engine
+implements a leaky token-bucket algorithm in hardware. Target and peak
+bitrate parameters dictated by AMF establish the refill and leak rates
+of this bucket.</li>
+<li><strong>Frame-Level Quantization:</strong> For each input frame
+submitted by OBS, the VCN hardware calculates frame complexity. Based on
+the target bitrate constraints assigned by AMF, the hardware encoder
+automatically modulates macroblock and transform-block delta QP values
+across the image plane to maintain the specified rate curve.</li>
+<li><strong>RDNA Pre-Analysis Integration:</strong> On supported RDNA
+architectures, AMF can also bind pre-analysis flags set by OBS. This
+allows the VCN engine to assess frame motion and spatial complexity
+prior to the final encoding pass, ensuring that bit allocation precisely
+aligns with the OBS rate control model without overflowing the
+transmission buffer.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

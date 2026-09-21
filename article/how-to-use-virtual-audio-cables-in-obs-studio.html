@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Use Virtual Audio Cables in OBS Studio - obs-studio</title>
+    <meta name="description" content="This guide explains how to install and configure virtual audio cables to separate individual application audio sources in OBS Studio. By isolating your game, voice chat, and music, you gain precise control over your stream's audio levels and can easily p">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-use-virtual-audio-cables-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Use Virtual Audio Cables in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-use-virtual-audio-cables-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide explains how to install and configure virtual audio cables to separate individual application audio sources in OBS Studio. By isolating your game, voice chat, and music, you gain precise control over your stream's audio levels and can easily p" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-use-virtual-audio-cables-in-obs-studio">How to Use
+Virtual Audio Cables in OBS Studio</h1>
+<p>This guide explains how to install and configure virtual audio cables
+to separate individual application audio sources in OBS Studio. By
+isolating your game, voice chat, and music, you gain precise control
+over your stream's audio levels and can easily prevent copyrighted music
+from saving to your stream VODs.</p>
+<h3 id="step-1-download-and-install-a-virtual-audio-cable">Step 1:
+Download and Install a Virtual Audio Cable</h3>
+<p>To get started, you need a software tool that acts as a virtual
+bridge for your audio.</p>
+<ol type="1">
+<li>Download a free virtual audio cable driver, such as <strong>VB-CABLE
+Virtual Audio Cable</strong>.</li>
+<li>Extract the downloaded folder, right-click the setup file
+(<code>VBCABLE_Setup_x64.exe</code>), and select <strong>Run as
+administrator</strong>.</li>
+<li>Click <strong>Install Driver</strong>, then restart your computer
+when the installation is complete.</li>
+</ol>
+<h3 id="step-2-route-application-audio-in-windows">Step 2: Route
+Application Audio in Windows</h3>
+<p>Once the driver is installed, you must direct the audio of a specific
+application (such as Discord, Spotify, or a web browser) into the
+virtual cable.</p>
+<ol type="1">
+<li>Open the application you want to isolate and play some audio through
+it.</li>
+<li>Right-click the speaker icon in your Windows system tray and select
+<strong>Open Sound settings</strong> (or search for <strong>Volume
+mixer</strong> in Windows 11).</li>
+<li>Scroll down and open <strong>App volume and device
+preferences</strong> (or <strong>Volume mixer</strong>).</li>
+<li>Locate your target application in the list.</li>
+<li>Change its <strong>Output</strong> device from "Default" to
+<strong>CABLE Input (VB-Audio Virtual Cable)</strong>.</li>
+</ol>
+<h3 id="step-3-add-the-virtual-cable-to-obs-studio">Step 3: Add the
+Virtual Cable to OBS Studio</h3>
+<p>Now you need to bring that isolated audio channel into your streaming
+software.</p>
+<ol type="1">
+<li>Open OBS Studio.</li>
+<li>In the <strong>Sources</strong> dock, click the <strong>+
+(Add)</strong> icon and select <strong>Audio Output
+Capture</strong>.</li>
+<li>Name the source based on the application (e.g., "Discord Audio") and
+click <strong>OK</strong>.</li>
+<li>In the Device dropdown menu, select <strong>CABLE Input (VB-Audio
+Virtual Cable)</strong>.</li>
+<li>Click <strong>OK</strong>. The audio from that specific application
+will now display as its own volume slider in the OBS Audio Mixer.</li>
+</ol>
+<h3 id="step-4-configure-audio-monitoring-to-hear-the-audio">Step 4:
+Configure Audio Monitoring (To Hear the Audio)</h3>
+<p>Because you routed the application's audio to a virtual cable, you
+will no longer hear it through your headphones by default. You must
+configure OBS to output the sound back to your headset.</p>
+<ol type="1">
+<li>In OBS Studio, click the three dots (or gear icon) next to your
+newly created audio source in the Audio Mixer.</li>
+<li>Select <strong>Advanced Audio Properties</strong>.</li>
+<li>Find your virtual cable source in the list.</li>
+<li>Change the <strong>Audio Monitoring</strong> setting from "Monitor
+Off" to <strong>Monitor and Output</strong>.</li>
+<li>Ensure your playback device is correctly configured by going to
+<strong>Settings</strong> &gt; <strong>Audio</strong> &gt;
+<strong>Advanced</strong> and verifying that the <strong>Monitoring
+Device</strong> is set to your primary headphones or speakers.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

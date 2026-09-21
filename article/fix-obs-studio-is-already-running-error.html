@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix OBS Studio Is Already Running Error - obs-studio</title>
+    <meta name="description" content="The "OBS Studio is already running" error typically occurs when the application fails to close properly during a previous session, leaving a background process active that prevents a new window from opening. This article provides direct, step-by-step met">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/fix-obs-studio-is-already-running-error">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Fix OBS Studio Is Already Running Error - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/fix-obs-studio-is-already-running-error" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The "OBS Studio is already running" error typically occurs when the application fails to close properly during a previous session, leaving a background process active that prevents a new window from opening. This article provides direct, step-by-step met" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="fix-obs-studio-is-already-running-error">Fix OBS Studio Is
+Already Running Error</h1>
+<p>The "OBS Studio is already running" error typically occurs when the
+application fails to close properly during a previous session, leaving a
+background process active that prevents a new window from opening. This
+article provides direct, step-by-step methods to resolve this issue on
+both Windows and macOS, covering how to force-close stuck background
+processes, run the program with proper administrative privileges, and
+prevent the error from happening in the future.</p>
+<h2 id="method-1-end-the-obs-process-in-task-manager-windows">Method 1:
+End the OBS Process in Task Manager (Windows)</h2>
+<p>The quickest way to resolve this error is to manually terminate the
+stuck OBS process running in the background.</p>
+<ol type="1">
+<li>Press <strong>Ctrl + Shift + Esc</strong> on your keyboard to open
+the <strong>Task Manager</strong>.</li>
+<li>Click on the <strong>Details</strong> tab (or
+<strong>Processes</strong> tab if you are on Windows 11).</li>
+<li>Scroll down and look for <strong>obs64.exe</strong> or <strong>OBS
+Studio</strong>.</li>
+<li>Right-click on the OBS process and select <strong>End
+task</strong>.</li>
+<li>Close the Task Manager and try relaunching OBS Studio.</li>
+</ol>
+<h2 id="method-2-end-the-obs-process-in-activity-monitor-macos">Method
+2: End the OBS Process in Activity Monitor (macOS)</h2>
+<p>If you are using a Mac, you can use the Activity Monitor to
+force-close the frozen application.</p>
+<ol type="1">
+<li>Press <strong>Cmd + Space</strong> to open Spotlight search, type
+<strong>Activity Monitor</strong>, and press Enter.</li>
+<li>In the search bar at the top right of the Activity Monitor, type
+<strong>OBS</strong>.</li>
+<li>Select the OBS process from the list.</li>
+<li>Click the <strong>X</strong> button at the top-left of the window
+and select <strong>Force Quit</strong>.</li>
+<li>Relaunch OBS Studio.</li>
+</ol>
+<h2 id="method-3-run-obs-studio-as-an-administrator">Method 3: Run OBS
+Studio as an Administrator</h2>
+<p>Sometimes, insufficient user permissions prevent OBS from interacting
+properly with system files, causing it to hang during startup or
+shutdown.</p>
+<ol type="1">
+<li>Right-click on the <strong>OBS Studio shortcut</strong> on your
+desktop or in the Start menu.</li>
+<li>Select <strong>Properties</strong>.</li>
+<li>Navigate to the <strong>Compatibility</strong> tab.</li>
+<li>Check the box next to <strong>Run this program as an
+administrator</strong>.</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong>.</li>
+</ol>
+<h2 id="method-4-restart-your-computer">Method 4: Restart Your
+Computer</h2>
+<p>If background processes are unresponsive to the Task Manager or
+Activity Monitor, a system restart will completely clear your computer's
+temporary memory and shut down all stuck processes. Save any open work,
+restart your PC or Mac, and launch OBS Studio again.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

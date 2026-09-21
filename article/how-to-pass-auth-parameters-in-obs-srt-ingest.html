@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Pass Auth Parameters in OBS SRT Ingest - obs-studio</title>
+    <meta name="description" content="Passing custom authentication parameters through a Secure Reliable Transport (SRT) connection in OBS Studio requires appending query strings directly to the target SRT URL. Because OBS Studio utilizes standard SRT socket options, you can transmit access">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-pass-auth-parameters-in-obs-srt-ingest">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Pass Auth Parameters in OBS SRT Ingest - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-pass-auth-parameters-in-obs-srt-ingest" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Passing custom authentication parameters through a Secure Reliable Transport (SRT) connection in OBS Studio requires appending query strings directly to the target SRT URL. Because OBS Studio utilizes standard SRT socket options, you can transmit access" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-pass-auth-parameters-in-obs-srt-ingest">How to Pass Auth
+Parameters in OBS SRT Ingest</h1>
+<p>Passing custom authentication parameters through a Secure Reliable
+Transport (SRT) connection in OBS Studio requires appending query
+strings directly to the target SRT URL. Because OBS Studio utilizes
+standard SRT socket options, you can transmit access tokens, user
+credentials, and stream identifiers directly to the ingest server via
+query arguments in the stream settings. This guide explains how to
+format your SRT connection string and configure OBS Studio to ensure
+your authentication parameters reach the ingest endpoint
+successfully.</p>
+<h3 id="understanding-the-srt-url-format">Understanding the SRT URL
+Format</h3>
+<p>SRT connections accept configuration options as standard URI query
+parameters. The base syntax for an SRT URL is structured as:</p>
+<pre class="text"><code>srt://&lt;hostname-or-ip&gt;:&lt;port&gt;?&lt;parameter1&gt;=&lt;value1&gt;&amp;&lt;parameter2&gt;=&lt;value2&gt;</code></pre>
+<p>In the SRT protocol, authentication is typically handled either
+through the native <code>passphrase</code> parameter (for pre-shared key
+AES encryption) or the <code>streamid</code> parameter (for complex
+authorization tokens, usernames, or hierarchical routing rules).</p>
+<h3 id="step-by-step-configuration-in-obs-studio">Step-by-Step
+Configuration in OBS Studio</h3>
+<ol type="1">
+<li><strong>Open Stream Settings</strong>: Launch OBS Studio, select
+<strong>Settings</strong> in the bottom-right control dock, and navigate
+to the <strong>Stream</strong> tab.</li>
+<li><strong>Select Custom Service</strong>: Set the
+<strong>Service</strong> dropdown to <strong>Custom...</strong>.</li>
+<li><strong>Configure the Server Field</strong>: Enter your full SRT
+address, including your custom query parameters, into the
+<strong>Server</strong> input field.</li>
+<li><strong>Leave Stream Key Blank</strong>: Leave the <strong>Stream
+Key</strong> field empty. OBS Studio parses the entire SRT
+configuration—including credentials and stream paths—directly from the
+<strong>Server</strong> field.</li>
+<li><strong>Apply Settings</strong>: Click <strong>Apply</strong> and
+then <strong>OK</strong>.</li>
+</ol>
+<h3 id="formatting-custom-authentication-parameters">Formatting Custom
+Authentication Parameters</h3>
+<p>Ingest servers (such as Haivision Media Platform, Nimble Streamer, or
+custom MediaMTX setups) parse incoming credentials differently.
+Depending on your ingest provider, use one of the following formats:</p>
+<h4 id="method-1-using-the-standard-streamid-specification">Method 1:
+Using the Standard <code>streamid</code> Specification</h4>
+<p>The official SRT Access Control specification uses the
+<code>streamid</code> query parameter formatted as key-value pairs
+separated by commas and prefixed with standard control blocks:</p>
+<pre class="text"><code>srt://live.example.com:9998?streamid=#!::u=myUsername,p=myPassword,r=live/streamName</code></pre>
+<ul>
+<li><code>u</code>: Username or user identifier.</li>
+<li><code>p</code>: Authentication token or password.</li>
+<li><code>r</code>: Target resource or stream path.</li>
+</ul>
+<h4 id="method-2-key-value-query-tokens">Method 2: Key-Value Query
+Tokens</h4>
+<p>If your receiver or media server expects custom query variables,
+append them directly as typical URL query arguments:</p>
+<pre class="text"><code>srt://live.example.com:9998?token=abc123xyz&amp;user=streamer01</code></pre>
+<h4 id="method-3-combining-custom-tokens-with-srt-socket-options">Method
+3: Combining Custom Tokens with SRT Socket Options</h4>
+<p>You can send your authentication parameters alongside operational SRT
+settings (such as latency or passphrase encryption) within the same
+connection string by chaining parameters with an ampersand
+(<code>&amp;</code>):</p>
+<pre class="text"><code>srt://live.example.com:9998?streamid=live/streamName&amp;auth=secretToken123&amp;latency=200000</code></pre>
+<h3 id="critical-syntax-rules">Critical Syntax Rules</h3>
+<ul>
+<li><strong>URL Encoding</strong>: If your authentication credentials or
+stream keys contain special characters (such as <code>@</code>,
+<code>?</code>, <code>=</code>, <code>:</code>, or <code>/</code>),
+convert them to URL-encoded formats (percent-encoding). For instance,
+replace <code>@</code> with <code>%40</code> and <code>/</code> with
+<code>%2F</code> to prevent the OBS SRT library from prematurely
+terminating the parameter parser.</li>
+<li><strong>Case Sensitivity</strong>: Query parameters defined by the
+SRT specification (like <code>streamid</code>, <code>passphrase</code>,
+<code>latency</code>, and <code>pbkeylen</code>) are case-sensitive and
+must be written in lowercase. Custom application parameters should match
+the casing expected by your ingest server.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

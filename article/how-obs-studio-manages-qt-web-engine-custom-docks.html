@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Studio Manages Qt WebEngine Custom Docks - obs-studio</title>
+    <meta name="description" content="OBS Studio manages custom dock windows built with Qt WebEngine by embedding web views inside native Qt dock widgets, overseeing their lifecycle from initial creation and configuration to runtime visibility and teardown. Through a combination of Qt's nati">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-studio-manages-qt-web-engine-custom-docks">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Studio Manages Qt WebEngine Custom Docks - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-studio-manages-qt-web-engine-custom-docks" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio manages custom dock windows built with Qt WebEngine by embedding web views inside native Qt dock widgets, overseeing their lifecycle from initial creation and configuration to runtime visibility and teardown. Through a combination of Qt's nati" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-studio-manages-qt-webengine-custom-docks">How OBS Studio
+Manages Qt WebEngine Custom Docks</h1>
+<p>OBS Studio manages custom dock windows built with Qt WebEngine by
+embedding web views inside native Qt dock widgets, overseeing their
+lifecycle from initial creation and configuration to runtime visibility
+and teardown. Through a combination of Qt's native widget architecture,
+chromium-based process isolation, and internal configuration management,
+OBS coordinates state restoration, background resource throttling, and
+clean process termination for custom browser docks.</p>
+<h3 id="initialization-and-registration">Initialization and
+Registration</h3>
+<p>Custom browser docks in OBS Studio are encapsulated as instances of
+<code>QDockWidget</code> containing a child <code>QWebEngineView</code>.
+When OBS initializes or when a user defines a new dock via the
+interface, the application constructs the <code>QDockWidget</code>
+container, designates its object name for state tracking, and
+instantiates the underlying <code>QWebEnginePage</code>.</p>
+<p>During this phase, OBS configures the dock's specific
+<code>QWebEngineProfile</code>. The profile establishes storage paths
+for cache, persistent cookies, and local storage. Docks can be assigned
+shared sessions or dedicated profiles depending on implementation
+requirements. Once the page environment is ready, OBS Studio connects
+signal-slot bindings to monitor page loading events, title updates, and
+close requests, subsequently integrating the dock into the main window's
+layout via standard Qt docking routines.</p>
+<h3 id="state-persistence-and-restoration">State Persistence and
+Restoration</h3>
+<p>OBS Studio relies on Qt's layout serialization features alongside its
+own configuration system to maintain dock states across application
+restarts:</p>
+<ul>
+<li><strong>Layout Geometry:</strong> The position, dimensions, docking
+area, and floating status are serialized using Qt’s
+<code>saveState()</code> and restored during startup using
+<code>restoreState()</code>.</li>
+<li><strong>Dock Metadata:</strong> Titles and URLs entered by the user
+are stored within OBS Studio’s JSON configuration files (such as
+<code>basic-main.json</code>).</li>
+<li><strong>Session Persistence:</strong> When OBS launches, it reads
+the saved dock definitions, instantiates the required Qt WebEngine
+components before applying the saved layout, and begins loading the
+registered target URLs.</li>
+</ul>
+<h3 id="runtime-visibility-and-resource-management">Runtime Visibility
+and Resource Management</h3>
+<p>Web pages can be resource-intensive, so the lifecycle during active
+execution is largely driven by visibility and focus states:</p>
+<ol type="1">
+<li><strong>Visibility Events:</strong> OBS Studio monitors
+<code>showEvent</code> and <code>hideEvent</code> signals emitted by the
+<code>QDockWidget</code>. When a dock is closed, minimized, or covered
+in a tabbed dock stack, the underlying WebEngine widget is notified of
+its occluded state.</li>
+<li><strong>Chromium Engine Throttling:</strong> Qt WebEngine utilizes
+Chromium’s internal power-saving mechanisms. When a dock is hidden,
+Chromium throttles JavaScript execution, reduces timer frequencies, and
+halts render passes to minimize CPU and GPU overhead.</li>
+<li><strong>Audio and Focus Handling:</strong> OBS oversees page muting
+states and input focus, ensuring that background docks do not
+unintentionally capture global keystrokes or output unmanaged audio
+streams during live broadcasts.</li>
+</ol>
+<h3 id="destruction-and-teardown">Destruction and Teardown</h3>
+<p>The termination lifecycle occurs either when a user deletes a custom
+dock or during OBS Studio’s global shutdown sequence:</p>
+<ul>
+<li><strong>Individual Dock Removal:</strong> When a user removes a dock
+via the "Custom Browser Docks" dialog, OBS triggers a deletion sequence.
+The parent <code>QDockWidget</code> is unregistered from the main
+window, its pointer is removed from the active dock collection, and
+<code>deleteLater()</code> is called. This signals the
+<code>QWebEngineView</code> to abort ongoing network requests, execute
+window unload hooks, and destroy the associated DOM tree.</li>
+<li><strong>Application Shutdown:</strong> During the main window's
+<code>closeEvent</code>, OBS saves the current window geometry and dock
+configuration. It then proceeds to safely teardown active child widgets.
+Because Qt WebEngine relies on auxiliary render processes, OBS permits
+the WebEngine context to cleanly flush data caches to disk and terminate
+IPC connections before releasing the WebEngine profile and freeing
+allocated memory.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

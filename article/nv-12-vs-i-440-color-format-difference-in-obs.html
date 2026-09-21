@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NV12 vs I440 Color Format Difference in OBS - obs-studio</title>
+    <meta name="description" content="When configuring OBS Studio for recording or streaming, choosing the right color format in the advanced settings is crucial for balancing visual quality and system performance. This article compares the NV12 and I440 color formats, explaining their techn">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/nv-12-vs-i-440-color-format-difference-in-obs">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="NV12 vs I440 Color Format Difference in OBS - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/nv-12-vs-i-440-color-format-difference-in-obs" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When configuring OBS Studio for recording or streaming, choosing the right color format in the advanced settings is crucial for balancing visual quality and system performance. This article compares the NV12 and I440 color formats, explaining their techn" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="nv12-vs-i440-color-format-difference-in-obs">NV12 vs I440 Color
+Format Difference in OBS</h1>
+<p>When configuring OBS Studio for recording or streaming, choosing the
+right color format in the advanced settings is crucial for balancing
+visual quality and system performance. This article compares the NV12
+and I440 color formats, explaining their technical differences, how they
+impact visual clarity, and their effect on system resource consumption
+to help you make the optimal choice for your setup.</p>
+<h2 id="technical-definition-and-chroma-subsampling">Technical
+Definition and Chroma Subsampling</h2>
+<p>The primary difference between NV12 and I440 lies in chroma
+subsampling, a method of compressing video by saving color information
+(chroma) at a lower resolution than brightness information (luma).</p>
+<ul>
+<li><strong>NV12 (YUV 4:2:0):</strong> This is the industry-standard
+format. It samples color at half the horizontal and half the vertical
+resolution of the brightness data. It discards 75% of the color
+information to save bandwidth, which the human eye rarely notices in
+moving images.</li>
+<li><strong>I440 (YUV 4:4:0):</strong> This format samples color at full
+horizontal resolution but half vertical resolution. It preserves more
+color data than NV12, particularly along horizontal lines and
+borders.</li>
+</ul>
+<h2 id="visual-differences">Visual Differences</h2>
+<p>In real-world scenarios, the visual difference between NV12 and I440
+depends heavily on the content you are capturing.</p>
+<ul>
+<li><strong>Gameplay and Camera Feeds:</strong> For fast-moving video
+games and live-camera footage, the visual difference between NV12 and
+I440 is virtually imperceptible. The human eye is highly sensitive to
+brightness detail but less sensitive to color detail in motion.</li>
+<li><strong>Text and Fine Details:</strong> The visual advantages of
+I440 become apparent when capturing static screens with high-contrast
+text, such as programming environments, spreadsheets, or retro pixel
+art. In NV12, red text on a black background can appear blurry or
+pixelated around the edges (chroma bleeding). I440 keeps these edges
+sharper and more legible.</li>
+</ul>
+<h2 id="performance-and-compatibility-impact">Performance and
+Compatibility Impact</h2>
+<p>While I440 offers slightly better color fidelity for specific use
+cases, it introduces significant performance overhead compared to
+NV12.</p>
+<ul>
+<li><strong>Hardware Encoder Support:</strong> Hardware encoders like
+NVIDIA NVENC, AMD AMF, and Intel Quick Sync are native to the NV12
+format. If you select NV12, your GPU processes the video directly with
+minimal performance cost. Selecting I440 often forces the encoder to
+convert the color space on the fly, increasing CPU/GPU usage and risking
+skipped or lagged frames.</li>
+<li><strong>Streaming Platform Limits:</strong> Popular streaming
+platforms like Twitch, YouTube, and Kick transcode all incoming video
+streams to YUV 4:2:0 (effectively NV12) before distributing them to
+viewers. Streaming in I440 is inefficient, as the extra color data will
+be discarded by the platform's servers anyway.</li>
+<li><strong>Video Player and Editor Compatibility:</strong> NV12 is
+universally compatible with almost all media players and video editing
+software. I440 is a less common format and can cause compatibility
+issues, color distortion, or import errors in older video editing
+suites.</li>
+</ul>
+<h2 id="summary-and-recommendation">Summary and Recommendation</h2>
+<ul>
+<li><strong>Choose NV12</strong> for all live streaming, gameplay
+recording, and general content creation. It ensures maximum hardware
+compatibility, lowest resource usage, and optimal encoder
+performance.</li>
+<li><strong>Choose I440</strong> (or I444) only for high-quality local
+recordings of desktop applications, tutorials, or text-heavy content
+where fine color detail is critical, provided you have a powerful CPU
+and editing software that natively supports the format.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

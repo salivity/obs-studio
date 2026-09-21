@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Fix OBS Unexpected End of File Error - obs-studio</title>
+    <meta name="description" content="When importing an older scene collection into OBS Studio, the "Encountered unexpected end-of-file" error typically indicates that the scene collection's JSON file is corrupted, incomplete, or formatted incorrectly. This article provides a straightforward">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-fix-obs-unexpected-end-of-file-error">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Fix OBS Unexpected End of File Error - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-fix-obs-unexpected-end-of-file-error" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When importing an older scene collection into OBS Studio, the "Encountered unexpected end-of-file" error typically indicates that the scene collection's JSON file is corrupted, incomplete, or formatted incorrectly. This article provides a straightforward" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-fix-obs-unexpected-end-of-file-error">How to Fix OBS
+Unexpected End of File Error</h1>
+<p>When importing an older scene collection into OBS Studio, the
+"Encountered unexpected end-of-file" error typically indicates that the
+scene collection's JSON file is corrupted, incomplete, or formatted
+incorrectly. This article provides a straightforward guide to diagnosing
+the cause of this error and step-by-step methods to repair the JSON
+file, locate automated OBS backups, and successfully restore your
+scenes.</p>
+<h2 id="why-this-error-occurs">Why This Error Occurs</h2>
+<p>OBS Studio exports and manages scene collections as
+<code>.json</code> files. The "unexpected end-of-file" (EOF) error means
+the OBS parser reached the end of the file while still expecting more
+data. This usually happens because:</p>
+<ul>
+<li>The export process was interrupted, resulting in a truncated
+file.</li>
+<li>The file is missing closing brackets (<code>}</code> or
+<code>]</code>) required by the JSON format.</li>
+<li>The file was transferred incorrectly, causing data corruption.</li>
+</ul>
+<hr />
+<h2 id="method-1-repair-the-json-formatting">Method 1: Repair the JSON
+Formatting</h2>
+<p>If the file is simply missing its final closing brackets, you can
+quickly repair it using a text editor.</p>
+<ol type="1">
+<li><strong>Open the JSON File:</strong> Right-click your exported
+<code>.json</code> scene collection file and open it with a text editor
+like Notepad, Notepad++, or VS Code.</li>
+<li><strong>Use a JSON Validator:</strong> Copy the entire contents of
+the file and paste it into a free online validator like <a
+href="https://jsonlint.com/">JSONLint</a>.</li>
+<li><strong>Identify the Error:</strong> Click "Validate JSON." The tool
+will highlight where the formatting breaks—usually at the very end of
+the document.</li>
+<li><strong>Fix the Brackets:</strong> If the validator indicates
+missing closing tags, scroll to the bottom of your text editor and add
+the missing curly braces <code>}</code> or square brackets
+<code>]</code> as indicated.</li>
+<li><strong>Save and Re-import:</strong> Save the file and attempt to
+import it into OBS Studio via <strong>Scene Collection &gt;
+Import</strong>.</li>
+</ol>
+<hr />
+<h2 id="method-2-restore-from-obs-studio-backups">Method 2: Restore from
+OBS Studio Backups</h2>
+<p>If the file you are trying to import is permanently corrupted, you
+may be able to retrieve an automatic backup directly from your system.
+OBS Studio regularly saves backups of your scenes.</p>
+<h3 id="on-windows">On Windows:</h3>
+<ol type="1">
+<li>Press <code>Windows Key + R</code> to open the Run dialog.</li>
+<li>Type <code>%appdata%\obs-studio\basic\scenes</code> and press
+<strong>Enter</strong>.</li>
+<li>Look for files ending in <code>.json.bak</code> or look for files
+with older timestamps that match your lost scene collection.</li>
+<li>Copy the backup file to your desktop.</li>
+<li>Rename the file extension from <code>.json.bak</code> to
+<code>.json</code>.</li>
+<li>Import this renamed file into OBS Studio.</li>
+</ol>
+<h3 id="on-macos">On macOS:</h3>
+<ol type="1">
+<li>Open Finder and click <strong>Go &gt; Go to Folder...</strong> in
+the menu bar.</li>
+<li>Type
+<code>~/Library/Application Support/obs-studio/basic/scenes</code> and
+press <strong>Enter</strong>.</li>
+<li>Locate the <code>.bak</code> files, copy the relevant backup, change
+the extension to <code>.json</code>, and import it into OBS.</li>
+</ol>
+<hr />
+<h2 id="method-3-manually-recreate-the-scene-collection">Method 3:
+Manually Recreate the Scene Collection</h2>
+<p>If the JSON file is completely unreadable and no backups exist, you
+will need to manually rebuild the scene collection. However, you can
+still extract configuration data to make this process easier:</p>
+<ol type="1">
+<li>Open the broken <code>.json</code> file in a text editor.</li>
+<li>Use the search function (<code>Ctrl + F</code> or
+<code>Cmd + F</code>) to search for terms like <code>"name":</code> or
+<code>"sources":</code>.</li>
+<li>Write down the names of your previous scenes, sources, and media
+file paths listed in the text.</li>
+<li>Create a new, clean scene collection in OBS Studio and manually add
+the sources using the list you recovered.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

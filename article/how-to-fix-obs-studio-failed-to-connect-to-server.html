@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Fix OBS Studio Failed to Connect to Server - obs-studio</title>
+    <meta name="description" content="Encountering the "Failed to connect to server" error in OBS Studio can prevent you from starting your live stream. This guide provides direct, step-by-step solutions to resolve this common connection issue, covering essential troubleshooting steps such a">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-fix-obs-studio-failed-to-connect-to-server">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Fix OBS Studio Failed to Connect to Server - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-fix-obs-studio-failed-to-connect-to-server" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Encountering the "Failed to connect to server" error in OBS Studio can prevent you from starting your live stream. This guide provides direct, step-by-step solutions to resolve this common connection issue, covering essential troubleshooting steps such a" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-fix-obs-studio-failed-to-connect-to-server">How to Fix
+OBS Studio Failed to Connect to Server</h1>
+<p>Encountering the "Failed to connect to server" error in OBS Studio
+can prevent you from starting your live stream. This guide provides
+direct, step-by-step solutions to resolve this common connection issue,
+covering essential troubleshooting steps such as verifying your stream
+key, changing stream servers, adjusting OBS network settings, and
+configuring your firewall.</p>
+<h2 id="1-verify-or-reset-your-stream-key">1. Verify or Reset Your
+Stream Key</h2>
+<p>An invalid or expired stream key is the most common cause of this
+error.</p>
+<ol type="1">
+<li>Log into your streaming platform (such as Twitch, YouTube, or
+Facebook Gaming).</li>
+<li>Navigate to your creator dashboard and locate your <strong>Stream
+Key</strong>.</li>
+<li>Copy the stream key.</li>
+<li>Open OBS Studio, go to <strong>Settings</strong> &gt;
+<strong>Stream</strong>.</li>
+<li>Paste the copied key into the <strong>Stream Key</strong> field,
+click <strong>Apply</strong>, and then <strong>OK</strong>.</li>
+</ol>
+<h2 id="2-change-the-streaming-server">2. Change the Streaming
+Server</h2>
+<p>The default ingest server you are trying to connect to might be
+offline or experiencing high traffic.</p>
+<ol type="1">
+<li>In OBS Studio, open <strong>Settings</strong> and click on the
+<strong>Stream</strong> tab.</li>
+<li>Locate the <strong>Server</strong> dropdown menu.</li>
+<li>Change the setting from <em>Auto</em> (or your current server) to a
+different, physically close server.</li>
+<li>Click <strong>Apply</strong> and <strong>OK</strong>, then try
+starting your stream.</li>
+</ol>
+<h2 id="3-adjust-the-bind-ip-setting">3. Adjust the Bind IP Setting</h2>
+<p>Network adapter conflicts can prevent OBS from reaching the streaming
+server. Binding OBS to your specific IP address can resolve this.</p>
+<ol type="1">
+<li>Open OBS Studio and go to <strong>Settings</strong>.</li>
+<li>Click on the <strong>Advanced</strong> tab in the left menu.</li>
+<li>Scroll down to the <strong>Network</strong> section.</li>
+<li>Locate <strong>Bind to IP</strong> and change it from
+<em>Default</em> to your active network connection (e.g., your specific
+IPv4 address or Ethernet/Wi-Fi adapter name).</li>
+<li>Click <strong>Apply</strong> and <strong>OK</strong>.</li>
+</ol>
+<h2 id="4-enable-dynamic-bitrate">4. Enable Dynamic Bitrate</h2>
+<p>If your internet connection fluctuates, OBS might drop the connection
+entirely. Enabling dynamic bitrate allows OBS to automatically lower
+quality instead of disconnecting.</p>
+<ol type="1">
+<li>Go to <strong>Settings</strong> &gt; <strong>Advanced</strong>.</li>
+<li>Scroll down to the <strong>Network</strong> section.</li>
+<li>Check the box for <strong>Dynamically change bitrate to manage
+congestion (Beta)</strong>.</li>
+<li>Click <strong>Apply</strong> and <strong>OK</strong>.</li>
+</ol>
+<h2 id="5-allow-obs-through-your-firewall">5. Allow OBS Through Your
+Firewall</h2>
+<p>Windows Defender or third-party antivirus software might block OBS
+Studio's outgoing connection.</p>
+<ol type="1">
+<li>Open the Windows Start menu, type "firewall," and select
+<strong>Allow an app through Windows Firewall</strong>.</li>
+<li>Click <strong>Change settings</strong> (administrator privileges
+required).</li>
+<li>Scroll down to find <strong>obs64</strong> or <strong>OBS
+Studio</strong>.</li>
+<li>Ensure both the <strong>Private</strong> and <strong>Public</strong>
+checkboxes are checked.</li>
+<li>Click <strong>OK</strong> to save the changes.</li>
+</ol>
+<h2 id="6-restart-your-router-and-network-adapter">6. Restart Your
+Router and Network Adapter</h2>
+<p>If the issue persists, your local network hardware may need a
+refresh.</p>
+<ol type="1">
+<li>Unplug your modem and router from power.</li>
+<li>Wait 30 seconds, then plug them back in.</li>
+<li>Once your internet connection is restored, restart your computer and
+launch OBS Studio to try streaming again.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

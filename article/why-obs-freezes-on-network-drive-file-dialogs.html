@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why OBS Freezes on Network Drive File Dialogs - obs-studio</title>
+    <meta name="description" content="When OBS Studio completely freezes while opening a file dialog box directed at or browsing near network drives, the issue is almost always caused by the Windows Shell API blocking the software's main application thread. OBS Studio relies on the Qt framew">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/why-obs-freezes-on-network-drive-file-dialogs">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why OBS Freezes on Network Drive File Dialogs - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/why-obs-freezes-on-network-drive-file-dialogs" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When OBS Studio completely freezes while opening a file dialog box directed at or browsing near network drives, the issue is almost always caused by the Windows Shell API blocking the software's main application thread. OBS Studio relies on the Qt framew" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-obs-freezes-on-network-drive-file-dialogs">Why OBS Freezes
+on Network Drive File Dialogs</h1>
+<p>When OBS Studio completely freezes while opening a file dialog box
+directed at or browsing near network drives, the issue is almost always
+caused by the Windows Shell API blocking the software's main application
+thread. OBS Studio relies on the Qt framework to generate its graphical
+interface, which delegates file browsing tasks to native operating
+system dialogs. If a connected network share, mapped drive, or Server
+Message Block (SMB) path experiences latency, disconnection, or
+sleep-state spin-up times, the operating system halts the entire OBS UI
+thread until the network request completes or times out.</p>
+<h3 id="synchronous-thread-blocking-in-qt-and-windows-shell">Synchronous
+Thread Blocking in Qt and Windows Shell</h3>
+<p>OBS Studio executes its user interface on a single main thread. When
+you trigger an action requiring a file path—such as selecting a video
+source, choosing a recording directory, or loading an overlay—OBS calls
+the native operating system file picker through Qt.</p>
+<p>Windows File Explorer dialogs are not purely asynchronous. When
+initialized, the dialog queries all active namespace extensions, shell
+locations, and drive letters to render the left-hand navigation pane and
+populate folder contents. If any of those locations reside on a network
+path, the Windows Shell makes synchronous I/O calls to inspect them.
+Because these queries run on the thread that spawned the dialog, the OBS
+interface stops responding entirely to user input until the OS receives
+a response.</p>
+<h3 id="smb-timeouts-and-sleeping-network-shares">SMB Timeouts and
+Sleeping Network Shares</h3>
+<p>Network-Attached Storage (NAS) units and shared network folders often
+spin down hard drives to conserve energy during inactivity. When a file
+dialog queries a sleeping network location:</p>
+<ul>
+<li><strong>Drive Spin-Up Latency:</strong> The storage array must wake
+the physical disks, negotiate the connection, and return directory
+metadata, which can take anywhere from 10 to 30 seconds.</li>
+<li><strong>SMB Keep-Alive Timeouts:</strong> If a previously mapped
+network drive is unplugged, offline, or assigned a changed IP address,
+Windows does not immediately declare it unavailable. Instead, the SMB
+client retries the connection repeatedly until it hits the default TCP
+and SMB network timeout limits, causing OBS to freeze for several
+minutes.</li>
+</ul>
+<h3 id="quick-access-and-recent-locations-polling">Quick Access and
+Recent Locations Polling</h3>
+<p>Even if you are not actively navigating to a network share, the
+standard Windows open/save dialog automatically reads your Quick Access
+list, pinned shortcuts, and recently opened file paths. If any recent
+shortcut points to an unavailable or slow remote server, the shell
+attempts to validate the icon and existence of that link before
+rendering the window. This pre-fetching triggers the same
+thread-blocking behavior, causing OBS to freeze the moment the dialog
+box is invoked.</p>
+<h3 id="network-interface-and-dns-delays">Network Interface and DNS
+Delays</h3>
+<p>Name resolution delays amplify this problem. If a network path uses a
+hostname (such as <code>\\NAS\Recordings</code>) rather than an IP
+address, the Windows networking stack must query local DNS or
+NetBIOS/LLMNR to resolve the target. If the local network DNS is
+misconfigured or packet loss occurs over Wi-Fi, the lookup stalls,
+locking the UI thread in a wait state until the resolution fails or
+times out.</p>
+<h3 id="how-to-prevent-obs-dialog-freezes">How to Prevent OBS Dialog
+Freezes</h3>
+<p>To stop network drives from hanging the OBS Studio interface:</p>
+<ul>
+<li><strong>Remove Stale Mapped Drives:</strong> Disconnect mapped
+drives that point to offline servers or decommissioned computers via
+File Explorer or the <code>net use /delete</code> command.</li>
+<li><strong>Clear Quick Access Network Pins:</strong> Remove any pinned
+shortcuts or recent files in Windows File Explorer that link to network
+locations.</li>
+<li><strong>Use Local Staging:</strong> Save recordings, media sources,
+and assets to a fast local solid-state drive first, then use background
+sync scripts or dedicated file transfer software to offload data to
+network storage without tying up OBS.</li>
+<li><strong>Prevent Drive Spindown:</strong> Configure NAS and external
+drives containing media assets to stay awake during production hours to
+eliminate wake-up latency during live operations.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

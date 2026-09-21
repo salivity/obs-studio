@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>24fps to 60fps Frame Pacing in OBS Studio - obs-studio</title>
+    <meta name="description" content="Playing 24fps cinematic media on a 60fps canvas introduces a mathematical mismatch that can disrupt motion fluidity. This article explains how OBS Studio manages frame pacing across different framerates, detailing how its internal rendering pipeline samp">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/24-fps-to-60-fps-frame-pacing-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="24fps to 60fps Frame Pacing in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/24-fps-to-60-fps-frame-pacing-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Playing 24fps cinematic media on a 60fps canvas introduces a mathematical mismatch that can disrupt motion fluidity. This article explains how OBS Studio manages frame pacing across different framerates, detailing how its internal rendering pipeline samp" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="24fps-to-60fps-frame-pacing-in-obs-studio">24fps to 60fps Frame
+Pacing in OBS Studio</h1>
+<p>Playing 24fps cinematic media on a 60fps canvas introduces a
+mathematical mismatch that can disrupt motion fluidity. This article
+explains how OBS Studio manages frame pacing across different
+framerates, detailing how its internal rendering pipeline samples
+presentation timestamps, uses a 3:2 cadence to prevent temporal drift,
+and maintains audio-video synchronization without introducing cumulative
+latency.</p>
+<h3 id="the-framerate-mismatch-24fps-on-a-60fps-canvas">The Framerate
+Mismatch: 24fps on a 60fps Canvas</h3>
+<p>Cinema standard footage runs at 24 frames per second (or 23.976 fps),
+while standard broadcast and streaming canvases in OBS Studio typically
+run at 60 frames per second (or 59.94 fps).</p>
+<p>Dividing 60 by 24 results in 2.5 canvas refreshes per video frame.
+Because a monitor or digital canvas cannot display half a frame, OBS
+Studio cannot distribute 24 frames symmetrically across 60 discrete
+render cycles without processing adaptations.</p>
+<h3 id="timestamp-based-rendering-loop">Timestamp-Based Rendering
+Loop</h3>
+<p>OBS Studio does not process video by queuing raw frame counts.
+Instead, it relies on a hardware-clocked rendering loop driven by
+Presentation Time Stamps (PTS):</p>
+<ol type="1">
+<li><strong>The Render Tick:</strong> The OBS graphics thread ticks at
+an exact interval based on the project's base framerate (every 16.67
+milliseconds for a 60fps canvas).</li>
+<li><strong>PTS Polling:</strong> During each tick, the compositor
+queries every active source—such as a Media Source running via FFmpeg—to
+retrieve the frame that matches the current master rendering clock.</li>
+<li><strong>Decoded Frame Fetching:</strong> The decoder continuously
+unpacks incoming video frames into a memory buffer, tagging each with
+its native PTS. The rendering engine fetches the newest decoded frame
+whose timestamp is less than or equal to the current render tick
+time.</li>
+</ol>
+<h3 id="the-32-cadence-implementation">The 3:2 Cadence
+Implementation</h3>
+<p>To bridge the 2.5-frame ratio, OBS Studio applies a standard 3:2
+pulldown pattern at the compositor level.</p>
+<ul>
+<li>The first source frame is drawn on the canvas and held for <strong>3
+canvas ticks</strong> (50ms).</li>
+<li>The second source frame is drawn and held for <strong>2 canvas
+ticks</strong> (33.33ms).</li>
+<li>Over 5 canvas frames (83.33ms), exactly 2 video frames are shown
+(<span class="math inline">\(3 + 2 = 5\)</span>).</li>
+<li>Repeating this sequence 12 times produces 60 canvas frames
+displaying all 24 source frames in one second.</li>
+</ul>
+<p>Because OBS evaluates presentation timestamps on every 16.67ms tick,
+this alternating 3:2 cadence emerges naturally. The compositor never
+attempts to invent intermediate frames (motion interpolation) or blend
+frames together unless specialized third-party shaders or filters are
+applied.</p>
+<h3 id="preventing-audio-video-drift">Preventing Audio-Video Drift</h3>
+<p>Cadence judder (the subtle micro-stutter resulting from alternating
+between 33.33ms and 50ms display durations) is mathematically
+unavoidable on a fixed 60Hz grid. However, OBS Studio protects against
+<strong>frame drift</strong>—where playback gradually slows down or
+falls out of sync with audio.</p>
+<p>OBS uses audio-driven time synchronization for media playback. The
+media source’s audio clock acts as the reference timeline. If the video
+decoding thread falls behind the rendering clock due to high CPU/GPU
+load, OBS executes a frame drop, skipping the late frame to fetch the
+current PTS match. Conversely, if frames decode faster than required,
+they remain buffered until their corresponding timestamp arrives.</p>
+<h3 id="practical-considerations-for-smooth-playback">Practical
+Considerations for Smooth Playback</h3>
+<p>To minimize judder and ensure predictable frame pacing when handling
+24fps media inside OBS:</p>
+<ul>
+<li><strong>Hardware Decoding:</strong> Enable hardware decoding in the
+Media Source properties to prevent decoding bottlenecks that disrupt the
+3:2 pattern.</li>
+<li><strong>Canvas Framerates:</strong> If pure, uniform frame pacing is
+required without a 3:2 cadence, setting the OBS canvas framerate to an
+integer multiple of 24 (such as 120fps, where each 24fps frame holds for
+exactly 5 ticks) will display cinema media with perfectly uniform
+pacing.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Best OBS Settings for Kick Streaming - obs-studio</title>
+    <meta name="description" content="Streaming to Kick.com requires configuring OBS Studio to balance high-quality visuals with stream stability. This guide provides the exact encoder, bitrate, resolution, and audio settings you need to optimize your OBS Studio setup for a smooth, high-defi">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/best-obs-settings-for-kick-streaming">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Best OBS Settings for Kick Streaming - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/best-obs-settings-for-kick-streaming" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Streaming to Kick.com requires configuring OBS Studio to balance high-quality visuals with stream stability. This guide provides the exact encoder, bitrate, resolution, and audio settings you need to optimize your OBS Studio setup for a smooth, high-defi" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="best-obs-settings-for-kick-streaming">Best OBS Settings for Kick
+Streaming</h1>
+<p>Streaming to Kick.com requires configuring OBS Studio to balance
+high-quality visuals with stream stability. This guide provides the
+exact encoder, bitrate, resolution, and audio settings you need to
+optimize your OBS Studio setup for a smooth, high-definition broadcast
+on the Kick platform.</p>
+<h2 id="1-stream-connection-settings">1. Stream Connection Settings</h2>
+<p>To connect OBS Studio to Kick, you must use the Custom service
+option:</p>
+<ul>
+<li><strong>Service:</strong> Custom...</li>
+<li><strong>Server:</strong> Copy the Stream URL from your Kick Creator
+Dashboard (Settings &gt; Stream Key).</li>
+<li><strong>Stream Key:</strong> Copy your unique Stream Key from your
+Kick Creator Dashboard.</li>
+</ul>
+<h2 id="2-output-settings-streaming-tab">2. Output Settings (Streaming
+Tab)</h2>
+<p>Set your Output Mode to <strong>Advanced</strong> to access the
+necessary encoder settings.</p>
+<h3 id="for-nvidia-graphics-cards-geforce-gtxrtx">For NVIDIA Graphics
+Cards (GeForce GTX/RTX)</h3>
+<ul>
+<li><strong>Audio Track:</strong> 1</li>
+<li><strong>Encoder:</strong> NVIDIA NVENC H.264</li>
+<li><strong>Rate Control:</strong> CBR (Constant Bitrate)</li>
+<li><strong>Bitrate:</strong> 8000 Kbps (for 1080p 60fps) or 6000 Kbps
+(for 1080p 30fps / 720p 60fps)</li>
+<li><strong>Keyframe Interval:</strong> 2s</li>
+<li><strong>Preset:</strong> P5: Slow (Good Quality) or P6: Slower
+(Better Quality)</li>
+<li><strong>Tuning:</strong> High Quality</li>
+<li><strong>Multipass Mode:</strong> Two Passes (Quarter
+Resolution)</li>
+<li><strong>Profile:</strong> high</li>
+<li><strong>Look-ahead:</strong> Unchecked</li>
+<li><strong>Psycho Visual Tuning:</strong> Checked</li>
+<li><strong>GPU:</strong> 0</li>
+<li><strong>Max B-frames:</strong> 2</li>
+</ul>
+<h3 id="for-amd-graphics-cards">For AMD Graphics Cards</h3>
+<ul>
+<li><strong>Encoder:</strong> AMD HW H.264</li>
+<li><strong>Rate Control:</strong> CBR</li>
+<li><strong>Bitrate:</strong> 8000 Kbps</li>
+<li><strong>Keyframe Interval:</strong> 2.0</li>
+<li><strong>Preset:</strong> Quality</li>
+</ul>
+<h3 id="for-cpu-encoding-x264">For CPU Encoding (x264)</h3>
+<ul>
+<li><strong>Encoder:</strong> x264</li>
+<li><strong>Rate Control:</strong> CBR</li>
+<li><strong>Bitrate:</strong> 8000 Kbps</li>
+<li><strong>Keyframe Interval:</strong> 2</li>
+<li><strong>CPU Usage Preset:</strong> veryfast (or faster for stronger
+CPUs)</li>
+<li><strong>Profile:</strong> high</li>
+</ul>
+<h2 id="3-video-settings">3. Video Settings</h2>
+<p>These settings dictate the actual resolution and frame rate of your
+broadcast:</p>
+<ul>
+<li><strong>Base (Canvas) Resolution:</strong> Set this to your
+monitor's native resolution (typically 1920x1080).</li>
+<li><strong>Output (Scaled) Resolution:</strong> 1920x1080 (for 1080p)
+or 1280x720 (for 720p).</li>
+<li><strong>Downscale Filter:</strong> Lanczos (Sharpened scaling, 36
+samples) for high-end PCs, or Bicubic (Sharpened scaling, 16 samples)
+for mid-range PCs.</li>
+<li><strong>Common FPS Values:</strong> 60 (for fast-paced gaming) or 30
+(for slower-paced games or limited internet upload speeds).</li>
+</ul>
+<h2 id="4-audio-settings">4. Audio Settings</h2>
+<p>Clear audio is crucial for viewer retention. Use these standard
+specifications:</p>
+<ul>
+<li><strong>Sample Rate:</strong> 48 kHz</li>
+<li><strong>Channels:</strong> Stereo</li>
+<li><strong>Audio Bitrate (under Output &gt; Audio tab):</strong> 160
+Kbps or 320 Kbps for maximum clarity on Track 1.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

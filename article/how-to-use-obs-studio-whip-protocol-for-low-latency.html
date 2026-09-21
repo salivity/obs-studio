@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Use OBS Studio WHIP Protocol for Low Latency - obs-studio</title>
+    <meta name="description" content="This guide provides a straightforward, step-by-step tutorial on how to configure and use the WebRTC HTTP Ingestion Protocol (WHIP) in OBS Studio for ultra-low latency live streaming. You will learn what WHIP is, why it is beneficial for real-time interac">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-use-obs-studio-whip-protocol-for-low-latency">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Use OBS Studio WHIP Protocol for Low Latency - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-use-obs-studio-whip-protocol-for-low-latency" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide provides a straightforward, step-by-step tutorial on how to configure and use the WebRTC HTTP Ingestion Protocol (WHIP) in OBS Studio for ultra-low latency live streaming. You will learn what WHIP is, why it is beneficial for real-time interac" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-use-obs-studio-whip-protocol-for-low-latency">How to Use
+OBS Studio WHIP Protocol for Low Latency</h1>
+<p>This guide provides a straightforward, step-by-step tutorial on how
+to configure and use the WebRTC HTTP Ingestion Protocol (WHIP) in OBS
+Studio for ultra-low latency live streaming. You will learn what WHIP
+is, why it is beneficial for real-time interaction, and how to configure
+your OBS Studio settings to broadcast with sub-second delay.</p>
+<h3 id="what-is-whip">What is WHIP?</h3>
+<p>WebRTC HTTP Ingestion Protocol (WHIP) is an internet draft standard
+that allows media engines like OBS Studio to ingest video streams into a
+media server using WebRTC. Unlike traditional streaming protocols like
+RTMP, which often have a delay of several seconds, WHIP enables
+ultra-low latency streaming with delays of less than a second, making it
+ideal for real-time auctions, interactive webinars, and live gaming.</p>
+<h3 id="prerequisites">Prerequisites</h3>
+<p>To stream using WHIP, you will need:</p>
+<ul>
+<li><strong>OBS Studio</strong> (Version 30.0 or newer is highly
+recommended, as native WHIP support was officially introduced in this
+version).</li>
+<li><strong>A WHIP-compatible streaming service or media server</strong>
+(such as Dolby.io, Cloudflare Stream, Janus, or any self-hosted WebRTC
+media server).</li>
+<li><strong>A WHIP Endpoint URL</strong> and a <strong>Bearer
+Token</strong> (if required) provided by your streaming service.</li>
+</ul>
+<h3 id="step-by-step-configuration-in-obs-studio">Step-by-Step
+Configuration in OBS Studio</h3>
+<ol type="1">
+<li><p><strong>Open Stream Settings:</strong> Launch OBS Studio. In the
+bottom-right control panel, click on <strong>Settings</strong> (or go to
+<em>File</em> &gt; <em>Settings</em> in the top menu).</p></li>
+<li><p><strong>Select the WHIP Service:</strong> In the Settings window,
+click on the <strong>Stream</strong> tab on the left sidebar.</p>
+<ul>
+<li>Click the <strong>Service</strong> dropdown menu.</li>
+<li>Select <strong>WHIP</strong> from the list of available
+services.</li>
+</ul></li>
+<li><p><strong>Enter Your WHIP Credentials:</strong> Once WHIP is
+selected, you will see fields for the Server and Bearer Token.</p>
+<ul>
+<li>In the <strong>Server</strong> field, paste the WHIP Endpoint URL
+provided by your streaming service.</li>
+<li>In the <strong>Bearer Token</strong> field, paste your stream's
+authorization token (if your provider requires one).</li>
+</ul></li>
+<li><p><strong>Configure Video and Audio Encoder Settings:</strong>
+Because WebRTC handles network congestion differently than RTMP,
+configuring your output settings correctly is crucial for maintaining
+ultra-low latency. Click on the <strong>Output</strong> tab on the left
+sidebar and apply these settings:</p>
+<ul>
+<li><strong>Output Mode:</strong> Set this to
+<strong>Advanced</strong>.</li>
+<li><strong>Video Encoder:</strong> Select a hardware encoder like
+<strong>NVIDIA NVENC H.264</strong> or <strong>AMD HW H.264</strong> (or
+<strong>x264</strong> if you prefer CPU encoding). WebRTC natively
+supports H.264.</li>
+<li><strong>Rate Control:</strong> Set this to <strong>CBR</strong>
+(Constant Bitrate).</li>
+<li><strong>Keyframe Interval:</strong> Set this to <strong>1s</strong>
+or <strong>2s</strong>. WebRTC performs best with frequent
+keyframes.</li>
+<li><strong>B-frames:</strong> Set Max B-frames to <strong>0</strong>.
+WebRTC does not support B-frames efficiently, and disabling them reduces
+latency.</li>
+</ul></li>
+<li><p><strong>Apply and Save:</strong> Click <strong>Apply</strong> and
+then <strong>OK</strong> to save your settings.</p></li>
+</ol>
+<h3 id="start-your-stream">Start Your Stream</h3>
+<p>With your settings configured, simply click the <strong>Start
+Streaming</strong> button on the main OBS Studio interface. Your stream
+will instantly publish to the WHIP server with sub-second latency,
+enabling real-time interaction with your audience.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

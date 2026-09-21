@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio RTMP Chunk Size Negotiation Explained - obs-studio</title>
+    <meta name="description" content="This article explores how OBS Studio negotiates Real-Time Messaging Protocol (RTMP) chunk sizes when connecting to ingest edge servers. By default, the legacy RTMP specification limits chunk sizes to 128 bytes, which introduces excessive header overhead">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-rtmp-chunk-size-negotiation-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio RTMP Chunk Size Negotiation Explained - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-rtmp-chunk-size-negotiation-explained" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores how OBS Studio negotiates Real-Time Messaging Protocol (RTMP) chunk sizes when connecting to ingest edge servers. By default, the legacy RTMP specification limits chunk sizes to 128 bytes, which introduces excessive header overhead" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-rtmp-chunk-size-negotiation-explained">OBS Studio
+RTMP Chunk Size Negotiation Explained</h1>
+<p>This article explores how OBS Studio negotiates Real-Time Messaging
+Protocol (RTMP) chunk sizes when connecting to ingest edge servers. By
+default, the legacy RTMP specification limits chunk sizes to 128 bytes,
+which introduces excessive header overhead for modern high-definition
+video. To ensure efficient network throughput and reduced CPU
+consumption, OBS Studio requests a substantially larger chunk
+size—typically 4096 bytes—immediately following the initial connection
+handshake.</p>
+<h3 id="the-default-rtmp-chunk-size-problem">The Default RTMP Chunk Size
+Problem</h3>
+<p>The original RTMP specification mandates a default chunk size of 128
+bytes. Every video and audio packet must be fragmented into chunks of
+this size, each prepended with an RTMP chunk header ranging from 1 to 18
+bytes. For modern streaming bitrates (such as 6,000 to 10,000 kbps for
+1080p60 content), a 128-byte chunk size generates millions of fragments
+per stream, significantly increasing packet processing overhead and
+overall bandwidth waste on both the broadcasting client and the ingest
+edge server.</p>
+<h3 id="obs-studio-connection-and-handshake-flow">OBS Studio Connection
+and Handshake Flow</h3>
+<p>When establishing a connection, OBS Studio adheres to the standard
+RTMP connection sequence:</p>
+<ol type="1">
+<li><strong>Handshake:</strong> OBS Studio initiates and completes the
+standard three-way RTMP handshake (<code>C0</code>/<code>C1</code>,
+<code>S0</code>/<code>S1</code>/<code>S2</code>, and <code>C2</code>) to
+establish raw socket synchronization.</li>
+<li><strong>Connect Command:</strong> OBS Studio sends the
+<code>connect</code> command along with application metadata (such as
+the target app name and Flash version string).</li>
+<li><strong>Chunk Size Declaration:</strong> Right after the connection
+command is established or during the initial session setup, OBS Studio
+sends a <code>Set Chunk Size</code> protocol control message.</li>
+</ol>
+<h3 id="mechanics-of-the-set-chunk-size-message">Mechanics of the "Set
+Chunk Size" Message</h3>
+<p>In RTMP, chunk size adjustments are unidirectional rather than
+mutually bargained. A sender simply informs the receiver of the chunk
+size it will use for all subsequent outgoing messages.</p>
+<ul>
+<li><strong>Message Type:</strong> OBS Studio dispatches a Protocol
+Control Message with Message Type ID 1
+(<code>Set Chunk Size</code>).</li>
+<li><strong>Payload Value:</strong> OBS Studio sets this value to 4096
+bytes by default via its underlying <code>librtmp</code> and
+<code>obs-outputs</code> modules. The value is packed as a 32-bit
+integer, with the most significant bit reserved (set to 0), defining the
+new chunk size between 1 and 2,147,483,647 bytes.</li>
+<li><strong>Immediate Activation:</strong> Once OBS Studio dispatches
+this message, every subsequent packet it transmits uses the newly
+defined 4096-byte boundary. It does not wait for an explicit
+application-layer acknowledgment to begin transmitting at this
+size.</li>
+</ul>
+<h3 id="ingest-server-dynamics">Ingest Server Dynamics</h3>
+<p>Ingest servers—such as NGINX-RTMP, SRS (Simple Realtime Server), and
+proprietary edge endpoints used by platforms like Twitch and
+YouTube—monitor incoming stream data for Type 1 control messages.</p>
+<p>Upon parsing OBS Studio's <code>Set Chunk Size</code> packet:</p>
+<ul>
+<li><strong>Buffer Reallocation:</strong> The edge server updates its
+internal state machine to read up to 4096 bytes of incoming message
+payload before expecting the next chunk basic header.</li>
+<li><strong>Return Path Separation:</strong> Because RTMP chunk sizes
+are independent for each direction, the server may continue to send
+control messages, pings, and acknowledgments back to OBS Studio using
+either the default 128-byte size or its own negotiated chunk size.</li>
+</ul>
+<p>By shifting from 128 bytes to 4096 bytes, OBS Studio minimizes
+protocol overhead to less than 1% of total bandwidth, streamlining
+packet parsing and reducing CPU interrupts across ingest networks.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

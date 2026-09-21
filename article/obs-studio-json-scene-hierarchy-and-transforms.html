@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio JSON Scene Hierarchy and Transforms - obs-studio</title>
+    <meta name="description" content="OBS Studio stores its entire configuration, including scene layouts, source configurations, and transitions, inside structured JSON files within its user profile directory. Rather than relying on a strictly separated relational database, OBS serializes i">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-json-scene-hierarchy-and-transforms">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio JSON Scene Hierarchy and Transforms - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-json-scene-hierarchy-and-transforms" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio stores its entire configuration, including scene layouts, source configurations, and transitions, inside structured JSON files within its user profile directory. Rather than relying on a strictly separated relational database, OBS serializes i" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-json-scene-hierarchy-and-transforms">OBS Studio JSON
+Scene Hierarchy and Transforms</h1>
+<p>OBS Studio stores its entire configuration, including scene layouts,
+source configurations, and transitions, inside structured JSON files
+within its user profile directory. Rather than relying on a strictly
+separated relational database, OBS serializes its layout as a flat list
+of polymorphic source objects where scenes themselves are treated as
+sources. This article breaks down how OBS Studio builds parent-child
+scene relationships through referenced arrays and manages visual spatial
+data using dedicated scene item transform schemas.</p>
+<h2 id="the-flat-source-architecture">The Flat Source Architecture</h2>
+<p>At the root of an OBS scene collection JSON file is a top-level
+dictionary containing general metadata, audio monitoring settings, and a
+primary array labeled <code>sources</code>.</p>
+<p>OBS Studio employs an architectural pattern where a "scene" is
+technically a specialized visual source whose internal identifier is
+<code>scene</code>. Because both individual inputs (such as display
+captures, webcams, or media sources) and full scenes share the same base
+structure, they all reside side by side within the <code>sources</code>
+array.</p>
+<p>Each source entry contains primary metadata:</p>
+<ul>
+<li><code>name</code>: The unique string name assigned to the source or
+scene.</li>
+<li><code>id</code>: The source type identifier (for example,
+<code>scene</code>, <code>browser_source</code>, or
+<code>wasapi_input_capture</code>).</li>
+<li><code>settings</code>: An object housing configuration variables
+specific to that source type.</li>
+</ul>
+<h2 id="representing-nested-scenes">Representing Nested Scenes</h2>
+<p>Because all sources reside in a flat list, nested scene relationships
+are represented through composition rather than deep JSON object
+nesting.</p>
+<p>When a scene contains other sources or sub-scenes, those elements are
+declared inside the parent scene's <code>settings</code> property within
+an array called <code>items</code>.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Main Scene&quot;</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;scene&quot;</span><span class="fu">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;settings&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;items&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Sub-Scene Overlay&quot;</span><span class="fu">,</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;visible&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;locked&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;rot&quot;</span><span class="fu">:</span> <span class="fl">0.0</span><span class="fu">,</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;pos&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;x&quot;</span><span class="fu">:</span> <span class="fl">0.0</span><span class="fu">,</span> <span class="dt">&quot;y&quot;</span><span class="fu">:</span> <span class="fl">0.0</span> <span class="fu">},</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;scale&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;x&quot;</span><span class="fu">:</span> <span class="fl">1.0</span><span class="fu">,</span> <span class="dt">&quot;y&quot;</span><span class="fu">:</span> <span class="fl">1.0</span> <span class="fu">}</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>When OBS renders "Main Scene," it iterates through its
+<code>items</code> array:</p>
+<ol type="1">
+<li>It reads the item reference (via the <code>name</code> field).</li>
+<li>It looks up that matching name in the root <code>sources</code>
+array.</li>
+<li>If the resolved source is of type <code>id: "scene"</code>, OBS
+initializes a sub-pipeline rendering pass, processing the child scene’s
+own <code>items</code> array before compositing the output back into the
+parent scene.</li>
+</ol>
+<p>Circular nesting (e.g., Scene A containing Scene B, which also
+contains Scene A) is detected and blocked by the application runtime
+during composition to prevent infinite recursion loops.</p>
+<h2 id="the-scene-item-transform-structure">The Scene Item Transform
+Structure</h2>
+<p>Every element inside a scene's <code>items</code> array contains
+dedicated transform properties that dictate its position, scale,
+rotation, alignment, and cropping relative to that scene's coordinate
+space.</p>
+<p>Modern versions of OBS serialize these attributes either directly on
+the item or grouped within an associated transform dictionary. The core
+parameters include:</p>
+<h3 id="1-position-and-alignment">1. Position and Alignment</h3>
+<ul>
+<li><code>pos</code>: A 2D coordinate object
+<code>{ "x": float, "y": float }</code> describing the element’s
+placement within the parent scene’s canvas (typically defined in base
+canvas pixels, such as 1920x1080).</li>
+<li><code>align</code>: A bitmask integer representing source anchor
+points. OBS uses standard bit flags to anchor sources to edges or
+corners (e.g., <code>5</code> corresponds to top-left alignment: Top [1]
++ Left [4]).</li>
+</ul>
+<h3 id="2-scaling-and-rotation">2. Scaling and Rotation</h3>
+<ul>
+<li><code>scale</code>: A 2D multiplier
+<code>{ "x": float, "y": float }</code> defining size changes relative
+to the native resolution of the underlying source. A scale of
+<code>1.0</code> maintains native dimensions, while <code>2.0</code>
+doubles them.</li>
+<li><code>rot</code>: A floating-point value indicating clockwise
+rotation in degrees, ranging from <code>0.0</code> to
+<code>360.0</code>.</li>
+</ul>
+<h3 id="3-bounds-and-scaling-behavior">3. Bounds and Scaling
+Behavior</h3>
+<p>When sources are forced into specific bounding containers (e.g.,
+"Scale to inner bounds"), OBS serializes bounding attributes:</p>
+<ul>
+<li><code>bounds</code>: A 2D vector
+<code>{ "x": float, "y": float }</code> setting the box dimensions.</li>
+<li><code>bounds_type</code>: An integer mapping to bounding box types
+(0 = None, 1 = Stretch to bounds, 2 = Scale to inner bounds, 3 = Scale
+to outer bounds, etc.).</li>
+<li><code>bounds_align</code>: An alignment integer defining where the
+source sits inside the bounding box.</li>
+</ul>
+<h3 id="4-cropping">4. Cropping</h3>
+<ul>
+<li><code>crop_left</code>, <code>crop_right</code>,
+<code>crop_top</code>, <code>crop_bottom</code>: Integer values
+specifying how many pixels are cut from each edge of the raw source
+prior to applying scaling and positioning.</li>
+</ul>
+<h2 id="local-vs-global-coordinate-inheritance">Local vs. Global
+Coordinate Inheritance</h2>
+<p>Transforms in OBS are strictly hierarchical and local to their
+immediate container.</p>
+<p>When a sub-scene is nested inside a parent scene:</p>
+<ul>
+<li>Sources inside the child scene calculate their layout relative to
+the child scene's internal base dimensions.</li>
+<li>The parent scene then treats the rendered output of the child scene
+as a single flat texture.</li>
+<li>The parent scene's <code>pos</code>, <code>scale</code>, and
+<code>rot</code> values are applied to that compiled texture as a
+whole.</li>
+</ul>
+<p>This separation ensures that complex multi-source layouts can be
+designed once within a dedicated sub-scene, then shifted, scaled, or
+animated within multiple master production scenes without disrupting the
+internal spatial relationships of the child sources.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

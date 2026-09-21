@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Teleport vs NDI: Local Video Streaming Compared - obs-studio</title>
+    <meta name="description" content="This article provides a comprehensive overview of the Teleport plugin for OBS Studio, explaining its core functionality as a local network streaming tool. It also delivers a direct comparison between Teleport and the industry-standard NDI (Network Device">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-teleport-vs-ndi-local-video-streaming-compared">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Teleport vs NDI: Local Video Streaming Compared - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-teleport-vs-ndi-local-video-streaming-compared" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides a comprehensive overview of the Teleport plugin for OBS Studio, explaining its core functionality as a local network streaming tool. It also delivers a direct comparison between Teleport and the industry-standard NDI (Network Device" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-teleport-vs-ndi-local-video-streaming-compared">OBS Teleport
+vs NDI: Local Video Streaming Compared</h1>
+<p>This article provides a comprehensive overview of the Teleport plugin
+for OBS Studio, explaining its core functionality as a local network
+streaming tool. It also delivers a direct comparison between Teleport
+and the industry-standard NDI (Network Device Interface) protocol,
+evaluating their differences in latency, video quality, system resource
+usage, and overall ease of use to help you choose the best tool for your
+streaming setup.</p>
+<h2 id="what-is-the-teleport-plugin-for-obs-studio">What is the Teleport
+Plugin for OBS Studio?</h2>
+<p>Teleport is an open-source plugin designed specifically for OBS
+Studio that allows users to stream high-quality, low-latency video and
+audio from one OBS instance to another over a local area network (LAN).
+It acts as a sender and receiver mechanism. You can configure one
+computer running OBS to "teleport" its program output or specific
+sources, and another computer on the same network running OBS can ingest
+that feed instantly as a dedicated source.</p>
+<p>Unlike traditional streaming protocols that require heavy encoding
+(like RTMP), Teleport transmits video with minimal compression. This
+results in visually lossless quality and near-zero latency, making it
+ideal for dual-PC streaming setups, secondary monitors, or live
+production environments.</p>
+<h2 id="how-does-teleport-compare-to-ndi">How Does Teleport Compare to
+NDI?</h2>
+<p>While both Teleport and NDI serve the same primary purpose—sending
+video over an IP network—they differ significantly in their
+architecture, compatibility, and resource requirements.</p>
+<h3 id="1-ecosystem-and-compatibility">1. Ecosystem and
+Compatibility</h3>
+<ul>
+<li><strong>Teleport:</strong> This plugin is designed strictly for
+OBS-to-OBS communication. It does not work with external hardware
+cameras, triCasters, or other third-party broadcasting software. It is a
+highly specialized, lightweight tool for OBS users.</li>
+<li><strong>NDI:</strong> Developed by NewTek, NDI is an
+industry-standard protocol integrated into a vast ecosystem of
+professional hardware (PTZ cameras, switchers) and software (vMix,
+Wirecast, Adobe Premiere). It is highly versatile and suitable for
+complex, multi-platform broadcast environments.</li>
+</ul>
+<h3 id="2-system-resource-usage-cpu-and-ram">2. System Resource Usage
+(CPU and RAM)</h3>
+<ul>
+<li><strong>Teleport:</strong> Teleport uses a lightweight compression
+method (often utilizing libjpeg-turbo). Because it avoids heavy
+compression algorithms, it requires very little CPU power to encode and
+decode streams, making it excellent for older or budget computers.</li>
+<li><strong>NDI:</strong> NDI uses more sophisticated compression
+(especially Full NDI or NDI|HX). While this keeps bandwidth lower, it
+requires significantly more CPU or GPU processing power to encode and
+decode the video feed.</li>
+</ul>
+<h3 id="3-bandwidth-and-network-requirements">3. Bandwidth and Network
+Requirements</h3>
+<ul>
+<li><strong>Teleport:</strong> Because Teleport uses less compression,
+it requires a massive amount of network bandwidth. A single 1080p 60fps
+Teleport stream can easily consume several hundred megabits per second
+(Mbps). A wired Gigabit Ethernet connection is mandatory.</li>
+<li><strong>NDI:</strong> NDI is much more network-efficient.
+High-bandwidth NDI uses around 100-150 Mbps for a 1080p 60fps stream,
+while NDI|HX (highly compressed) can run on wireless networks using only
+10-20 Mbps.</li>
+</ul>
+<h3 id="4-latency-and-video-quality">4. Latency and Video Quality</h3>
+<ul>
+<li><strong>Teleport:</strong> Offers virtually zero latency (often
+under 10-30 milliseconds) and visually perfect image quality due to the
+lack of heavy compression artifacts.</li>
+<li><strong>NDI:</strong> Also offers ultra-low latency suitable for
+live broadcasts, but minor compression artifacts may be visible in
+highly detailed, fast-moving scenes depending on whether you use Full
+NDI or NDI|HX.</li>
+</ul>
+<h3 id="5-setup-and-ease-of-use">5. Setup and Ease of Use</h3>
+<ul>
+<li><strong>Teleport:</strong> Extremely easy to set up. You simply
+install the plugin on both machines. One machine enables the "Teleport"
+output in the OBS tools menu, and the other adds a "Teleport" source. No
+external drivers or runtime installations are required.</li>
+<li><strong>NDI:</strong> Requires installing the OBS-NDI plugin
+alongside the official NDI runtime toolkits. While still relatively
+straightforward, it involves more troubleshooting steps regarding
+network discovery and firewall permissions.</li>
+</ul>
+<h2 id="summary-which-one-should-you-choose">Summary: Which One Should
+You Choose?</h2>
+<ul>
+<li><strong>Choose Teleport if:</strong> You run a simple dual-PC
+streaming setup using OBS Studio on both machines, have a reliable wired
+Gigabit network, and want the absolute lowest CPU usage on your gaming
+and streaming rigs.</li>
+<li><strong>Choose NDI if:</strong> You need to connect OBS to other
+software (like vMix), utilize hardware-based IP cameras, stream over
+Wi-Fi, or require a standardized protocol for a professional
+multi-device broadcast environment.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Fix OBS Encoding Overloaded - obs-studio</title>
+    <meta name="description" content="The "Encoding overloaded!" warning in OBS Studio indicates that your computer's hardware cannot process your video stream fast enough to maintain your current settings. This article explains what causes this error and provides direct, actionable solution">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-fix-obs-encoding-overloaded">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Fix OBS Encoding Overloaded - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-fix-obs-encoding-overloaded" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The "Encoding overloaded!" warning in OBS Studio indicates that your computer's hardware cannot process your video stream fast enough to maintain your current settings. This article explains what causes this error and provides direct, actionable solution" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-fix-obs-encoding-overloaded">How to Fix OBS Encoding
+Overloaded</h1>
+<p>The "Encoding overloaded!" warning in OBS Studio indicates that your
+computer's hardware cannot process your video stream fast enough to
+maintain your current settings. This article explains what causes this
+error and provides direct, actionable solutions to fix it, allowing you
+to achieve a smooth stream or recording without lag, stuttering, or
+dropped frames.</p>
+<h2 id="what-does-encoding-overloaded-mean">What Does "Encoding
+Overloaded" Mean?</h2>
+<p>Video encoding is a highly resource-intensive process. When you
+stream or record, OBS Studio takes the raw visual data from your screen
+or capture card and compresses it into a digital video format.</p>
+<p>If your CPU or GPU is pushed past its limit, it cannot compress the
+frames quickly enough. When this happens, OBS is forced to discard
+(drop) frames to keep up, resulting in the "Encoding overloaded!"
+warning at the bottom of your OBS window and a laggy, freezing video for
+your viewers.</p>
+<hr />
+<h2 id="how-to-fix-obs-encoding-overloaded-1">How to Fix OBS Encoding
+Overloaded</h2>
+<p>To resolve this issue, you must reduce the processing load on your
+computer. Work through the following steps in order until the warning
+disappears.</p>
+<h3 id="1-run-obs-studio-as-administrator">1. Run OBS Studio as
+Administrator</h3>
+<p>Windows allocates system resources based on priority. Running OBS as
+an administrator tells Windows to prioritize OBS's GPU demands over
+other background processes, which often instantly resolves encoding
+issues.</p>
+<ul>
+<li>Right-click the <strong>OBS Studio shortcut</strong>.</li>
+<li>Select <strong>Run as administrator</strong>.</li>
+</ul>
+<h3 id="2-lower-your-output-resolution">2. Lower Your Output
+Resolution</h3>
+<p>Encoding at 1080p requires more than double the processing power of
+encoding at 720p. Downscaling your output resolution is one of the most
+effective ways to stop encoding overloads.</p>
+<ul>
+<li>Open OBS and go to <strong>Settings</strong> &gt;
+<strong>Video</strong>.</li>
+<li>Change the <strong>Output (Scaled) Resolution</strong> to a lower
+setting (e.g., from <code>1920x1080</code> to
+<code>1280x720</code>).</li>
+<li>Click <strong>Apply</strong>.</li>
+</ul>
+<h3 id="3-reduce-your-frame-rate-fps">3. Reduce Your Frame Rate
+(FPS)</h3>
+<p>If you are streaming or recording at 60 FPS, your computer has to
+process 60 frames every second. Dropping this to 30 FPS cuts the
+encoder's workload in half.</p>
+<ul>
+<li>Go to <strong>Settings</strong> &gt; <strong>Video</strong>.</li>
+<li>Find <strong>Common FPS Values</strong> and change it from
+<code>60</code> to <code>30</code>.</li>
+<li>Click <strong>Apply</strong>.</li>
+</ul>
+<h3 id="4-switch-to-hardware-encoding-nvenc--amf--quicksync">4. Switch
+to Hardware Encoding (NVENC / AMF / QuickSync)</h3>
+<p>By default, OBS may use your CPU for encoding (x264). Switching to
+hardware encoding offloads the work to dedicated chips on your graphics
+card (NVIDIA or AMD) or Intel CPU, drastically reducing CPU usage.</p>
+<ul>
+<li>Go to <strong>Settings</strong> &gt; <strong>Output</strong>.</li>
+<li>Set the Output Mode to <strong>Simple</strong>.</li>
+<li>Under the <strong>Streaming</strong> or <strong>Recording</strong>
+section, find the <strong>Encoder</strong> dropdown.</li>
+<li>Change it from <strong>x264 (Software)</strong> to a hardware
+encoder:
+<ul>
+<li><strong>NVIDIA NVENC H.264</strong> (Highly recommended for NVIDIA
+GPUs)</li>
+<li><strong>AMD HW H.264</strong> (For AMD GPUs)</li>
+<li><strong>QuickSync H.264</strong> (For Intel integrated
+graphics)</li>
+</ul></li>
+</ul>
+<h3 id="5-change-the-encoder-preset-if-using-x264software">5. Change the
+Encoder Preset (If using x264/Software)</h3>
+<p>If you must use your CPU (x264) for encoding, you can change the
+"preset." A faster preset uses fewer CPU resources but slightly lowers
+video quality.</p>
+<ul>
+<li>Go to <strong>Settings</strong> &gt; <strong>Output</strong> (set
+Output Mode to <strong>Advanced</strong>).</li>
+<li>Under the <strong>Streaming</strong> tab, locate <strong>CPU Usage
+Preset</strong>.</li>
+<li>Change it from the default <code>veryfast</code> to
+<code>superfast</code> or <code>ultrafast</code>.</li>
+</ul>
+<h3 id="6-cap-your-in-game-frame-rate-and-lower-game-settings">6. Cap
+Your In-Game Frame Rate and Lower Game Settings</h3>
+<p>If you are streaming PC games on the same computer, the game might be
+consuming 100% of your GPU/CPU, leaving nothing left for OBS.</p>
+<ul>
+<li>Inside your game's graphics settings, limit the maximum frame rate
+(e.g., cap it at 60 FPS or match your monitor's refresh rate).</li>
+<li>Lower the game's graphical settings (such as shadows, texture
+quality, and anti-aliasing) from Ultra/High to Medium.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

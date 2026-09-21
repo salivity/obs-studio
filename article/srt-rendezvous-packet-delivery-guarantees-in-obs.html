@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRT Rendezvous Packet Delivery Guarantees in OBS - obs-studio</title>
+    <meta name="description" content="Connecting two OBS Studio nodes directly via SRT (Secure Reliable Transport) in rendezvous mode provides predictable, low-latency transport over UDP while actively mitigating packet loss. This setup guarantees in-order packet delivery, selective retransm">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/srt-rendezvous-packet-delivery-guarantees-in-obs">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="SRT Rendezvous Packet Delivery Guarantees in OBS - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/srt-rendezvous-packet-delivery-guarantees-in-obs" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Connecting two OBS Studio nodes directly via SRT (Secure Reliable Transport) in rendezvous mode provides predictable, low-latency transport over UDP while actively mitigating packet loss. This setup guarantees in-order packet delivery, selective retransm" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="srt-rendezvous-packet-delivery-guarantees-in-obs">SRT Rendezvous
+Packet Delivery Guarantees in OBS</h1>
+<p>Connecting two OBS Studio nodes directly via SRT (Secure Reliable
+Transport) in rendezvous mode provides predictable, low-latency
+transport over UDP while actively mitigating packet loss. This setup
+guarantees in-order packet delivery, selective retransmission of dropped
+frames, and strict timing preservation via Time-Based Packet Delivery
+(TSBPD). However, it does not guarantee absolute delivery under all
+conditions; delivery is strictly bounded by a configurable latency
+buffer, meaning severely delayed packets are intentionally dropped to
+preserve live broadcast synchronization.</p>
+<h3 id="the-role-of-srt-rendezvous-mode">The Role of SRT Rendezvous
+Mode</h3>
+<p>SRT rendezvous mode is a connection-negotiation mechanism designed
+for environments where both endpoints are behind firewalls or NATs
+without dedicated port forwarding. Both OBS Studio instances initiate
+handshake requests simultaneously. Once this bidirectional hole-punching
+succeeds, the rendezvous mechanism steps back, and the standard SRT
+transport protocol dictates all transmission parameters. Connection
+negotiation does not alter the underlying packet delivery guarantees,
+which remain identical to standard caller/listener SRT topologies.</p>
+<h3 id="selective-retransmission-arq">Selective Retransmission
+(ARQ)</h3>
+<p>SRT uses an Advanced Repeat reQuest (ARQ) system built on top of UDP.
+Unlike standard UDP, which drops missing packets without recovery, SRT
+constantly tracks sequence numbers.</p>
+<ul>
+<li><strong>Negative Acknowledgments (NAKs):</strong> When the receiving
+OBS node detects a missing packet sequence, it issues a NAK back to the
+sender.</li>
+<li><strong>Targeted Resends:</strong> The sending node only retransmits
+the missing packets, avoiding unnecessary full-frame retransmissions and
+saving bandwidth.</li>
+<li><strong>Bandwidth Overhead Tracking:</strong> SRT monitors
+retransmissions to prevent saturating the available uplink during
+periods of high packet loss.</li>
+</ul>
+<h3 id="timestamp-based-packet-delivery-tsbpd">Timestamp-Based Packet
+Delivery (TSBPD)</h3>
+<p>In standard TCP/UDP video streaming, network jitter can cause packets
+to arrive in bursts or out of sequence. SRT solves this by appending a
+high-resolution timestamp to every packet header at the sending OBS
+node.</p>
+<p>The receiving OBS instance buffers the incoming stream and
+reconstructs the packet intervals to match the exact spacing at which
+they were encoded. This ensures:</p>
+<ul>
+<li><strong>Strict In-Order Delivery:</strong> Applications consuming
+the SRT feed in OBS will never receive out-of-order packets.</li>
+<li><strong>De-Jittering:</strong> Network-induced delay variations are
+smoothed out before frames are handed off to the video decoder.</li>
+</ul>
+<h3 id="bounded-latency-and-too-late-packet-drop-tlpktdrop">Bounded
+Latency and Too-Late Packet Drop (TLPKTDROP)</h3>
+<p>The most critical factor in SRT delivery guarantees is bounded
+latency. SRT prioritizes maintaining a fixed playout timeline over
+absolute data integrity.</p>
+<p>When configuring SRT in OBS, a <code>latency</code> parameter (in
+milliseconds) is defined:</p>
+<ol type="1">
+<li><strong>The Retransmission Window:</strong> The sender and receiver
+hold packets in a buffer equivalent to the defined latency value. If a
+packet is lost, the receiver has this exact window of time to request
+and receive the retransmitted packet.</li>
+<li><strong>Deterministic Drops:</strong> If a retransmitted packet
+cannot arrive before its scheduled playout time in the receiving buffer,
+the receiving node invokes Too-Late Packet Drop (TLPKTDROP). The packet
+is discarded permanently, and the stream moves forward to prevent video
+buffering or freeze.</li>
+</ol>
+<p>Because of this mechanism, SRT does not guarantee 100% data arrival
+like TCP does. Instead, it guarantees <strong>time-bounded reliable
+arrival</strong>. If packet loss exceeds what can be resolved within the
+configured buffer window, data loss will occur to protect live real-time
+playback.</p>
+<h3 id="cryptographic-and-sequence-integrity">Cryptographic and Sequence
+Integrity</h3>
+<p>SRT integrates AES-128, AES-192, and AES-256 encryption. When
+configured in OBS Studio via the <code>passphrase</code> and
+<code>pbkeylen</code> URL parameters, SRT verifies the cryptographic
+integrity of incoming payloads. Corrupted or unauthorized packets
+injected into the UDP stream are identified at the socket layer and
+discarded before reaching the OBS rendering pipeline.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

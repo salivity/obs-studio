@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Causes of OBS Studio Recording Metadata Corruption - obs-studio</title>
+    <meta name="description" content="Abruptly terminating an active recording in OBS Studio often leaves video files unplayable due to metadata corruption. When a recording session ends unexpectedly—whether through a software crash, forced task termination, or sudden power loss—the soft">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/causes-of-obs-studio-recording-metadata-corruption">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Causes of OBS Studio Recording Metadata Corruption - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/causes-of-obs-studio-recording-metadata-corruption" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Abruptly terminating an active recording in OBS Studio often leaves video files unplayable due to metadata corruption. When a recording session ends unexpectedly—whether through a software crash, forced task termination, or sudden power loss—the soft" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="causes-of-obs-studio-recording-metadata-corruption">Causes of
+OBS Studio Recording Metadata Corruption</h1>
+<p>Abruptly terminating an active recording in OBS Studio often leaves
+video files unplayable due to metadata corruption. When a recording
+session ends unexpectedly—whether through a software crash, forced task
+termination, or sudden power loss—the software is prevented from
+executing its critical file-finalization routines. This article breaks
+down the exact technical causes behind this metadata corruption,
+focusing on container architectures, unwritten index tables, and
+buffered data loss.</p>
+<h3 id="1-missing-index-tables-the-moov-atom">1. Missing Index Tables
+(The Moov Atom)</h3>
+<p>The most common container format, standard MP4 (as well as MOV),
+relies on an essential block of metadata known as the <code>moov</code>
+atom. This structure acts as the table of contents for the entire file,
+detailing frame rates, timestamps, codec specifications, sample sizes,
+and track synchronization.</p>
+<p>By default, standard recording pipelines write the <code>moov</code>
+atom at the very end of the recording process because the file's final
+duration and frame indices cannot be known beforehand. If OBS Studio is
+terminated abruptly:</p>
+<ul>
+<li>The recording process stops before writing the <code>moov</code>
+atom to disk.</li>
+<li>Media players reading the file find the raw media streams (the
+<code>mdat</code> atom) but have no temporal map to navigate or decode
+the frames.</li>
+<li>The file appears corrupted, displaying a zero-byte duration or
+failing to open entirely.</li>
+</ul>
+<h3 id="2-incomplete-container-headers">2. Incomplete Container
+Headers</h3>
+<p>Video containers require structural markers at the beginning and end
+of the file stream to validate data integrity. An abrupt termination
+prevents OBS from writing closing tags and checksums. Media demuxers
+expect these closing blocks to properly parse the stream boundaries.
+Without them, software decoders identify the stream as incomplete or
+damaged and refuse to initialize playback.</p>
+<h3 id="3-unflushed-memory-buffers">3. Unflushed Memory Buffers</h3>
+<p>To ensure smooth performance and minimize disk I/O bottlenecks, OBS
+Studio and the host operating system hold video and audio frames in
+volatile memory (RAM) caches before committing them to physical storage.
+When an active recording process is killed instantly:</p>
+<ul>
+<li>Buffered metadata and the final trailing frames held in RAM are
+wiped instantly without being flushed to disk.</li>
+<li>The physical file cuts off at an arbitrary byte boundary, often in
+the middle of an encoded frame or audio packet.</li>
+<li>This leaves an incomplete bitstream that breaks the syntax rules of
+the underlying codec (such as H.264 or HEVC), leading to unrecoverable
+header states.</li>
+</ul>
+<h3 id="4-broken-inter-frame-dependencies">4. Broken Inter-frame
+Dependencies</h3>
+<p>Modern video codecs use temporal compression consisting of keyframes
+(I-frames) and predictive frames (P-frames and B-frames). If the
+recording cuts off mid-sequence, the metadata detailing the decoding
+order (DTS) and presentation order (PTS) of these inter-dependent frames
+is lost. Without the metadata specifying how trailing frames correlate
+with preceding reference frames, the decoder cannot interpret the
+fragmented end of the bitstream.</p>
+<h3 id="how-container-choice-mitigates-the-issue">How Container Choice
+Mitigates the Issue</h3>
+<p>The vulnerability to abrupt termination depends directly on the
+container format selected in OBS Studio:</p>
+<ul>
+<li><strong>Standard MP4/MOV:</strong> Highly vulnerable because all
+indexing is deferred to the end of the session.</li>
+<li><strong>Fragmented MP4 (fMP4) / Fragmented MOV:</strong>
+Significantly more resilient because metadata is written in repeated,
+self-contained fragments throughout the recording rather than in a
+single block at the end.</li>
+<li><strong>MKV (Matroska) / FLV:</strong> Immune to total loss from
+abrupt stops. These formats stream metadata continuously alongside
+packet data. If interrupted, the file remains valid up to the very last
+written millisecond.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desktop Audio vs Mic Aux in OBS Studio - obs-studio</title>
+    <meta name="description" content="In OBS Studio, managing your sound sources is crucial for producing a professional stream or recording. This article explains the fundamental differences between Desktop Audio and Mic/Aux audio, how they function within the software, and how to properly">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/desktop-audio-vs-mic-aux-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Desktop Audio vs Mic Aux in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/desktop-audio-vs-mic-aux-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In OBS Studio, managing your sound sources is crucial for producing a professional stream or recording. This article explains the fundamental differences between Desktop Audio and Mic/Aux audio, how they function within the software, and how to properly" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="desktop-audio-vs-mic-aux-in-obs-studio">Desktop Audio vs Mic Aux
+in OBS Studio</h1>
+<p>In OBS Studio, managing your sound sources is crucial for producing a
+professional stream or recording. This article explains the fundamental
+differences between Desktop Audio and Mic/Aux audio, how they function
+within the software, and how to properly configure both to ensure your
+audience hears a balanced mix of system sounds and your voice.</p>
+<h2 id="what-is-desktop-audio">What is Desktop Audio?</h2>
+<p>Desktop Audio refers to the sounds generated internally by your
+computer's operating system and applications. It captures the audio
+output that you hear through your headphones or speakers.</p>
+<p>Common examples of Desktop Audio include:</p>
+<ul>
+<li>In-game sound effects and music.</li>
+<li>Background music from applications like Spotify or YouTube.</li>
+<li>Voice chat from communication apps like Discord or Zoom.</li>
+<li>System notifications and browser alerts.</li>
+</ul>
+<p>In OBS Studio, Desktop Audio is an <strong>output capture</strong>.
+It monitors the designated playback device of your computer and
+broadcasts whatever sound is sent to that device.</p>
+<h2 id="what-is-micaux-audio">What is Mic/Aux Audio?</h2>
+<p>Mic/Aux (Microphone/Auxiliary) Audio refers to external sound sources
+capturing physical audio from your environment.</p>
+<p>Common examples of Mic/Aux Audio include:</p>
+<ul>
+<li>USB microphones (e.g., Blue Yeti, Shure MV7).</li>
+<li>XLR microphones connected via an audio interface.</li>
+<li>Headset microphones.</li>
+<li>External instruments or mixers plugged into your computer’s line-in
+port.</li>
+</ul>
+<p>In OBS Studio, Mic/Aux is an <strong>input capture</strong>. It takes
+sound waves from the physical world, converts them into digital signals,
+and brings them into your stream.</p>
+<h2 id="key-differences-between-desktop-audio-and-micaux">Key
+Differences Between Desktop Audio and Mic/Aux</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Desktop Audio</th>
+<th style="text-align: left;">Mic/Aux Audio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Source Type</strong></td>
+<td style="text-align: left;">Internal (System Output)</td>
+<td style="text-align: left;">External (Physical Input)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Primary Purpose</strong></td>
+<td style="text-align: left;">Capturing game sound, music, and voice
+chat.</td>
+<td style="text-align: left;">Capturing your voice or live
+instruments.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Direction of Signal</strong></td>
+<td style="text-align: left;">Outgoing from the computer to your
+ears.</td>
+<td style="text-align: left;">Incoming from the room to the
+computer.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Default Muting</strong></td>
+<td style="text-align: left;">Usually kept unmuted unless copyright
+music is playing.</td>
+<td style="text-align: left;">Frequently muted/unmuted (push-to-talk) to
+hide background noise.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="why-keeping-them-separate-matters">Why Keeping Them Separate
+Matters</h2>
+<p>OBS Studio displays these two sources as separate tracks in the Audio
+Mixer. Keeping them distinct is essential for several reasons:</p>
+<ol type="1">
+<li><strong>Volume Balancing:</strong> Game audio is often much louder
+than a microphone. Having separate sliders allows you to lower the
+Desktop Audio so your voice (Mic/Aux) remains clear and audible.</li>
+<li><strong>Multi-Track Recording:</strong> If you record your videos,
+OBS allows you to export Desktop Audio and Mic/Aux on separate audio
+tracks. This is invaluable during video editing, as you can adjust or
+mute game sounds without affecting your commentary.</li>
+<li><strong>Filters and Processing:</strong> You apply different filters
+to different sources. Your Mic/Aux will benefit from filters like Noise
+Suppression, Noise Gate, and Compressor to clean up background noise.
+Applying these to Desktop Audio would ruin the sound quality of your
+games or music.</li>
+</ol>
+<h2 id="how-to-configure-both-in-obs-studio">How to Configure Both in
+OBS Studio</h2>
+<p>To set up or change these devices:</p>
+<ol type="1">
+<li>Open OBS Studio and click on <strong>Settings</strong> (bottom
+right).</li>
+<li>Select the <strong>Audio</strong> tab from the left menu.</li>
+<li>Under <strong>Global Audio Devices</strong>:
+<ul>
+<li>Set <strong>Desktop Audio</strong> to "Default" or select your
+primary listening device (e.g., your headphones).</li>
+<li>Set <strong>Mic/Auxiliary Audio</strong> to your specific
+microphone.</li>
+</ul></li>
+<li>Click <strong>Apply</strong> and <strong>OK</strong>.</li>
+</ol>
+<p>Both sources will now appear in your Audio Mixer on the main screen,
+ready for individual volume adjustment.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

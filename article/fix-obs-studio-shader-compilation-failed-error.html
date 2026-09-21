@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix OBS Studio Shader Compilation Failed Error - obs-studio</title>
+    <meta name="description" content="A "Shader compilation failed" entry in an OBS Studio log indicates that the application cannot compile the necessary High-Level Shader Language (HLSL) code required to render scenes, sources, and visual effects. This article explains how this error direc">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/fix-obs-studio-shader-compilation-failed-error">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Fix OBS Studio Shader Compilation Failed Error - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/fix-obs-studio-shader-compilation-failed-error" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="A "Shader compilation failed" entry in an OBS Studio log indicates that the application cannot compile the necessary High-Level Shader Language (HLSL) code required to render scenes, sources, and visual effects. This article explains how this error direc" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="fix-obs-studio-shader-compilation-failed-error">Fix OBS Studio
+Shader Compilation Failed Error</h1>
+<p>A "Shader compilation failed" entry in an OBS Studio log indicates
+that the application cannot compile the necessary High-Level Shader
+Language (HLSL) code required to render scenes, sources, and visual
+effects. This article explains how this error directly relates to
+missing, corrupted, or outdated DirectX runtime libraries, and outlines
+the precise steps needed to restore normal functionality.</p>
+<h2 id="what-the-error-means-for-directx-runtime-libraries">What the
+Error Means for DirectX Runtime Libraries</h2>
+<p>OBS Studio relies heavily on Microsoft DirectX (specifically Direct3D
+11) for its core graphics rendering pipeline. To display capture cards,
+game captures, overlays, and video filters, OBS must compile HLSL
+shaders on the fly using DirectX runtime files.</p>
+<p>When "Shader compilation failed" appears in the log, it signals one
+of the following DirectX-related issues:</p>
+<ul>
+<li><strong>Missing D3DCompiler Libraries:</strong> OBS requires
+specific compiler DLLs (such as <code>d3dcompiler_47.dll</code> or older
+redistributable equivalents). If these files are absent from the Windows
+system directory, shader compilation immediately aborts.</li>
+<li><strong>Corrupted DirectX Runtimes:</strong> System crashes, failed
+Windows updates, or incomplete software installations can corrupt
+existing DirectX runtime components, preventing the API from properly
+reading shader instructions.</li>
+<li><strong>Outdated DirectX End-User Runtimes:</strong> Modern Windows
+versions include core DirectX components, but legacy runtimes required
+by certain media and capture software are often omitted by default.</li>
+<li><strong>GPU Driver Communication Failure:</strong> If the graphics
+driver cannot interface correctly with the DirectX API, the runtime
+cannot pass the compiled shader instructions to the graphics
+hardware.</li>
+</ul>
+<h2 id="how-to-resolve-the-error">How to Resolve the Error</h2>
+<h3 id="1-install-the-directx-end-user-runtime">1. Install the DirectX
+End-User Runtime</h3>
+<p>Even on Windows 10 and Windows 11, missing legacy DirectX libraries
+are the most common trigger for this error.</p>
+<ol type="1">
+<li>Download the <strong>DirectX End-User Runtimes (June 2010)</strong>
+installer from Microsoft's official website.</li>
+<li>Run the installer to unpack the files to a temporary folder.</li>
+<li>Open the temporary folder, locate <code>DXSETUP.exe</code>, run it
+as an administrator, and complete the installation wizard.</li>
+<li>Restart your computer.</li>
+</ol>
+<h3 id="2-update-or-reinstall-graphics-drivers">2. Update or Reinstall
+Graphics Drivers</h3>
+<p>A corrupted or outdated display driver often fails to execute shader
+compilation requests made through DirectX.</p>
+<ol type="1">
+<li>Download the latest driver package directly from your GPU
+manufacturer (NVIDIA, AMD, or Intel).</li>
+<li>Choose a <strong>Clean Installation</strong> during the setup
+process to wipe corrupted driver-level shader caches and broken API
+interfaces.</li>
+<li>Restart your system.</li>
+</ol>
+<h3 id="3-repair-corrupted-windows-system-files">3. Repair Corrupted
+Windows System Files</h3>
+<p>If essential DirectX system DLLs are damaged, running the System File
+Checker will locate and restore them.</p>
+<ol type="1">
+<li>Press <code>Win + X</code> and select <strong>Terminal
+(Admin)</strong> or <strong>Command Prompt (Admin)</strong>.</li>
+<li>Type <code>sfc /scannow</code> and press
+<strong>Enter</strong>.</li>
+<li>Wait for the verification process to finish and repair any damaged
+operating system components.</li>
+<li>If issues are found, restart the computer before launching OBS
+Studio.</li>
+</ol>
+<h3 id="4-reinstall-obs-studio">4. Reinstall OBS Studio</h3>
+<p>If runtime issues persist, internal OBS shader files
+(<code>.effect</code> files located in the OBS installation directory)
+may be damaged. Uninstall OBS Studio, download the latest stable
+installer, and perform a fresh installation to ensure all default
+shaders and application-level DLLs are restored.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

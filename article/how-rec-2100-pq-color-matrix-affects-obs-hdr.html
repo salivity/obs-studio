@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Rec 2100 PQ Color Matrix Affects OBS HDR - obs-studio</title>
+    <meta name="description" content="Selecting the Rec. 2100 (PQ) color matrix in OBS Studio enables the software to accurately capture, process, and output High Dynamic Range (HDR) video content. This setting is essential for streamers and content creators who want to broadcast or record g">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-rec-2100-pq-color-matrix-affects-obs-hdr">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Rec 2100 PQ Color Matrix Affects OBS HDR - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-rec-2100-pq-color-matrix-affects-obs-hdr" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Selecting the Rec. 2100 (PQ) color matrix in OBS Studio enables the software to accurately capture, process, and output High Dynamic Range (HDR) video content. This setting is essential for streamers and content creators who want to broadcast or record g" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-rec-2100-pq-color-matrix-affects-obs-hdr">How Rec 2100 PQ
+Color Matrix Affects OBS HDR</h1>
+<p>Selecting the Rec. 2100 (PQ) color matrix in OBS Studio enables the
+software to accurately capture, process, and output High Dynamic Range
+(HDR) video content. This setting is essential for streamers and content
+creators who want to broadcast or record gameplay and video in true
+HDR10, preventing the washed-out color issues that occur when HDR
+sources are compressed into Standard Dynamic Range (SDR) color spaces.
+By aligning OBS Studio’s internal rendering pipeline with the BT.2020
+color gamut and the Perceptual Quantizer (PQ) transfer function, this
+matrix ensures that highlights, shadows, and vibrant colors are
+preserved correctly for HDR-capable displays.</p>
+<h3 id="1-enables-true-10-bit-hdr-processing">1. Enables True 10-Bit HDR
+Processing</h3>
+<p>By default, OBS Studio operates in the Rec. 709 color space, which is
+designed for standard 8-bit SDR content. Switching to Rec. 2100 (PQ)
+instructs OBS to utilize the BT.2020 color gamut. This allows the
+software to process a much wider spectrum of colors and support 10-bit
+color depth, which is necessary to eliminate color banding in smooth
+gradients like skies and shadows.</p>
+<h3 id="2-prevents-washed-out-colors">2. Prevents Washed-Out Colors</h3>
+<p>If you capture an HDR game or monitor using an SDR color matrix, the
+bright highlights and deep blacks are clipped, resulting in a dull,
+greyed-out image. The Perceptual Quantizer (PQ) curve (standardized as
+SMPTE ST 2084) acts as the transfer function that translates digital
+values to specific physical brightness levels (up to 10,000 nits).
+Selecting Rec. 2100 (PQ) ensures that OBS interprets these brightness
+values correctly, maintaining the intended contrast and color saturation
+of your source.</p>
+<h3 id="3-preserves-hdr-metadata-for-platforms-like-youtube">3.
+Preserves HDR Metadata for Platforms like YouTube</h3>
+<p>To stream or upload HDR content to platforms like YouTube, the video
+file or stream must contain specific HDR metadata. Using the Rec. 2100
+(PQ) color matrix ensures that this metadata is generated and embedded
+in the output stream. When compatible platforms receive this data, they
+recognize the video as HDR and trigger HDR playback on viewers'
+compatible screens.</p>
+<h3 id="4-requires-specific-obs-settings-to-function">4. Requires
+Specific OBS Settings to Function</h3>
+<p>Simply changing the color matrix is not enough to achieve a full HDR
+workflow. For the Rec. 2100 (PQ) matrix to work effectively, you must
+configure the following settings in OBS Studio under <strong>Settings
+&gt; Advanced</strong>:</p>
+<ul>
+<li><strong>Color Format:</strong> Must be set to <strong>P010</strong>
+(a 10-bit color format). Standard NV12 or I420 formats will discard the
+extra color data.</li>
+<li><strong>Color Space:</strong> Set to <strong>Rec. 2100
+(PQ)</strong>.</li>
+<li><strong>Video Encoder:</strong> You must use an encoder that
+supports 10-bit HEVC (H.265) or AV1 (such as NVIDIA NVENC AV1/HEVC or
+AMD HW AV1/HEVC). Standard H.264 (AVC) does not natively support HDR
+streaming on most platforms.</li>
+</ul>
+<p>Using the Rec. 2100 (PQ) color matrix is the foundational step to
+unlocking high-fidelity HDR capture in OBS Studio, bridging the gap
+between high-end gaming hardware and HDR-ready viewing audiences.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

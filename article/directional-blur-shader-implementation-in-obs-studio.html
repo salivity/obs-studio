@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directional Blur Shader Implementation in OBS Studio - obs-studio</title>
+    <meta name="description" content="This article provides a technical breakdown of how directional blur filters are implemented as shaders within advanced OBS Studio plugins like StreamFX. Directional blur simulates linear motion by sampling pixels along a specific angle across a defined d">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/directional-blur-shader-implementation-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Directional Blur Shader Implementation in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/directional-blur-shader-implementation-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides a technical breakdown of how directional blur filters are implemented as shaders within advanced OBS Studio plugins like StreamFX. Directional blur simulates linear motion by sampling pixels along a specific angle across a defined d" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1
+id="directional-blur-shader-implementation-in-obs-studio">Directional
+Blur Shader Implementation in OBS Studio</h1>
+<p>This article provides a technical breakdown of how directional blur
+filters are implemented as shaders within advanced OBS Studio plugins
+like StreamFX. Directional blur simulates linear motion by sampling
+pixels along a specific angle across a defined distance. By analyzing
+the coordinate mathematics, sampling loops, weighting algorithms, and
+GPU execution pipeline, this guide explains how real-time linear
+convolution occurs inside the OBS graphics subsystem.</p>
+<h3 id="coordinate-mathematics-and-vector-calculation">Coordinate
+Mathematics and Vector Calculation</h3>
+<p>A directional blur works by taking multiple texture samples along a
+single line vector rather than across a two-dimensional grid. In OBS
+Studio's HLSL-based rendering pipeline, the filter receives user
+parameters—typically the blur angle (<span
+class="math inline">\(\theta\)</span>) in degrees or radians and the
+blur distance or size (<span class="math inline">\(S\)</span>) in
+pixels.</p>
+<p>Before running the sampling loop, the shader converts these
+parameters into a normalized directional step vector scaled by the
+inverse of the viewport resolution:</p>
+<pre class="hlsl"><code>float radians = angle * (3.14159265 / 180.0);
+float2 direction = float2(cos(radians), sin(radians));
+float2 stepSize = (direction * size) / (textureResolution * sampleCount);</code></pre>
+<p>By factoring in the reciprocal of the render target's resolution, the
+shader ensures that steps correspond accurately to pixel space
+regardless of canvas scaling or aspect ratio.</p>
+<h3 id="sampling-loop-and-kernel-weighting">Sampling Loop and Kernel
+Weighting</h3>
+<p>The core of the pixel shader execution is an accumulation loop. For
+every rendered pixel, the shader offsets its UV coordinates forward and
+backward along the calculated vector, samples the source texture
+repeatedly, and sums the color values.</p>
+<p>Directional blurs typically implement one of two weighting
+profiles:</p>
+<ol type="1">
+<li><strong>Box Filter:</strong> Every sample along the vector carries
+equal weight. This produces a simple trailing effect but can exhibit
+harsh edges at low sample counts.</li>
+<li><strong>Gaussian Filter:</strong> Samples closer to the origin carry
+more weight than samples at the extremities. The weight is calculated
+per step using a one-dimensional Gaussian distribution function:</li>
+</ol>
+<pre class="hlsl"><code>float weight = exp(-0.5 * pow(i / standardDeviation, 2.0));</code></pre>
+<p>During execution, each sampled color is multiplied by its
+corresponding weight, and the weight is added to an accumulator
+variable.</p>
+<h3 id="pixel-shader-accumulation-logic">Pixel Shader Accumulation
+Logic</h3>
+<p>Below is the standard representation of the accumulation routine
+within an OBS HLSL pixel shader:</p>
+<pre class="hlsl"><code>float4 totalColor = float4(0.0, 0.0, 0.0, 0.0);
+float totalWeight = 0.0;
+
+for (int i = -samples; i &lt;= samples; ++i) {
+    float2 offset = stepSize * float(i);
+    float weight = calculateWeight(i);
+    
+    totalColor += imageTexture.Sample(linearSampler, input.uv + offset) * weight;
+    totalWeight += weight;
+}
+
+float4 finalColor = totalColor / totalWeight;</code></pre>
+<p>Dividing the accumulated color by <code>totalWeight</code> normalizes
+the output, preventing the blurred image from brightening or dimming
+regardless of how many samples are taken.</p>
+<h3 id="hardware-optimization-via-bilinear-filtering">Hardware
+Optimization via Bilinear Filtering</h3>
+<p>To maintain smooth 60 FPS performance in OBS Studio, high-end
+directional blur shaders avoid integer-only pixel steps. By placing UV
+sample coordinates precisely halfway between two texel centers, the
+GPU’s hardware bilinear filtering automatically interpolates two
+adjacent pixels in a single texture fetch. This mathematical trick
+effectively doubles the visual smoothness of the blur without doubling
+the instruction cost, allowing plugins to achieve smooth results with
+half the sample iterations.</p>
+<h3 id="integration-with-the-obs-graphics-pipeline">Integration with the
+OBS Graphics Pipeline</h3>
+<p>OBS Studio exposes its rendering architecture through
+<code>libobs</code>, using Direct3D 11 on Windows and OpenGL or Metal on
+other platforms. Directional blur plugins pass user-configured variables
+through constant buffers directly to the graphics pipeline. Because
+directional blur is fundamentally a 1D convolution, it operates with a
+computational complexity of <span class="math inline">\(O(N)\)</span>
+per pixel, making it significantly less resource-intensive than
+unseparated 2D spatial blurs (<span
+class="math inline">\(O(N^2)\)</span>) and capable of running smoothly
+alongside resource-heavy streaming and encoding tasks.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

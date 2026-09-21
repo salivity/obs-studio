@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Media Source Loop Point and Playback Queues - obs-studio</title>
+    <meta name="description" content="This article explains how OBS Studio handles video playback queues and decoder buffers when an active Media Source reaches its designated loop point. It examines the internal demuxing workflow, the flushing of video frame pipelines, timestamp resets, and">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-media-source-loop-point-and-playback-queues">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Media Source Loop Point and Playback Queues - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-media-source-loop-point-and-playback-queues" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how OBS Studio handles video playback queues and decoder buffers when an active Media Source reaches its designated loop point. It examines the internal demuxing workflow, the flushing of video frame pipelines, timestamp resets, and" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-media-source-loop-point-and-playback-queues">OBS Media
+Source Loop Point and Playback Queues</h1>
+<p>This article explains how OBS Studio handles video playback queues
+and decoder buffers when an active Media Source reaches its designated
+loop point. It examines the internal demuxing workflow, the flushing of
+video frame pipelines, timestamp resets, and how looping affects
+playlist-based media queues versus standalone files.</p>
+<h3 id="the-internal-demuxer-and-queue-flushing">The Internal Demuxer
+and Queue Flushing</h3>
+<p>When an active Media Source in OBS Studio reaches its loop point (or
+the end of the file), the underlying FFmpeg demuxer triggers an internal
+seek command back to the file's start time. Because video frames are
+decoded ahead of time and stored in a playback queue (a buffer of
+decoded raw frames waiting to be rendered), this seek operation requires
+an immediate queue flush.</p>
+<p>OBS Studio clears the existing frame queue to prevent stale frames
+from the end of the video from displaying after the seek completes. The
+decoder calls <code>avcodec_flush_buffers()</code> to clear internal
+pipeline states, dropping any pre-buffered B-frames or P-frames that
+rely on references from before the loop boundary.</p>
+<h3 id="timestamp-synchronization-and-discontinuity">Timestamp
+Synchronization and Discontinuity</h3>
+<p>During continuous playback, OBS Studio maps the media file’s
+Presentation Timestamps (PTS) to the scene's global rendering clock.
+When the loop point is reached:</p>
+<ol type="1">
+<li><strong>PTS Reset:</strong> The media source resets its internal PTS
+back to the starting timestamp (typically zero).</li>
+<li><strong>Clock Resynchronization:</strong> The OBS rendering engine
+detects the timestamp discontinuity. Instead of interpreting the reset
+as a playback delay, it establishes a new time offset relative to the
+master audio/video clock.</li>
+<li><strong>Audio-Video Alignment:</strong> Both audio and video packet
+queues are cleared simultaneously to avoid desynchronization artifacts,
+ensuring audio does not lag behind the restarted video track.</li>
+</ol>
+<h3
+id="standalone-media-sources-vs-multi-file-playback-queues">Standalone
+Media Sources vs. Multi-File Playback Queues</h3>
+<p>How the queue behaves depends significantly on whether the source is
+a native OBS Media Source or a queue-driven source such as the VLC Video
+Source.</p>
+<ul>
+<li><strong>Native Media Source (Single File):</strong> The native
+source treats looping strictly at the file level. The playback queue
+never advances to an external asset; it indefinitely cycles through
+decoding, buffering, rendering, and flushing the same asset's data
+streams.</li>
+<li><strong>VLC Video Source (Playlists and Queues):</strong> When using
+playlist-based playback, the loop setting can be applied at the track
+level or the playlist level. If track looping is active, the playlist
+queue is effectively blocked from advancing; the current file loops
+continuously while the remaining queue items remain idle. If playlist
+looping is enabled, reaching the end of a video does not flush and
+restart the same file—instead, the queue pops the next media item into
+the decoder pipeline, only flushing when the entire playlist reaches its
+end and restarts from the first item.</li>
+</ul>
+<h3 id="performance-impact-of-the-loop-reset">Performance Impact of the
+Loop Reset</h3>
+<p>Because the video playback queue is flushed and rebuilt at every loop
+point, there is a minor spike in demuxing and decoding activity at the
+transition point. If the video codec relies on long Groups of Pictures
+(GOPs) or high bitrates, the queue may experience a brief starvation
+period while waiting for the initial keyframe (I-frame) to decode, which
+can occasionally manifest as a micro-stutter on systems with high
+resource utilization.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

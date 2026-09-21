@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Capture a Specific Window in OBS Studio - obs-studio</title>
+    <meta name="description" content="Capturing a specific application window in OBS Studio is a fundamental skill for streamers, content creators, and educators who want to share a single program without exposing their entire desktop. This guide provides a direct, step-by-step walkthrough o">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-capture-a-specific-window-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Capture a Specific Window in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-capture-a-specific-window-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Capturing a specific application window in OBS Studio is a fundamental skill for streamers, content creators, and educators who want to share a single program without exposing their entire desktop. This guide provides a direct, step-by-step walkthrough o" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-capture-a-specific-window-in-obs-studio">How to Capture a
+Specific Window in OBS Studio</h1>
+<p>Capturing a specific application window in OBS Studio is a
+fundamental skill for streamers, content creators, and educators who
+want to share a single program without exposing their entire desktop.
+This guide provides a direct, step-by-step walkthrough on how to use the
+"Window Capture" source in OBS Studio to record or stream a specific
+application, along with quick troubleshooting tips for common
+issues.</p>
+<h3 id="step-1-prepare-your-software">Step 1: Prepare Your Software</h3>
+<p>Before opening OBS Studio, launch the application window you want to
+capture (such as a web browser, a document viewer, or a game). Ensure
+the target window is not minimized to your taskbar, as OBS cannot
+capture minimized applications.</p>
+<h3 id="step-2-add-a-window-capture-source">Step 2: Add a Window Capture
+Source</h3>
+<ol type="1">
+<li>Open <strong>OBS Studio</strong>.</li>
+<li>Go to the <strong>Sources</strong> dock at the bottom of the
+screen.</li>
+<li>Click the <strong>+ (plus)</strong> icon at the bottom of the
+Sources dock.</li>
+<li>Select <strong>Window Capture</strong> from the pop-up menu.</li>
+<li>In the "Create/Select Source" window, give the source a recognizable
+name (e.g., "Browser Capture") and click <strong>OK</strong>.</li>
+</ol>
+<h3 id="step-3-select-and-configure-the-target-window">Step 3: Select
+and Configure the Target Window</h3>
+<p>A properties window will appear automatically after you name the
+source. Configure the following settings:</p>
+<ul>
+<li><strong>Window:</strong> Click this dropdown menu and select the
+specific application you want to capture.</li>
+<li><strong>Capture Method:</strong> Leave this on
+<strong>Automatic</strong>. If the window appears black or doesn't
+render correctly, change this setting to <strong>Windows 10 (1903 and
+up)</strong>.</li>
+<li><strong>Window Match Priority:</strong> If you are capturing a
+window that changes titles frequently (like a web browser tab), set this
+to <strong>Match title, otherwise find window of same type</strong>.
+Otherwise, the default setting is sufficient.</li>
+<li><strong>Capture Cursor:</strong> Check or uncheck this box depending
+on whether you want your mouse movements to be visible in the
+capture.</li>
+</ul>
+<p>Click <strong>OK</strong> to apply the settings.</p>
+<h3 id="step-4-adjust-the-capture-in-your-scene">Step 4: Adjust the
+Capture in Your Scene</h3>
+<p>The captured window will now appear in your OBS canvas. You can click
+and drag the red boundary box to resize or reposition the window within
+your scene.</p>
+<ul>
+<li>To resize proportionally, click and drag any corner of the red
+box.</li>
+<li>To crop the window, hold the <strong>Alt</strong> key (Option key on
+Mac) while dragging the edges of the red box.</li>
+</ul>
+<h3 id="troubleshooting-common-issues">Troubleshooting Common
+Issues</h3>
+<ul>
+<li><strong>Black Screen:</strong> If the preview window is black,
+ensure the target application is not minimized. If it still does not
+appear, try running OBS Studio as an administrator, or turn off hardware
+acceleration in the settings of the target application (especially
+common with Discord, Chrome, or Spotify).</li>
+<li><strong>Missing Window in Dropdown:</strong> If your application
+does not appear in the "Window" dropdown menu, restart OBS Studio or
+close and relaunch the target application.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

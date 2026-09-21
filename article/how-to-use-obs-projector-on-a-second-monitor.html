@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Use OBS Projector on a Second Monitor - obs-studio</title>
+    <meta name="description" content="This guide provides a straightforward walkthrough on how to use the projector feature in OBS Studio to send your video feed, scenes, or specific sources to a secondary monitor. You will learn how to access both fullscreen and windowed projectors, how to">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-use-obs-projector-on-a-second-monitor">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Use OBS Projector on a Second Monitor - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-use-obs-projector-on-a-second-monitor" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide provides a straightforward walkthrough on how to use the projector feature in OBS Studio to send your video feed, scenes, or specific sources to a secondary monitor. You will learn how to access both fullscreen and windowed projectors, how to" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-use-obs-projector-on-a-second-monitor">How to Use OBS
+Projector on a Second Monitor</h1>
+<p>This guide provides a straightforward walkthrough on how to use the
+projector feature in OBS Studio to send your video feed, scenes, or
+specific sources to a secondary monitor. You will learn how to access
+both fullscreen and windowed projectors, how to display different types
+of outputs, and how to manage these displays during a live stream or
+recording session.</p>
+<h2 id="types-of-projectors-in-obs-studio">Types of Projectors in OBS
+Studio</h2>
+<p>OBS Studio offers two main types of projectors, which can be applied
+to different aspects of your production:</p>
+<ul>
+<li><strong>Fullscreen Projector:</strong> Sends the video output
+directly to a selected monitor, filling the entire screen without any
+window borders or taskbars.</li>
+<li><strong>Windowed Projector:</strong> Opens the video output in a
+resizable, draggable window that you can place anywhere, including on a
+secondary monitor.</li>
+</ul>
+<p>You can project four different outputs:</p>
+<ol type="1">
+<li><strong>Program (Output):</strong> The final feed that your viewers
+see.</li>
+<li><strong>Preview:</strong> The staging area (only visible when Studio
+Mode is enabled).</li>
+<li><strong>Scene:</strong> A specific scene from your collection,
+regardless of whether it is currently live.</li>
+<li><strong>Source:</strong> A single camera, capture card, image, or
+media source.</li>
+</ol>
+<hr />
+<h2 id="step-by-step-how-to-set-up-a-fullscreen-projector">Step-by-Step:
+How to Set Up a Fullscreen Projector</h2>
+<p>Using a fullscreen projector is the most common method for dedicating
+a secondary monitor as a confidence monitor or video feed.</p>
+<ol type="1">
+<li><strong>Identify your target display:</strong> Ensure your secondary
+monitor is plugged in, turned on, and recognized by your computer’s
+operating system.</li>
+<li><strong>Choose what to project:</strong>
+<ul>
+<li><strong>For the Program/Preview feed:</strong> Right-click anywhere
+on the main black preview window in OBS Studio.</li>
+<li><strong>For a specific Scene:</strong> Right-click the desired scene
+in the <strong>Scenes</strong> dock.</li>
+<li><strong>For a specific Source:</strong> Right-click the desired
+source in the <strong>Sources</strong> dock, or right-click the source
+directly in the preview window.</li>
+</ul></li>
+<li><strong>Select the Projector option:</strong> Hover your mouse over
+<strong>Fullscreen Projector (Preview)</strong>, <strong>Fullscreen
+Projector (Program)</strong>, <strong>Fullscreen Projector
+(Scene)</strong>, or <strong>Fullscreen Projector (Source)</strong>
+depending on your choice in step 2.</li>
+<li><strong>Choose the secondary monitor:</strong> A sub-menu will
+appear listing your connected monitors (e.g., <em>Display 0</em>,
+<em>Display 1</em>). Click on the monitor you want to send the video
+feed to.</li>
+</ol>
+<p>The video feed will immediately render in fullscreen on that
+monitor.</p>
+<hr />
+<h2 id="step-by-step-how-to-set-up-a-windowed-projector">Step-by-Step:
+How to Set Up a Windowed Projector</h2>
+<p>If you do not want the video to take up the entire screen, or if you
+want to resize it alongside other applications on your second monitor,
+use the windowed projector.</p>
+<ol type="1">
+<li><strong>Open the context menu:</strong> Right-click on the preview
+window, scene, or source you wish to project.</li>
+<li><strong>Select Windowed Projector:</strong> Click on
+<strong>Windowed Projector (Preview)</strong>, <strong>Windowed
+Projector (Program)</strong>, <strong>Windowed Projector
+(Scene)</strong>, or <strong>Windowed Projector (Source)</strong>.</li>
+<li><strong>Position the window:</strong> A new window containing your
+video feed will pop up. Drag this window over to your secondary
+monitor.</li>
+<li><strong>Resize:</strong> Click and drag the edges of the window to
+scale it to your preferred size, or double-click the title bar to
+maximize it.</li>
+</ol>
+<hr />
+<h2 id="how-to-close-and-manage-projectors">How to Close and Manage
+Projectors</h2>
+<p>Managing active projectors is simple once they are running:</p>
+<ul>
+<li><strong>To close a Fullscreen Projector:</strong> Press the
+<strong>Escape (Esc)</strong> key on your keyboard while clicking on the
+projected monitor, or right-click on the projected screen and select
+<strong>Close</strong>.</li>
+<li><strong>To close a Windowed Projector:</strong> Click the standard
+<strong>X</strong> close button in the top-right (or top-left on macOS)
+corner of the projector window.</li>
+<li><strong>To save projector states:</strong> By default, OBS Studio
+can remember your windowed projector positions. You can configure this
+behavior in <strong>Settings</strong> &gt; <strong>General</strong> &gt;
+<strong>Projectors</strong>.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

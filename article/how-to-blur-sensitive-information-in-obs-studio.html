@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Blur Sensitive Information in OBS Studio - obs-studio</title>
+    <meta name="description" content="Protecting your privacy while live-streaming or recording is crucial, especially when typing passwords, emails, or displaying personal data. This article provides a step-by-step guide on how to dynamically blur sensitive information in OBS Studio. You wi">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-blur-sensitive-information-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Blur Sensitive Information in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-blur-sensitive-information-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Protecting your privacy while live-streaming or recording is crucial, especially when typing passwords, emails, or displaying personal data. This article provides a step-by-step guide on how to dynamically blur sensitive information in OBS Studio. You wi" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-blur-sensitive-information-in-obs-studio">How to Blur
+Sensitive Information in OBS Studio</h1>
+<p>Protecting your privacy while live-streaming or recording is crucial,
+especially when typing passwords, emails, or displaying personal data.
+This article provides a step-by-step guide on how to dynamically blur
+sensitive information in OBS Studio. You will learn how to use a native,
+plugin-free pixelation method as well as how to use popular free plugins
+for a professional blur effect.</p>
+<h2
+id="method-1-the-native-pixelation-method-no-plugins-required">Method 1:
+The Native Pixelation Method (No Plugins Required)</h2>
+<p>If you do not want to install third-party plugins, you can create a
+dynamic blur/pixelation effect using OBS Studio’s built-in filters. This
+method works by duplicating your source, cropping it to the sensitive
+area, and downscaling it to create a pixelated block.</p>
+<h3 id="step-1-duplicate-your-source">Step 1: Duplicate your source</h3>
+<ol type="1">
+<li>Open OBS Studio and go to your <strong>Sources</strong> dock.</li>
+<li>Right-click the source you want to blur (e.g., Window Capture or
+Display Capture) and select <strong>Copy</strong>.</li>
+<li>Right-click in the Sources box again and select <strong>Paste
+Reference</strong>. This ensures any changes to the original source
+happen to the blurred layer as well.</li>
+</ol>
+<h3 id="step-2-crop-to-the-sensitive-area">Step 2: Crop to the sensitive
+area</h3>
+<ol type="1">
+<li>Select the duplicated source you just pasted.</li>
+<li>Hold the <strong>Alt</strong> key (Option on Mac) and drag the red
+bounding box edges inward to crop the source so only the sensitive area
+(like a password field) is visible.</li>
+<li>Alternatively, right-click the duplicated source, go to
+<strong>Filters</strong>, click the <strong>+</strong> icon, and add a
+<strong>Crop/Pad</strong> filter to precisely target the coordinates of
+the sensitive area.</li>
+</ol>
+<h3 id="step-3-apply-the-pixelation-filter">Step 3: Apply the pixelation
+filter</h3>
+<ol type="1">
+<li>Right-click the cropped duplicate source and select
+<strong>Filters</strong>.</li>
+<li>Click the <strong>+</strong> icon under Effect Filters and select
+<strong>Scaling/Aspect Ratio</strong>.</li>
+<li>Change the <strong>Resolution</strong> to a very low setting (e.g.,
+64x64 or 32x32).</li>
+<li>Set the <strong>Scale Filtering</strong> to
+<strong>Bilinear</strong> (for a blurry look) or <strong>Point</strong>
+(for a pixelated look).</li>
+<li>Close the filters window and resize the cropped source on your
+canvas to fit perfectly over the original sensitive area.</li>
+</ol>
+<hr />
+<h2 id="method-2-using-the-composite-blur-plugin-recommended">Method 2:
+Using the "Composite Blur" Plugin (Recommended)</h2>
+<p>For a smooth, professional Gaussian blur, using a dedicated plugin is
+the best approach. The free <strong>Composite Blur</strong> plugin
+allows you to easily mask and blur specific areas of a source.</p>
+<h3 id="step-1-install-the-plugin">Step 1: Install the plugin</h3>
+<ol type="1">
+<li>Download and install the <strong>Composite Blur</strong> plugin from
+the official OBS Resources forum.</li>
+<li>Restart OBS Studio after installation.</li>
+</ol>
+<h3 id="step-2-apply-the-filter">Step 2: Apply the filter</h3>
+<ol type="1">
+<li>Right-click the source containing the sensitive information and
+select <strong>Filters</strong>.</li>
+<li>Click the <strong>+</strong> icon under Effect Filters and select
+<strong>Composite Blur</strong>.</li>
+<li>In the filter settings, adjust the <strong>Blur Value</strong> to
+your desired strength.</li>
+</ol>
+<h3 id="step-3-mask-the-sensitive-area">Step 3: Mask the sensitive
+area</h3>
+<ol type="1">
+<li>Inside the Composite Blur filter settings, look for the
+<strong>Mask</strong> or <strong>Crop</strong> options.</li>
+<li>Use the slider controls to crop the blur effect so it only covers
+the specific portion of the screen where the password or sensitive input
+field resides.</li>
+<li>Close the filter settings. The blur will now remain locked to that
+specific coordinate on your capture source.</li>
+</ol>
+<hr />
+<h2 id="keeping-the-blur-dynamic-with-moving-windows">Keeping the Blur
+Dynamic with Moving Windows</h2>
+<p>If the window containing the sensitive information moves around your
+screen, the blur must move with it.</p>
+<p>To achieve this:</p>
+<ol type="1">
+<li>Ensure you apply the crop or blur filters directly to a
+<strong>Window Capture</strong> source rather than a Display Capture
+source.</li>
+<li>If using Method 1, select both your original source and the cropped
+duplicate source in your Sources dock.</li>
+<li>Right-click them and select <strong>Group Selected
+Items</strong>.</li>
+<li>Whenever you move or resize the window, the cropped blur overlay
+will remain locked in the correct position relative to the window.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

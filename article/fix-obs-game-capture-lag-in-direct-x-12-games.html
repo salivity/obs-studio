@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix OBS Game Capture Lag in DirectX 12 Games - obs-studio</title>
+    <meta name="description" content="If you experience massive in-game frame rate drops when using OBS Studio's "Game Capture" source on DirectX 12 (DX12) titles, you are not alone. This performance hit is usually caused by conflicts between DX12's low-level API rendering and the way OBS ho">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/fix-obs-game-capture-lag-in-direct-x-12-games">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Fix OBS Game Capture Lag in DirectX 12 Games - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/fix-obs-game-capture-lag-in-direct-x-12-games" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="If you experience massive in-game frame rate drops when using OBS Studio's "Game Capture" source on DirectX 12 (DX12) titles, you are not alone. This performance hit is usually caused by conflicts between DX12's low-level API rendering and the way OBS ho" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="fix-obs-game-capture-lag-in-directx-12-games">Fix OBS Game
+Capture Lag in DirectX 12 Games</h1>
+<p>If you experience massive in-game frame rate drops when using OBS
+Studio's "Game Capture" source on DirectX 12 (DX12) titles, you are not
+alone. This performance hit is usually caused by conflicts between
+DX12's low-level API rendering and the way OBS hooks into the game
+engine. This article provides straightforward, actionable solutions to
+eliminate these frame drops, covering settings adjustments, alternative
+capture methods, and system optimizations to restore your game's
+performance while streaming or recording.</p>
+<h2 id="use-windows-graphics-capture-wgc-for-window-capture">Use Windows
+Graphics Capture (WGC) for Window Capture</h2>
+<p>DirectX 12 games often react poorly to the traditional hooking method
+used by OBS’s "Game Capture" source. Transitioning to a "Window Capture"
+source using the modern Windows graphics engine bypasses this hook
+entirely.</p>
+<ol type="1">
+<li>Open OBS Studio and go to your <strong>Sources</strong> dock.</li>
+<li>Click the <strong>+</strong> icon and select <strong>Window
+Capture</strong> (instead of Game Capture).</li>
+<li>Set your DX12 game to run in <strong>Borderless Windowed</strong> or
+<strong>Windowed</strong> mode in the game's settings.</li>
+<li>In the OBS Window Capture properties, select your game under the
+<strong>Window</strong> dropdown.</li>
+<li>Change the <strong>Capture Method</strong> to <strong>Windows 10
+(1903 and up)</strong> (also known as Windows Graphics Capture).</li>
+</ol>
+<p>This method utilizes a highly optimized Windows API that captures
+DX12 games with virtually zero impact on in-game frame rates.</p>
+<h2 id="run-obs-studio-as-administrator">Run OBS Studio as
+Administrator</h2>
+<p>When your GPU runs at 100% capacity, Windows prioritizes the game
+over background applications, causing OBS to starve for resources and
+drop frames. Running OBS as an administrator triggers a Windows GPU
+scheduler feature that reserves a small percentage of GPU power for
+OBS.</p>
+<ol type="1">
+<li>Right-click your <strong>OBS Studio</strong> shortcut.</li>
+<li>Select <strong>Properties</strong>.</li>
+<li>Go to the <strong>Compatibility</strong> tab.</li>
+<li>Check the box for <strong>Run this program as an
+administrator</strong>.</li>
+<li>Click <strong>Apply</strong> and <strong>OK</strong>.</li>
+</ol>
+<h2 id="limit-your-in-game-frame-rate">Limit Your In-Game Frame
+Rate</h2>
+<p>If your GPU is fully maxed out rendering unlimited frames in a DX12
+game, OBS will struggle to capture the video feed, resulting in
+stuttering.</p>
+<ol type="1">
+<li>Open your game's video settings.</li>
+<li>Enable a <strong>Frame Rate Limit</strong> (FPS limit).</li>
+<li>Match the limit to your monitor's refresh rate (e.g., 60, 120, or
+144 FPS) or slightly lower.</li>
+<li>Alternatively, enable <strong>V-Sync</strong> to cap your frame rate
+and reduce GPU load, leaving overhead for OBS to encode the video.</li>
+</ol>
+<h2 id="disable-conflicting-overlays">Disable Conflicting Overlays</h2>
+<p>DirectX 12 is highly sensitive to multiple applications trying to
+hook into its render pipeline. Third-party overlays are a primary cause
+of severe performance degradation when combined with OBS.</p>
+<p>Disable the following overlays while streaming or recording:</p>
+<ul>
+<li><strong>Discord Overlay</strong> (User Settings &gt; Game Overlay
+&gt; Enable in-game overlay [Turn Off])</li>
+<li><strong>GeForce Experience Share / ShadowPlay Overlay</strong></li>
+<li><strong>Steam Overlay</strong></li>
+<li><strong>RivaTuner Statistics Server (RTSS)</strong> or <strong>MSI
+Afterburner</strong></li>
+</ul>
+<h2 id="toggle-hardware-accelerated-gpu-scheduling-hags">Toggle
+Hardware-Accelerated GPU Scheduling (HAGS)</h2>
+<p>Windows' Hardware-Accelerated GPU Scheduling (HAGS) can sometimes
+conflict with OBS Studio's resource allocation on DX12 titles. Depending
+on your GPU driver version, turning this feature on or off can resolve
+the frame rate drops.</p>
+<ol type="1">
+<li>Open the Windows <strong>Start Menu</strong> and search for
+<strong>Graphics settings</strong>.</li>
+<li>Locate <strong>Hardware-accelerated GPU scheduling</strong>.</li>
+<li>Toggle the switch to <strong>Off</strong> (or <strong>On</strong> if
+it was previously off to see if performance improves).</li>
+<li>Restart your computer for the changes to take effect.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

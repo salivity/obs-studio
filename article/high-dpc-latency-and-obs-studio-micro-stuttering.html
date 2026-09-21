@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High DPC Latency and OBS Studio Micro-Stuttering - obs-studio</title>
+    <meta name="description" content="High Deferred Procedure Call (DPC) latency can cause severe micro-stuttering in OBS Studio streams, even when your GPU usage sits well below 50%. This article explains how DPC latency interrupts critical frame delivery pipelines, why hardware utilization">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/high-dpc-latency-and-obs-studio-micro-stuttering">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="High DPC Latency and OBS Studio Micro-Stuttering - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/high-dpc-latency-and-obs-studio-micro-stuttering" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="High Deferred Procedure Call (DPC) latency can cause severe micro-stuttering in OBS Studio streams, even when your GPU usage sits well below 50%. This article explains how DPC latency interrupts critical frame delivery pipelines, why hardware utilization" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="high-dpc-latency-and-obs-studio-micro-stuttering">High DPC
+Latency and OBS Studio Micro-Stuttering</h1>
+<p>High Deferred Procedure Call (DPC) latency can cause severe
+micro-stuttering in OBS Studio streams, even when your GPU usage sits
+well below 50%. This article explains how DPC latency interrupts
+critical frame delivery pipelines, why hardware utilization metrics fail
+to reflect the problem, and what specific driver, BIOS, and system power
+behaviors trigger these transient delays.</p>
+<h3
+id="understanding-dpc-latency-in-the-streaming-pipeline">Understanding
+DPC Latency in the Streaming Pipeline</h3>
+<p>A Deferred Procedure Call (DPC) is an operating system mechanism in
+Windows that manages interrupt processing. When hardware tasks
+occur—such as a network packet arriving or an audio buffer filling—the
+hardware issues an Interrupt Service Routine (ISR), followed by a DPC to
+execute the heavier deferred work.</p>
+<p>OBS Studio requires consistent, real-time access to the CPU and GPU
+to capture, compose, and encode frames at steady intervals (e.g.,
+precisely every 16.6 milliseconds for 60 FPS). When a misbehaving driver
+holds the CPU in a prolonged DPC routine, it delays all other system
+processes. Even if your GPU is idling at 30% to 40% capacity, the
+compositor cannot deliver frames to the encoder on time, leading to
+frame drops, erratic frame pacing, and visible micro-stuttering.</p>
+<h3 id="why-low-gpu-load-masks-the-problem">Why Low GPU Load Masks the
+Problem</h3>
+<p>A common misconception is that stuttering must be caused by hardware
+saturation, such as a maxed-out GPU core or overloaded VRAM. DPC
+latency, however, is an operating system and driver scheduling
+bottleneck, not a raw throughput limitation.</p>
+<p>In fact, maintaining a low GPU load can sometimes worsen the issue.
+When GPU utilization remains low, the graphics driver and system power
+plan actively attempt to downclock hardware components into aggressive
+low-power states (such as PCIe Active State Power Management or GPU
+P-States). When OBS suddenly demands a frame compositing pass, the
+transition from an idle or low-power state back to a high-performance
+state creates transient latency spikes that disrupt frame rendering
+deadlines.</p>
+<h3 id="the-primary-causes-of-dpc-latency-spikes">The Primary Causes of
+DPC Latency Spikes</h3>
+<ol type="1">
+<li><p><strong>GPU Driver Interrupts (<code>nvlddmkm.sys</code> or
+<code>amdkmdag.sys</code>)</strong> The primary display driver
+frequently causes DPC latency spikes when dynamic power-saving routines
+miscalculate workload changes. Variable refresh rate technologies
+(G-Sync/FreeSync) operating across mixed-refresh-rate multi-monitor
+setups can also cause the driver to delay frame presentation.</p></li>
+<li><p><strong>Network Drivers (<code>ndis.sys</code>)</strong> Network
+interface cards (NICs), particularly Wi-Fi adapters or onboard
+Realtek/Intel Ethernet controllers running default Windows drivers,
+regularly introduce high DPC overhead. Features such as Energy Efficient
+Ethernet, interrupt moderation misconfigurations, and outdated network
+drivers frequently block system execution queues while processing
+high-bitrate video traffic.</p></li>
+<li><p><strong>Audio Subsystem Drivers (<code>portcls.sys</code> or USB
+Audio)</strong> Real-time audio processing requires low-latency
+handling. Incompatible Realtek high-definition audio drivers, virtual
+audio cables, or unoptimized USB audio interface drivers can saturate
+the DPC queue, causing streaming software to hitch while waiting for
+synchronized audio/video packets.</p></li>
+<li><p><strong>BIOS Power Configurations (C-States and
+SpeedShift/SpeedStep)</strong> Deep CPU sleep states (C6/C7/C8) can
+introduce significant wake-up penalties. When OBS and the underlying
+game periodically alternate between demanding and relinquishing CPU
+cycles, the CPU constantly enters and exits low-power states. The
+microsecond delays incurred during these power transitions prevent OBS
+from meeting strict frame submission deadlines.</p></li>
+<li><p><strong>USB Hub and Bus Saturation</strong> Streaming setups
+often rely on multiple high-bandwidth USB devices plugged into the same
+internal root hub, such as capture cards, webcams, and external audio
+interfaces. If the host controller is overwhelmed or poorly optimized by
+system drivers, it queues high-priority hardware interrupts that stall
+the entire processing chain.</p></li>
+</ol>
+<h3 id="how-to-identify-and-resolve-dpc-latency">How to Identify and
+Resolve DPC Latency</h3>
+<ul>
+<li><strong>Diagnose with LatencyMon:</strong> Run the LatencyMon
+utility during a test stream. Check the "Drivers" tab and sort by
+highest execution time to identify the exact driver file
+(<code>nvlddmkm.sys</code>, <code>ndis.sys</code>, etc.) responsible for
+the highest DPC routines.</li>
+<li><strong>Configure GPU Power Management:</strong> In the NVIDIA
+Control Panel or AMD Software, set the power management mode for OBS
+Studio (or globally) to "Prefer maximum performance" to prevent hardware
+downclocking during live streams.</li>
+<li><strong>Disable Hardware Power Saving:</strong> Turn off Energy
+Efficient Ethernet and Green Ethernet in your network adapter's device
+properties. In Windows Power Options, set PCIe Link State Power
+Management to "Off."</li>
+<li><strong>Stabilize CPU Power States:</strong> If latency spikes
+persist, enter your motherboard BIOS and test disabling deep C-States
+(leaving basic C-States enabled) to reduce wake-up latency penalties
+across processing cores.</li>
+<li><strong>Balance USB Controllers:</strong> Distribute high-bandwidth
+devices (such as USB capture cards and 4K webcams) across separate
+physical USB controllers rather than daisy-chaining them onto a single
+hub.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

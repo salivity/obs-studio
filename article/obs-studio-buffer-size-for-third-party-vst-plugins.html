@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Buffer Size for Third-Party VST Plugins - obs-studio</title>
+    <meta name="description" content="This article examines the audio buffer size allocation used by OBS Studio when running third-party VST plugins, including equalizers. It details the fixed internal frame sizes utilized by the OBS audio engine, explains how the software feeds audio data t">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-buffer-size-for-third-party-vst-plugins">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Buffer Size for Third-Party VST Plugins - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-buffer-size-for-third-party-vst-plugins" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines the audio buffer size allocation used by OBS Studio when running third-party VST plugins, including equalizers. It details the fixed internal frame sizes utilized by the OBS audio engine, explains how the software feeds audio data t" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-buffer-size-for-third-party-vst-plugins">OBS Studio
+Buffer Size for Third-Party VST Plugins</h1>
+<p>This article examines the audio buffer size allocation used by OBS
+Studio when running third-party VST plugins, including equalizers. It
+details the fixed internal frame sizes utilized by the OBS audio engine,
+explains how the software feeds audio data to the VST host module, and
+explores the practical impact this buffer size has on processing latency
+and filter behavior.</p>
+<h2 id="the-default-buffer-size-allocation">The Default Buffer Size
+Allocation</h2>
+<p>OBS Studio allocates a fixed buffer size of <strong>1,024
+samples</strong> per audio block when processing audio through its
+internal pipeline and third-party VST 2.x plugins.</p>
+<p>In the core OBS architecture (<code>libobs</code>), the audio system
+defines standard processing chunks using the macro
+<code>AUDIO_OUTPUT_FRAMES</code>, which is hardcoded to 1,024 audio
+frames per channel. When audio passes through the filter chain on any
+audio source, the native <code>obs-vst</code> plugin host passes audio
+data to the plugin’s <code>processReplacing</code> or
+<code>processDoubleReplacing</code> functions in chunks of this exact
+size.</p>
+<h2 id="latency-and-sample-rate-calculations">Latency and Sample Rate
+Calculations</h2>
+<p>Because the buffer size is tied to a fixed sample count rather than a
+fixed time slice, the physical latency introduced by this buffer depends
+on the global sample rate configured in OBS Studio:</p>
+<ul>
+<li><strong>At 48 kHz (standard broadcast rate):</strong> A 1,024-sample
+buffer equates to approximately <strong>21.33 milliseconds</strong> of
+processing latency per block.</li>
+<li><strong>At 44.1 kHz (standard media rate):</strong> A 1,024-sample
+buffer equates to approximately <strong>23.22 milliseconds</strong> of
+processing latency per block.</li>
+</ul>
+<p>Unlike a Digital Audio Workstation (DAW) utilizing dedicated
+low-latency ASIO drivers, OBS Studio does not provide a native user
+interface setting to alter this internal 1,024-sample processing block
+size. The audio pipeline relies on this uniform buffer to maintain
+stability and prevent buffer underruns during real-time video
+compositing and encoding.</p>
+<h2 id="impact-on-vst-equalization-plugins">Impact on VST Equalization
+Plugins</h2>
+<p>The 1,024-sample block size directly affects how third-party
+equalization filters function inside OBS Studio:</p>
+<ul>
+<li><strong>Minimum-Phase Equalizers (IIR Filters):</strong> Standard
+parametric and graphic EQs process samples sequentially with virtually
+zero inherent algorithmic latency. These plugins execute well within the
+1,024-sample block, introducing no additional delay beyond the
+software's standard 21.33 ms processing chunk.</li>
+<li><strong>Linear-Phase Equalizers (FIR / FFT Filters):</strong>
+Linear-phase EQs require larger internal Fast Fourier Transform (FFT)
+windows (often 2,048, 4,096, or more samples) to maintain accurate
+low-frequency resolution. When the internal plugin window exceeds OBS’s
+1,024-sample buffer, the plugin must queue multiple incoming blocks
+before returning processed audio. This adds reportable latency that can
+misalign live microphone audio with corresponding video feeds.</li>
+</ul>
+<h2 id="latency-compensation-in-obs-studio">Latency Compensation in OBS
+Studio</h2>
+<p>While standard DAWs automatically delay timeline tracks to match the
+plugin with the highest latency, OBS Studio does not feature universal
+automatic plugin delay compensation (PDC). If a complex VST equalizer
+introduces internal processing delay on top of the 1,024-sample engine
+buffer, manual adjustment is required. Broadcasters must enter a
+negative or positive offset via the <strong>Sync Offset</strong> setting
+in the <strong>Advanced Audio Properties</strong> menu to keep equalized
+microphone audio synchronized with visual camera frames.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

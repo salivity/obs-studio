@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Memory Cleanup When Closing Scene Collections - obs-studio</title>
+    <meta name="description" content="When you close or switch away from a heavily filtered scene collection without quitting OBS Studio, the application executes a structured teardown process to release both system RAM and GPU VRAM. By utilizing an internal reference-counting model across i">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-memory-cleanup-when-closing-scene-collections">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Memory Cleanup When Closing Scene Collections - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-memory-cleanup-when-closing-scene-collections" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When you close or switch away from a heavily filtered scene collection without quitting OBS Studio, the application executes a structured teardown process to release both system RAM and GPU VRAM. By utilizing an internal reference-counting model across i" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-memory-cleanup-when-closing-scene-collections">OBS
+Studio Memory Cleanup When Closing Scene Collections</h1>
+<p>When you close or switch away from a heavily filtered scene
+collection without quitting OBS Studio, the application executes a
+structured teardown process to release both system RAM and GPU VRAM. By
+utilizing an internal reference-counting model across its core framework
+(<code>libobs</code>), OBS systematically unloads active render
+pipelines, destroys filter chains, and signals the operating system and
+graphics drivers to release hardware resources. While the teardown
+triggers immediate deallocation instructions within the software, the
+actual observed memory footprint depends on how external drivers,
+third-party plugins, and the OS memory manager handle deferred
+reclamation.</p>
+<h3 id="reference-counting-and-source-destruction">Reference Counting
+and Source Destruction</h3>
+<p>OBS Studio treats every scene, source, and filter as an
+<code>obs_source_t</code> object. Filters operate as child sources
+attached to parent sources within a linked list. When a scene collection
+is closed:</p>
+<ol type="1">
+<li><strong>Hierarchy Teardown:</strong> OBS traverses the scene graph,
+detaching filters from their respective sources and sources from their
+scenes.</li>
+<li><strong>Reference Decrementing:</strong> The software invokes
+<code>obs_source_release</code> on every object in the collection. This
+decrements the object's reference counter.</li>
+<li><strong>Destruction Callback:</strong> Once an object's reference
+count drops to zero, <code>libobs</code> calls the internal
+<code>destroy</code> function specific to that source or filter type.
+This stops processing threads, halts asynchronous video rendering ticks,
+and frees the source's memory allocation.</li>
+</ol>
+<h3 id="gpu-memory-vram-reclamation">GPU Memory (VRAM) Reclamation</h3>
+<p>Heavily filtered collections consume significant video memory due to
+intermediate render targets, dynamic textures, and custom shaders (e.g.,
+blur passes, color grading LUTs, scaling masks). During collection
+closure:</p>
+<ul>
+<li><strong>Render Target Deletion:</strong> OBS calls graphics
+subsystem wrappers (such as <code>gs_texture_destroy</code> and
+<code>gs_stagesurf_destroy</code>) to release Direct3D 11, OpenGL, or
+Metal textures assigned to offscreen render passes.</li>
+<li><strong>Shader Pipeline Flushes:</strong> Active filter shaders are
+unbound from the rendering context. Shaders shared across the core
+engine may remain cached, but instance-specific parameters, constant
+buffers, and framebuffers are purged.</li>
+<li><strong>Driver Caching:</strong> Although OBS marks these graphics
+contexts for deletion, graphics drivers (NVIDIA, AMD, or Intel) may not
+immediately return the VRAM to the global pool. The driver frequently
+retains allocated memory blocks to minimize reallocation latency for
+incoming tasks.</li>
+</ul>
+<h3 id="system-ram-and-cpu-cleanup">System RAM and CPU Cleanup</h3>
+<p>Filters that process audio, perform software-based compositing, or
+utilize CPU-driven machine learning (such as background removal)
+allocate substantial system memory. When the collection closes:</p>
+<ul>
+<li><strong>Buffer Deallocation:</strong> Frame buffers, audio ring
+buffers, and worker queues are deallocated using internal memory
+utilities (<code>bfree</code>).</li>
+<li><strong>Plugin Teardown:</strong> Native plugins release their
+dynamically allocated data structs and terminate associated background
+worker threads.</li>
+<li><strong>C-Runtime Behavior:</strong> Even after OBS frees heap
+memory, the C-runtime memory allocator (or OS virtual memory manager)
+might hold onto the committed pages rather than returning them to
+physical RAM instantly. This explains why Task Manager or Activity
+Monitor may show a delayed or partial reduction in RAM usage until the
+memory is actively requested by another process.</li>
+</ul>
+<h3 id="third-party-plugin-leaks">Third-Party Plugin Leaks</h3>
+<p>The reliability of memory reclamation heavily relies on filter
+implementation. Core OBS Studio filters (such as Chroma Key, Color
+Correction, and Scaling) cleanly destroy all allocations. However,
+third-party plugins—particularly those utilizing external AI frameworks
+or unmanaged code—may fail to properly implement the
+<code>destroy</code> callback. In such cases, dangling pointers or
+orphaned threads can cause persistent memory leaks that remain resident
+in system memory until the OBS application is completely restarted.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What is AV1 Encoder and How to Use It in OBS - obs-studio</title>
+    <meta name="description" content="This article explains what the AV1 video encoder is, why it represents a major leap forward for live streaming and recording, and provides a clear, step-by-step guide on how to enable and configure it within OBS Studio. AV1 (AOMedia Video 1) is an open-s">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/what-is-av-1-encoder-and-how-to-use-it-in-obs">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="What is AV1 Encoder and How to Use It in OBS - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/what-is-av-1-encoder-and-how-to-use-it-in-obs" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains what the AV1 video encoder is, why it represents a major leap forward for live streaming and recording, and provides a clear, step-by-step guide on how to enable and configure it within OBS Studio. AV1 (AOMedia Video 1) is an open-s" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="what-is-av1-encoder-and-how-to-use-it-in-obs">What is AV1
+Encoder and How to Use It in OBS</h1>
+<p>This article explains what the AV1 video encoder is, why it
+represents a major leap forward for live streaming and recording, and
+provides a clear, step-by-step guide on how to enable and configure it
+within OBS Studio.</p>
+<h2 id="what-is-the-av1-encoder">What is the AV1 Encoder?</h2>
+<p>AV1 (AOMedia Video 1) is an open-source, royalty-free video coding
+format designed for video transmissions over the internet. Developed by
+the Alliance for Open Media—a coalition of tech giants including Google,
+Microsoft, Apple, and Netflix—AV1 is the successor to the widely used
+H.264 (AVC) and HEVC (H.265) codecs.</p>
+<p>The primary benefit of AV1 is its superior compression efficiency. It
+can deliver the same visual quality as H.264 while using up to 30% to
+50% less data (bandwidth). For content creators and streamers, this
+means you can stream in higher resolutions (like 1440p or 4K) and higher
+frame rates at much lower bitrates, resulting in a clearer picture with
+less buffering for your viewers.</p>
+<h2 id="requirements-for-using-av1-in-obs-studio">Requirements for Using
+AV1 in OBS Studio</h2>
+<p>To use AV1 encoding in OBS Studio, you need compatible hardware and
+software:</p>
+<ul>
+<li><strong>OBS Studio:</strong> Version 29.0 or newer.</li>
+<li><strong>Graphics Card (Hardware Encoding):</strong> AV1 encoding
+requires dedicated hardware chips on your GPU. Compatible cards include:
+<ul>
+<li><strong>NVIDIA:</strong> GeForce RTX 40-Series or newer.</li>
+<li><strong>AMD:</strong> Radeon RX 7000-Series or newer.</li>
+<li><strong>Intel:</strong> Arc GPUs or Intel Core Ultra
+processors.</li>
+</ul></li>
+<li><strong>Software Encoding:</strong> If you do not have a supported
+GPU, you can use the SVT-AV1 software encoder, though this is highly
+CPU-intensive and not recommended for live gaming.</li>
+</ul>
+<h2 id="how-to-configure-av1-in-obs-studio">How to Configure AV1 in OBS
+Studio</h2>
+<p>Once you have verified your hardware is compatible and your OBS
+Studio is up to date, follow these steps to enable AV1:</p>
+<h3 id="step-1-access-output-settings">Step 1: Access Output
+Settings</h3>
+<ol type="1">
+<li>Open <strong>OBS Studio</strong>.</li>
+<li>Click on <strong>Settings</strong> in the bottom-right corner (or go
+to <strong>File</strong> &gt; <strong>Settings</strong>).</li>
+<li>Click on the <strong>Output</strong> tab in the left-hand menu.</li>
+</ol>
+<h3 id="step-2-switch-to-advanced-mode">Step 2: Switch to Advanced
+Mode</h3>
+<ol type="1">
+<li>Locate the <strong>Output Mode</strong> dropdown menu at the top of
+the window.</li>
+<li>Change it from <em>Simple</em> to <strong>Advanced</strong>.</li>
+</ol>
+<h3 id="step-3-enable-the-av1-encoder">Step 3: Enable the AV1
+Encoder</h3>
+<p>Depending on whether you want to stream or record, select the
+corresponding tab:</p>
+<ul>
+<li><strong>For Streaming:</strong>
+<ol type="1">
+<li>Click the <strong>Streaming</strong> tab.</li>
+<li>Find the <strong>Video Encoder</strong> dropdown menu.</li>
+<li>Select your hardware-based AV1 encoder (e.g., <strong>NVIDIA NVENC
+AV1</strong>, <strong>AMD HW AV1</strong>, or <strong>Intel QuickSync
+AV1</strong>).</li>
+</ol></li>
+<li><strong>For Recording:</strong>
+<ol type="1">
+<li>Click the <strong>Recording</strong> tab.</li>
+<li>Set the <strong>Video Encoder</strong> to your hardware AV1
+option.</li>
+</ol></li>
+</ul>
+<h3 id="step-4-configure-bitrates">Step 4: Configure Bitrates</h3>
+<p>Because AV1 is highly efficient, you can adjust your bitrate settings
+to optimize your stream:</p>
+<ul>
+<li><strong>For 1080p at 60 FPS:</strong> Set your bitrate between
+<strong>4,000 to 5,000 Kbps</strong> (previously 6,000+ Kbps was
+required for H.264).</li>
+<li><strong>For 1440p at 60 FPS:</strong> Set your bitrate between
+<strong>6,000 to 8,000 Kbps</strong>.</li>
+<li><strong>For 4K at 60 FPS:</strong> Set your bitrate between
+<strong>10,000 to 15,000 Kbps</strong>.</li>
+</ul>
+<p>Click <strong>Apply</strong> and then <strong>OK</strong> to save
+your settings.</p>
+<h2 id="current-platform-support">Current Platform Support</h2>
+<p>Before streaming, make sure your target platform supports AV1
+input:</p>
+<ul>
+<li><strong>YouTube:</strong> Fully supports AV1 live streaming via the
+RTMP and HLS protocols.</li>
+<li><strong>Twitch:</strong> Supports AV1 streaming via the Twitch
+Enhanced Broadcasting feature (currently in rolling beta for compatible
+hardware).</li>
+<li><strong>Discord:</strong> Supports AV1 screen sharing for
+high-quality, low-latency streams directly to friends or servers.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

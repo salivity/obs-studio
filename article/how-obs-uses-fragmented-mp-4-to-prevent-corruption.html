@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Uses Fragmented MP4 to Prevent Corruption - obs-studio</title>
+    <meta name="description" content="This article explains how OBS Studio leverages the fragmented MP4 (fMP4) format to protect video recordings against corruption caused by sudden power loss or system crashes. By replacing the traditional monolithic MP4 structure with continuous, self-cont">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-uses-fragmented-mp-4-to-prevent-corruption">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Uses Fragmented MP4 to Prevent Corruption - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-uses-fragmented-mp-4-to-prevent-corruption" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how OBS Studio leverages the fragmented MP4 (fMP4) format to protect video recordings against corruption caused by sudden power loss or system crashes. By replacing the traditional monolithic MP4 structure with continuous, self-cont" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-uses-fragmented-mp4-to-prevent-corruption">How OBS Uses
+Fragmented MP4 to Prevent Corruption</h1>
+<p>This article explains how OBS Studio leverages the fragmented MP4
+(fMP4) format to protect video recordings against corruption caused by
+sudden power loss or system crashes. By replacing the traditional
+monolithic MP4 structure with continuous, self-contained segments, OBS
+ensures that recorded footage remains fully playable right up to the
+second the interruption occurs.</p>
+<h3 id="the-problem-with-standard-mp4-files">The Problem with Standard
+MP4 Files</h3>
+<p>Standard MP4 files rely on a critical metadata block called the
+<code>moov</code> atom (movie atom). This index defines the file layout,
+frame rates, codecs, and timestamps required for media players to decode
+and play the video data (<code>mdat</code> atom).</p>
+<p>In conventional recording workflows, the <code>moov</code> atom is
+constructed in system memory during the session and written to the
+storage drive only after the user stops the recording. If a power outage
+or system crash occurs while recording, this metadata is never committed
+to the disk. Without the <code>moov</code> atom, the operating system
+and media players cannot interpret the raw audio and video data,
+rendering the entire file unreadable and functionally corrupted.</p>
+<h3 id="the-mechanics-of-fragmented-mp4-fmp4">The Mechanics of
+Fragmented MP4 (fMP4)</h3>
+<p>Fragmented MP4 solves this structural vulnerability by dividing the
+recording into a sequence of small, independent chunks. Instead of
+deferring metadata creation until the recording is completed, fMP4
+operates on a continuous, two-part cycle:</p>
+<ol type="1">
+<li><strong>Movie Fragment Header (<code>moof</code> atom):</strong>
+Contains the playback metadata, frame offsets, and timing data
+specifically for the upcoming slice of media.</li>
+<li><strong>Media Data (<code>mdat</code> atom):</strong> Contains the
+actual audio and video packets corresponding to that specific
+header.</li>
+</ol>
+<p>OBS Studio periodically generates these paired <code>moof</code> and
+<code>mdat</code> fragments throughout the recording process. As soon as
+a fragment is compiled—typically covering a duration of one to two
+seconds—it is dispatched directly to the disk subsystem.</p>
+<h3 id="preventing-corruption-during-power-loss">Preventing Corruption
+During Power Loss</h3>
+<p>When an unexpected power loss occurs, the benefits of fMP4 become
+evident in two distinct ways:</p>
+<ul>
+<li><strong>Independent Playability:</strong> Because each fragment
+carries its own metadata, the file does not require a finalized global
+index at the end of the container. Every fragment already written and
+synced to disk is complete and valid on its own.</li>
+<li><strong>Minimal Data Exposure:</strong> In the event of a sudden
+power loss, only the single fragment currently residing in the volatile
+write cache is lost. All preceding fragments written prior to the power
+failure remain intact, properly formatted, and fully functional.</li>
+</ul>
+<p>When power is restored, any standard media player that supports the
+fMP4 specification can open the container, read the initialization
+header, and sequentially parse every completed fragment up to the moment
+of failure without requiring repair utilities or manual
+reconstruction.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

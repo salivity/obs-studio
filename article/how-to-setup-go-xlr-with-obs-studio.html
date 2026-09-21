@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Setup GoXLR with OBS Studio - obs-studio</title>
+    <meta name="description" content="Integrating a GoXLR audio mixer with OBS Studio allows content creators to achieve professional-grade control over their stream's audio levels. This guide provides a step-by-step walkthrough to seamlessly connect your GoXLR hardware, configure the GoXLR">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-setup-go-xlr-with-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Setup GoXLR with OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-setup-go-xlr-with-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Integrating a GoXLR audio mixer with OBS Studio allows content creators to achieve professional-grade control over their stream's audio levels. This guide provides a step-by-step walkthrough to seamlessly connect your GoXLR hardware, configure the GoXLR" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-setup-goxlr-with-obs-studio">How to Setup GoXLR with OBS
+Studio</h1>
+<p>Integrating a GoXLR audio mixer with OBS Studio allows content
+creators to achieve professional-grade control over their stream's audio
+levels. This guide provides a step-by-step walkthrough to seamlessly
+connect your GoXLR hardware, configure the GoXLR routing App, adjust
+Windows sound settings, and set up your audio sources within OBS Studio
+for both single-track and multi-track recording.</p>
+<h2 id="step-1-configure-windows-sound-settings">Step 1: Configure
+Windows Sound Settings</h2>
+<p>Before launching OBS Studio, you must ensure Windows is sending audio
+to the correct GoXLR virtual channels.</p>
+<ol type="1">
+<li>Right-click the speaker icon in your Windows system tray and select
+<strong>Sound settings</strong>.</li>
+<li>Under <strong>Output</strong>, set your default device to
+<strong>System (TC-Helicon GoXLR)</strong>.</li>
+<li>Under <strong>Input</strong>, set your default device to
+<strong>Chat Mic (TC-Helicon GoXLR)</strong>.</li>
+<li>Open your communication apps (like Discord) and set their output
+device to <strong>Chat (TC-Helicon GoXLR)</strong> and input device to
+<strong>Chat Mic (TC-Helicon GoXLR)</strong>.</li>
+</ol>
+<h2 id="step-2-configure-the-goxlr-app-routing-table">Step 2: Configure
+the GoXLR App Routing Table</h2>
+<p>The GoXLR App determines where your audio signals are sent. To ensure
+OBS Studio receives the correct signals:</p>
+<ol type="1">
+<li>Open the <strong>GoXLR App</strong> and navigate to the
+<strong>Routing</strong> tab.</li>
+<li>Locate the <strong>Broadcast Stream Mix</strong> column. This column
+represents the combined mix of all audio you want your viewers to
+hear.</li>
+<li>Check the boxes in the <strong>Broadcast Stream Mix</strong> column
+for all sources you want on stream (e.g., Microphone, System, Music,
+Chat, and Console).</li>
+<li>Ensure <strong>Mic</strong> is checked under the <strong>Chat
+Mic</strong> column so your friends in Discord can hear you.</li>
+</ol>
+<h2 id="step-3-configure-obs-studio-global-audio">Step 3: Configure OBS
+Studio Global Audio</h2>
+<p>To prevent audio duplication and echo, you must disable the default
+global audio devices in OBS Studio.</p>
+<ol type="1">
+<li>Open <strong>OBS Studio</strong> and click on
+<strong>Settings</strong> (bottom right).</li>
+<li>Navigate to the <strong>Audio</strong> tab.</li>
+<li>Under the <strong>Global Audio Devices</strong> section, set all
+devices (Desktop Audio, Desktop Audio 2, Mic/Auxiliary Audio) to
+<strong>Disabled</strong>.</li>
+<li>Click <strong>Apply</strong>.</li>
+</ol>
+<h2 id="step-4-add-goxlr-sources-to-obs-studio">Step 4: Add GoXLR
+Sources to OBS Studio</h2>
+<p>You can now choose between two methods to bring your GoXLR audio into
+OBS.</p>
+<h3 id="method-a-the-single-track-method-simple-setup">Method A: The
+Single-Track Method (Simple Setup)</h3>
+<p>This method sends your entire GoXLR mix to OBS as a single audio
+source.</p>
+<ol type="1">
+<li>In the OBS <strong>Sources</strong> dock, click the
+<strong>+</strong> (Add) icon and select <strong>Audio Input
+Capture</strong>.</li>
+<li>Name the source <code>GoXLR Stream Mix</code> and click
+<strong>OK</strong>.</li>
+<li>In the Device dropdown menu, select <strong>Broadcast Stream Mix
+(TC-Helicon GoXLR)</strong>.</li>
+<li>Click <strong>OK</strong>.</li>
+</ol>
+<h3 id="method-b-the-multi-track-method-advanced-control">Method B: The
+Multi-Track Method (Advanced Control)</h3>
+<p>This method allows you to control individual audio channels (like
+Mic, Game, and Music) independently in OBS, which is essential for
+splitting audio tracks for Twitch VODs or YouTube video editing.</p>
+<ol type="1">
+<li>In the OBS <strong>Sources</strong> dock, click the
+<strong>+</strong> icon and select <strong>Audio Input
+Capture</strong>.</li>
+<li>Name this source <code>GoXLR Mic</code> and select <strong>Chat Mic
+(TC-Helicon GoXLR)</strong> as the device.</li>
+<li>Click <strong>+</strong> again, select <strong>Audio Output
+Capture</strong>, name it <code>GoXLR System</code>, and select
+<strong>System (TC-Helicon GoXLR)</strong> as the device.</li>
+<li>Repeat this process for other channels you want to control
+individually in OBS, such as <strong>Music (TC-Helicon GoXLR)</strong>
+or <strong>Game (TC-Helicon GoXLR)</strong>.</li>
+</ol>
+<h2 id="step-5-test-and-adjust">Step 5: Test and Adjust</h2>
+<p>With your sources added, speak into your microphone and play some
+music to verify that the green level meters in the OBS Audio Mixer dock
+are moving. Use the physical faders on your GoXLR hardware to adjust the
+volume levels in real-time, ensuring your microphone sits in the
+"yellow" zone of the OBS meter for optimal streaming volume.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Socket Calls for Graceful Stream Stop - obs-studio</title>
+    <meta name="description" content="When a user stops a live broadcast in OBS Studio, the application performs an orderly teardown across both the RTMP application protocol layer and the underlying operating system transport layer rather than abruptly dropping the connection. This process">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-socket-calls-for-graceful-stream-stop">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Socket Calls for Graceful Stream Stop - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-socket-calls-for-graceful-stream-stop" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When a user stops a live broadcast in OBS Studio, the application performs an orderly teardown across both the RTMP application protocol layer and the underlying operating system transport layer rather than abruptly dropping the connection. This process" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-socket-calls-for-graceful-stream-stop">OBS Studio
+Socket Calls for Graceful Stream Stop</h1>
+<p>When a user stops a live broadcast in OBS Studio, the application
+performs an orderly teardown across both the RTMP application protocol
+layer and the underlying operating system transport layer rather than
+abruptly dropping the connection. This process ensures that queued media
+frames are delivered, the media server is formally notified that the
+stream has finished, and the underlying TCP connection cleanly closes
+without lingering states or corrupted archives. Below is the exact
+sequence of socket API calls executed by OBS Studio during a graceful
+stream termination.</p>
+<h3 id="1-final-payload-flush-send">1. Final Payload Flush:
+<code>send()</code></h3>
+<p>Before the socket itself is closed, the OBS streaming thread flushes
+any remaining buffered audio and video packets. Once the media buffers
+clear, the RTMP protocol client inside OBS (<code>obs-outputs</code>)
+constructs and transmits final RTMP control messages to inform the
+ingestion server (such as YouTube, Twitch, or NGINX-RTMP) that
+broadcasting has ended:</p>
+<ul>
+<li><strong><code>FCUnpublish</code> /
+<code>deleteStream</code></strong>: Instructs the RTMP server to unbind
+the active stream ID.</li>
+<li><strong><code>closeStream</code></strong>: Informs the server that
+the stream instance is ending.</li>
+</ul>
+<p>These command frames are transmitted using:</p>
+<ul>
+<li><code>send()</code> (POSIX) or <code>WSASend()</code> /
+<code>send()</code> (Windows Winsock)</li>
+</ul>
+<p>The return value is checked to guarantee that all bytes representing
+the protocol teardown are accepted into the kernel’s TCP send
+buffer.</p>
+<h3 id="2-transport-half-close-shutdown">2. Transport Half-Close:
+<code>shutdown()</code></h3>
+<p>Once the final protocol packets are queued for delivery, OBS Studio
+signals to the remote peer that it has finished sending data. It does
+this by closing the write half of the bidirectional TCP socket:</p>
+<ul>
+<li><strong>POSIX</strong>:
+<code>shutdown(socket_fd, SHUT_WR)</code></li>
+<li><strong>Windows (Winsock)</strong>:
+<code>shutdown(socket_fd, SD_SEND)</code></li>
+</ul>
+<p>Executing <code>shutdown()</code> with the write-direction flag
+triggers the operating system's TCP stack to construct and send a TCP
+<code>FIN</code> packet to the ingestion server. This notifies the
+remote server that transmission from the client has stopped while still
+keeping the receive channel open to capture any final acknowledgments
+(<code>ACK</code>) or server-side responses.</p>
+<h3 id="3-draining-inbound-data-recv">3. Draining Inbound Data:
+<code>recv()</code></h3>
+<p>To prevent an abrupt <code>RST</code> (TCP Reset) packet, which can
+occur if unread data remains in the receive buffer when a socket is
+destroyed, OBS enters a brief draining loop to read any final responses
+from the server:</p>
+<ul>
+<li><strong>POSIX / Windows</strong>:
+<code>recv(socket_fd, buffer, length, 0)</code></li>
+</ul>
+<p>The <code>recv()</code> function is called repeatedly inside a
+polling or timed read loop:</p>
+<ul>
+<li>If <code>recv()</code> returns <code>0</code>, it indicates that the
+remote server has received the client's <code>FIN</code>, sent its own
+<code>FIN</code>, and completed the standard four-way TCP
+handshake.</li>
+<li>If <code>recv()</code> returns <code>-1</code> (or
+<code>SOCKET_ERROR</code> on Windows) with an error code like
+<code>EWOULDBLOCK</code> or <code>WSAEWOULDBLOCK</code>, the socket
+waits via <code>select()</code> or <code>poll()</code> up to a
+predetermined timeout.</li>
+</ul>
+<h3 id="4-releasing-the-socket-handle-close-or-closesocket">4. Releasing
+the Socket Handle: <code>close()</code> or
+<code>closesocket()</code></h3>
+<p>Once the remote <code>FIN</code> is confirmed or the drain timeout
+expires, OBS initiates the final disposal of the socket descriptor to
+free kernel resources:</p>
+<ul>
+<li><strong>POSIX (Linux, macOS)</strong>:
+<code>close(socket_fd)</code></li>
+<li><strong>Windows (Winsock)</strong>:
+<code>closesocket(socket_fd)</code></li>
+</ul>
+<p>Calling this final function destroys the local socket handle,
+decrements system reference counters, and moves the local TCP state into
+<code>TIME_WAIT</code> (or terminates it if already acknowledged),
+completing the graceful termination process.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

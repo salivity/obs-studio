@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-GPU Hardware Decoding for Nested MP4s in OBS - obs-studio</title>
+    <meta name="description" content="OBS Studio leverages platform-native APIs and FFmpeg integration to manage hardware-accelerated video decoding, routing media playback through its primary rendering engine while decoding frames on available GPU resources. On multi-GPU configurations, pla">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/multi-gpu-hardware-decoding-for-nested-mp-4-s-in-obs">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Multi-GPU Hardware Decoding for Nested MP4s in OBS - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/multi-gpu-hardware-decoding-for-nested-mp-4-s-in-obs" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio leverages platform-native APIs and FFmpeg integration to manage hardware-accelerated video decoding, routing media playback through its primary rendering engine while decoding frames on available GPU resources. On multi-GPU configurations, pla" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="multi-gpu-hardware-decoding-for-nested-mp4s-in-obs">Multi-GPU
+Hardware Decoding for Nested MP4s in OBS</h1>
+<p>OBS Studio leverages platform-native APIs and FFmpeg integration to
+manage hardware-accelerated video decoding, routing media playback
+through its primary rendering engine while decoding frames on available
+GPU resources. On multi-GPU configurations, playing nested MP4
+files—video sources grouped inside embedded or nested scenes—introduces
+specific challenges regarding decode session allocation, VRAM
+management, and cross-adapter texture sharing. This article explains the
+underlying pipeline OBS Studio uses to decode multiple
+hardware-accelerated media files across multiple graphics adapters and
+how nested scene architectures impact system performance.</p>
+<h3 id="the-media-playback-architecture-in-obs-studio">The Media
+Playback Architecture in OBS Studio</h3>
+<p>OBS Studio handles MP4 playback primarily through the built-in
+<strong>Media Source</strong> (powered by FFmpeg/libavcodec) or the
+optional <strong>VLC Video Source</strong>. When the "Hardware decoding"
+option is enabled in a Media Source:</p>
+<ol type="1">
+<li><strong>Decoder Initialization:</strong> OBS queries the operating
+system’s multimedia framework (such as Microsoft D3D11VA, DXVA2 on
+Windows, or VA-API on Linux) to spawn a hardware-accelerated decoding
+context.</li>
+<li><strong>Surface Allocation:</strong> The underlying driver (NVIDIA
+NVDEC, AMD AMF, or Intel Quick Sync) allocates dedicated hardware
+decoder instances directly on the silicon.</li>
+<li><strong>Texture Interop:</strong> Decoded video frames are written
+directly to GPU video memory as surfaces (typically NV12 or P010
+formats) and converted into RGB textures for the rendering
+pipeline.</li>
+</ol>
+<h3 id="gpu-selection-and-multi-gpu-contexts">GPU Selection and
+Multi-GPU Contexts</h3>
+<p>In a multi-GPU environment (such as an integrated GPU paired with a
+discrete GPU, or dual discrete GPUs), OBS Studio binds its core
+compositor to a single graphics adapter specified in its settings or
+determined by the display running the application.</p>
+<ul>
+<li><strong>Primary Render Context:</strong> OBS initializes its primary
+graphics device (Direct3D 11 on Windows or OpenGL/Metal on other
+platforms) on one designated GPU. All canvas compositing, filtering, and
+scene rendering occur on this device.</li>
+<li><strong>Decoder Placement:</strong> Hardware-accelerated decoding
+generally attempts to initialize on the same GPU that hosts the OBS
+rendering context to maintain fast, zero-copy texture access. If the
+decoder initializes on a secondary GPU, the decoded frame data cannot be
+directly composited. Instead, it must be copied from the secondary GPU's
+VRAM across the PCIe bus to system RAM, and then uploaded to the primary
+GPU's VRAM. This process introduces significant PCIe bandwidth
+consumption and latency.</li>
+</ul>
+<h3 id="how-nested-mp4-playback-operates">How Nested MP4 Playback
+Operates</h3>
+<p>Nesting scenes in OBS allows a user to place Scene B inside Scene A.
+When MP4 files are embedded within nested scenes:</p>
+<ul>
+<li><strong>Independent Decode Instances:</strong> OBS treats each Media
+Source as an isolated entity, regardless of scene depth. If three MP4
+files exist across two nested scenes, OBS instantiates three separate
+hardware decoder sessions simultaneously.</li>
+<li><strong>Scene Pre-rendering:</strong> Nested scenes do not merge or
+batch video playback pipelines. Each source decodes its frame
+independently to its own texture. The compositor then evaluates the
+scene tree, rendering the nested scene offscreen before applying it as a
+composite texture into the parent scene.</li>
+<li><strong>Active vs. Deactivated States:</strong> By default, OBS
+provides the option to "Close file when inactive." If a nested scene is
+hidden, OBS frees the associated hardware decoder instances. If the
+source remains active (or if transitions require pre-buffering), the
+hardware decoders stay active concurrently in the background.</li>
+</ul>
+<h3 id="constraints-and-bottlenecks-on-multi-gpu-systems">Constraints
+and Bottlenecks on Multi-GPU Systems</h3>
+<p>Running concurrent nested MP4 files with hardware acceleration across
+multiple GPUs exposes distinct resource constraints:</p>
+<ul>
+<li><strong>Hardware Decoder Session Limits:</strong> Consumer graphics
+cards often enforce limits on concurrent NVDEC or hardware decode
+sessions. Exceeding these limits causes new decode requests to fail
+silently or fall back immediately to software (CPU) decoding via
+standard FFmpeg threads.</li>
+<li><strong>Cross-Adapter Synchronization Overhead:</strong> When
+secondary GPUs handle background tasks or alternate displays, Windows
+Advanced Optimus or hybrid graphics drivers may attempt to route
+secondary media engines independently. Synchronizing hardware clocks and
+surface transfers between two dissimilar GPUs (e.g., Intel iGPU decoding
+while an NVIDIA dGPU renders) causes frame pacing inconsistencies and
+micro-stuttering.</li>
+<li><strong>VRAM Fragmentation:</strong> Multiple simultaneous video
+decoders allocate independent scratch buffers and reference frame
+buffers in VRAM. On high-resolution files (such as 4K MP4s), this
+quickly consumes dedicated GPU memory, causing performance drops if the
+primary render GPU runs out of head space for textures and scene
+caches.</li>
+</ul>
+<h3 id="optimization-and-expected-behavior">Optimization and Expected
+Behavior</h3>
+<p>When properly configured, OBS Studio keeps the entire video
+pipeline—decoding, color conversion, and final scene
+compositing—confined to the single GPU configured as the primary
+rendering device. This avoids cross-adapter bus penalties. If hardware
+decoders become saturated by an excessive number of nested sources, OBS
+shifts excess load to software decoding to preserve system stability,
+ensuring continuous frame delivery at the cost of higher CPU
+utilization.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

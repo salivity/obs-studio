@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Delete OBS Studio Cache When Migrating Profiles - obs-studio</title>
+    <meta name="description" content="This article provides a straightforward, step-by-step guide on how to safely locate and delete temporary cache folders when migrating your OBS Studio settings to a new profile. Clearing these caches prevents configuration conflicts, resolves performance">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-delete-obs-studio-cache-when-migrating-profiles">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Delete OBS Studio Cache When Migrating Profiles - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-delete-obs-studio-cache-when-migrating-profiles" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides a straightforward, step-by-step guide on how to safely locate and delete temporary cache folders when migrating your OBS Studio settings to a new profile. Clearing these caches prevents configuration conflicts, resolves performance" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-delete-obs-studio-cache-when-migrating-profiles">How to
+Delete OBS Studio Cache When Migrating Profiles</h1>
+<p>This article provides a straightforward, step-by-step guide on how to
+safely locate and delete temporary cache folders when migrating your OBS
+Studio settings to a new profile. Clearing these caches prevents
+configuration conflicts, resolves performance hiccups, and ensures a
+clean transition while preserving your essential scenes, sources, and
+stream configurations.</p>
+<h3 id="step-1-close-obs-studio-completely">Step 1: Close OBS Studio
+Completely</h3>
+<p>Before modifying or deleting any files, ensure that OBS Studio is
+completely shut down. If the application is running in the background,
+files may be locked, or the system might write corrupt data to your new
+profile.</p>
+<h3 id="step-2-navigate-to-the-obs-studio-appdata-folder">Step 2:
+Navigate to the OBS Studio AppData Folder</h3>
+<p>OBS Studio stores its configuration and cache files in
+system-specific application directories. Open your file explorer and
+navigate to the appropriate path for your operating system:</p>
+<ul>
+<li><strong>Windows:</strong> Press <code>Windows Key + R</code>, type
+<code>%appdata%\obs-studio</code>, and press Enter.</li>
+<li><strong>macOS:</strong> Open Finder, press
+<code>Cmd + Shift + G</code>, type
+<code>~/Library/Application Support/obs-studio/</code>, and press
+Enter.</li>
+<li><strong>Linux:</strong> Navigate to
+<code>~/.config/obs-studio/</code>.</li>
+</ul>
+<h3 id="step-3-back-up-your-configuration">Step 3: Back Up Your
+Configuration</h3>
+<p>Before deleting any directories, create a backup of your current
+settings. Copy the entire <code>obs-studio</code> folder and paste it
+into a safe location, such as your Desktop. If you make a mistake during
+the migration, you can restore this folder to revert to your original
+setup.</p>
+<h3 id="step-4-safely-identify-and-delete-cache-folders">Step 4: Safely
+Identify and Delete Cache Folders</h3>
+<p>To clear the cache without losing your profile configurations (which
+are stored in the <code>basic</code> folder), target only the specific
+temporary directories. Inside the main <code>obs-studio</code> folder,
+delete the contents of the following directories:</p>
+<ol type="1">
+<li><strong>Browser Source Cache:</strong> Navigate to
+<code>plugin_config</code> &gt; <code>obs-browser</code>. Safely delete
+the folders named <code>Cache</code>, <code>GPUCache</code>, and
+<code>Local Storage</code>. These folders hold temporary web data from
+your browser sources, alerts, and widgets. Deleting them forces OBS to
+reload fresh web data.</li>
+<li><strong>Update Cache:</strong> Locate and delete the
+<code>updates</code> folder. This directory contains temporary files
+left over from previous OBS Studio software updates.</li>
+</ol>
+<p><em>Note: Do not delete any <code>.json</code> or <code>.ini</code>
+files in the <code>basic/profiles</code> or <code>basic/scenes</code>
+folders, as these contain your actual stream configurations and scene
+layouts.</em></p>
+<h3 id="step-5-launch-obs-and-verify-the-migration">Step 5: Launch OBS
+and Verify the Migration</h3>
+<p>Open OBS Studio and load your new profile. The software will
+automatically regenerate clean, conflict-free cache folders. Verify that
+your browser sources, transitions, and stream settings are functioning
+correctly.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Use OBS Compressor for Consistent Voice - obs-studio</title>
+    <meta name="description" content="This guide provides a straightforward tutorial on how to set up and configure the OBS Studio compressor filter to achieve balanced, professional, and consistent microphone audio. You will learn the exact steps to add the filter, what each compressor sett">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-use-obs-compressor-for-consistent-voice">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Use OBS Compressor for Consistent Voice - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-use-obs-compressor-for-consistent-voice" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide provides a straightforward tutorial on how to set up and configure the OBS Studio compressor filter to achieve balanced, professional, and consistent microphone audio. You will learn the exact steps to add the filter, what each compressor sett" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-use-obs-compressor-for-consistent-voice">How to Use OBS
+Compressor for Consistent Voice</h1>
+<p>This guide provides a straightforward tutorial on how to set up and
+configure the OBS Studio compressor filter to achieve balanced,
+professional, and consistent microphone audio. You will learn the exact
+steps to add the filter, what each compressor setting does, and the
+recommended values to prevent your voice from becoming too loud when you
+get excited or too quiet when you whisper.</p>
+<h3 id="what-is-a-compressor">What is a Compressor?</h3>
+<p>A compressor automatically lowers the volume of your audio when it
+goes above a certain level (threshold) and can boost the overall volume
+afterward. This reduces the dynamic range of your voice, making the
+quietest and loudest parts sound much closer in volume.</p>
+<h3 id="step-1-add-the-compressor-filter-in-obs">Step 1: Add the
+Compressor Filter in OBS</h3>
+<ol type="1">
+<li>Open OBS Studio and locate the <strong>Audio Mixer</strong>
+dock.</li>
+<li>Find your microphone source (usually named
+<strong>Mic/Aux</strong>).</li>
+<li>Click the <strong>three vertical dots</strong> (or gear icon) next
+to your microphone volume slider and select
+<strong>Filters</strong>.</li>
+<li>In the Filters window, click the <strong>+ (plus)</strong> icon in
+the bottom-left corner.</li>
+<li>Select <strong>Compressor</strong> from the list, name it (e.g.,
+"Mic Compressor"), and click <strong>OK</strong>.</li>
+</ol>
+<h3 id="step-2-configure-the-compressor-settings">Step 2: Configure the
+Compressor Settings</h3>
+<p>To get a natural and consistent voice, adjust the sliders to the
+following recommended baseline settings:</p>
+<ul>
+<li><strong>Ratio (e.g., 3:1 to 4:1):</strong> This determines how much
+the compressor reduces the volume once the threshold is crossed. A ratio
+of <strong>3:1</strong> or <strong>4:1</strong> is ideal for speech, as
+it controls volume spikes without making your voice sound muffled or
+squashed.</li>
+<li><strong>Threshold (e.g., -18 dB to -24 dB):</strong> This is the
+volume level at which the compressor starts working. Watch your audio
+meter while speaking normally. Set the threshold slightly below your
+normal speaking peaks (usually around <strong>-18 dB to -24 dB</strong>)
+so the compressor only activates when you speak louder than usual.</li>
+<li><strong>Attack (e.g., 2 ms to 5 ms):</strong> This controls how
+quickly the compressor starts reducing the volume once your voice
+crosses the threshold. A fast attack time of <strong>2 ms to 5
+ms</strong> is best for catching sudden loud sounds immediately.</li>
+<li><strong>Release (e.g., 50 ms to 100 ms):</strong> This controls how
+quickly the compressor stops working once your voice drops below the
+threshold. A release time of <strong>60 ms to 80 ms</strong> ensures a
+smooth transition back to uncompressed audio without creating a
+"pumping" effect.</li>
+<li><strong>Output Gain (e.g., 0 dB to 5 dB):</strong> Because
+compressing your voice reduces its peak volume, your overall sound might
+be slightly quieter. Use Output Gain (also known as makeup gain) to
+boost your voice back up. Increase this until your normal speaking voice
+consistently hits the high-green to low-yellow zone (around <strong>-15
+dB to -10 dB</strong>) on the OBS audio meter.</li>
+<li><strong>Sidechain/Ducking Source:</strong> Keep this set to
+<strong>None</strong>. Sidechaining is used to lower your mic volume
+based on another source, which is not needed for general voice
+consistency.</li>
+</ul>
+<h3 id="step-3-test-and-fine-tune">Step 3: Test and Fine-Tune</h3>
+<p>Test your new settings by recording a short clip in OBS. Speak at a
+whisper, a normal conversational level, and a louder, excited
+volume.</p>
+<p>Listen to the playback to ensure your loud voice does not clip (hit
+the red zone on the meter) and your quiet voice remains easily audible.
+If your loud voice still feels too piercing, slightly lower the
+<strong>Threshold</strong> or increase the <strong>Ratio</strong>.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configure OBS Noise Gate to Block Keyboard Clicks - obs-studio</title>
+    <meta name="description" content="This guide provides a step-by-step walkthrough on how to configure the Noise Gate filter in OBS Studio to eliminate distracting keyboard and mouse clicks from your audio feed. You will learn how to access the filter settings, understand the difference be">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/configure-obs-noise-gate-to-block-keyboard-clicks">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Configure OBS Noise Gate to Block Keyboard Clicks - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/configure-obs-noise-gate-to-block-keyboard-clicks" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide provides a step-by-step walkthrough on how to configure the Noise Gate filter in OBS Studio to eliminate distracting keyboard and mouse clicks from your audio feed. You will learn how to access the filter settings, understand the difference be" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="configure-obs-noise-gate-to-block-keyboard-clicks">Configure OBS
+Noise Gate to Block Keyboard Clicks</h1>
+<p>This guide provides a step-by-step walkthrough on how to configure
+the Noise Gate filter in OBS Studio to eliminate distracting keyboard
+and mouse clicks from your audio feed. You will learn how to access the
+filter settings, understand the difference between Close and Open
+thresholds, and fine-tune these levels to ensure your voice remains
+crystal clear while background noises are completely muted.</p>
+<h3 id="step-1-add-the-noise-gate-filter-to-your-microphone">Step 1: Add
+the Noise Gate Filter to Your Microphone</h3>
+<ol type="1">
+<li>Open OBS Studio and locate the <strong>Audio Mixer</strong>
+dock.</li>
+<li>Find your microphone source (usually labeled "Mic/Aux"), click the
+<strong>three dots</strong> (or gear icon) next to it, and select
+<strong>Filters</strong>.</li>
+<li>In the new window, click the <strong>plus (+) icon</strong> in the
+bottom-left corner of the "Audio Filters" section.</li>
+<li>Select <strong>Noise Gate</strong> from the list, give it a name (or
+leave it as default), and click <strong>OK</strong>.</li>
+</ol>
+<h3 id="step-2-identify-your-decibel-db-levels">Step 2: Identify Your
+Decibel (dB) Levels</h3>
+<p>To set the thresholds accurately, you need to measure the volume of
+your keyboard clicks versus the volume of your voice using the OBS
+green/yellow/red volume meter.</p>
+<ol type="1">
+<li><strong>Measure Keyboard Clicks:</strong> Stop talking and type
+aggressively on your keyboard. Watch the microphone's volume meter in
+OBS. Note the highest decibel level the meter reaches during typing (for
+example, -35 dB).</li>
+<li><strong>Measure Your Speaking Voice:</strong> Speak into the
+microphone at your normal volume. Note the average decibel level your
+voice reaches (for example, -15 dB).</li>
+</ol>
+<h3 id="step-3-configure-the-threshold-levels">Step 3: Configure the
+Threshold Levels</h3>
+<p>The Noise Gate works using two primary sliders: the <strong>Open
+Threshold</strong> and the <strong>Close Threshold</strong>.</p>
+<ul>
+<li><strong>Open Threshold:</strong> This is the volume level required
+to turn the microphone on. It must be set <em>higher</em> than your
+keyboard clicks, but <em>lower</em> than your normal speaking voice.
+<ul>
+<li><em>Calculation:</em> If your keyboard clicks peak at -35 dB and
+your voice sits at -15 dB, set the Open Threshold to approximately
+<strong>-25 dB</strong>.</li>
+</ul></li>
+<li><strong>Close Threshold:</strong> This is the volume level at which
+the microphone will turn back off once you stop talking. This should be
+set slightly lower than the Open Threshold (usually 3 to 5 dB lower) to
+prevent your voice from being cut off abruptly at the end of sentences,
+but it must still be higher than your keyboard clicks.
+<ul>
+<li><em>Calculation:</em> Using the previous example, set the Close
+Threshold to approximately <strong>-30 dB</strong>.</li>
+</ul></li>
+</ul>
+<h3 id="step-4-fine-tune-the-time-settings">Step 4: Fine-Tune the Time
+Settings</h3>
+<p>Underneath the threshold sliders, you will see three time-based
+settings. The default values are generally highly effective, but they
+can be tweaked for better performance:</p>
+<ul>
+<li><strong>Attack Time (Default: 25ms):</strong> This determines how
+fast the microphone turns on when you speak. Keep this low (10ms to
+25ms) so the beginning of your words are not cut off.</li>
+<li><strong>Hold Time (Default: 200ms):</strong> This keeps the
+microphone open for a brief moment after you stop speaking to prevent
+the gate from closing during natural pauses in conversation.</li>
+<li><strong>Release Time (Default: 150ms):</strong> This dictates how
+gradually the microphone fades out once the volume drops below the Close
+Threshold. A smooth release prevents an abrupt "choppy" sound.</li>
+</ul>
+<p>Test your settings by typing while speaking. If your voice gets cut
+off, slightly lower both thresholds. If keyboard clicks still activate
+the microphone when you are silent, raise both thresholds.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

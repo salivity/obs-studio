@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Multi-Track Audio via Enhanced RTMP - obs-studio</title>
+    <meta name="description" content="This article explains the technical pipeline OBS Studio uses to encode, package, and transmit multiple distinct language audio tracks over a single Enhanced RTMP (E-RTMP) connection. By leveraging the updated Enhanced RTMP specification spearheaded by th">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-multi-track-audio-via-enhanced-rtmp">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Multi-Track Audio via Enhanced RTMP - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-multi-track-audio-via-enhanced-rtmp" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains the technical pipeline OBS Studio uses to encode, package, and transmit multiple distinct language audio tracks over a single Enhanced RTMP (E-RTMP) connection. By leveraging the updated Enhanced RTMP specification spearheaded by th" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-multi-track-audio-via-enhanced-rtmp">OBS Studio
+Multi-Track Audio via Enhanced RTMP</h1>
+<p>This article explains the technical pipeline OBS Studio uses to
+encode, package, and transmit multiple distinct language audio tracks
+over a single Enhanced RTMP (E-RTMP) connection. By leveraging the
+updated Enhanced RTMP specification spearheaded by the Veovera Software
+Organization (VSO), OBS Studio moves beyond the legacy RTMP limitation
+of a single stereo audio track. The process involves independent
+per-track encoding, track-specific metadata tagging, and multiplexed
+transmission over one network stream.</p>
+<h3 id="legacy-rtmp-limitations-vs-enhanced-rtmp">Legacy RTMP
+Limitations vs. Enhanced RTMP</h3>
+<p>Legacy RTMP was constrained by the Adobe Flash Media format, which
+accommodated only one video track and one audio track (typically AAC or
+MP3) per stream. Delivering multilingual broadcasts traditionally
+required running multiple encoder instances or pushing separate RTMP
+streams to distinct stream keys, consuming excessive bandwidth and
+processing power.</p>
+<p>Enhanced RTMP solves this by introducing multi-track signaling,
+advanced codecs (such as AV1, HEVC, and Opus), and structured audio
+metadata within the standard RTMP chunk streaming protocol.</p>
+<h3 id="audio-configuration-and-independent-encoding">Audio
+Configuration and Independent Encoding</h3>
+<p>In OBS Studio, multi-track transmission begins in the output and
+audio routing settings:</p>
+<ol type="1">
+<li><strong>Source Routing:</strong> Using the Advanced Audio Properties
+matrix, sources (microphones, game audio, desktop sounds, or translated
+feeds) are assigned to distinct tracks (Tracks 1 through 6).</li>
+<li><strong>Track Assignment:</strong> Each track is mapped to a
+specific language pair or audio role (for example, Track 1 for primary
+game sound and English commentary, Track 2 for Spanish commentary, Track
+3 for clean ambient sound).</li>
+<li><strong>Independent Encoding:</strong> OBS Studio’s audio pipeline
+sends each enabled track to its own audio encoder instance. Each track
+is compressed independently according to user configuration—typically
+using AAC or Opus—at its designated bitrate and sample rate.</li>
+</ol>
+<h3 id="track-identification-and-metadata-tagging">Track Identification
+and Metadata Tagging</h3>
+<p>Once the audio frames are encoded, OBS Studio formats them to comply
+with the Enhanced RTMP multitrack standard:</p>
+<ul>
+<li><strong>Audio Message Extensions:</strong> Rather than utilizing
+legacy audio tags, OBS encapsulates compressed packets using updated
+header extensions.</li>
+<li><strong>Track IDs:</strong> Each audio packet is assigned a unique
+numerical <code>TrackID</code>. This ensures that audio data destined
+for one language track remains isolated from another.</li>
+<li><strong>Language and Metadata Signaling:</strong> Before streaming
+frames, or within regular metadata bursts, OBS sends an enhanced
+<code>onMetaData</code> or specific configuration message. This metadata
+maps each <code>TrackID</code> to standard language codes (such as ISO
+639-1 or 639-2 codes like <code>eng</code>, <code>spa</code>, or
+<code>jpn</code>), channel layouts (e.g., stereo, 5.1), and descriptor
+strings.</li>
+</ul>
+<h3 id="multiplexing-over-a-single-rtmp-stream">Multiplexing Over a
+Single RTMP Stream</h3>
+<p>After encoding and tagging, OBS Studio multiplexes the video and all
+audio tracks into a unified byte stream:</p>
+<ul>
+<li><strong>Chunking:</strong> The RTMP protocol divides continuous
+media streams into chunks with specific chunk stream IDs (CSIDs).</li>
+<li><strong>Interleaving:</strong> Video chunks and audio chunks from
+Track 1, Track 2, and beyond are interleaved sequentially according to
+their presentation timestamps (PTS).</li>
+<li><strong>Single Socket Transmission:</strong> The interleaved data is
+pushed across a single TCP socket connection to the ingest server.
+Despite carrying multiple discrete language feeds, the network overhead
+remains minimal because there is no duplication of the video payload or
+transport headers.</li>
+</ul>
+<h3 id="server-ingest-and-client-separation">Server Ingest and Client
+Separation</h3>
+<p>When the Enhanced RTMP-compatible ingest server receives the
+stream:</p>
+<ol type="1">
+<li>It parses the incoming packet headers and reads the metadata
+identifying the available audio tracks and their assigned language
+codes.</li>
+<li>The server demultiplexes the tracks while preserving time
+synchronization relative to the primary video stream.</li>
+<li>The server then repackages the stream into modern egress formats
+(such as HLS, DASH, or WebRTC). In these output formats, the audio
+tracks appear as selectable alternative audio streams, allowing the end
+viewer's player to switch between languages seamlessly on demand.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

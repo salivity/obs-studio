@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configure Multi-Channel SDI Audio in OBS Studio - obs-studio</title>
+    <meta name="description" content="Capturing multi-channel embedded SDI audio in OBS Studio allows broadcast operators and production teams to separate camera microphones, talent comms, and ambient feeds into discrete, mixable tracks. This guide outlines the step-by-step process of prepar">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/configure-multi-channel-sdi-audio-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Configure Multi-Channel SDI Audio in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/configure-multi-channel-sdi-audio-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Capturing multi-channel embedded SDI audio in OBS Studio allows broadcast operators and production teams to separate camera microphones, talent comms, and ambient feeds into discrete, mixable tracks. This guide outlines the step-by-step process of prepar" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="configure-multi-channel-sdi-audio-in-obs-studio">Configure
+Multi-Channel SDI Audio in OBS Studio</h1>
+<p>Capturing multi-channel embedded SDI audio in OBS Studio allows
+broadcast operators and production teams to separate camera microphones,
+talent comms, and ambient feeds into discrete, mixable tracks. This
+guide outlines the step-by-step process of preparing your capture
+hardware, configuring OBS Studio's internal audio channel capacity,
+adding the SDI source, and mapping discrete audio channels for live
+mixing, recording, and streaming.</p>
+<h2 id="1-prepare-capture-hardware-and-drivers">1. Prepare Capture
+Hardware and Drivers</h2>
+<p>Before configuring OBS Studio, verify that your SDI capture device
+(such as an AJA Kona, Blackmagic DeckLink, or Magewell Pro Capture card)
+is configured to pass multi-channel embedded SDI audio.</p>
+<ol type="1">
+<li>Open your capture card’s vendor utility (e.g., Blackmagic Desktop
+Video Setup or Magewell USB Capture Utility).</li>
+<li>Locate your SDI input settings and confirm that the audio input is
+set to <strong>Embedded SDI</strong>.</li>
+<li>Ensure the hardware is configured to recognize up to 8 or 16
+channels of embedded audio, rather than downmixing to stereo at the
+driver level.</li>
+</ol>
+<h2 id="2-set-global-audio-channels-in-obs-studio">2. Set Global Audio
+Channels in OBS Studio</h2>
+<p>By default, OBS Studio processes audio in Stereo (2 channels). To
+ingest more than two channels, you must expand the internal audio
+canvas.</p>
+<ol type="1">
+<li>Launch OBS Studio and navigate to <strong>Settings</strong> &gt;
+<strong>Audio</strong>.</li>
+<li>Under the <strong>General</strong> section, locate the
+<strong>Channels</strong> dropdown.</li>
+<li>Change the setting from <strong>Stereo</strong> to
+<strong>4.0</strong>, <strong>5.1</strong>, or <strong>7.1</strong>
+depending on how many discrete channels your workflow requires (7.1
+supports up to 8 distinct channels).</li>
+<li>Click <strong>Apply</strong> and restart OBS Studio when prompted to
+apply the new audio architecture.</li>
+</ol>
+<h2 id="3-add-the-sdi-capture-source">3. Add the SDI Capture Source</h2>
+<p>Bring the video and embedded audio into OBS via the dedicated capture
+source.</p>
+<ol type="1">
+<li>In the <strong>Sources</strong> dock, click the <strong>+</strong>
+(Add) icon.</li>
+<li>Select your device source:
+<ul>
+<li>For Blackmagic hardware, select <strong>Blackmagic Device</strong>
+for direct driver integration.</li>
+<li>For other cards (AJA, Magewell, etc.), select <strong>Video Capture
+Device</strong>.</li>
+</ul></li>
+<li>Select your SDI capture card from the <strong>Device</strong>
+list.</li>
+<li>Set your standard video resolution and frame rate to match your
+camera output.</li>
+<li>In the audio configuration area:
+<ul>
+<li>If using a Blackmagic source, check the audio settings to ensure
+multi-channel is enabled.</li>
+<li>If using a standard Video Capture Device, check <strong>Use custom
+audio device</strong> if the audio does not automatically latch, and
+select the corresponding SDI audio device.</li>
+</ul></li>
+<li>Click <strong>OK</strong>.</li>
+</ol>
+<h2 id="4-route-and-map-channels-in-advanced-audio-properties">4. Route
+and Map Channels in Advanced Audio Properties</h2>
+<p>Once the source is active, OBS receives the embedded channels mapped
+across its surround matrix (Front Left, Front Right, Center, LFE,
+Surround Left, Surround Right, etc.).</p>
+<ol type="1">
+<li>Locate your source in the <strong>Audio Mixer</strong> dock.</li>
+<li>Click the gear icon next to the source or right-click anywhere in
+the Audio Mixer and select <strong>Advanced Audio
+Properties</strong>.</li>
+<li>Under the <strong>Tracks</strong> columns (1 through 6), select
+which master tracks will receive the audio.
+<ul>
+<li>For live streaming, track 1 is typically the primary output.</li>
+<li>For ISO recording, map separate feeds across tracks 1 through 6
+under <strong>Settings</strong> &gt; <strong>Output</strong> &gt;
+<strong>Recording</strong>.</li>
+</ul></li>
+</ol>
+<h2 id="5-splitting-channels-for-independent-mixing-optional">5.
+Splitting Channels for Independent Mixing (Optional)</h2>
+<p>If your camera embeds distinct mono signals (e.g., Channel 1: Boom,
+Channel 2: Lav, Channel 3: Director Comms) that require individual
+volume faders and filters, use channel filtering:</p>
+<ol type="1">
+<li>Right-click the SDI source in the <strong>Sources</strong> dock and
+select <strong>Filters</strong>.</li>
+<li>Under <strong>Audio Filters</strong>, add a <strong>Gain</strong> or
+third-party downmix/matrix plugin.</li>
+<li>Alternatively, duplicate the capture source (or use audio-only
+virtual devices) and apply channel panning or matrix plugins (such as
+<em>Audio Monitor</em> or <em>obs-matrix-filter</em>) to isolate
+specific SDI channel pairs onto separate mixer faders.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

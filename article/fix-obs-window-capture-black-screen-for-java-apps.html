@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix OBS Window Capture Black Screen for Java Apps - obs-studio</title>
+    <meta name="description" content="Capturing Java-based applications in OBS Studio using Window Capture often results in a frustrating black screen due to how Java renders its graphical user interface. This guide provides straightforward, step-by-step solutions to resolve this compatibili">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/fix-obs-window-capture-black-screen-for-java-apps">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Fix OBS Window Capture Black Screen for Java Apps - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/fix-obs-window-capture-black-screen-for-java-apps" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Capturing Java-based applications in OBS Studio using Window Capture often results in a frustrating black screen due to how Java renders its graphical user interface. This guide provides straightforward, step-by-step solutions to resolve this compatibili" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="fix-obs-window-capture-black-screen-for-java-apps">Fix OBS
+Window Capture Black Screen for Java Apps</h1>
+<p>Capturing Java-based applications in OBS Studio using Window Capture
+often results in a frustrating black screen due to how Java renders its
+graphical user interface. This guide provides straightforward,
+step-by-step solutions to resolve this compatibility issue, including
+adjusting OBS capture settings, utilizing alternative capture methods,
+and configuring Java runtime parameters to ensure your application
+displays correctly.</p>
+<h3 id="method-1-change-the-capture-method-in-obs">Method 1: Change the
+Capture Method in OBS</h3>
+<p>The default "Automatic" capture method in OBS often fails to hook
+into the Java rendering engine. Forcing OBS to use a different graphics
+capture API usually solves the issue.</p>
+<ol type="1">
+<li>Open OBS Studio and double-click your <strong>Window
+Capture</strong> source to open its properties.</li>
+<li>Locate the <strong>Capture Method</strong> dropdown menu.</li>
+<li>Change the setting from <em>Automatic</em> to <strong>Windows 10
+(1903 and up)</strong>.</li>
+<li>If the screen remains black, open the dropdown again and select
+<strong>BitBlt (Windows 7 and up)</strong>.</li>
+<li>Click <strong>OK</strong> to save the changes.</li>
+</ol>
+<h3 id="method-2-use-game-capture-instead">Method 2: Use Game Capture
+Instead</h3>
+<p>If the Java application renders using OpenGL or Vulkan (common in
+Java games like Minecraft or heavy visualization tools), Window Capture
+may not work at all. Game Capture is designed to hook directly into
+these graphics libraries.</p>
+<ol type="1">
+<li>In the <strong>Sources</strong> dock, click the <strong>+</strong>
+icon and select <strong>Game Capture</strong>.</li>
+<li>Name the source and click <strong>OK</strong>.</li>
+<li>Set the <strong>Mode</strong> dropdown to <strong>Capture specific
+window</strong>.</li>
+<li>In the <strong>Window</strong> dropdown, select your active Java
+application.</li>
+<li>Click <strong>OK</strong>.</li>
+</ol>
+<h3 id="method-3-disable-java-hardware-acceleration">Method 3: Disable
+Java Hardware Acceleration</h3>
+<p>Java's internal Direct3D pipeline can conflict with OBS Studio's
+screen scraping mechanisms. You can disable Direct3D acceleration for
+the Java Virtual Machine (JVM) using launch arguments.</p>
+<p>If you launch your Java application via a command line, a terminal,
+or a custom launcher, append the following flag to your launch
+command:</p>
+<p><code>-Dsun.java2d.d3d=false</code></p>
+<p>Alternatively, you can use this flag to disable DirectDraw:</p>
+<p><code>-Dsun.java2d.noddraw=true</code></p>
+<h3 id="method-4-run-obs-studio-as-administrator">Method 4: Run OBS
+Studio as Administrator</h3>
+<p>Restricted user permissions can block OBS from capturing
+hardware-accelerated windows running at different privilege levels.</p>
+<ol type="1">
+<li>Close OBS Studio completely.</li>
+<li>Right-click the OBS Studio shortcut on your desktop or Start
+Menu.</li>
+<li>Select <strong>Run as administrator</strong>.</li>
+<li>Attempt to capture the Java window again.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

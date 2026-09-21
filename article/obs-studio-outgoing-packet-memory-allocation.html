@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Outgoing Packet Memory Allocation - obs-studio</title>
+    <meta name="description" content="This article provides an overview of the internal memory allocation and staging mechanisms used by OBS Studio to process outgoing network packets before serialization. OBS Studio relies on a combination of custom heap wrappers, an interleaved FIFO packet">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-outgoing-packet-memory-allocation">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Outgoing Packet Memory Allocation - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-outgoing-packet-memory-allocation" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of the internal memory allocation and staging mechanisms used by OBS Studio to process outgoing network packets before serialization. OBS Studio relies on a combination of custom heap wrappers, an interleaved FIFO packet" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-outgoing-packet-memory-allocation">OBS Studio
+Outgoing Packet Memory Allocation</h1>
+<p>This article provides an overview of the internal memory allocation
+and staging mechanisms used by OBS Studio to process outgoing network
+packets before serialization. OBS Studio relies on a combination of
+custom heap wrappers, an interleaved FIFO packet staging queue, and
+reference-managed structures (<code>encoder_packet</code>) to handle
+video and audio data safely across thread boundaries. Understanding this
+pipeline reveals how OBS balances real-time broadcast latency against
+memory consumption and network congestion.</p>
+<h3 id="the-memory-abstraction-layer-bmem">The Memory Abstraction Layer:
+<code>bmem</code></h3>
+<p>At the foundational level, OBS Studio wraps platform-specific memory
+allocators using its internal memory management utility located in
+<code>libobs/util/bmem.c</code>. The primitives—<code>bmalloc</code>,
+<code>brealloc</code>, <code>bfree</code>, and
+<code>bmemdup</code>—manage raw allocations for packet buffers. While
+these typically map directly to standard system allocators
+(<code>malloc</code>/<code>free</code>) or platform-specific
+implementations, they provide unified alignment and crash-on-failure
+safety semantics across all supported operating systems.</p>
+<h3 id="encapsulation-via-struct-encoder_packet">Encapsulation via
+<code>struct encoder_packet</code></h3>
+<p>When an encoder (such as x264, NVENC, or Apple VT) finishes
+compressing a video frame or audio chunk, it outputs raw encoded
+bitstream data. This payload is wrapped inside a
+<code>struct encoder_packet</code>.</p>
+<p>The packet structure stores critical stream metadata, including:</p>
+<ul>
+<li>A direct pointer to the heap-allocated payload buffer
+(<code>uint8_t *data</code>).</li>
+<li>The allocation size (<code>size_t size</code>).</li>
+<li>Timing information, such as Presentation Timestamp (PTS) and Decode
+Timestamp (DTS).</li>
+<li>Packet classification, including packet type (audio or video) and
+frame priority (keyframe, P-frame, or B-frame).</li>
+</ul>
+<p>The packet data buffer is allocated dynamically via
+<code>bmalloc</code> to hold the exact size of the compressed NAL units
+or audio frames.</p>
+<h3 id="packet-staging-and-the-interleaved-output-queue">Packet Staging
+and the Interleaved Output Queue</h3>
+<p>Before packets can be serialized to a specific protocol—such as RTMP,
+SRT, or WebRTC—they must be synchronized and scheduled. This occurs
+within the output module pipeline (for example,
+<code>plugins/obs-outputs/rtmp-stream.c</code>).</p>
+<p>OBS Studio implements a dedicated network dispatch thread
+(<code>send_thread</code>) fed by an interleaved FIFO queue. Memory
+allocation within this staging queue operates as follows:</p>
+<ol type="1">
+<li><strong>Queue Enqueueing:</strong> The video and audio encoding
+threads push completed <code>encoder_packet</code> instances into a
+shared queue protected by a mutex.</li>
+<li><strong>Buffer Duplication:</strong> If a packet needs to be staged
+or delayed across execution contexts, OBS duplicates packet ownership
+using <code>obs_encoder_packet_ref</code> or by creating a deep copy of
+the raw payload using <code>bmemdup</code>.</li>
+<li><strong>Queue Sizing:</strong> The queue does not preallocate fixed
+slabs; instead, it dynamically tracks the aggregate byte size and
+duration of buffered packets on the heap.</li>
+</ol>
+<h3 id="congestion-control-and-buffer-eviction">Congestion Control and
+Buffer Eviction</h3>
+<p>To prevent unbounded memory growth during network degradation, the
+staging queue enforces thresholds based on time and memory usage:</p>
+<ul>
+<li><strong>Drop Thresholds:</strong> If the network socket blocks and
+the staging queue exceeds user-defined or internal limits, OBS Studio
+triggers frame-dropping logic.</li>
+<li><strong>Selective Eviction:</strong> The queue inspects the buffered
+<code>encoder_packet</code> structures and purges disposable packets
+(such as B-frames or non-reference P-frames) first.</li>
+<li><strong>Immediate Deallocation:</strong> Discarded packets are freed
+immediately by calling <code>obs_encoder_packet_release</code>,
+returning the associated payload memory to the system allocator via
+<code>bfree</code>.</li>
+</ul>
+<h3 id="serialization-and-deallocation">Serialization and
+Deallocation</h3>
+<p>Once the dispatch thread dequeues an <code>encoder_packet</code>, the
+payload is handed over to the network serializer (such as librtmp or an
+SRT transmission socket). The data buffer is serialized directly into
+network transport buffers. Immediately following successful transmission
+or socket handoff, the staging pipeline invokes
+<code>obs_encoder_packet_release</code>, reclaiming the allocated heap
+memory and completing the lifecycle of the packet.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

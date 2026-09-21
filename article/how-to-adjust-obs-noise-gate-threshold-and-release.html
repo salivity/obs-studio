@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Adjust OBS Noise Gate Threshold and Release - obs-studio</title>
+    <meta name="description" content="This guide provides a straightforward walkthrough on how to locate, configure, and fine-tune the Noise Gate filter in OBS Studio. By adjusting the Close Threshold, Open Threshold, and Release Time, you can eliminate distracting background noises—such a">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-adjust-obs-noise-gate-threshold-and-release">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Adjust OBS Noise Gate Threshold and Release - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-adjust-obs-noise-gate-threshold-and-release" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide provides a straightforward walkthrough on how to locate, configure, and fine-tune the Noise Gate filter in OBS Studio. By adjusting the Close Threshold, Open Threshold, and Release Time, you can eliminate distracting background noises—such a" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-adjust-obs-noise-gate-threshold-and-release">How to
+Adjust OBS Noise Gate Threshold and Release</h1>
+<p>This guide provides a straightforward walkthrough on how to locate,
+configure, and fine-tune the Noise Gate filter in OBS Studio. By
+adjusting the Close Threshold, Open Threshold, and Release Time, you can
+eliminate distracting background noises—such as keyboard clicks, PC
+fans, or distant hums—ensuring your microphone only transmits your
+voice.</p>
+<h3 id="step-1-add-the-noise-gate-filter-to-your-microphone">Step 1: Add
+the Noise Gate Filter to Your Microphone</h3>
+<ol type="1">
+<li>Open OBS Studio.</li>
+<li>In the <strong>Audio Mixer</strong> dock, locate your microphone
+source (usually named <em>Mic/Aux</em>).</li>
+<li>Click the <strong>three dots (options icon)</strong> next to your
+microphone source and select <strong>Filters</strong>.</li>
+<li>In the Filters window, click the <strong>+ (plus) icon</strong> in
+the bottom-left corner of the "Audio Filters" section.</li>
+<li>Select <strong>Noise Gate</strong> from the list, name it, and click
+<strong>OK</strong>.</li>
+</ol>
+<h3 id="step-2-understand-and-adjust-the-threshold-settings">Step 2:
+Understand and Adjust the Threshold Settings</h3>
+<p>The Noise Gate works like a physical gate: it opens to let your voice
+through and closes to block quiet background noises. You need to
+configure two specific thresholds:</p>
+<ul>
+<li><strong>Close Threshold (dB):</strong> This is the volume level
+below which the gate will shut, completely muting your microphone.
+<ul>
+<li><em>How to adjust:</em> Stop speaking and look at the green bar in
+your OBS Audio Mixer to see the decibel (dB) level of your ambient
+background noise. Set the Close Threshold slider slightly above this
+ambient noise level. For example, if your background noise sits at -50
+dB, set the Close Threshold to -45 dB.</li>
+</ul></li>
+<li><strong>Open Threshold (dB):</strong> This is the volume level
+required to trigger the gate to open, letting sound pass through.
+<ul>
+<li><em>How to adjust:</em> Speak into your microphone at a normal
+volume and note where your voice peaks on the Audio Mixer. Set the Open
+Threshold slightly below your normal speaking level, but above the Close
+Threshold. For example, if your voice peaks at -20 dB, set the Open
+Threshold to -30 dB.</li>
+</ul></li>
+</ul>
+<h3 id="step-3-adjust-the-release-time-and-other-time-settings">Step 3:
+Adjust the Release Time (and other time settings)</h3>
+<p>Below the threshold sliders, you will find three time-based settings
+measured in milliseconds (ms). Adjusting these ensures your voice does
+not sound clipped or unnatural.</p>
+<ul>
+<li><strong>Release Time (ms):</strong> This determines how long the
+gate takes to transition from fully open to fully closed after your
+voice drops below the Close Threshold.
+<ul>
+<li><em>How to adjust:</em> If your words feel abruptly cut off at the
+ends of sentences, your release time is too fast. Increase the Release
+Time (typically between <strong>150 ms and 300 ms</strong>) to allow
+your voice to naturally fade out before the gate closes. If you hear
+background noise leaking in for too long after you stop speaking,
+decrease this value.</li>
+</ul></li>
+<li><strong>Attack Time (ms):</strong> How fast the gate opens when you
+begin speaking. Keep this fast (around <strong>10 ms to 25 ms</strong>)
+so the beginning of your first words are not cut off.</li>
+<li><strong>Hold Time (ms):</strong> How long the gate stays open after
+your volume drops below the Close Threshold but before the release phase
+begins. A default of <strong>100 ms to 200 ms</strong> prevents the gate
+from stuttering during short pauses in your natural speech.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

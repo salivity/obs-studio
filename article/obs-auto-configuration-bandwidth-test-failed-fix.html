@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Auto-Configuration Bandwidth Test Failed Fix - obs-studio</title>
+    <meta name="description" content="When running the OBS Studio auto-configuration wizard, encountering a failed bandwidth test is a common issue usually caused by network congestion, security software blocks, or incorrect streaming server settings. This article provides a straightforward">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-auto-configuration-bandwidth-test-failed-fix">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Auto-Configuration Bandwidth Test Failed Fix - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-auto-configuration-bandwidth-test-failed-fix" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When running the OBS Studio auto-configuration wizard, encountering a failed bandwidth test is a common issue usually caused by network congestion, security software blocks, or incorrect streaming server settings. This article provides a straightforward" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-auto-configuration-bandwidth-test-failed-fix">OBS
+Auto-Configuration Bandwidth Test Failed Fix</h1>
+<p>When running the OBS Studio auto-configuration wizard, encountering a
+failed bandwidth test is a common issue usually caused by network
+congestion, security software blocks, or incorrect streaming server
+settings. This article provides a straightforward troubleshooting guide
+to help you resolve this error. You will learn how to bypass the
+automated test by configuring your stream settings manually, adjusting
+your firewall permissions, and optimizing your network settings to
+ensure a stable connection.</p>
+<h2 id="1-manually-select-your-streaming-server">1. Manually Select Your
+Streaming Server</h2>
+<p>By default, the auto-configuration wizard tries to test multiple
+servers automatically. If the test fails, you should manually select a
+server closest to your geographical location.</p>
+<ol type="1">
+<li>Open OBS Studio and go to <strong>Settings</strong> (bottom right
+corner).</li>
+<li>Click on the <strong>Stream</strong> tab in the left sidebar.</li>
+<li>Select your service (e.g., Twitch, YouTube).</li>
+<li>Change the <strong>Server</strong> setting from "Auto (Recommended)"
+to a specific server geographically closest to you.</li>
+<li>Click <strong>Apply</strong> and try running the wizard again, or
+proceed with manual configuration.</li>
+</ol>
+<h2 id="2-check-and-re-enter-your-stream-key">2. Check and Re-enter Your
+Stream Key</h2>
+<p>An invalid, expired, or disconnected stream key will cause the
+bandwidth test to fail instantly because OBS cannot authenticate with
+the platform's ingest servers.</p>
+<ol type="1">
+<li>Log into your streaming platform (Twitch, YouTube, Facebook,
+etc.).</li>
+<li>Go to your creator dashboard and copy your current <strong>Stream
+Key</strong>.</li>
+<li>In OBS Studio, navigate to <strong>Settings</strong> &gt;
+<strong>Stream</strong>.</li>
+<li>Paste the fresh stream key into the <strong>Stream Key</strong>
+field.</li>
+<li>Save the changes.</li>
+</ol>
+<h2 id="3-allow-obs-through-your-firewall">3. Allow OBS Through Your
+Firewall</h2>
+<p>Windows Defender Firewall or third-party antivirus software often
+blocks the rapid network requests OBS sends during a bandwidth test,
+flagging them as suspicious activity.</p>
+<ol type="1">
+<li>Open the Windows Start menu, type <strong>Allow an app through
+Windows Firewall</strong>, and press Enter.</li>
+<li>Click <strong>Change settings</strong> (administrator privileges
+required).</li>
+<li>Locate <strong>OBS Studio</strong> in the list.</li>
+<li>Ensure both the <strong>Private</strong> and <strong>Public</strong>
+checkboxes next to OBS Studio are checked.</li>
+<li>Click <strong>OK</strong> to save settings and restart OBS.</li>
+</ol>
+<h2 id="4-run-obs-studio-as-an-administrator">4. Run OBS Studio as an
+Administrator</h2>
+<p>Running OBS with administrative privileges ensures the application
+has the necessary permissions to bind to your network ports and send
+test data packages.</p>
+<ol type="1">
+<li>Right-click the OBS Studio shortcut on your desktop or Start
+menu.</li>
+<li>Select <strong>Run as administrator</strong>.</li>
+<li>Attempt to run the auto-configuration wizard again.</li>
+</ol>
+<h2 id="5-disable-vpns-and-proxies">5. Disable VPNs and Proxies</h2>
+<p>Virtual Private Networks (VPNs) and proxy servers redirect your
+internet traffic through secondary servers, which often block the
+specific ports or protocols used by OBS during bandwidth tests.
+Temporarily disable your VPN or proxy before running the test.</p>
+<h2 id="6-enable-network-optimizations-in-obs">6. Enable Network
+Optimizations in OBS</h2>
+<p>If your connection is unstable, tweaking the internal network
+settings in OBS can bypass the failure.</p>
+<ol type="1">
+<li>Go to <strong>Settings</strong> &gt; <strong>Advanced</strong>.</li>
+<li>Scroll down to the <strong>Network</strong> section.</li>
+<li>Check the box for <strong>Enable network
+optimizations</strong>.</li>
+<li>Ensure <strong>Bind to IP</strong> is set to
+<strong>Default</strong> or your specific active network adapter
+(ethernet/Wi-Fi).</li>
+<li>Click <strong>Apply</strong> and <strong>OK</strong>.</li>
+</ol>
+<h2 id="7-skip-the-wizard-and-configure-bitrate-manually">7. Skip the
+Wizard and Configure Bitrate Manually</h2>
+<p>If the auto-configuration wizard continues to fail, you can easily
+set your settings manually. This is often preferred by experienced
+streamers to ensure optimal quality.</p>
+<ol type="1">
+<li>Run an online speed test (such as speedtest.net) to find your
+<strong>Upload Speed</strong> in Mbps.</li>
+<li>Convert your upload speed to Kbps (e.g., 10 Mbps upload = 10,000
+Kbps).</li>
+<li>Open OBS <strong>Settings</strong> &gt;
+<strong>Output</strong>.</li>
+<li>Set the <strong>Output Mode</strong> to
+<strong>Simple</strong>.</li>
+<li>Set your <strong>Video Bitrate</strong> based on your upload speed
+(as a rule of thumb, do not use more than 70% of your total upload
+speed):
+<ul>
+<li><strong>For 1080p 60fps streaming:</strong> Set bitrate between
+4,500 and 6,000 Kbps.</li>
+<li><strong>For 720p 60fps streaming:</strong> Set bitrate between 3,500
+and 4,500 Kbps.</li>
+<li><strong>For 720p 30fps streaming:</strong> Set bitrate between 2,500
+and 3,500 Kbps.</li>
+</ul></li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

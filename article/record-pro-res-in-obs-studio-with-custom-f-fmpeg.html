@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record ProRes in OBS Studio with Custom FFmpeg - obs-studio</title>
+    <meta name="description" content="This guide provides a step-by-step walkthrough on how to configure OBS Studio to record high-quality video using the Apple ProRes codec via the custom FFmpeg output option. You will learn how to navigate the advanced output settings, select the correct c">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/record-pro-res-in-obs-studio-with-custom-f-fmpeg">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Record ProRes in OBS Studio with Custom FFmpeg - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/record-pro-res-in-obs-studio-with-custom-f-fmpeg" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide provides a step-by-step walkthrough on how to configure OBS Studio to record high-quality video using the Apple ProRes codec via the custom FFmpeg output option. You will learn how to navigate the advanced output settings, select the correct c" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="record-prores-in-obs-studio-with-custom-ffmpeg">Record ProRes in
+OBS Studio with Custom FFmpeg</h1>
+<p>This guide provides a step-by-step walkthrough on how to configure
+OBS Studio to record high-quality video using the Apple ProRes codec via
+the custom FFmpeg output option. You will learn how to navigate the
+advanced output settings, select the correct container, and apply the
+specific encoder settings required for a successful ProRes
+recording.</p>
+<h3 id="step-1-access-the-advanced-output-settings">Step 1: Access the
+Advanced Output Settings</h3>
+<p>To begin, open OBS Studio and navigate to the settings menu:</p>
+<ol type="1">
+<li>Click on <strong>Settings</strong> in the bottom-right corner of the
+OBS interface (or go to <strong>File</strong> &gt;
+<strong>Settings</strong>).</li>
+<li>In the left sidebar, click on <strong>Output</strong>.</li>
+<li>At the top of the Output settings page, change the <strong>Output
+Mode</strong> dropdown from <em>Simple</em> to
+<strong>Advanced</strong>.</li>
+</ol>
+<h3 id="step-2-configure-the-recording-tab">Step 2: Configure the
+Recording Tab</h3>
+<p>Once you are in Advanced mode, you need to change the recording type
+to allow custom FFmpeg configurations:</p>
+<ol type="1">
+<li>Click on the <strong>Recording</strong> tab.</li>
+<li>Change the <strong>Type</strong> dropdown to <strong>Custom Output
+(FFmpeg)</strong>.</li>
+<li>In the <strong>Container Format</strong> field, type or select
+<strong>mov</strong>. Apple ProRes is natively and most reliably
+supported inside the QuickTime (.mov) container.</li>
+</ol>
+<h3 id="step-3-select-the-video-and-audio-encoders">Step 3: Select the
+Video and Audio Encoders</h3>
+<p>Next, configure the encoders to target the ProRes codec and
+uncompressed audio:</p>
+<ol type="1">
+<li>Locate the <strong>Video Encoder</strong> dropdown and select
+<strong>prores_ks</strong> (this is the recommended, high-quality FFmpeg
+ProRes encoder) or <strong>prores</strong>.</li>
+<li>Locate the <strong>Audio Encoder</strong> dropdown and select
+<strong>pcm_s16le</strong> or <strong>pcm_s24le</strong>. ProRes video
+is typically paired with uncompressed PCM audio for professional editing
+workflows.</li>
+</ol>
+<h3 id="step-4-define-prores-quality-settings">Step 4: Define ProRes
+Quality Settings</h3>
+<p>To control the quality of your ProRes recording, you must pass
+specific arguments to the encoder:</p>
+<ol type="1">
+<li>Find the <strong>Video Encoder Settings (if any)</strong> text
+box.</li>
+<li>Enter <code>profile=X</code> (replace <code>X</code> with a number
+from 0 to 4 depending on your desired quality level):
+<ul>
+<li><strong><code>profile=0</code></strong>: ProRes Proxy (Lowest
+bandwidth)</li>
+<li><strong><code>profile=1</code></strong>: ProRes LT</li>
+<li><strong><code>profile=2</code></strong>: ProRes Standard</li>
+<li><strong><code>profile=3</code></strong>: ProRes HQ (Recommended for
+high-quality mastering)</li>
+<li><strong><code>profile=4</code></strong>: ProRes 4444 (Supports alpha
+channels/transparency)</li>
+</ul></li>
+<li>For example, to record in ProRes 422 HQ, type <code>profile=3</code>
+into the settings box.</li>
+</ol>
+<h3 id="step-5-save-and-test">Step 5: Save and Test</h3>
+<ol type="1">
+<li>Click <strong>Apply</strong> and then <strong>OK</strong> to save
+your changes.</li>
+<li>Perform a short test recording to ensure your system can handle the
+high write-speed demands of the ProRes codec.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

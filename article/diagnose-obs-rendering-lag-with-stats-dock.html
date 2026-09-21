@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnose OBS Rendering Lag with Stats Dock - obs-studio</title>
+    <meta name="description" content="Rendering lag in OBS Studio can cause your stream or recording to stutter and lose frames, often due to your graphics card becoming overloaded. This guide explains how to open the OBS Studio Stats dock, interpret its data to identify rendering lag, and i">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/diagnose-obs-rendering-lag-with-stats-dock">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Diagnose OBS Rendering Lag with Stats Dock - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/diagnose-obs-rendering-lag-with-stats-dock" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Rendering lag in OBS Studio can cause your stream or recording to stutter and lose frames, often due to your graphics card becoming overloaded. This guide explains how to open the OBS Studio Stats dock, interpret its data to identify rendering lag, and i" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="diagnose-obs-rendering-lag-with-stats-dock">Diagnose OBS
+Rendering Lag with Stats Dock</h1>
+<p>Rendering lag in OBS Studio can cause your stream or recording to
+stutter and lose frames, often due to your graphics card becoming
+overloaded. This guide explains how to open the OBS Studio Stats dock,
+interpret its data to identify rendering lag, and implement quick fixes
+to restore smooth video performance.</p>
+<h2 id="how-to-open-the-stats-dock-in-obs-studio">How to Open the Stats
+Dock in OBS Studio</h2>
+<p>The Stats dock is a built-in diagnostic tool that provides real-time
+data about your system's performance during a session.</p>
+<p>To open it:</p>
+<ol type="1">
+<li>Launch <strong>OBS Studio</strong>.</li>
+<li>In the top menu bar, click on <strong>Docks</strong>.</li>
+<li>Select <strong>Stats</strong> from the drop-down menu.</li>
+<li>Drag and dock this window anywhere in your OBS interface, or leave
+it as a floating window.</li>
+</ol>
+<h2 id="identifying-rendering-lag-in-the-stats-dock">Identifying
+Rendering Lag in the Stats Dock</h2>
+<p>Once the Stats dock is open, look at the <strong>Output Sharing /
+GPU</strong> section. The key metric for this issue is:</p>
+<ul>
+<li><strong>Frames missed due to rendering lag</strong></li>
+</ul>
+<p>This metric displays the number of frames lost and the corresponding
+percentage.</p>
+<ul>
+<li><strong>0% to 0.5% (Green):</strong> Normal performance. A few
+dropped frames when opening a heavy game or transitioning scenes is
+expected.</li>
+<li><strong>Above 1% (Yellow/Red):</strong> Active rendering lag. Your
+graphics card (GPU) cannot render the frames fast enough to match your
+set framerate (e.g., 60 FPS).</li>
+</ul>
+<h3 id="rendering-lag-vs-encoding-lag-vs-network-lag">Rendering Lag vs.
+Encoding Lag vs. Network Lag</h3>
+<p>It is important to distinguish rendering lag from other issues in the
+Stats dock:</p>
+<ul>
+<li><strong>Rendering Lag (GPU):</strong> "Frames missed due to
+rendering lag." Your GPU is overloaded by the game or OBS scene
+elements.</li>
+<li><strong>Encoding Lag (CPU/GPU Encoder):</strong> "Skipped frames due
+to encoding lag." Your encoder (NVENC, AMF, or x264) cannot package the
+video fast enough.</li>
+<li><strong>Network Lag (Internet):</strong> "Dropped frames (Network)."
+Your internet connection cannot handle the output bitrate.</li>
+</ul>
+<h2 id="how-to-fix-obs-rendering-lag">How to Fix OBS Rendering Lag</h2>
+<p>If the Stats dock confirms you have rendering lag, use the following
+steps to resolve the GPU bottleneck:</p>
+<h3 id="1-run-obs-studio-as-administrator">1. Run OBS Studio as
+Administrator</h3>
+<p>This is the most effective fix. Windows prioritizes GPU resources for
+games over background apps. Running OBS as an administrator tells
+Windows to allocate sufficient GPU power to OBS to prevent rendering
+lag.</p>
+<ul>
+<li>Right-click the OBS Studio shortcut and select <strong>Run as
+administrator</strong>.</li>
+</ul>
+<h3 id="2-enable-windows-game-mode">2. Enable Windows Game Mode</h3>
+<p>Windows Game Mode works alongside OBS to balance GPU
+distribution.</p>
+<ul>
+<li>Open Windows Settings -&gt; <strong>Gaming</strong> -&gt;
+<strong>Game Mode</strong> and toggle it <strong>On</strong>.</li>
+</ul>
+<h3 id="3-cap-your-in-game-frame-rate">3. Cap Your In-Game Frame
+Rate</h3>
+<p>If your game runs at an uncapped framerate (e.g., 144+ FPS), it will
+consume 100% of your GPU, leaving nothing for OBS to render your
+stream.</p>
+<ul>
+<li>Open your in-game settings and cap the framerate to match your
+monitor's refresh rate (e.g., 60 FPS, 120 FPS, or 144 FPS).</li>
+<li>Turn on V-Sync or use a frame rate limiter.</li>
+</ul>
+<h3 id="4-simplify-your-obs-scenes">4. Simplify Your OBS Scenes</h3>
+<p>Complex scenes require more GPU power to render.</p>
+<ul>
+<li>Reduce the number of browser sources, video capture devices, and
+motion graphics active in your current scene.</li>
+<li>Disable "Source Record" plugins or multiple active filters if you
+are using them.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

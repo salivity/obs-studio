@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Clone and Crop Capture Cards in OBS Studio - obs-studio</title>
+    <meta name="description" content="Using a single physical capture card for multiple different crops or layouts in OBS Studio can be challenging because changes made to a source usually apply globally. This guide explains how to use the "Source Clone" plugin to create independent virtual">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-clone-and-crop-capture-cards-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Clone and Crop Capture Cards in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-clone-and-crop-capture-cards-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Using a single physical capture card for multiple different crops or layouts in OBS Studio can be challenging because changes made to a source usually apply globally. This guide explains how to use the "Source Clone" plugin to create independent virtual" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-clone-and-crop-capture-cards-in-obs-studio">How to Clone
+and Crop Capture Cards in OBS Studio</h1>
+<p>Using a single physical capture card for multiple different crops or
+layouts in OBS Studio can be challenging because changes made to a
+source usually apply globally. This guide explains how to use the
+"Source Clone" plugin to create independent virtual copies of your
+capture card, allowing you to apply distinct crop parameters, filters,
+and aspect ratios to each clone without affecting the original
+input.</p>
+<h3 id="step-1-install-the-source-clone-plugin">Step 1: Install the
+Source Clone Plugin</h3>
+<p>Before starting, ensure you have the "Source Clone" plugin by Exeldro
+installed. Download the plugin from the official OBS Project website,
+run the installer compatible with your operating system, and restart OBS
+Studio.</p>
+<h3 id="step-2-add-your-physical-capture-card">Step 2: Add Your Physical
+Capture Card</h3>
+<p>First, add your physical capture card to your scene as you normally
+would:</p>
+<ol type="1">
+<li>In the <strong>Sources</strong> dock, click the <strong>+</strong>
+icon.</li>
+<li>Select <strong>Video Capture Device</strong>, name it (e.g., "Main
+Capture Card"), select your hardware device from the dropdown menu, and
+click <strong>OK</strong>.</li>
+</ol>
+<h3 id="step-3-create-a-source-clone">Step 3: Create a Source Clone</h3>
+<p>Instead of adding the video capture device a second time (which would
+mirror the exact same filters and settings), you will use the plugin to
+create an independent clone:</p>
+<ol type="1">
+<li>Click the <strong>+</strong> icon in the <strong>Sources</strong>
+dock.</li>
+<li>Select <strong>Source Clone</strong> from the menu.</li>
+<li>Name this clone based on its intended use (e.g., "Gameplay Zoom" or
+"Cam Crop") and click <strong>OK</strong>.</li>
+<li>In the properties window that appears, locate the
+<strong>Source</strong> dropdown menu and select your original "Main
+Capture Card".</li>
+<li>Set the <strong>Clone Type</strong> to <strong>Default</strong>
+(this option ensures that any filters you apply to the clone will not
+affect the original source). Click <strong>OK</strong>.</li>
+</ol>
+<h3 id="step-4-apply-distinct-crop-parameters">Step 4: Apply Distinct
+Crop Parameters</h3>
+<p>Now that you have an independent clone of your physical capture card,
+you can apply a specific crop to it:</p>
+<ol type="1">
+<li>Right-click the newly created <strong>Source Clone</strong> in your
+Sources list and select <strong>Filters</strong>.</li>
+<li>Click the <strong>+</strong> icon in the <strong>Effect
+Filters</strong> section (the bottom-left panel of the filters
+window).</li>
+<li>Select <strong>Crop/Pad</strong> from the list and click
+<strong>OK</strong>.</li>
+<li>Adjust the Left, Top, Right, and Bottom pixel values to isolate the
+specific area of the capture card you want to display.</li>
+<li>Close the Filters window.</li>
+</ol>
+<h3 id="step-5-scale-and-position-the-clone">Step 5: Scale and Position
+the Clone</h3>
+<p>With the crop applied, you can now resize and position the cloned
+source anywhere on your canvas using the red transform boundary box. The
+original "Main Capture Card" source will remain fully intact and
+uncropped in any other scenes where you have placed it. Repeat Steps 3
+and 4 for as many distinct crops as your layout requires.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

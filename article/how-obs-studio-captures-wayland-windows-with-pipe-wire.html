@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Studio Captures Wayland Windows with PipeWire - obs-studio</title>
+    <meta name="description" content="This article explores the technical pipeline OBS Studio uses to capture individual application windows under Linux Wayland compositors through PipeWire and the XDG Desktop Portal framework. Due to Wayland's strict security model, individual applications">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-studio-captures-wayland-windows-with-pipe-wire">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Studio Captures Wayland Windows with PipeWire - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-studio-captures-wayland-windows-with-pipe-wire" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores the technical pipeline OBS Studio uses to capture individual application windows under Linux Wayland compositors through PipeWire and the XDG Desktop Portal framework. Due to Wayland's strict security model, individual applications" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-studio-captures-wayland-windows-with-pipewire">How OBS
+Studio Captures Wayland Windows with PipeWire</h1>
+<p>This article explores the technical pipeline OBS Studio uses to
+capture individual application windows under Linux Wayland compositors
+through PipeWire and the XDG Desktop Portal framework. Due to Wayland's
+strict security model, individual applications cannot directly access
+the window buffers of other running programs. Instead, OBS Studio
+orchestrates capture by delegating user permissions to the compositor,
+receiving a hardware-accelerated media stream through PipeWire, and
+importing frame buffers directly into its graphics pipeline for
+low-latency compositing.</p>
+<h3 id="the-wayland-security-barrier">The Wayland Security Barrier</h3>
+<p>Under legacy X11 display servers, every client has unrestricted read
+and write access to the global display server, making window and screen
+capture straightforward via standard X11 protocol requests. Wayland
+fundamentally departs from this design by isolating client surfaces.
+Each application only renders to its own private buffers, and the
+Wayland compositor alone manages the global scene graph. To maintain
+this security isolation without permanently breaking desktop capture
+functionality, the Linux desktop ecosystem standardizes capture through
+external system interfaces rather than extending the core Wayland
+protocol directly to client applications like OBS Studio.</p>
+<h3 id="the-xdg-desktop-portal-handshake">The XDG Desktop Portal
+Handshake</h3>
+<p>When an OBS Studio user creates a "Window Capture (PipeWire)" source,
+the application cannot directly query the system for a list of open
+windows. Instead, OBS initiates an IPC request over the D-Bus system bus
+to the <code>org.freedesktop.portal.ScreenCast</code> interface exposed
+by <code>xdg-desktop-portal</code>.</p>
+<p>The portal service dispatches the request to the active desktop
+environment's specific backend implementation, such as
+<code>xdg-desktop-portal-gnome</code>,
+<code>xdg-desktop-portal-kde</code>, or
+<code>xdg-desktop-portal-wlr</code>. At this stage, the compositor—not
+OBS—presents an interface prompt allowing the user to select the
+specific window they wish to capture. This preserves the security model:
+untrusted software cannot surreptitiously target a window without
+explicit user consent.</p>
+<h3 id="session-establishment-and-pipewire-stream-routing">Session
+Establishment and PipeWire Stream Routing</h3>
+<p>Once the user approves the window selection, the compositor
+configures a private capture session. The compositor hooks directly into
+its internal rendering pipeline to duplicate the chosen window's surface
+whenever that window redraws.</p>
+<p>To transfer these video frames back to OBS, the portal creates a
+PipeWire multimedia node. PipeWire acts as an IPC media router,
+specialized in handling low-latency video and audio streams between
+isolated processes. The desktop portal passes two critical pieces of
+data back to OBS Studio over D-Bus:</p>
+<ol type="1">
+<li>A file descriptor providing access to the PipeWire daemon.</li>
+<li>A unique PipeWire Node ID corresponding to the newly created capture
+stream.</li>
+</ol>
+<h3 id="buffer-transfer-via-dma-buf">Buffer Transfer via DMA-BUF</h3>
+<p>With the node ID and file descriptor, OBS Studio's internal PipeWire
+capture plugin connects directly to PipeWire's graph. Rather than
+copying frame data across CPU memory—which would introduce severe
+performance penalties and CPU overhead—the capture pipeline relies on
+DMA-BUF (Direct Memory Access Buffer) sharing.</p>
+<ol type="1">
+<li><strong>Surface Redraw:</strong> When the target window updates, the
+compositor renders the surface into a GPU buffer.</li>
+<li><strong>Buffer Export:</strong> The compositor exports this buffer
+as a DMA-BUF file descriptor.</li>
+<li><strong>PipeWire Transport:</strong> PipeWire passes the buffer
+metadata and the DMA-BUF descriptor across the process boundary to OBS
+Studio using Unix domain sockets.</li>
+<li><strong>Zero-Copy Ingestion:</strong> OBS Studio receives the file
+descriptor and imports the buffer straight into its graphics context
+(typically via EGL and OpenGL) as an external texture.</li>
+</ol>
+<p>Through DMA-BUF, the pixel data remains entirely within VRAM,
+bypassing system RAM and enabling zero-copy frame ingestion at native
+display refresh rates.</p>
+<h3 id="handling-window-resizing-and-lifecycle">Handling Window Resizing
+and Lifecycle</h3>
+<p>Discrete window capture introduces dynamic challenges that
+full-screen capture avoids, notably window resizing and minimization.
+When a captured window changes dimensions, the compositor allocates new
+DMA-BUFs matching the new geometry.</p>
+<p>PipeWire handles this dynamism by negotiating format and parameter
+changes on the fly via the <code>SPA</code> (Simple Plugin Architecture)
+protocol. OBS receives a renegotiation event, updates the scaling and UV
+coordinate mapping for the source, and seamlessly adjusts the rendered
+texture without dropping the capture session. If the window closes, the
+compositor destroys the backing surface, prompting PipeWire to signal an
+end-of-stream state, which OBS Studio reflects by clearing the frame or
+rendering a transparent placeholder.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

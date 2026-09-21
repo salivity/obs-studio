@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Close File When Inactive 4K Video Performance - obs-studio</title>
+    <meta name="description" content="This article explains how the "Close file when inactive" setting in OBS Studio affects system performance when managing massive 4K video files as media sources. By understanding how this option manages RAM, VRAM, and storage drive read cycles, you can op">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-close-file-when-inactive-4-k-video-performance">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Close File When Inactive 4K Video Performance - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-close-file-when-inactive-4-k-video-performance" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how the "Close file when inactive" setting in OBS Studio affects system performance when managing massive 4K video files as media sources. By understanding how this option manages RAM, VRAM, and storage drive read cycles, you can op" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-close-file-when-inactive-4k-video-performance">OBS Close
+File When Inactive 4K Video Performance</h1>
+<p>This article explains how the "Close file when inactive" setting in
+OBS Studio affects system performance when managing massive 4K video
+files as media sources. By understanding how this option manages RAM,
+VRAM, and storage drive read cycles, you can optimize your stream or
+recording setup to prevent dropped frames, stuttering, and system
+resource exhaustion.</p>
+<h2 id="what-the-close-file-when-inactive-option-does">What the "Close
+File When Inactive" Option Does</h2>
+<p>In OBS Studio, the "Close file when inactive" option is a setting
+found in the properties of Media Sources (such as MP4 or MOV video
+files).</p>
+<ul>
+<li><strong>When Enabled:</strong> When a scene containing the 4K video
+is not active (i.e., you switch to a different scene, or manually hide
+the media source), OBS completely closes the video file and purges it
+from your system's memory.</li>
+<li><strong>When Disabled:</strong> OBS keeps the video file open and
+cached in your computer's memory, even when the video is hidden or you
+are on a different scene.</li>
+</ul>
+<h2 id="impact-on-system-performance-for-massive-4k-files">Impact on
+System Performance for Massive 4K Files</h2>
+<p>Managing 4K video files requires substantial system resources due to
+their high resolutions, massive file sizes, and high bitrates. Toggling
+this setting alters how your CPU, GPU, RAM, and storage drive
+interact.</p>
+<h3 id="memory-usage-ram-and-vram">Memory Usage (RAM and VRAM)</h3>
+<p>4K video files, especially those with high bitrates or uncompressed
+formats, consume a significant amount of RAM and video memory
+(VRAM).</p>
+<ul>
+<li><strong>With the option enabled:</strong> You instantly reclaim
+system memory whenever the 4K source is inactive. This is highly
+beneficial if your system is running close to its RAM or VRAM limits,
+freeing up crucial resources for demanding games or hardware
+encoding.</li>
+<li><strong>With the option disabled:</strong> OBS holds the file in
+memory. If you have multiple massive 4K assets, this can quickly lead to
+RAM or VRAM starvation, resulting in overall system slowdowns, game lag,
+or OBS crashes.</li>
+</ul>
+<h3 id="storage-drive-activity-readwrite">Storage Drive Activity
+(Read/Write)</h3>
+<p>The speed of your storage drive plays a critical role when this
+option is enabled.</p>
+<ul>
+<li><strong>With the option enabled:</strong> Every time you switch to
+the scene containing the 4K video, OBS must fetch the file from your
+storage drive and reload it. If the file is stored on a slower
+mechanical Hard Disk Drive (HDD) or a SATA SSD, this sudden, heavy read
+operation can bottleneck the drive.</li>
+<li><strong>With the option disabled:</strong> The storage drive is only
+read once when OBS starts up or when the source is first created.
+Transitions between scenes are entirely reliant on memory, bypassing
+storage speed limitations.</li>
+</ul>
+<h3 id="cpu-and-gpu-decoding-overhead">CPU and GPU Decoding
+Overhead</h3>
+<p>Decoding 4K video is a hardware-intensive task.</p>
+<ul>
+<li><strong>With the option enabled:</strong> Loading the video causes a
+sudden spike in CPU/GPU usage as the system initializes the hardware
+decoder for the file. This can lead to a brief moment of rendering lag
+or dropped frames at the exact moment of transition.</li>
+<li><strong>With the option disabled:</strong> The decoder remains
+primed or the file stays pre-loaded, resulting in a seamless transition
+with no sudden processing spikes.</li>
+</ul>
+<h2 id="which-setting-should-you-choose">Which Setting Should You
+Choose?</h2>
+<p>The ideal configuration depends entirely on your hardware
+specifications:</p>
+<ul>
+<li><strong>Enable "Close file when inactive" if:</strong> You have
+limited RAM (16GB or less), a low-VRAM graphics card, or if you only use
+the 4K video occasionally during a long broadcast. Ensure your 4K media
+files are stored on a fast NVMe M.2 SSD to minimize reloading
+delays.</li>
+<li><strong>Disable "Close file when inactive" if:</strong> You have
+plenty of spare RAM/VRAM (32GB+ of RAM) and require instantaneous,
+stutter-free transitions. This is critical for transitions, stingers, or
+overlays where even a micro-second delay in video playback is highly
+noticeable.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Metallic Texture to OBS Text with Image Mask - obs-studio</title>
+    <meta name="description" content="This guide explains how to apply a custom metallic texture overlay to a text source in OBS Studio using the "Image Mask/Blend" filter. By utilizing a texture image and configuring OBS’s built-in blend modes, you can easily upgrade plain stream text int">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/add-metallic-texture-to-obs-text-with-image-mask">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Add Metallic Texture to OBS Text with Image Mask - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/add-metallic-texture-to-obs-text-with-image-mask" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide explains how to apply a custom metallic texture overlay to a text source in OBS Studio using the "Image Mask/Blend" filter. By utilizing a texture image and configuring OBS’s built-in blend modes, you can easily upgrade plain stream text int" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="add-metallic-texture-to-obs-text-with-image-mask">Add Metallic
+Texture to OBS Text with Image Mask</h1>
+<p>This guide explains how to apply a custom metallic texture overlay to
+a text source in OBS Studio using the "Image Mask/Blend" filter. By
+utilizing a texture image and configuring OBS’s built-in blend modes,
+you can easily upgrade plain stream text into a dynamic, metallic
+design.</p>
+<h3 id="step-1-prepare-your-texture-image">Step 1: Prepare Your Texture
+Image</h3>
+<p>Before opening OBS Studio, you need a metallic texture image. Search
+for a royalty-free seamless texture of brushed steel, gold, chrome, or
+copper. Save this image as a PNG or JPEG on your computer. For the best
+results, ensure the texture has good contrast and detail.</p>
+<h3 id="step-2-create-your-text-source-in-obs">Step 2: Create Your Text
+Source in OBS</h3>
+<ol type="1">
+<li>Launch OBS Studio.</li>
+<li>In the <strong>Sources</strong> dock, click the <strong>+</strong>
+(plus) icon and select <strong>Text (GDI+)</strong> or <strong>Text
+(FreeType 2)</strong> on macOS.</li>
+<li>Name your source and click <strong>OK</strong>.</li>
+<li>In the properties window, type your text, choose a bold font (thick
+fonts display textures much better), and set the text color to
+<strong>white</strong>. Keep the color white, as it acts as a neutral
+canvas for the texture blend. Click <strong>OK</strong>.</li>
+</ol>
+<h3 id="step-3-add-the-image-maskblend-filter">Step 3: Add the Image
+Mask/Blend Filter</h3>
+<ol type="1">
+<li>Right-click your newly created Text source in the
+<strong>Sources</strong> list and select <strong>Filters</strong>.</li>
+<li>In the <strong>Effect Filters</strong> section on the bottom-left,
+click the <strong>+</strong> icon.</li>
+<li>Select <strong>Image Mask/Blend</strong> from the list and click
+<strong>OK</strong>.</li>
+</ol>
+<h3 id="step-4-configure-the-filter-settings">Step 4: Configure the
+Filter Settings</h3>
+<ol type="1">
+<li>In the filter properties, locate the <strong>Type</strong> dropdown
+menu. Change this from "Alpha Mask" to one of the blend options.
+<strong>Blend (Multiply)</strong> or <strong>Blend (Overlay)</strong>
+work best for metallic textures.</li>
+<li>Click the <strong>Browse</strong> button next to the
+<strong>Path</strong> field.</li>
+<li>Navigate to and select the metallic texture image you saved in Step
+1.</li>
+<li>Adjust the <strong>Opacity</strong> slider if you want to blend the
+texture back with the original white text color for a subtler
+effect.</li>
+</ol>
+<p>Once configured, the texture will map directly onto the shape of your
+text. Click <strong>Close</strong> to apply the changes.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

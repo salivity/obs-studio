@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Present Slides in Google Meet with OBS Virtual Camera - obs-studio</title>
+    <meta name="description" content="Using OBS Studio as a virtual camera is one of the best ways to deliver crisp, high-quality slide presentations in Google Meet. By bypassing standard screen sharing, which often compresses text and lowers frame rates, OBS allows you to broadcast your sli">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/present-slides-in-google-meet-with-obs-virtual-camera">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Present Slides in Google Meet with OBS Virtual Camera - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/present-slides-in-google-meet-with-obs-virtual-camera" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Using OBS Studio as a virtual camera is one of the best ways to deliver crisp, high-quality slide presentations in Google Meet. By bypassing standard screen sharing, which often compresses text and lowers frame rates, OBS allows you to broadcast your sli" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="present-slides-in-google-meet-with-obs-virtual-camera">Present
+Slides in Google Meet with OBS Virtual Camera</h1>
+<p>Using OBS Studio as a virtual camera is one of the best ways to
+deliver crisp, high-quality slide presentations in Google Meet. By
+bypassing standard screen sharing, which often compresses text and
+lowers frame rates, OBS allows you to broadcast your slides directly
+through your video feed in high definition. This guide provides a
+straightforward, step-by-step walkthrough on how to set up OBS Studio,
+import your slides, activate the Virtual Camera, and select it as your
+primary video source in Google Meet.</p>
+<h3 id="step-1-prepare-your-slides-and-obs-studio">Step 1: Prepare Your
+Slides and OBS Studio</h3>
+<p>First, open your slide presentation program (such as Google Slides,
+PowerPoint, or Keynote) and set your presentation to play in a window
+rather than full screen.</p>
+<p>Next, launch OBS Studio. In the <strong>Scenes</strong> box, click
+the <strong>+</strong> icon to create a new scene and name it "Slides."
+Move to the <strong>Sources</strong> box, click the <strong>+</strong>
+icon, and select <strong>Window Capture</strong>. Name the source,
+select your presentation window from the dropdown list, and click OK. If
+your slides do not fill the black canvas area in OBS, right-click the
+source in the preview window, go to <strong>Transform</strong>, and
+select <strong>Fit to Screen</strong>.</p>
+<h3 id="step-2-activate-the-obs-virtual-camera">Step 2: Activate the OBS
+Virtual Camera</h3>
+<p>Once your slides are framed perfectly in the OBS preview canvas, look
+at the <strong>Controls</strong> dock located in the bottom-right corner
+of the OBS interface. Click the button labeled <strong>Start Virtual
+Camera</strong>. This action converts your OBS preview canvas into a
+live camera feed that your web browser and other applications can detect
+as a physical webcam.</p>
+<h3 id="step-3-configure-google-meet-settings">Step 3: Configure Google
+Meet Settings</h3>
+<p>Open your web browser and join your Google Meet session. Before or
+during the call, click the three vertical dots (More Options) at the
+bottom of the screen and select <strong>Settings</strong>.</p>
+<p>In the Settings menu, click on the <strong>Video</strong> tab. Under
+the <strong>Camera</strong> dropdown menu, select <strong>OBS Virtual
+Camera</strong> instead of your default webcam. You should immediately
+see your OBS slide preview appear in the video box.</p>
+<h3 id="step-4-maximize-video-resolution">Step 4: Maximize Video
+Resolution</h3>
+<p>To ensure your audience can read the fine text on your slides, you
+must adjust Google Meet's quality settings. While still in the
+<strong>Video</strong> settings tab:</p>
+<ul>
+<li>Change the <strong>Send resolution (maximum)</strong> from Auto to
+<strong>High Definition (720p)</strong>.</li>
+<li>Change the <strong>Receive resolution (maximum)</strong> to
+<strong>High Definition (720p)</strong>.</li>
+</ul>
+<p>These settings force Google Meet to allocate the maximum available
+bandwidth to your camera feed, ensuring your slides remain sharp.</p>
+<h3 id="important-note-on-mirroring">Important Note on Mirroring</h3>
+<p>When using the OBS Virtual Camera, your self-view in Google Meet may
+appear mirrored (backwards) to you. Do not panic; this is a default
+behavior in Google Meet to make self-view feel more natural. Your
+audience will see the slides oriented correctly and perfectly
+readable.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

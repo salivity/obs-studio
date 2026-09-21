@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio: x264 Placebo vs Very Slow Preset - obs-studio</title>
+    <meta name="description" content="This article compares the "Placebo" and "Very Slow" x264 encoding presets in OBS Studio, highlighting their differences in CPU utilization, encoding speed, and visual quality. While both presets aim for maximum video compression efficiency, understanding">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-x-264-placebo-vs-very-slow-preset">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio: x264 Placebo vs Very Slow Preset - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-x-264-placebo-vs-very-slow-preset" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article compares the "Placebo" and "Very Slow" x264 encoding presets in OBS Studio, highlighting their differences in CPU utilization, encoding speed, and visual quality. While both presets aim for maximum video compression efficiency, understanding" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-x264-placebo-vs-very-slow-preset">OBS Studio: x264
+Placebo vs Very Slow Preset</h1>
+<p>This article compares the "Placebo" and "Very Slow" x264 encoding
+presets in OBS Studio, highlighting their differences in CPU
+utilization, encoding speed, and visual quality. While both presets aim
+for maximum video compression efficiency, understanding their practical
+performance impact is crucial for streamers and content creators looking
+to optimize their broadcast settings without crashing their systems.</p>
+<h2 id="what-are-x264-presets-in-obs-studio">What are x264 Presets in
+OBS Studio?</h2>
+<p>In OBS Studio, the x264 encoder uses presets to determine the
+tradeoff between CPU usage and video quality. A slower preset tells the
+encoder to spend more time analyzing each video frame, resulting in
+better image quality at a given bitrate. The scale ranges from
+"Ultrafast" (lowest CPU usage, lowest quality) to "Placebo" (highest CPU
+usage, highest quality). "Very Slow" and "Placebo" sit at the absolute
+bottom of this list.</p>
+<h2 id="the-very-slow-preset">The "Very Slow" Preset</h2>
+<p>The "Very Slow" preset is designed for high-end systems, particularly
+dedicated streaming PCs. It utilizes advanced motion estimation,
+subpixel refinement, and deep frame analysis to squeeze the absolute
+highest visual quality out of a restricted bandwidth (such as Twitch's
+6000-8000 Kbps limit).</p>
+<p>While it delivers exceptionally crisp fast-motion video, it demands
+massive CPU processing power. Using "Very Slow" on a single-PC setup
+while gaming will often result in encoder overload warnings, dropped
+frames, and stuttering.</p>
+<h2 id="the-placebo-preset">The "Placebo" Preset</h2>
+<p>The "Placebo" preset is the final option in the x264 library. It is
+named "Placebo" because the visual quality improvement it offers over
+"Very Slow" is mathematically negligible and completely imperceptible to
+the human eye.</p>
+<p>To achieve a fraction of a percent improvement in compression
+efficiency, "Placebo" enables highly complex encoding parameters (such
+as exhaustive motion estimation) that exponentially increase the
+workload on your CPU.</p>
+<h2 id="key-differences">Key Differences</h2>
+<ul>
+<li><strong>CPU Overhead:</strong> "Placebo" can increase CPU encoding
+times by 50% to 100% compared to "Very Slow," yet it yields almost zero
+perceptible difference in output quality.</li>
+<li><strong>Stream Stability:</strong> Running "Placebo" in a live
+environment like OBS Studio is highly likely to cause severe lag,
+rendering delays, and stream crashes due to CPU exhaustion. "Very Slow"
+is also highly taxing but remains mathematically viable on specialized
+multi-core processors.</li>
+<li><strong>File Size and Bitrate:</strong> At a constant quality
+setting (CRF), the file size difference between a video encoded in "Very
+Slow" and one in "Placebo" is usually less than 1%, making the extra
+processing time wasted.</li>
+</ul>
+<h2 id="conclusion-and-recommendation">Conclusion and
+Recommendation</h2>
+<p>You should never use the "Placebo" preset in OBS Studio. It exists
+purely as a statistical benchmark within the x264 library rather than a
+functional tool for live broadcasting or recording. If you have an
+incredibly powerful CPU and want the absolute best x264 quality
+possible, stop at the "Very Slow" (or even "Slower") preset.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

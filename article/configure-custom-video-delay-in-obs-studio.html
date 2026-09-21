@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configure Custom Video Delay in OBS Studio - obs-studio</title>
+    <meta name="description" content="This guide provides a step-by-step walkthrough on how to set up a custom video delay for an individual source in OBS Studio using the built-in Render Delay filter. You will learn how to access the filter settings, apply the correct delay duration in mill">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/configure-custom-video-delay-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Configure Custom Video Delay in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/configure-custom-video-delay-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide provides a step-by-step walkthrough on how to set up a custom video delay for an individual source in OBS Studio using the built-in Render Delay filter. You will learn how to access the filter settings, apply the correct delay duration in mill" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="configure-custom-video-delay-in-obs-studio">Configure Custom
+Video Delay in OBS Studio</h1>
+<p>This guide provides a step-by-step walkthrough on how to set up a
+custom video delay for an individual source in OBS Studio using the
+built-in Render Delay filter. You will learn how to access the filter
+settings, apply the correct delay duration in milliseconds, and manage
+hardware limitations to ensure your video and audio feeds are perfectly
+synchronized.</p>
+<h2 id="step-by-step-guide-to-applying-render-delay">Step-by-Step Guide
+to Applying Render Delay</h2>
+<p>To delay a specific video source in OBS Studio, follow these
+steps:</p>
+<ol type="1">
+<li><strong>Select the Source:</strong> Open OBS Studio and locate the
+<strong>Sources</strong> dock. Right-click on the specific video source
+(such as a webcam or capture card) that you want to delay, then select
+<strong>Filters</strong>.</li>
+<li><strong>Add the Render Delay Filter:</strong> In the Filters window,
+locate the <strong>Effect Filters</strong> section at the bottom left.
+Click the <strong>+</strong> (plus) icon and select <strong>Render
+Delay</strong> from the dropdown menu.</li>
+<li><strong>Name the Filter:</strong> Enter a name for the filter (e.g.,
+"Webcam Delay") and click <strong>OK</strong>.</li>
+<li><strong>Adjust the Delay Value:</strong> In the filter properties on
+the right, enter your desired delay time in milliseconds (ms). For
+reference, 1000 milliseconds equals 1 second.</li>
+<li><strong>Close and Save:</strong> Click <strong>Close</strong> to
+apply the filter. The video source will now render with the specified
+delay.</li>
+</ol>
+<h2 id="hardware-considerations-and-limitations">Hardware Considerations
+and Limitations</h2>
+<p>When using the Render Delay filter, keep the following technical
+factors in mind:</p>
+<ul>
+<li><strong>GPU Memory Usage:</strong> The Render Delay filter stores
+video frames in your graphics card (GPU) memory. Setting a high delay on
+high-resolution sources (like 4K at 60 FPS) will consume significant
+VRAM.</li>
+<li><strong>Maximum Delay Limit:</strong> OBS Studio caps the Render
+Delay filter at a maximum of <strong>500 milliseconds</strong> (0.5
+seconds) per filter instance to prevent system instability.</li>
+<li><strong>Stacking Filters:</strong> If you require a delay longer
+than 500ms, you can add multiple Render Delay filters to the same
+source. For example, applying two 500ms filters will create a total
+delay of 1000ms (1 second). However, monitor your system's GPU
+utilization to avoid dropped frames.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

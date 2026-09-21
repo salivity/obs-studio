@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Straight vs Premultiplied Alpha in OBS Studio - obs-studio</title>
+    <meta name="description" content="In OBS Studio, understanding the difference between straight alpha and premultiplied alpha is essential for correctly rendering transparent overlays, stingers, and media sources without visual artifacts. Alpha blending determines how semi-transparent pix">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/straight-vs-premultiplied-alpha-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Straight vs Premultiplied Alpha in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/straight-vs-premultiplied-alpha-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In OBS Studio, understanding the difference between straight alpha and premultiplied alpha is essential for correctly rendering transparent overlays, stingers, and media sources without visual artifacts. Alpha blending determines how semi-transparent pix" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="straight-vs-premultiplied-alpha-in-obs-studio">Straight vs
+Premultiplied Alpha in OBS Studio</h1>
+<p>In OBS Studio, understanding the difference between straight alpha
+and premultiplied alpha is essential for correctly rendering transparent
+overlays, stingers, and media sources without visual artifacts. Alpha
+blending determines how semi-transparent pixels composite over a
+background scene. While straight alpha preserves raw color values
+independently of the transparency mask, premultiplied alpha
+pre-calculates the color intensity based on opacity, dictating how the
+OBS compositor mathematically combines source layers to avoid unsightly
+dark or discolored edges.</p>
+<h3 id="straight-alpha-unassociated-alpha">Straight Alpha (Unassociated
+Alpha)</h3>
+<p>In straight alpha, the RGB color channels and the alpha channel (A)
+remain completely independent:</p>
+<ul>
+<li><strong>Pixel Data:</strong> The RGB values store the full,
+unattenuated color information, even if a pixel is 50% or completely
+transparent.</li>
+<li><strong>Compositing Math:</strong> To render a straight alpha layer
+onto a background, the compositor must first multiply the source RGB
+values by the source alpha value, then multiply the background RGB
+values by the inverted alpha <span class="math inline">\((1 -
+Alpha)\)</span>, and finally add the two results together: <span
+class="math display">\[\text{Final Color} = (\text{Source}_{\text{RGB}}
+\times \text{Source}_A) + (\text{Background}_{\text{RGB}} \times (1 -
+\text{Source}_A))\]</span></li>
+</ul>
+<p>Straight alpha is the standard format for most static image formats
+like PNG and is intuitive for manual editing, as the underlying color
+remains intact regardless of the alpha channel level.</p>
+<h3 id="premultiplied-alpha-associated-alpha">Premultiplied Alpha
+(Associated Alpha)</h3>
+<p>In premultiplied alpha, the source RGB values have already been
+multiplied by their alpha values during the export or rendering
+process:</p>
+<ul>
+<li><strong>Pixel Data:</strong> A 50% transparent pure red pixel <span
+class="math inline">\((R: 1.0, G: 0.0, B: 0.0, A: 0.5)\)</span> is
+stored in the file as <span class="math inline">\((R: 0.5, G: 0.0, B:
+0.0, A: 0.5)\)</span>. Fully transparent pixels always become pure black
+<span class="math inline">\((0, 0, 0, 0)\)</span>.</li>
+<li><strong>Compositing Math:</strong> Because the color channels are
+already scaled by the alpha value, the compositor skips the first
+multiplication step, reducing computational overhead: <span
+class="math display">\[\text{Final Color} = \text{Source}_{\text{RGB}} +
+(\text{Background}_{\text{RGB}} \times (1 -
+\text{Source}_A))\]</span></li>
+</ul>
+<p>Premultiplied alpha is computationally faster for real-time graphics
+engines and prevents filtering artifacts when assets are scaled or
+filtered.</p>
+<h3 id="key-differences-in-the-obs-studio-compositor">Key Differences in
+the OBS Studio Compositor</h3>
+<p>The primary difference inside OBS Studio lies in how the graphics
+compositor interprets incoming pixel data from media sources, stinger
+transitions, and browser layers.</p>
+<ol type="1">
+<li><p><strong>Incorrect Interpretation Artifacts:</strong></p>
+<ul>
+<li><strong>Premultiplied asset treated as Straight:</strong> If an
+asset rendered with premultiplied alpha is composited using straight
+alpha math, the alpha multiplication happens twice. This results in dark
+or black fringes around semi-transparent edges, glows, shadows, and
+motion blur.</li>
+<li><strong>Straight asset treated as Premultiplied:</strong> If a
+straight alpha asset is read as premultiplied, the initial
+multiplication step is skipped entirely. This causes semi-transparent
+edges to appear overly bright, washed out, or surrounded by a white
+halo.</li>
+</ul></li>
+<li><p><strong>Common Source Types:</strong></p>
+<ul>
+<li><strong>Browser Sources &amp; WebM:</strong> Modern web renderers
+and WebM clips often use premultiplied alpha to optimize
+performance.</li>
+<li><strong>PNG &amp; ProRes 4444:</strong> Graphic design assets and
+ProRes video files with an alpha channel are commonly exported using
+straight alpha unless explicitly specified otherwise in rendering
+software like Adobe After Effects or DaVinci Resolve.</li>
+</ul></li>
+</ol>
+<p>To ensure clean edges in OBS Studio, the source's alpha
+interpretation setting must match the exact export method used during
+asset creation.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

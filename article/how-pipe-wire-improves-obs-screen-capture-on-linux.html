@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How PipeWire Improves OBS Screen Capture on Linux - obs-studio</title>
+    <meta name="description" content="This article explores PipeWire, the modern multimedia server for Linux, and explains how it revolutionizes audio and video handling on the platform. You will learn what PipeWire is, why it was created, and how it drastically improves the performance, sec">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-pipe-wire-improves-obs-screen-capture-on-linux">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How PipeWire Improves OBS Screen Capture on Linux - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-pipe-wire-improves-obs-screen-capture-on-linux" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores PipeWire, the modern multimedia server for Linux, and explains how it revolutionizes audio and video handling on the platform. You will learn what PipeWire is, why it was created, and how it drastically improves the performance, sec" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-pipewire-improves-obs-screen-capture-on-linux">How PipeWire
+Improves OBS Screen Capture on Linux</h1>
+<p>This article explores PipeWire, the modern multimedia server for
+Linux, and explains how it revolutionizes audio and video handling on
+the platform. You will learn what PipeWire is, why it was created, and
+how it drastically improves the performance, security, and reliability
+of screen capture inside OBS Studio.</p>
+<h2 id="what-is-pipewire">What is PipeWire?</h2>
+<p>PipeWire is a low-latency, graph-based multimedia framework designed
+for Linux. Created by Wim Taymans at Red Hat, its primary goal is to
+unify and replace legacy Linux audio and video systems.</p>
+<p>Historically, Linux relied on PulseAudio for general desktop audio,
+JACK for professional low-latency audio, and various fragmented APIs for
+video handling. PipeWire consolidates these use cases into a single
+daemon. It supports containerized applications (like Flatpaks), manages
+hardware devices, and routes audio and video streams dynamically with
+minimal CPU overhead.</p>
+<h2 id="the-screen-capture-problem-on-linux">The Screen Capture Problem
+on Linux</h2>
+<p>To understand why PipeWire is necessary for OBS Studio, it is
+important to understand the transition from the legacy X11 display
+server to the modern Wayland compositor.</p>
+<p>Under the old X11 system, any running application could read the
+state of the entire screen. While this made screen capture in OBS Studio
+easy, it created a massive security vulnerability; malicious software
+could easily log keystrokes or record your screen without consent.</p>
+<p>Wayland solved this security flaw by isolating application windows
+from one another. Under Wayland, OBS Studio cannot directly peek at the
+desktop or other windows. While this design secured the desktop, it
+initially broke screen recording and streaming functionality
+entirely.</p>
+<p>PipeWire was developed to bridge this gap.</p>
+<h2 id="how-pipewire-fixes-screen-capture-in-obs-studio">How PipeWire
+Fixes Screen Capture in OBS Studio</h2>
+<p>PipeWire serves as a secure, high-performance intermediary between
+the Wayland display server and OBS Studio. The technology improves
+screen capture in several key ways:</p>
+<h3 id="1-secure-desktop-portals">1. Secure Desktop Portals</h3>
+<p>Instead of letting OBS Studio directly grab screen data, PipeWire
+works alongside <strong>XDG Desktop Portals</strong>. When you add a
+Screen Capture (PipeWire) source in OBS, a system prompt asks you to
+select which screen or window you want to share. Once you grant
+permission, the Wayland compositor passes the video stream to PipeWire,
+which safely routes it to OBS Studio.</p>
+<h3 id="2-zero-copy-performance-and-lower-cpu-usage">2. Zero-Copy
+Performance and Lower CPU Usage</h3>
+<p>PipeWire is designed for speed. It allows for "zero-copy" screen
+sharing by passing file descriptors of graphic buffers directly between
+the compositor and OBS Studio using DMA-BUF (Direct Memory Access
+Buffer). Because the video data is processed directly on the GPU without
+being copied back and forth to system RAM, CPU usage drops
+significantly, resulting in smoother frame rates and less lag during
+high-resolution recordings.</p>
+<h3 id="3-native-wayland-support">3. Native Wayland Support</h3>
+<p>Previously, Linux users had to rely on workaround plugins or run OBS
+Studio in XWayland compatibility mode (which degraded performance) to
+capture their screens. PipeWire provides native Wayland capture, making
+OBS Studio highly stable on modern Linux distributions like Fedora,
+Ubuntu, and Arch Linux.</p>
+<h3 id="4-seamless-window-and-monitor-selection">4. Seamless Window and
+Monitor Selection</h3>
+<p>PipeWire allows users to easily choose between capturing an entire
+monitor or a single application window. If you close and reopen an
+application, PipeWire can automatically restore the stream to OBS
+Studio, eliminating the need to re-configure sources mid-stream.</p>
+<h3 id="5-unified-audio-and-video-sync">5. Unified Audio and Video
+Sync</h3>
+<p>Because PipeWire handles both audio and video streams using the same
+underlying clock system, it prevents the synchronization drift that
+often plagued older Linux setups. Audio captured from a microphone or
+desktop output aligns perfectly with the video captured from the
+screen.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Studio Hooks DirectX Swap Chains - obs-studio</title>
+    <meta name="description" content="This article explores the internal mechanism OBS Studio uses to capture video from high-performance games via DirectX swap chain hooking. By injecting a dedicated dynamic-link library into the target game’s process, OBS intercepts the graphics renderin">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-studio-hooks-direct-x-swap-chains">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Studio Hooks DirectX Swap Chains - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-studio-hooks-direct-x-swap-chains" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores the internal mechanism OBS Studio uses to capture video from high-performance games via DirectX swap chain hooking. By injecting a dedicated dynamic-link library into the target game’s process, OBS intercepts the graphics renderin" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-studio-hooks-directx-swap-chains">How OBS Studio Hooks
+DirectX Swap Chains</h1>
+<p>This article explores the internal mechanism OBS Studio uses to
+capture video from high-performance games via DirectX swap chain
+hooking. By injecting a dedicated dynamic-link library into the target
+game’s process, OBS intercepts the graphics rendering pipeline right
+before frames are pushed to the monitor. This process enables direct
+GPU-to-GPU memory copies, ensuring minimal performance degradation and
+low latency during high-resolution, high-framerate gameplay
+recording.</p>
+<h3 id="process-injection-and-initialization">Process Injection and
+Initialization</h3>
+<p>OBS Studio cannot intercept game frames from an external process
+boundary due to operating system memory isolation. To overcome this, OBS
+utilizes a 32-bit or 64-bit helper service (such as
+<code>inject-helper.exe</code>) that injects a capture library—commonly
+named <code>graphics-hook.dll</code>—directly into the target game's
+address space. This injection typically occurs via Windows APIs like
+<code>CreateRemoteThread</code> or window hook procedures
+(<code>SetWindowsHookEx</code>). Once loaded inside the game's memory,
+the hook DLL identifies the active graphics API used by the executable,
+such as DirectX 9, DirectX 11, or DirectX 12.</p>
+<h3 id="locating-and-hooking-the-swap-chain">Locating and Hooking the
+Swap Chain</h3>
+<p>In modern DirectX applications (DirectX 10 through 12), rendering
+occurs on an off-screen back buffer managed by the DirectX Graphics
+Infrastructure (DXGI). When a frame is ready to be drawn to the screen,
+the game calls the swap chain method:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>HRESULT IDXGISwapChain<span class="op">::</span>Present<span class="op">(</span>UINT SyncInterval<span class="op">,</span> UINT Flags<span class="op">);</span></span></code></pre></div>
+<p>Because the swap chain is a COM (Component Object Model) interface,
+its functions are indexed in a Virtual Method Table (VMT). The injected
+OBS hook locates the memory address of the <code>IDXGISwapChain</code>
+virtual table by either creating a temporary, dummy DirectX device/swap
+chain to read the table addresses or by scanning memory patterns.</p>
+<p>Once the address of the <code>Present</code> function (and
+<code>Present1</code> for newer DXGI versions) is identified, OBS
+applies an inline detour or replaces the pointer in the VMT. This detour
+redirects execution of the <code>Present</code> call to an OBS-defined
+capture callback before the real frame is finalized.</p>
+<h3 id="intercepting-the-frame-in-vram">Intercepting the Frame in
+VRAM</h3>
+<p>When the game calls <code>Present</code> at the end of a render loop,
+execution transfers immediately to OBS's custom hook routine. Inside
+this hook, OBS gains direct access to the <code>IDXGISwapChain</code>
+pointer:</p>
+<ol type="1">
+<li><strong>Back Buffer Retrieval:</strong> The hook calls
+<code>GetBuffer</code> on the swap chain to obtain a reference to the
+active DirectX surface/texture containing the completed frame.</li>
+<li><strong>Texture Copying on the GPU:</strong> To prevent the severe
+performance penalties of copying raw 4K or high-refresh-rate pixel
+buffers across the PCIe bus into system RAM, OBS keeps the data entirely
+within video memory (VRAM). It utilizes the GPU's copy engine (such as
+<code>CopyResource</code>) to transfer the back-buffer texture into an
+internal shared texture.</li>
+<li><strong>Cross-Process Sharing:</strong> The shared texture is
+exposed to the main OBS Studio process using DXGI shared handles
+(<code>CreateSharedHandle</code> or <code>OpenSharedResource</code>).
+This allows the primary OBS rendering engine to access the texture
+directly from its own DirectX context on the GPU without CPU
+intervention.</li>
+</ol>
+<h3 id="synchronization-and-frame-hand-off">Synchronization and Frame
+Hand-off</h3>
+<p>DirectX operations are asynchronous. To ensure that OBS does not read
+a texture while the game is still drawing to it, or vice versa, the hook
+uses synchronization primitives. In DirectX 11 and 12, this is managed
+via DXGI Keyed Mutexes or DirectX fences. These lightweight hardware
+sync objects alert the primary OBS composition thread when the copy is
+complete.</p>
+<p>After scheduling the copy and managing the synchronization state, the
+OBS hook invokes the original, unhooked
+<code>IDXGISwapChain::Present</code> function. The game's back buffer
+flips to the front buffer and displays on the user’s monitor as
+intended, with the capture overhead restricted to a fraction of a
+millisecond.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

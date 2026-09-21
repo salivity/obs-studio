@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Dynamic File Naming Guide - obs-studio</title>
+    <meta name="description" content="OBS Studio allows content creators to automate recording organization using dynamic file naming conventions based on format specifiers. By utilizing standardized time and date variables, OBS automatically generates unique filenames and subfolders for eac">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-dynamic-file-naming-guide">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Dynamic File Naming Guide - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-dynamic-file-naming-guide" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio allows content creators to automate recording organization using dynamic file naming conventions based on format specifiers. By utilizing standardized time and date variables, OBS automatically generates unique filenames and subfolders for eac" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-dynamic-file-naming-guide">OBS Studio Dynamic File
+Naming Guide</h1>
+<p>OBS Studio allows content creators to automate recording organization
+using dynamic file naming conventions based on format specifiers. By
+utilizing standardized time and date variables, OBS automatically
+generates unique filenames and subfolders for each recording session,
+preventing accidental file overwrites and eliminating the need to rename
+media manually after each stream or capture.</p>
+<h2 id="accessing-filename-formatting-settings">Accessing Filename
+Formatting Settings</h2>
+<p>To configure dynamic file names in OBS Studio:</p>
+<ol type="1">
+<li>Open OBS Studio.</li>
+<li>Navigate to <strong>Settings</strong> in the bottom right corner or
+via <strong>File &gt; Settings</strong>.</li>
+<li>Select the <strong>Advanced</strong> tab from the left navigation
+panel.</li>
+<li>Locate the <strong>Recording</strong> section.</li>
+<li>Edit the input field labeled <strong>Filename
+Formatting</strong>.</li>
+</ol>
+<p>By default, OBS uses <code>%CCYY-%MM-%DD %hh-%mm-%ss</code> or
+<code>%Y-%m-%d %H-%M-%S</code> depending on the installation
+version.</p>
+<h2 id="core-date-and-time-format-specifiers">Core Date and Time Format
+Specifiers</h2>
+<p>OBS Studio relies on standard C-style <code>strftime</code> format
+specifiers. These variables begin with a percent sign (<code>%</code>)
+followed by a character indicating the specific data point:</p>
+<h3 id="year-variables">Year Variables</h3>
+<ul>
+<li><code>%Y</code>: Four-digit year (e.g., <code>2024</code>)</li>
+<li><code>%y</code>: Two-digit year (e.g., <code>24</code>)</li>
+</ul>
+<h3 id="month-variables">Month Variables</h3>
+<ul>
+<li><code>%m</code>: Month as a zero-padded number (e.g.,
+<code>01</code> to <code>12</code>)</li>
+<li><code>%b</code>: Abbreviated month name (e.g., <code>Jan</code>,
+<code>Feb</code>, <code>Mar</code>)</li>
+<li><code>%B</code>: Full month name (e.g., <code>January</code>,
+<code>February</code>)</li>
+</ul>
+<h3 id="day-variables">Day Variables</h3>
+<ul>
+<li><code>%d</code>: Day of the month as a zero-padded number (e.g.,
+<code>01</code> to <code>31</code>)</li>
+<li><code>%e</code>: Day of the month without leading zeros (e.g.,
+<code>1</code> to <code>31</code>)</li>
+<li><code>%a</code>: Abbreviated weekday name (e.g., <code>Mon</code>,
+<code>Tue</code>)</li>
+<li><code>%A</code>: Full weekday name (e.g., <code>Monday</code>,
+<code>Tuesday</code>)</li>
+</ul>
+<h3 id="time-variables">Time Variables</h3>
+<ul>
+<li><code>%H</code>: Hour in 24-hour format (e.g., <code>00</code> to
+<code>23</code>)</li>
+<li><code>%I</code>: Hour in 12-hour format (e.g., <code>01</code> to
+<code>12</code>)</li>
+<li><code>%p</code>: AM or PM designation</li>
+<li><code>%M</code>: Minute (e.g., <code>00</code> to
+<code>59</code>)</li>
+<li><code>%S</code>: Second (e.g., <code>00</code> to
+<code>59</code>)</li>
+</ul>
+<h2 id="automatic-folder-creation">Automatic Folder Creation</h2>
+<p>OBS Studio can generate directory structures automatically by
+including forward slashes (<code>/</code>) or backslashes
+(<code>\</code>) inside the <strong>Filename Formatting</strong> field.
+When OBS detects a directory separator, it creates the corresponding
+folder path inside the primary recording directory specified in the
+<strong>Output</strong> settings.</p>
+<ul>
+<li><strong>Format:</strong>
+<code>%Y/%m/%d/%Y-%m-%d_%H-%M-%S</code></li>
+<li><strong>Resulting Path:</strong>
+<code>2024/05/18/2024-05-18_14-30-00.mkv</code></li>
+</ul>
+<p>This structure groups recordings into year, month, and day folders
+automatically.</p>
+<h2 id="practical-naming-templates">Practical Naming Templates</h2>
+<h3 id="standard-timestamp">Standard Timestamp</h3>
+<ul>
+<li><strong>Template:</strong> <code>%Y-%m-%d_%H-%M-%S</code></li>
+<li><strong>Output:</strong> <code>2024-10-15_18-45-12.mp4</code></li>
+<li><strong>Use Case:</strong> Clear chronological sorting in a flat
+folder.</li>
+</ul>
+<h3 id="project-specific-labeling">Project-Specific Labeling</h3>
+<ul>
+<li><strong>Template:</strong> <code>Gameplay_%Y%m%d_%H%M</code></li>
+<li><strong>Output:</strong>
+<code>Gameplay_20241015_1845.mp4</code></li>
+<li><strong>Use Case:</strong> Separating specific content types while
+retaining compact date tracking.</li>
+</ul>
+<h3 id="monthly-folder-archive">Monthly Folder Archive</h3>
+<ul>
+<li><strong>Template:</strong>
+<code>%Y-%m/%B_%d_%Y_%I-%M-%S_%p</code></li>
+<li><strong>Output:</strong>
+<code>2024-10/October_15_2024_06-45-12_PM.mp4</code></li>
+<li><strong>Use Case:</strong> High-volume recording workflows that
+require nested month-by-month archival.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

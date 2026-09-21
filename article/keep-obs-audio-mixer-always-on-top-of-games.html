@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keep OBS Audio Mixer Always on Top of Games - obs-studio</title>
+    <meta name="description" content="This article explains how to keep the OBS Studio audio mixer visible over a borderless windowed game using the native "Always on Top" feature. By undocking the audio mixer and enabling this view mode, you can monitor your stream’s audio levels in real-">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/keep-obs-audio-mixer-always-on-top-of-games">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Keep OBS Audio Mixer Always on Top of Games - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/keep-obs-audio-mixer-always-on-top-of-games" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how to keep the OBS Studio audio mixer visible over a borderless windowed game using the native "Always on Top" feature. By undocking the audio mixer and enabling this view mode, you can monitor your stream’s audio levels in real-" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="keep-obs-audio-mixer-always-on-top-of-games">Keep OBS Audio
+Mixer Always on Top of Games</h1>
+<p>This article explains how to keep the OBS Studio audio mixer visible
+over a borderless windowed game using the native "Always on Top"
+feature. By undocking the audio mixer and enabling this view mode, you
+can monitor your stream’s audio levels in real-time without needing a
+second monitor or constantly alt-tabbing out of your game.</p>
+<h3 id="step-1-set-your-game-to-borderless-windowed-mode">Step 1: Set
+Your Game to Borderless Windowed Mode</h3>
+<p>For this method to work, your game must run in <strong>Borderless
+Windowed</strong> or <strong>Windowed</strong> mode. Standard "Exclusive
+Fullscreen" mode blocks all external windows from rendering on top of
+the game. Open your game's video settings and ensure it is set to
+windowed or borderless.</p>
+<h3 id="step-2-undock-the-audio-mixer-in-obs-studio">Step 2: Undock the
+Audio Mixer in OBS Studio</h3>
+<p>To isolate the audio mixer from the main OBS interface:</p>
+<ol type="1">
+<li>Locate the <strong>Audio Mixer</strong> dock inside OBS Studio.</li>
+<li>Click and hold the title bar of the Audio Mixer dock.</li>
+<li>Drag it away from the main OBS window and release it. This "undocks"
+the mixer, turning it into a standalone, resizable window.</li>
+</ol>
+<h3 id="step-3-enable-always-on-top-in-obs-studio">Step 3: Enable
+"Always on Top" in OBS Studio</h3>
+<p>With the mixer undocked, you need to tell OBS to keep its windows
+layered above all other applications:</p>
+<ol type="1">
+<li>In the top menu bar of OBS Studio, click on
+<strong>View</strong>.</li>
+<li>Select <strong>Always on Top</strong> from the dropdown menu to
+enable it.</li>
+</ol>
+<p>Because the undocked Audio Mixer is a sub-window of OBS Studio, it
+inherits this rule and will now stay pinned above other open
+applications, including your game.</p>
+<h3 id="step-4-position-and-resize-the-mixer">Step 4: Position and
+Resize the Mixer</h3>
+<ol type="1">
+<li>Click and drag the undocked Audio Mixer window over your game
+screen.</li>
+<li>Resize the mixer window by dragging its edges so that it is small
+enough not to block critical in-game elements, but large enough for you
+to monitor your decibel meters.</li>
+<li>You can move the main OBS Studio window to the background or
+minimize it; the undocked Audio Mixer will remain pinned on top of your
+game.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

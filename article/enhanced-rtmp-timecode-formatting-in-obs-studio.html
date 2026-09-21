@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced RTMP Timecode Formatting in OBS Studio - obs-studio</title>
+    <meta name="description" content="OBS Studio implements timecode and timestamp formatting for multi-track video within the Enhanced RTMP (E-RTMP) specification by synchronizing tracks against a single monotonic clock and expressing presentation offsets across RTMP chunk headers, extended">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/enhanced-rtmp-timecode-formatting-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Enhanced RTMP Timecode Formatting in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/enhanced-rtmp-timecode-formatting-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio implements timecode and timestamp formatting for multi-track video within the Enhanced RTMP (E-RTMP) specification by synchronizing tracks against a single monotonic clock and expressing presentation offsets across RTMP chunk headers, extended" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="enhanced-rtmp-timecode-formatting-in-obs-studio">Enhanced RTMP
+Timecode Formatting in OBS Studio</h1>
+<p>OBS Studio implements timecode and timestamp formatting for
+multi-track video within the Enhanced RTMP (E-RTMP) specification by
+synchronizing tracks against a single monotonic clock and expressing
+presentation offsets across RTMP chunk headers, extended video packet
+headers, and optional in-band SEI messaging. By standardizing the Decode
+Time Stamp (DTS) at the chunk header level and pairing it with a 24-bit
+Composition Time Offset (CTS) inside the extended payload, OBS Studio
+ensures that multiple concurrent video renditions remain precisely
+aligned for player-side client switching.</p>
+<h3 id="the-monotonic-reference-clock">The Monotonic Reference
+Clock</h3>
+<p>When OBS Studio streams multi-track video—such as Twitch Enhanced
+Broadcasting with multiple resolution tiers—it derives all track timings
+from a shared internal clock. Rather than generating independent
+timelines for each encoder instance, OBS creates a shared reference base
+at the start of the stream. Video frames captured from the canvas are
+assigned presentation timestamps (PTS) before being routed to each
+parallel encoder. This ensures that a specific video frame in a 1080p60
+track shares the exact PTS reference with the corresponding frame in the
+720p60 or 480p30 tracks.</p>
+<h3 id="rtmp-chunk-header-timestamps-dts">RTMP Chunk Header Timestamps
+(DTS)</h3>
+<p>At the container level, OBS Studio uses standard RTMP chunk message
+headers to convey the Decode Time Stamp (DTS) for each track:</p>
+<ul>
+<li><strong>Basic Header &amp; Message Header:</strong> A standard Type
+0 or Type 1 RTMP message header includes a 24-bit integer timestamp
+field measured in milliseconds.</li>
+<li><strong>Extended Timestamp Field:</strong> If the stream runtime
+exceeds 16,777,215 milliseconds (~4.66 hours), the 24-bit field is
+populated with <code>0xFFFFFF</code>, and an additional 32-bit extended
+timestamp field follows the header to prevent rollover.</li>
+<li><strong>Track Differentiation:</strong> Multi-track streams assign
+unique Chunk Stream IDs (CSID) and Message Stream IDs to separate video
+feeds, allowing downstream ingest servers to track DTS progressions
+independently without cross-stream timeline collision.</li>
+</ul>
+<h3 id="enhanced-rtmp-extended-video-header-structure">Enhanced RTMP
+Extended Video Header Structure</h3>
+<p>Enhanced RTMP replaces traditional Flash Video (FLV) tags with an
+extended video packet structure to accommodate modern codecs (such as
+HEVC and AV1) and multi-track signaling. OBS Studio formats the initial
+bytes of each video packet payload as follows:</p>
+<ol type="1">
+<li><strong>Header Control Byte (1 byte):</strong>
+<ul>
+<li>Bits 0–3 define the <code>PacketType</code> (e.g., <code>0</code>
+for Sequence Start, <code>1</code> for Coded Frames, <code>3</code> for
+Coded Frames X).</li>
+<li>Bits 4–7 define the <code>FrameType</code> (Keyframe <code>1</code>,
+Inter-frame <code>2</code>).</li>
+</ul></li>
+<li><strong>FourCC Identifier (4 bytes):</strong> Directly follows the
+control byte to identify the video codec (e.g., <code>hvc1</code> for
+HEVC, <code>av01</code> for AV1, or <code>avc1</code> for H.264).</li>
+<li><strong>Composition Time Offset / CTS (3 bytes):</strong> For codecs
+utilizing B-frames (bi-directional predictive frames), the extended
+header inserts a 24-bit signed or unsigned integer representing the
+Composition Time Offset (<span class="math inline">\(CTS = PTS -
+DTS\)</span>) in milliseconds. When a decoder processes the packet, it
+calculates the true rendering time by adding this 24-bit CTS to the DTS
+provided in the RTMP chunk header. If the codec profile does not use
+B-frames (e.g., low-latency baseline configurations or AV1 streams
+without reordering), this offset is set to <code>0</code>.</li>
+</ol>
+<h3 id="in-band-nalu-timecodes-sei">In-Band NALU Timecodes (SEI)</h3>
+<p>In addition to container-level millisecond timestamps, OBS Studio can
+pass embedded timecodes directly within the video elementary bitstream.
+For H.264 and HEVC encodes, Supplemental Enhancement Information (SEI)
+Network Abstraction Layer (NAL) units are prepended to keyframes:</p>
+<ul>
+<li><strong>Picture Timing SEI:</strong> Encodes precise clock ticks,
+field/frame flags, and picture structure timing derived from the
+encoder's internal counter.</li>
+<li><strong>User Data Unregistered SEI:</strong> Used in specialized
+broadcast workflows to carry SMPTE timecodes (hours, minutes, seconds,
+frames) or ISO-8601 UTC timestamps, ensuring down-funnel synchronization
+for DVR alignment and multi-camera playback.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

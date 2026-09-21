@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elgato Firmware Crash Log Signatures in OBS Studio - obs-studio</title>
+    <meta name="description" content="When an Elgato capture card suffers a firmware or hardware-level crash while running OBS Studio, it suddenly stops delivering frames or disconnects from the system bus entirely. Identifying this issue requires inspecting the OBS Studio log file (Help > L">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/elgato-firmware-crash-log-signatures-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Elgato Firmware Crash Log Signatures in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/elgato-firmware-crash-log-signatures-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When an Elgato capture card suffers a firmware or hardware-level crash while running OBS Studio, it suddenly stops delivering frames or disconnects from the system bus entirely. Identifying this issue requires inspecting the OBS Studio log file (Help > L" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="elgato-firmware-crash-log-signatures-in-obs-studio">Elgato
+Firmware Crash Log Signatures in OBS Studio</h1>
+<p>When an Elgato capture card suffers a firmware or hardware-level
+crash while running OBS Studio, it suddenly stops delivering frames or
+disconnects from the system bus entirely. Identifying this issue
+requires inspecting the OBS Studio log file (<code>Help</code> &gt;
+<code>Log Files</code> &gt; <code>View Current Log</code>) for specific
+DirectShow, Windows Media Foundation, USB bus drop, or driver-level
+error signatures. This guide outlines the exact error codes and message
+patterns that indicate an Elgato capture card has crashed at the
+firmware level rather than experiencing a standard software
+configuration issue.</p>
+<h3 id="1-the-directshow-device-not-functioning-failure-0x8007001f">1.
+The DirectShow "Device Not Functioning" Failure (0x8007001F)</h3>
+<p>When the card's firmware hangs or the onboard processor resets,
+Windows reports a generic device failure. In OBS, the DirectShow video
+input subsystem logs an unrecoverable run failure:</p>
+<pre class="text"><code>[DShow Device: &#39;Elgato Capture Device&#39;] Run failed (0x8007001F): A device attached to the system is not functioning.</code></pre>
+<p>This error (Win32 error code <code>ERROR_GEN_FAILURE</code>) means
+the operating system lost communication with the internal controller of
+the card mid-stream, pointing directly to a hardware or firmware
+freeze.</p>
+<h3 id="2-sudden-device-removal-and-usb-bus-resets">2. Sudden Device
+Removal and USB Bus Resets</h3>
+<p>A severe firmware crash will cause the card's USB controller to
+restart, triggering a hardware disconnect event in the log. Elgato
+devices share the Corsair/Elgato Vendor ID <code>0fd9</code>:</p>
+<pre class="text"><code>User added source &#39;Video Capture Device&#39; (dshow_input) to scene &#39;Live&#39;
+[DShow Device: &#39;Game Capture 4K60 S+&#39;] Device disconnected
+DShow: Device removed: \\?\usb#vid_0fd9&amp;pid_...</code></pre>
+<p>If this disconnect happens without user intervention and is
+immediately followed by reconnection attempts or failed instantiation,
+the device underwent a hard firmware reboot.</p>
+<h3 id="3-capture-graph-failure-e_fail--0x80004005">3. Capture Graph
+Failure (E_FAIL / 0x80004005)</h3>
+<p>When the firmware freezes, the video stream halts abruptly, causing
+the media graph to fail when attempting to pull subsequent frames:</p>
+<pre class="text"><code>[DShow Device: &#39;Elgato HD60 X&#39;] capture failed: 0x80004005
+[DShow Device: &#39;Elgato HD60 X&#39;] Video capture device is not providing frames</code></pre>
+<p>The error <code>0x80004005</code> (Unspecified Error /
+<code>E_FAIL</code>) coupled with the warning that the capture device
+has ceased providing frames indicates that the card remains recognized
+as an active USB endpoint by Windows, but its video encoding or HDMI
+processing block has crashed internally.</p>
+<h3 id="4-directshow-run-failure-insufficient-resources-0x800705aa">4.
+DirectShow Run Failure: Insufficient Resources (0x800705AA)</h3>
+<p>A firmware memory leak or buffer allocation crash on the device board
+will often manifest as:</p>
+<pre class="text"><code>[DShow Device: &#39;Elgato Game Capture HD60 S&#39;] Run failed (0x800705AA): Insufficient system resources exist to complete the requested service.</code></pre>
+<p>Despite the wording, this error typically reflects exhausted onboard
+endpoint buffers or a stalled USB transfer descriptor on the device
+side, not an exhausted PC system RAM pool.</p>
+<h3 id="5-simultaneous-wasapi-audio-termination">5. Simultaneous WASAPI
+Audio Termination</h3>
+<p>Elgato capture cards stream both video and audio over integrated
+DirectShow and WASAPI audio endpoints. If the firmware crashes, the
+audio engine drops at the exact same millisecond:</p>
+<pre class="text"><code>WASAPI: Device &#39;Game Capture HD60 X Audio&#39; disconnected
+WASAPI: Device &#39;Game Capture HD60 X Audio&#39; invalidated</code></pre>
+<p>When paired with any of the <code>DShow</code> run failures above,
+this confirms that the entire hardware module lost power or reset,
+rather than an isolated video pipeline issue inside OBS Studio.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

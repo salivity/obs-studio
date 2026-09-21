@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rec 2020 to Rec 709 Color Matrix in OBS Studio - obs-studio</title>
+    <meta name="description" content="This article provides the exact 3x3 color conversion matrix implemented by OBS Studio to map Rec. 2020 HDR color primaries into Rec. 709 SDR color space. It outlines the precise floating-point coefficients utilized in OBS Studio's internal graphics shade">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/rec-2020-to-rec-709-color-matrix-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Rec 2020 to Rec 709 Color Matrix in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/rec-2020-to-rec-709-color-matrix-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides the exact 3x3 color conversion matrix implemented by OBS Studio to map Rec. 2020 HDR color primaries into Rec. 709 SDR color space. It outlines the precise floating-point coefficients utilized in OBS Studio's internal graphics shade" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="rec-2020-to-rec-709-color-matrix-in-obs-studio">Rec 2020 to Rec
+709 Color Matrix in OBS Studio</h1>
+<p>This article provides the exact 3x3 color conversion matrix
+implemented by OBS Studio to map Rec. 2020 HDR color primaries into Rec.
+709 SDR color space. It outlines the precise floating-point coefficients
+utilized in OBS Studio's internal graphics shaders, explains the
+mathematical derivation based on standard CIE colorimetry, and details
+where this operation occurs within the HDR-to-SDR tone-mapping
+pipeline.</p>
+<h3 id="the-conversion-matrix">The Conversion Matrix</h3>
+<p>OBS Studio performs primary conversions in linear light space. When
+converting linear Rec. 2020 coordinates <span
+class="math inline">\([R_{2020}, G_{2020}, B_{2020}]^T\)</span> to
+linear Rec. 709 coordinates <span class="math inline">\([R_{709},
+G_{709}, B_{709}]^T\)</span>, the following 3×3 matrix is applied:</p>
+<h1 id="-beginbmatrix-r_709--g_709--b_709-endbmatrix">$$ \begin{bmatrix}
+R_{709} \ G_{709} \ B_{709} \end{bmatrix}</h1>
+<p>\begin{bmatrix} 1.660491 &amp; -0.587641 &amp; -0.072850 \ -0.124550
+&amp; 1.132855 &amp; -0.008305 \ -0.018151 &amp; -0.100579 &amp;
+1.118730 \end{bmatrix} \begin{bmatrix} R_{2020} \ G_{2020} \ B_{2020}
+\end{bmatrix} $$</p>
+<p>In OBS Studio's internal HLSL shader pipeline (specifically within
+the color-processing rendering passes), this is implemented as:</p>
+<pre class="hlsl"><code>static const float3x3 rec2020_to_rec709 = {
+    1.660491, -0.587641, -0.072850,
+   -0.124550,  1.132855, -0.008305,
+   -0.018151, -0.100579,  1.118730
+};</code></pre>
+<h3 id="derivation-from-cie-1931-primaries">Derivation from CIE 1931
+Primaries</h3>
+<p>Because both ITU-R BT.2020 and ITU-R BT.709 share the identical CIE
+Standard Illuminant D65 white point (<span class="math inline">\(x_n =
+0.3127, y_n = 0.3290\)</span>), no chromatic adaptation transform (such
+as Bradford or Von Kries) is required.</p>
+<p>The matrix is calculated by computing the normalized primary matrix
+for each color space relative to CIE 1931 <span
+class="math inline">\(XYZ\)</span>:</p>
+<ol type="1">
+<li><p><strong>Rec. 709 Primaries:</strong></p>
+<ul>
+<li>Red: <span class="math inline">\((0.64, 0.33)\)</span></li>
+<li>Green: <span class="math inline">\((0.30, 0.60)\)</span></li>
+<li>Blue: <span class="math inline">\((0.15, 0.06)\)</span></li>
+</ul></li>
+<li><p><strong>Rec. 2020 Primaries:</strong></p>
+<ul>
+<li>Red: <span class="math inline">\((0.708, 0.292)\)</span></li>
+<li>Green: <span class="math inline">\((0.170, 0.797)\)</span></li>
+<li>Blue: <span class="math inline">\((0.131, 0.046)\)</span></li>
+</ul></li>
+</ol>
+<p>Multiplying the inverse of the Rec. 709 RGB-to-XYZ matrix by the Rec.
+2020 RGB-to-XYZ matrix produces the direct linear transformation:</p>
+<p><span class="math display">\[M_{2020 \to 709} = M_{709 \to XYZ}^{-1}
+\times M_{2020 \to XYZ}\]</span></p>
+<h3 id="processing-order-in-the-obs-pipeline">Processing Order in the
+OBS Pipeline</h3>
+<p>The matrix is not applied directly to non-linear video frames. OBS
+Studio applies this conversion within a strict color pipeline:</p>
+<ol type="1">
+<li><strong>YUV to Non-Linear RGB:</strong> The incoming video feed
+(commonly 10-bit YUV 4:2:0 using BT.2020 non-constant luminance) is
+converted to non-linear <span
+class="math inline">\(R&#39;G&#39;B&#39;_{2020}\)</span>.</li>
+<li><strong>Electro-Optical Transfer Function (EOTF):</strong>
+Non-linear values are linearized using either the SMPTE ST 2084 (PQ) or
+ARIB STD-B67 (HLG) transfer function.</li>
+<li><strong>Primary Transformation:</strong> The linear color vectors
+are multiplied by the <code>rec2020_to_rec709</code> matrix.</li>
+<li><strong>Tone Mapping and Gamut Mapping:</strong> Because Rec. 2020
+contains colors outside the physical gamut of Rec. 709, negative values
+and out-of-range highlights are mapped, compressed, or clipped according
+to the selected SDR tone-mapping operator (such as Reinhard or Aces
+Filmic).</li>
+<li><strong>Opto-Electronic Transfer Function (OETF):</strong> The
+mapped linear values are encoded into standard Rec. 709 gamma (typically
+power 2.2 or ITU-R BT.709/sRGB curve) for SDR presentation and
+recording.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

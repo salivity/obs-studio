@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDR White Level vs HDR Nominal Peak Level in OBS - obs-studio</title>
+    <meta name="description" content="Configuring HDR in OBS Studio requires understanding how standard dynamic range (SDR) and high dynamic range (HDR) elements coexist in a single video feed. When streaming or recording in HDR, OBS must balance the brightness of standard elements like webc">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/sdr-white-level-vs-hdr-nominal-peak-level-in-obs">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="SDR White Level vs HDR Nominal Peak Level in OBS - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/sdr-white-level-vs-hdr-nominal-peak-level-in-obs" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Configuring HDR in OBS Studio requires understanding how standard dynamic range (SDR) and high dynamic range (HDR) elements coexist in a single video feed. When streaming or recording in HDR, OBS must balance the brightness of standard elements like webc" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="sdr-white-level-vs-hdr-nominal-peak-level-in-obs">SDR White
+Level vs HDR Nominal Peak Level in OBS</h1>
+<p>Configuring HDR in OBS Studio requires understanding how standard
+dynamic range (SDR) and high dynamic range (HDR) elements coexist in a
+single video feed. When streaming or recording in HDR, OBS must balance
+the brightness of standard elements like webcams, alerts, and overlays
+with the intense highlights of HDR gameplay. The "SDR White Level" and
+"HDR Nominal Peak Level" settings are the two primary controls used to
+calibrate this brightness balance and prevent your video from looking
+either washed out or blindingly overexposed.</p>
+<h2 id="what-is-sdr-white-level">What is SDR White Level?</h2>
+<p>The <strong>SDR White Level</strong> setting (measured in nits)
+determines how bright SDR sources should be when mapped into an HDR
+video container.</p>
+<p>In a typical stream or recording, you will have a mix of HDR content
+(like an HDR-enabled game) and SDR content (such as your webcam, stream
+overlays, alerts, and browser sources). Because SDR content does not
+have HDR brightness data, OBS must convert these elements so they look
+natural alongside the HDR game.</p>
+<ul>
+<li><strong>The standard value:</strong> The industry standard for SDR
+white in an HDR environment (BT.2408) is <strong>203 nits</strong>
+(sometimes configured at 300 nits depending on personal preference and
+viewing environments).</li>
+<li><strong>If set too low:</strong> Your overlays, alerts, and webcam
+will look dark, dull, and gray compared to the bright game behind
+them.</li>
+<li><strong>If set too high:</strong> Your SDR elements will look
+unnaturally bright, glowing intensely and potentially "clipping" (losing
+detail in bright areas), which causes eye strain for viewers.</li>
+</ul>
+<h2 id="what-is-hdr-nominal-peak-level">What is HDR Nominal Peak
+Level?</h2>
+<p>The <strong>HDR Nominal Peak Level</strong> setting (also measured in
+nits) defines the maximum target brightness for the brightest highlights
+in your HDR video.</p>
+<p>This setting tells OBS—and ultimately the video player or streaming
+platform (like YouTube)—how bright the peak highlights of the video are
+expected to be. This includes intense light sources like explosions,
+sunlight, reflections on metal, or headlights.</p>
+<ul>
+<li><strong>The standard value:</strong> The most common setting is
+<strong>1000 nits</strong>, which matches the mastering standard for
+most consumer HDR displays and HDR10 content.</li>
+<li><strong>If set too low (e.g., 400 nits):</strong> The video will
+lack the "pop" of true HDR, making highlights look flat and closer to
+standard dynamic range.</li>
+<li><strong>If set too high (e.g., 4000+ nits):</strong> If your monitor
+or your viewers' displays cannot handle that level of brightness, the
+brightest parts of the image will "clip," turning into solid white
+blocks with zero visible detail.</li>
+</ul>
+<h2 id="key-differences-summary">Key Differences Summary</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">SDR White Level</th>
+<th style="text-align: left;">HDR Nominal Peak Level</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Primary Target</strong></td>
+<td style="text-align: left;">SDR elements (overlays, webcams, alerts,
+text).</td>
+<td style="text-align: left;">HDR elements (gameplay highlights, sun,
+fire, reflections).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Purpose</strong></td>
+<td style="text-align: left;">Adjusts the baseline brightness of
+standard content to match the HDR space.</td>
+<td style="text-align: left;">Sets the absolute ceiling for the
+brightest pixels in the video.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Typical Setting</strong></td>
+<td style="text-align: left;">203 to 300 nits.</td>
+<td style="text-align: left;">1000 nits (standard for most HDR
+content).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Visual Impact</strong></td>
+<td style="text-align: left;">Keeps UI and text legible without being
+too dim or too blinding.</td>
+<td style="text-align: left;">Directs how vivid and intense the bright
+highlights will appear.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="how-to-configure-them-together-in-obs">How to Configure Them
+Together in OBS</h2>
+<p>To get the best visual balance in OBS Studio, use the following
+workflow:</p>
+<ol type="1">
+<li><strong>Set your color space:</strong> In OBS Advanced Settings,
+ensure your Color Space is set to <strong>Rec. 2100 (PQ)</strong>.</li>
+<li><strong>Adjust SDR White Level first:</strong> Start at <strong>203
+nits</strong>. View your stream overlays against your game. If the
+overlays look too dim, slightly increase this value (up to 250 or 300
+nits) until the text and webcams look naturally bright but not
+glowing.</li>
+<li><strong>Set HDR Nominal Peak Level:</strong> Match this to the peak
+brightness of your gaming monitor or the HDR calibration of your game
+(usually <strong>1000 nits</strong> is the safest default for
+compatibility across streaming platforms).</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

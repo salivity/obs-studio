@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Fix Webcam Exposure Flickering in OBS Studio - obs-studio</title>
+    <meta name="description" content="If your webcam constantly shifts between bright and dark exposure levels in OBS Studio, it is because the camera's automatic exposure setting is continuously adjusting to minor changes in lighting. This article explains why this flickering happens and pr">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-fix-webcam-exposure-flickering-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Fix Webcam Exposure Flickering in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-fix-webcam-exposure-flickering-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="If your webcam constantly shifts between bright and dark exposure levels in OBS Studio, it is because the camera's automatic exposure setting is continuously adjusting to minor changes in lighting. This article explains why this flickering happens and pr" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-fix-webcam-exposure-flickering-in-obs-studio">How to Fix
+Webcam Exposure Flickering in OBS Studio</h1>
+<p>If your webcam constantly shifts between bright and dark exposure
+levels in OBS Studio, it is because the camera's automatic exposure
+setting is continuously adjusting to minor changes in lighting. This
+article explains why this flickering happens and provides a direct,
+step-by-step guide on how to disable auto-exposure and lock your
+settings for a consistent, professional video feed.</p>
+<h2 id="why-your-webcam-exposure-flickers">Why Your Webcam Exposure
+Flickers</h2>
+<p>Webcams are designed to adapt to changing environments. By default,
+they use <strong>Auto-Exposure</strong> to analyze the incoming light
+and adjust the brightness of the image.</p>
+<p>In a typical streaming or recording setup, the light reflecting off
+your face constantly changes—usually due to movement, shifting
+background light, or the changing brightness of your computer monitors.
+When the camera detects these tiny shifts, it automatically
+recalibrates, causing the sudden, distracting jumps in brightness known
+as exposure flickering.</p>
+<hr />
+<h2 id="how-to-lock-your-webcam-exposure-in-obs-studio">How to Lock Your
+Webcam Exposure in OBS Studio</h2>
+<p>To stop the flickering, you must disable the camera's automatic
+adjustments and set a fixed, manual exposure value.</p>
+<h3 id="step-1-open-video-capture-device-properties">Step 1: Open Video
+Capture Device Properties</h3>
+<ol type="1">
+<li>Launch <strong>OBS Studio</strong>.</li>
+<li>Go to the <strong>Sources</strong> dock.</li>
+<li>Double-click your webcam source (usually named <strong>Video Capture
+Device</strong>), or right-click it and select
+<strong>Properties</strong>.</li>
+</ol>
+<h3 id="step-2-access-the-cameras-driver-settings">Step 2: Access the
+Camera's Driver Settings</h3>
+<ol type="1">
+<li>In the Properties window, scroll down and click the
+<strong>Configure Video</strong> button.</li>
+<li>This will open a separate properties window provided by your
+webcam’s manufacturer (such as Logitech, Razer, or Elgato).</li>
+</ol>
+<h3 id="step-3-disable-auto-exposure">Step 3: Disable Auto-Exposure</h3>
+<ol type="1">
+<li>In the new window, click on the <strong>Camera Control</strong> tab
+(if available; otherwise, look for "Exposure" on the main tab).</li>
+<li>Locate the <strong>Exposure</strong> setting.</li>
+<li>Uncheck the <strong>Auto</strong> box next to Exposure. This locks
+the exposure value in place.</li>
+</ol>
+<h3 id="step-4-manually-adjust-the-slider">Step 4: Manually Adjust the
+Slider</h3>
+<ol type="1">
+<li>Manually drag the <strong>Exposure</strong> slider until your video
+looks natural and properly lit.</li>
+<li><em>Note:</em> Setting the exposure too low will make the image
+dark, while setting it too high can lower your webcam's frame rate (FPS)
+and introduce motion blur. For the smoothest video, keep the exposure
+value as low as possible and compensate by increasing your physical room
+lighting.</li>
+<li>Uncheck any other automatic settings that might cause flickering,
+such as <strong>Auto White Balance</strong> or <strong>Low Light
+Compensation</strong>.</li>
+</ol>
+<h3 id="step-5-save-your-settings">Step 5: Save Your Settings</h3>
+<ol type="1">
+<li>Click <strong>Apply</strong>, then click <strong>OK</strong> to
+close the camera settings window.</li>
+<li>Click <strong>OK</strong> on the OBS Properties window to save the
+changes.</li>
+</ol>
+<p>By locking these settings, your webcam will maintain a constant
+brightness level, completely eliminating exposure flickering regardless
+of monitor glare or movement.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

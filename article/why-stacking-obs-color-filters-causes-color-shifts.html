@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Stacking OBS Color Filters Causes Color Shifts - obs-studio</title>
+    <meta name="description" content="Applying multiple color correction filters sequentially to a single source in OBS Studio often causes unexpected tinting, crushed shadows, and severe color shifts. This issue stems from the way OBS Studio processes its filter pipeline, specifically regar">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/why-stacking-obs-color-filters-causes-color-shifts">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Stacking OBS Color Filters Causes Color Shifts - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/why-stacking-obs-color-filters-causes-color-shifts" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Applying multiple color correction filters sequentially to a single source in OBS Studio often causes unexpected tinting, crushed shadows, and severe color shifts. This issue stems from the way OBS Studio processes its filter pipeline, specifically regar" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-stacking-obs-color-filters-causes-color-shifts">Why Stacking
+OBS Color Filters Causes Color Shifts</h1>
+<p>Applying multiple color correction filters sequentially to a single
+source in OBS Studio often causes unexpected tinting, crushed shadows,
+and severe color shifts. This issue stems from the way OBS Studio
+processes its filter pipeline, specifically regarding execution order,
+repeated dynamic range clamping, mathematical rounding, and compounding
+non-linear transformations. Understanding how these factors interact
+allows streamers and creators to maintain accurate color fidelity
+without unintentionally degrading their video feed.</p>
+<h3 id="sequential-filter-execution">Sequential Filter Execution</h3>
+<p>OBS Studio processes filters down a linear stack from top to bottom.
+The output of the first filter becomes the direct input for the second
+filter, and so on. If the initial filter introduces a slight tint,
+changes contrast, or alters gamma, the subsequent filter does not act on
+the original source data; it operates entirely on the modified image.
+Even minor adjustments in early stages are heavily magnified as they
+travel down the chain.</p>
+<h3 id="value-clamping-and-dynamic-range-clipping">Value Clamping and
+Dynamic Range Clipping</h3>
+<p>A primary driver of color distortion in multi-filter setups is value
+clamping. OBS video shaders generally normalize color channels between
+<code>0.0</code> (pure black) and <code>1.0</code> (pure white),
+corresponding to standard 8-bit values (0–255).</p>
+<p>When a filter pushes a color channel beyond these bounds—such as
+increasing brightness or contrast—OBS clamps values exceeding
+<code>1.0</code> down to <code>1.0</code> and values below
+<code>0.0</code> up to <code>0.0</code>. If a subsequent filter attempts
+to lower the brightness or restore shadows, the clipped data cannot be
+recovered. Instead, the downstream filter works with truncated color
+data, leading to discolored highlights, posterization, and crushed,
+discolored shadows.</p>
+<h3 id="compounding-non-linear-adjustments">Compounding Non-Linear
+Adjustments</h3>
+<p>Parameters such as Gamma, Contrast, and Saturation are non-linear
+mathematical operations. For example:</p>
+<ul>
+<li><strong>Gamma:</strong> Applied as an exponential curve (<span
+class="math inline">\(Output = Input^{\gamma}\)</span>). Stacking two
+gamma filters applies exponents successively, rapidly destabilizing the
+relationship between red, green, and blue channels in the midtones.</li>
+<li><strong>Saturation:</strong> Calculates color divergence from a
+luminance baseline. Altering luminance or contrast prior to or following
+saturation changes shifts the mathematical center of the color
+calculation, dragging hues toward unintended secondary colors.</li>
+</ul>
+<p>Applying non-linear formulas repeatedly without converting back to a
+linear color space causes channel values to diverge, resulting in
+unnatural color casts (frequently magenta, green, or yellow tints).</p>
+<h3 id="quantization-and-rounding-errors">Quantization and Rounding
+Errors</h3>
+<p>Video feeds inside OBS Studio are rendered primarily in 8-bit per
+channel color pipelines on the GPU. Every time a shader performs
+floating-point calculations and writes the result back for the next
+filter pass, values are rounded to fit into standard color buffers.
+Chaining multiple passes accumulates precision errors, which manifest
+visibly as color banding, artifacting, and noticeable shifts in neutral
+tones like grays and skin tones.</p>
+<h3 id="how-to-prevent-multi-filter-color-shifts">How to Prevent
+Multi-Filter Color Shifts</h3>
+<p>To prevent color shifts when grading video sources in OBS Studio:</p>
+<ul>
+<li><strong>Consolidate into a Single Filter:</strong> Make all
+fundamental adjustments—such as contrast, brightness, and
+saturation—within a single Color Correction filter instance.</li>
+<li><strong>Use Look-Up Tables (LUTs):</strong> Instead of stacking
+several native filters to achieve a visual style, generate a
+<code>.cube</code> or <code>.png</code> LUT in dedicated software (such
+as DaVinci Resolve) and apply it using a single "Apply LUT" filter.</li>
+<li><strong>Prioritize Filter Order:</strong> If multiple filters are
+mandatory, place corrective filters (exposure and white balance) at the
+top of the stack and creative or stylistic filters at the bottom.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

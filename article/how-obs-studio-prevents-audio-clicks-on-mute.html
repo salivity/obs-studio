@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Studio Prevents Audio Clicks on Mute - obs-studio</title>
+    <meta name="description" content="When muting live audio, abruptly cutting a digital signal mid-waveform causes an instantaneous drop to zero amplitude, producing a sharp high-frequency pop known as a square-wave click transient. OBS Studio prevents these audible artifacts by using a sof">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-studio-prevents-audio-clicks-on-mute">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Studio Prevents Audio Clicks on Mute - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-studio-prevents-audio-clicks-on-mute" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When muting live audio, abruptly cutting a digital signal mid-waveform causes an instantaneous drop to zero amplitude, producing a sharp high-frequency pop known as a square-wave click transient. OBS Studio prevents these audible artifacts by using a sof" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-studio-prevents-audio-clicks-on-mute">How OBS Studio
+Prevents Audio Clicks on Mute</h1>
+<p>When muting live audio, abruptly cutting a digital signal
+mid-waveform causes an instantaneous drop to zero amplitude, producing a
+sharp high-frequency pop known as a square-wave click transient. OBS
+Studio prevents these audible artifacts by using a software-level gain
+ramping process, often referred to as micro-fading or de-zippering.
+Instead of hard-clamping the audio buffer directly to zero, the software
+rapidly interpolates the volume over a short time window, ensuring
+smooth continuous transitions that protect the listening experience.</p>
+<h3 id="the-physics-of-the-audio-pop-transient">The Physics of the Audio
+Pop Transient</h3>
+<p>Digital audio is represented as a stream of continuous amplitude
+values. If an audio track is playing and a user activates a hard mute,
+the audio waveform is sliced at its current sample value.</p>
+<p>If this cut occurs anywhere other than a "zero-crossing" (the exact
+point where the waveform naturally crosses the baseline of 0
+dB/centerline), the waveform drops instantly from its current amplitude
+to absolute silence. In mathematical terms, this near-instantaneous
+vertical drop acts like the rising or falling edge of a square wave.
+Because a step-change contains energy across an infinite harmonic
+spectrum, the playback hardware outputs an audible, jarring click or
+pop.</p>
+<h3 id="gain-interpolation-in-obs-studio">Gain Interpolation in OBS
+Studio</h3>
+<p>OBS Studio avoids this issue within its core audio pipeline
+(<code>libobs</code>) by treating the mute function not as an
+instantaneous binary switch, but as a rapid target-gain transition.</p>
+<p>When a user toggles the mute button:</p>
+<ol type="1">
+<li><strong>State Registration:</strong> The mute state transitions to
+true, but the audio processing thread does not immediately discard
+incoming samples.</li>
+<li><strong>Target Gain Setting:</strong> The system sets the target
+volume multiplier to <code>0.0</code>, while keeping track of the
+current volume multiplier (e.g., <code>1.0</code>).</li>
+<li><strong>Linear or Logarithmic Ramping:</strong> During the active
+audio frame (or across a small block of samples), OBS Studio calculates
+an incremental step value for every consecutive sample.</li>
+<li><strong>Sample-by-Sample Multiplication:</strong> Each sample in the
+buffer is multiplied by a progressively decreasing gain coefficient
+until the gain reaches <code>0.0</code>.</li>
+</ol>
+<p>This micro-fade typically takes place across a few milliseconds—fast
+enough to feel instantaneous to the human ear, but gradual enough to
+slope the waveform downward without creating the steep edge required to
+produce a transient artifact.</p>
+<h3 id="buffer-level-processing">Buffer-Level Processing</h3>
+<p>OBS Studio processes audio in fixed-size buffers, dictated by the
+sample rate (typically 44.1 kHz or 48 kHz). When a mute event
+occurs:</p>
+<ul>
+<li>The audio mixer inspects the volume envelope for the current
+source.</li>
+<li>If a discrepancy exists between the source's current output level
+and its target level (zero), it applies a ramp algorithm across the
+audio buffer.</li>
+<li>Once the ramp reaches zero, the audio subsystem flags the source as
+fully attenuated. At this point, OBS Studio can bypass heavier
+downstream processing (such as active filters or encoding overhead) for
+that dead channel to conserve CPU cycles.</li>
+</ul>
+<h3 id="unmuting-transitions">Unmuting Transitions</h3>
+<p>The unmuting process mirrors the muting routine. If an unmuted
+channel begins processing mid-signal, an abrupt jump from absolute zero
+to a high amplitude peak would generate the exact same high-frequency
+click.</p>
+<p>OBS Studio mitigates this by applying an identical upward gain ramp,
+interpolating from <code>0.0</code> back to the user’s designated volume
+setting over a brief sample envelope. This ensures that attacks remain
+soft and clean, preventing pops on the leading edge of speech or
+music.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

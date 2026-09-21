@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Clean Reinstall OBS Studio and Purge Settings - obs-studio</title>
+    <meta name="description" content="Performing a truly clean re-installation of OBS Studio requires more than just running the standard uninstaller. This guide provides a straightforward, step-by-step walkthrough on how to completely purge all cached data, user profiles, scene collections,">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-clean-reinstall-obs-studio-and-purge-settings">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Clean Reinstall OBS Studio and Purge Settings - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-clean-reinstall-obs-studio-and-purge-settings" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Performing a truly clean re-installation of OBS Studio requires more than just running the standard uninstaller. This guide provides a straightforward, step-by-step walkthrough on how to completely purge all cached data, user profiles, scene collections," />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-clean-reinstall-obs-studio-and-purge-settings">How to
+Clean Reinstall OBS Studio and Purge Settings</h1>
+<p>Performing a truly clean re-installation of OBS Studio requires more
+than just running the standard uninstaller. This guide provides a
+straightforward, step-by-step walkthrough on how to completely purge all
+cached data, user profiles, scene collections, and configuration files
+from your system, ensuring a blank-slate reinstall of the software on
+both Windows and macOS.</p>
+<h2 id="step-1-backup-your-settings-optional">Step 1: Backup Your
+Settings (Optional)</h2>
+<p>If you want to save your current profiles and scenes before purging
+them forever, export them first. Open OBS Studio, go to
+<strong>Profile</strong> &gt; <strong>Export</strong>, and then
+<strong>Scene Collection</strong> &gt; <strong>Export</strong> to save
+your layouts. If you want a completely fresh start, skip this step.</p>
+<h2 id="step-2-uninstall-obs-studio">Step 2: Uninstall OBS Studio</h2>
+<h3 id="on-windows">On Windows:</h3>
+<ol type="1">
+<li>Close OBS Studio completely.</li>
+<li>Open the <strong>Start Menu</strong>, search for <strong>Add or
+remove programs</strong>, and open it.</li>
+<li>Find <strong>OBS Studio</strong> in the list, click the three dots
+(or click the program), and select <strong>Uninstall</strong>.</li>
+<li>During the uninstallation process, if prompted to "Delete user
+settings" or "Remove user data," make sure to check that box.</li>
+</ol>
+<h3 id="on-macos">On macOS:</h3>
+<ol type="1">
+<li>Quit OBS Studio.</li>
+<li>Open <strong>Finder</strong> and navigate to your
+<strong>Applications</strong> folder.</li>
+<li>Drag <strong>OBS</strong> to the <strong>Trash</strong> (or
+right-click and select <strong>Move to Trash</strong>).</li>
+</ol>
+<h2 id="step-3-purge-remaining-user-data-and-configurations">Step 3:
+Purge Remaining User Data and Configurations</h2>
+<p>The uninstaller often leaves behind configuration files, plugins, and
+cache folders. You must delete these manually to perform a true
+purge.</p>
+<h3 id="on-windows-1">On Windows:</h3>
+<ol type="1">
+<li>Press the <strong>Windows Key + R</strong> on your keyboard to open
+the Run dialog box.</li>
+<li>Type <code>%appdata%</code> and press <strong>Enter</strong>. This
+opens the hidden <code>Roaming</code> folder.</li>
+<li>Locate the folder named <strong>obs-studio</strong>.</li>
+<li>Right-click the <strong>obs-studio</strong> folder and select
+<strong>Delete</strong>.</li>
+<li>Open the Run dialog box again (<strong>Windows Key + R</strong>),
+type <code>%localappdata%</code>, and press <strong>Enter</strong>.</li>
+<li>Check for an <strong>obs-studio</strong> folder here as well. If it
+exists, delete it.</li>
+<li>Empty your <strong>Recycle Bin</strong>.</li>
+</ol>
+<h3 id="on-macos-1">On macOS:</h3>
+<ol type="1">
+<li>Open <strong>Finder</strong>.</li>
+<li>Click <strong>Go</strong> in the top menu bar, hold down the
+<strong>Option (Alt)</strong> key, and click <strong>Library</strong>
+when it appears.</li>
+<li>Navigate to the <strong>Application Support</strong> folder.</li>
+<li>Locate the folder named <strong>obs-studio</strong> and move it to
+the <strong>Trash</strong>.</li>
+<li>Empty your <strong>Trash</strong>.</li>
+</ol>
+<h2 id="step-4-reinstall-obs-studio">Step 4: Reinstall OBS Studio</h2>
+<p>Once all directory traces have been removed, your system is
+completely cleared of OBS data.</p>
+<ol type="1">
+<li>Download the latest installer directly from the official OBS Studio
+website.</li>
+<li>Run the installer and follow the on-screen prompts.</li>
+<li>Upon launching the newly installed OBS Studio, you will be greeted
+by the Auto-Configuration Wizard, confirming that the application has
+been successfully reset to its default factory settings.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

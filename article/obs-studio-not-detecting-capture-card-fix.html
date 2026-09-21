@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Not Detecting Capture Card Fix - obs-studio</title>
+    <meta name="description" content="If OBS Studio is not detecting your capture card, it can disrupt your streaming or recording setup. This troubleshooting guide provides quick, actionable steps to resolve this common issue, covering hardware connections, Windows privacy settings, driver">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-not-detecting-capture-card-fix">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Not Detecting Capture Card Fix - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-not-detecting-capture-card-fix" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="If OBS Studio is not detecting your capture card, it can disrupt your streaming or recording setup. This troubleshooting guide provides quick, actionable steps to resolve this common issue, covering hardware connections, Windows privacy settings, driver" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-not-detecting-capture-card-fix">OBS Studio Not
+Detecting Capture Card Fix</h1>
+<p>If OBS Studio is not detecting your capture card, it can disrupt your
+streaming or recording setup. This troubleshooting guide provides quick,
+actionable steps to resolve this common issue, covering hardware
+connections, Windows privacy settings, driver updates, and OBS
+configuration tweaks to get your capture card working seamlessly.</p>
+<h2 id="1-verify-physical-connections">1. Verify Physical
+Connections</h2>
+<p>Before changing any software settings, ensure the physical
+connections are secure:</p>
+<ul>
+<li><strong>Check the USB Port:</strong> Many capture cards require a
+USB 3.0 port (usually colored blue or labeled with "SS" for SuperSpeed).
+Plugging a USB 3.0 capture card into a USB 2.0 port will often prevent
+OBS from recognizing it.</li>
+<li><strong>Inspect the Cables:</strong> Ensure your HDMI and USB cables
+are firmly plugged in. If possible, test with a different HDMI or USB
+cable to rule out a faulty cord.</li>
+<li><strong>Avoid USB Hubs:</strong> Connect the capture card directly
+to your computer's motherboard ports (on the back of a desktop) rather
+than using an external USB hub, which may not provide enough power or
+bandwidth.</li>
+</ul>
+<h2 id="2-enable-camera-privacy-permissions">2. Enable Camera Privacy
+Permissions</h2>
+<p>Windows and macOS have privacy settings that can block applications
+from accessing video input devices.</p>
+<ul>
+<li><strong>On Windows:</strong> Open <strong>Settings</strong> &gt;
+<strong>Privacy &amp; Security</strong> &gt; <strong>Camera</strong>.
+Ensure that "Camera access" is turned on and that OBS Studio has
+permission to access your camera.</li>
+<li><strong>On macOS:</strong> Go to <strong>System Settings</strong>
+&gt; <strong>Privacy &amp; Security</strong> &gt;
+<strong>Camera</strong>, and check the box next to OBS Studio to allow
+access.</li>
+</ul>
+<h2 id="3-re-add-the-source-in-obs">3. Re-add the Source in OBS</h2>
+<p>Sometimes OBS fails to initialize the device properly. Resetting the
+source can force a refresh:</p>
+<ol type="1">
+<li>Open OBS Studio.</li>
+<li>In the <strong>Sources</strong> dock, right-click your capture card
+source and select <strong>Remove</strong>.</li>
+<li>Click the <strong>+</strong> icon to add a new source and select
+<strong>Video Capture Device</strong>.</li>
+<li>Name the source and click <strong>OK</strong>.</li>
+<li>In the <strong>Device</strong> drop-down menu, select your capture
+card.</li>
+<li>If the device is listed but shows a black screen, click
+<strong>Deactivate</strong>, wait a few seconds, and then click
+<strong>Activate</strong>.</li>
+</ol>
+<h2 id="4-check-for-software-conflicts">4. Check for Software
+Conflicts</h2>
+<p>Capture cards can only be used by one application at a time. If
+another program is using the capture card's feed, OBS will display a
+black screen or fail to detect the device.</p>
+<ul>
+<li>Close any proprietary software that came with the capture card
+(e.g., Elgato 4K Capture Utility, AVerMedia RECentral).</li>
+<li>Close other communication apps like Zoom, Discord, MS Teams, or
+Skype that might be trying to access the capture card as a webcam.</li>
+</ul>
+<h2 id="5-update-drivers-and-firmware">5. Update Drivers and
+Firmware</h2>
+<p>Outdated drivers can prevent your operating system and OBS from
+communicating with the capture card.</p>
+<ul>
+<li>Open your computer's <strong>Device Manager</strong> (Windows) and
+look under <strong>Imaging devices</strong> or <strong>Sound, video and
+game controllers</strong> to see if your capture card has a yellow
+warning icon.</li>
+<li>Visit the official website of your capture card manufacturer (such
+as Elgato, AVerMedia, or Razer) to download and install the latest
+drivers and firmware updates for your specific model.</li>
+</ul>
+<h2 id="6-match-resolution-and-fps-settings">6. Match Resolution and FPS
+Settings</h2>
+<p>If OBS is set to a resolution or frame rate that your capture card
+does not support, it may fail to display.</p>
+<ol type="1">
+<li>Double-click your capture card source in OBS to open its
+<strong>Properties</strong>.</li>
+<li>Change <strong>Resolution/FPS Type</strong> from "Device Default" to
+<strong>Custom</strong>.</li>
+<li>Manually select a resolution (e.g., 1920x1080) and FPS (e.g., 60)
+that matches the output of your source device (like a console or
+camera).</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

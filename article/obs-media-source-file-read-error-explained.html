@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Media Source File Read Error Explained - obs-studio</title>
+    <meta name="description" content="This article explains what the "Media Source File Read Error" means in OBS Studio log files, why it occurs, and how you can quickly resolve it to ensure your streams and recordings run smoothly. In OBS Studio, a "Media Source File Read Error" indicates t">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-media-source-file-read-error-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Media Source File Read Error Explained - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-media-source-file-read-error-explained" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains what the "Media Source File Read Error" means in OBS Studio log files, why it occurs, and how you can quickly resolve it to ensure your streams and recordings run smoothly. In OBS Studio, a "Media Source File Read Error" indicates t" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-media-source-file-read-error-explained">OBS Media Source
+File Read Error Explained</h1>
+<p>This article explains what the "Media Source File Read Error" means
+in OBS Studio log files, why it occurs, and how you can quickly resolve
+it to ensure your streams and recordings run smoothly.</p>
+<p>In OBS Studio, a "Media Source File Read Error" indicates that the
+software attempted to load or play a media file—such as a video, audio
+track, or animation—configured as a "Media Source" in one of your
+scenes, but failed to access or read the file. When this happens, the
+source will typically appear as a black screen, fail to play, or
+disappear from your stream overlay entirely.</p>
+<h3 id="common-causes-of-the-error">Common Causes of the Error</h3>
+<p>There are four primary reasons why OBS Studio generates this error in
+its log files:</p>
+<ol type="1">
+<li><strong>Broken File Path:</strong> This is the most common cause. If
+you moved, renamed, or deleted the media file on your computer after
+adding it to OBS, the software will still look for the file in its
+original location and fail to find it.</li>
+<li><strong>Disconnected Drives:</strong> If your media files are stored
+on an external hard drive, a USB flash drive, or a network-attached
+storage (NAS) device, and that drive disconnects or goes to sleep, OBS
+will lose access to the file.</li>
+<li><strong>Permissions Issues:</strong> Sometimes, your operating
+system restricts OBS Studio from accessing certain folders (like system
+directories or protected user folders), preventing the software from
+reading the file.</li>
+<li><strong>Unsupported or Corrupt Codecs:</strong> If the file is
+corrupted or encoded with a codec that OBS Studio does not support, the
+system will fail to read the file data.</li>
+</ol>
+<h3 id="how-to-fix-the-error">How to Fix the Error</h3>
+<p>To resolve the "Media Source File Read Error," try the following
+troubleshooting steps:</p>
+<ul>
+<li><strong>Relink the File:</strong> Open OBS Studio, locate the
+affected Media Source in your "Sources" dock, double-click it, and click
+"Browse" to locate and re-select the file in its current folder.</li>
+<li><strong>Consolidate Your Assets:</strong> To prevent future path
+issues, create a dedicated folder on your local main drive (such as your
+C: drive) specifically for stream assets, and move all your media files
+there.</li>
+<li><strong>Use Local Storage:</strong> Avoid hosting active stream
+media on external drives or network locations. Transfer these files
+directly to your internal solid-state drive (SSD) or hard drive.</li>
+<li><strong>Convert the Media Format:</strong> If the file is corrupted
+or using an exotic codec, use a free transcoding tool like Handbrake to
+convert the video into a widely compatible format, such as an MP4 file
+using the H.264 video codec and AAC audio codec.</li>
+<li><strong>Run OBS as Administrator:</strong> Right-click the OBS
+Studio shortcut and select "Run as administrator" to bypass any
+potential operating system permission blocks that might prevent the
+software from reading your media files.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

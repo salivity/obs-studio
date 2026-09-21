@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stream HDR in OBS Studio with SDR Preview - obs-studio</title>
+    <meta name="description" content="This guide explains how to configure OBS Studio to broadcast high-quality High Dynamic Range (HDR) gameplay to streaming platforms while ensuring your local OBS preview accurately tone-maps the image to Standard Dynamic Range (SDR). By adjusting your col">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/stream-hdr-in-obs-studio-with-sdr-preview">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Stream HDR in OBS Studio with SDR Preview - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/stream-hdr-in-obs-studio-with-sdr-preview" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide explains how to configure OBS Studio to broadcast high-quality High Dynamic Range (HDR) gameplay to streaming platforms while ensuring your local OBS preview accurately tone-maps the image to Standard Dynamic Range (SDR). By adjusting your col" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="stream-hdr-in-obs-studio-with-sdr-preview">Stream HDR in OBS
+Studio with SDR Preview</h1>
+<p>This guide explains how to configure OBS Studio to broadcast
+high-quality High Dynamic Range (HDR) gameplay to streaming platforms
+while ensuring your local OBS preview accurately tone-maps the image to
+Standard Dynamic Range (SDR). By adjusting your color space, encoder,
+and tone-mapping settings, you can deliver a vibrant HDR feed to your
+viewers without suffering from a washed-out or blindingly bright preview
+screen on your local monitor.</p>
+<h3 id="step-1-enable-hdr-in-windows">Step 1: Enable HDR in Windows</h3>
+<p>Before configuring OBS, ensure your operating system and game are
+outputting an HDR signal.</p>
+<ol type="1">
+<li>Right-click your desktop and select <strong>Display
+settings</strong>.</li>
+<li>Select your HDR-capable monitor and toggle on <strong>Use
+HDR</strong>.</li>
+<li>Launch your game and ensure HDR is enabled in the in-game video
+settings.</li>
+</ol>
+<h3 id="step-2-configure-obs-color-settings">Step 2: Configure OBS Color
+Settings</h3>
+<p>To process HDR metadata, OBS Studio must be configured to use a
+10-bit color format and an HDR color space.</p>
+<ol type="1">
+<li>Open OBS Studio and click <strong>Settings</strong> in the
+bottom-right corner.</li>
+<li>Navigate to the <strong>Advanced</strong> tab on the left menu.</li>
+<li>Under the <strong>Video</strong> section, change the following
+settings:
+<ul>
+<li><strong>Color Format:</strong> Set to <strong>P010</strong> (this
+enables 10-bit color).</li>
+<li><strong>Color Space:</strong> Set to <strong>Rec. 2100
+(PQ)</strong>.</li>
+<li><strong>Color Range:</strong> Set to <strong>Limited</strong> (the
+standard for HDR video streaming).</li>
+</ul></li>
+</ol>
+<h3 id="step-3-adjust-sdr-white-level-for-the-preview">Step 3: Adjust
+SDR White Level for the Preview</h3>
+<p>Because your OBS canvas is now rendering in HDR, OBS must tone-map
+the local preview window down to SDR if your OBS interface is on an SDR
+monitor, or to keep UI overlays balanced.</p>
+<ol type="1">
+<li>In the same <strong>Advanced</strong> settings tab, locate
+<strong>SDR White Level (nits)</strong>.</li>
+<li>Adjust this value to calibrate the brightness of SDR sources (like
+webcams, text, and alerts) within your HDR scene.</li>
+<li>The default is <strong>203 nits</strong> (the BT.2408
+recommendation), which provides an accurate, balanced local preview. If
+your preview looks too dark, increase this value slightly (between 200
+and 250 nits).</li>
+<li>Click <strong>Apply</strong> and <strong>OK</strong>.</li>
+</ol>
+<h3 id="step-4-capture-the-hdr-game-source">Step 4: Capture the HDR Game
+Source</h3>
+<ol type="1">
+<li>In your OBS Scene, add a new source and select <strong>Game
+Capture</strong> (or <strong>Windows Graphics Capture</strong> via
+Display Capture).</li>
+<li>Ensure the source properties are set to capture your game.</li>
+<li>OBS will automatically detect the Rec. 2100 PQ color metadata from
+the game and display it correctly in the preview window, tone-mapping it
+to SDR color standards on your monitor so it does not look washed
+out.</li>
+</ol>
+<h3 id="step-5-configure-encoder-settings-for-hdr-streaming">Step 5:
+Configure Encoder Settings for HDR Streaming</h3>
+<p>Standard H.264 (AVC) encoding does not support HDR. You must use a
+modern encoder to stream HDR content to platforms like YouTube.</p>
+<ol type="1">
+<li>Go to <strong>Settings</strong> &gt; <strong>Output</strong>.</li>
+<li>Set the <strong>Output Mode</strong> to <strong>Advanced</strong>,
+then select the <strong>Streaming</strong> tab.</li>
+<li>Change your <strong>Video Encoder</strong> to one of the following:
+<ul>
+<li><strong>HEVC (H.265):</strong> Highly compatible, available on
+NVIDIA (NVENC), AMD (AMF), and Intel (QuickSync).</li>
+<li><strong>AV1:</strong> The most efficient encoder for HDR, available
+on NVIDIA RTX 40-series, AMD RX 7000-series, and Intel Arc GPUs.</li>
+</ul></li>
+<li>Set your target bitrate (HDR streaming generally requires higher
+bitrates; 10,000 to 15,000 Kbps is recommended for 1440p/4K HDR).</li>
+<li>Click <strong>Apply</strong> and <strong>OK</strong> to save your
+settings. You are now ready to stream HDR gameplay while viewing a
+perfectly mapped SDR preview.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

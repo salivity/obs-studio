@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Studio Calculates Timestamps for VFR Sources - obs-studio</title>
+    <meta name="description" content="OBS Studio manages variable frame rate (VFR) sources by decoupling input ingestion from its internal rendering pipeline, converting irregular incoming frames into a predictable, constant frame rate (CFR) output. When sources deliver frames at fluctuating">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-studio-calculates-timestamps-for-vfr-sources">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Studio Calculates Timestamps for VFR Sources - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-studio-calculates-timestamps-for-vfr-sources" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio manages variable frame rate (VFR) sources by decoupling input ingestion from its internal rendering pipeline, converting irregular incoming frames into a predictable, constant frame rate (CFR) output. When sources deliver frames at fluctuating" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-studio-calculates-timestamps-for-vfr-sources">How OBS
+Studio Calculates Timestamps for VFR Sources</h1>
+<p>OBS Studio manages variable frame rate (VFR) sources by decoupling
+input ingestion from its internal rendering pipeline, converting
+irregular incoming frames into a predictable, constant frame rate (CFR)
+output. When sources deliver frames at fluctuating intervals, OBS
+buffers these inputs, synchronizes them against a high-resolution
+monotonic master clock, and samples the most appropriate frame during
+each scheduled compositing tick. The final presentation timestamp (PTS)
+assigned to the composited frame is generated directly by OBS Studio's
+internal render loop, ensuring the downstream video encoder receives
+strictly monotonic, evenly spaced timestamps regardless of input
+variance.</p>
+<h3 id="the-monotonic-master-clock-and-render-cadence">The Monotonic
+Master Clock and Render Cadence</h3>
+<p>OBS Studio relies on a central monotonic time provider
+(<code>os_gettime_ns</code>) to coordinate audio and video subsystems.
+While sources may emit frames with varying delays or native presentation
+timestamps, the OBS video rendering thread runs on a rigid,
+predetermined interval defined by the user’s canvas settings (for
+example, 16.666 milliseconds for 60 FPS).</p>
+<p>This fixed interval establishes the cadence for the compositing
+engine. The render thread periodically awakens at defined tick
+boundaries. The presentation timestamp of the final composited frame is
+tied to this render clock rather than the raw timestamps delivered by
+individual capture devices or media decoders.</p>
+<h3 id="ingestion-and-timestamp-normalization">Ingestion and Timestamp
+Normalization</h3>
+<p>When a VFR source—such as a smartphone camera, window capture, or
+media file—delivers a video frame to OBS, it arrives inside an
+<code>obs_source_frame</code> struct containing its source-generated
+timestamp. OBS immediately converts or maps this incoming timestamp to
+the unified engine timeline:</p>
+<ol type="1">
+<li><strong>Clock Drift and Alignment:</strong> OBS assesses the
+source's arrival time relative to the master clock. If a source provides
+hardware-level timestamps, OBS normalizes them to prevent drift relative
+to system audio.</li>
+<li><strong>Buffering:</strong> Ingested frames enter a circular queue
+or state cache for that specific source. Because the source is variable,
+intervals between arrivals may be shorter or longer than the
+compositor's tick rate.</li>
+</ol>
+<h3 id="frame-selection-during-compositing">Frame Selection During
+Compositing</h3>
+<p>When the video render loop triggers at target time <span
+class="math inline">\(T\)</span>, OBS walks the active scene graph to
+draw each source. For every VFR source, OBS evaluates the buffered
+frames to choose which visual data to composite:</p>
+<ul>
+<li><strong>Frame Evaluation:</strong> OBS checks the timestamps of
+queued frames against the current rendering timestamp <span
+class="math inline">\(T\)</span>.</li>
+<li><strong>The Nearest Valid Frame:</strong> The compositor selects the
+most recent frame whose adjusted timestamp is less than or equal to
+<span class="math inline">\(T\)</span> (<span
+class="math inline">\(PTS_{source} \le T\)</span>).</li>
+<li><strong>Frame Dropping:</strong> Any older frames lingering in the
+source queue that were superseded before the current render tick are
+discarded without being drawn. This prevents latency accumulation when a
+source temporarily spikes above the target frame rate.</li>
+<li><strong>Frame Duplication:</strong> If the VFR source has not
+delivered a new frame since the last tick (a frame drop or low-framerate
+dip), OBS retains and redraws the last rendered frame.</li>
+</ul>
+<h3 id="output-pts-generation-for-encoders">Output PTS Generation for
+Encoders</h3>
+<p>Once all active sources are sampled and blended onto the rendering
+canvas, the frame is complete. OBS does not pass individual source PTS
+metadata to the output pipeline. Instead, the composited frame is
+stamped with a newly generated output presentation timestamp.</p>
+<p>The output PTS represents the exact tick index multiplied by the
+canvas timebase:</p>
+<p><span class="math display">\[\text{PTS} = \text{Frame Count} \times
+\text{Frame Duration}\]</span></p>
+<p>This calculation guarantees that downstream hardware or software
+encoders receive an uninterrupted CFR stream. Even if a VFR source
+stutters, drops to 5 FPS, or surges to 120 FPS, OBS Studio’s frame
+presentation timestamps remain strictly uniform and synchronized with
+system audio.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Dynamic Bitrate Calculation Explained - obs-studio</title>
+    <meta name="description" content="OBS Studio’s Dynamic Bitrate feature automatically adjusts video transmission rates during network instability to prevent dropped frames and stream disconnects. Rather than dropping entire video frames when bandwidth fluctuates, OBS Studio monitors rea">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-dynamic-bitrate-calculation-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Dynamic Bitrate Calculation Explained - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-dynamic-bitrate-calculation-explained" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio’s Dynamic Bitrate feature automatically adjusts video transmission rates during network instability to prevent dropped frames and stream disconnects. Rather than dropping entire video frames when bandwidth fluctuates, OBS Studio monitors rea" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-dynamic-bitrate-calculation-explained">OBS Studio
+Dynamic Bitrate Calculation Explained</h1>
+<p>OBS Studio’s Dynamic Bitrate feature automatically adjusts video
+transmission rates during network instability to prevent dropped frames
+and stream disconnects. Rather than dropping entire video frames when
+bandwidth fluctuates, OBS Studio monitors real-time transmission health
+and dynamically alters the video encoder's target bitrate on the fly.
+This article examines the internal mechanisms OBS Studio uses to detect
+network bottlenecks, the mathematical logic behind its rate adjustments,
+and how it recalculates and applies new bitrate targets to the active
+encoder.</p>
+<h3 id="network-congestion-detection-via-socket-buffers">Network
+Congestion Detection via Socket Buffers</h3>
+<p>OBS Studio monitors network conditions at the transport layer,
+specifically observing the operating system's TCP socket buffer
+(<code>SO_SNDBUF</code>) used by the RTMP streaming protocol.</p>
+<p>When a network connection becomes erratic or available upload
+bandwidth drops below the streaming bitrate, the operating system cannot
+clear outgoing packets at the required pace. These unacknowledged
+packets accumulate in the socket send buffer. OBS tracks the fill
+percentage of this queue:</p>
+<ul>
+<li><strong>Buffer Clearance Time:</strong> OBS calculates how long
+queued data takes to be acknowledged by the ingestion server.</li>
+<li><strong>Congestion Thresholds:</strong> When the unsent data exceeds
+designated internal latency thresholds (typically measured in
+milliseconds of buffered media), OBS flags a congestion state.</li>
+</ul>
+<h3 id="the-bitrate-calculation-cycle">The Bitrate Calculation
+Cycle</h3>
+<p>OBS Studio employs an algorithm functionally similar to Additive
+Increase, Multiplicative Decrease (AIMD) congestion control. The
+calculation balances immediate congestion relief with stream
+stability.</p>
+<h4 id="1-multiplicative-reduction-congestion-mitigation">1.
+Multiplicative Reduction (Congestion Mitigation)</h4>
+<p>When the socket buffer fills past a critical threshold, OBS
+aggressively reduces the target bitrate to prevent packet loss.</p>
+<ul>
+<li>The reduction is proportional to the severity of the queue
+bloat.</li>
+<li>If a minor delay is observed, the target bitrate drops by a modest
+step (e.g., 10% to 25%).</li>
+<li>If congestion is severe or escalating rapidly, the bitrate decreases
+aggressively toward a hard floor (commonly around 500 kbps to 1000 kbps,
+depending on codec baseline capability) to instantly alleviate pressure
+on the local network buffer.</li>
+</ul>
+<p>The formula for the reduced target bitrate (<span
+class="math inline">\(R_{new}\)</span>) during congestion can be modeled
+as:</p>
+<p><span class="math display">\[R_{new} = \max(R_{current} \times (1 -
+\beta), R_{min})\]</span></p>
+<p>Where <span class="math inline">\(\beta\)</span> is a backoff
+multiplier determined by queue delay severity, and <span
+class="math inline">\(R_{min}\)</span> is the predefined minimum
+allowable bitrate.</p>
+<h4 id="2-additive-recovery-bandwidth-probing">2. Additive Recovery
+(Bandwidth Probing)</h4>
+<p>Once the send buffer drains and round-trip acknowledgments normalize,
+OBS does not immediately jump back to the original bitrate. Doing so
+would instantly refill the bottlenecked buffer. Instead, it enters a
+recovery phase:</p>
+<ul>
+<li>OBS increments the bitrate upward in fixed, conservative steps over
+uniform time intervals (typically every few seconds).</li>
+<li>This incremental climb tests whether the network can sustain higher
+throughput without re-filling the socket buffer.</li>
+<li>The user-configured bitrate in OBS output settings serves as the
+hard ceiling (<span class="math inline">\(R_{max}\)</span>). The
+calculation never exceeds this baseline:</li>
+</ul>
+<p><span class="math display">\[R_{new} = \min(R_{current} + \alpha,
+R_{max})\]</span></p>
+<p>Where <span class="math inline">\(\alpha\)</span> is a fixed,
+conservative bandwidth increment applied per evaluation window.</p>
+<h3 id="real-time-encoder-reconfiguration">Real-Time Encoder
+Reconfiguration</h3>
+<p>Once a new target bitrate is calculated, OBS Studio communicates the
+update directly to the active video encoder (such as NVENC, AMD AMF,
+Intel QuickSync, or x264) through the <code>obs_encoder_update</code>
+API.</p>
+<p>Because the underlying streaming pipeline cannot stop without causing
+an interruption:</p>
+<ol type="1">
+<li><strong>Dynamic Bitrate Control:</strong> Modern hardware and
+software encoders support rate control updates on the fly without
+resetting the keyframe interval or pipeline.</li>
+<li><strong>Buffer Sizing (CPB/VBV Adjustment):</strong> OBS updates
+both the target average bitrate and the Video Buffer Verifier (VBV)
+buffer size in tandem. Maintaining proportional buffer sizing ensures
+that the encoder does not produce sudden high-complexity frame spikes
+that immediately violate the newly restricted network ceiling.</li>
+</ol>
+<p>By cyclically monitoring send-buffer latency, multiplicatively
+dropping bitrates during congestion, and incrementally probing for
+bandwidth recovery, OBS Studio maintains stream connectivity at the
+expense of temporary visual quality degradation.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

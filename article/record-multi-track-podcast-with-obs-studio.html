@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record Multi-Track Podcast with OBS Studio - obs-studio</title>
+    <meta name="description" content="Recording a multi-track podcast with local guests in OBS Studio allows you to isolate each microphone onto its own separate audio track. This layout is crucial for post-production, as it lets you edit, adjust volumes, and apply effects to individual voic">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/record-multi-track-podcast-with-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Record Multi-Track Podcast with OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/record-multi-track-podcast-with-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Recording a multi-track podcast with local guests in OBS Studio allows you to isolate each microphone onto its own separate audio track. This layout is crucial for post-production, as it lets you edit, adjust volumes, and apply effects to individual voic" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="record-multi-track-podcast-with-obs-studio">Record Multi-Track
+Podcast with OBS Studio</h1>
+<p>Recording a multi-track podcast with local guests in OBS Studio
+allows you to isolate each microphone onto its own separate audio track.
+This layout is crucial for post-production, as it lets you edit, adjust
+volumes, and apply effects to individual voices without affecting the
+other speakers. This guide will walk you through the essential hardware
+requirements, OBS audio configurations, and recording settings needed to
+capture high-quality, multi-track local podcast audio.</p>
+<h3 id="step-1-connect-your-audio-hardware">Step 1: Connect Your Audio
+Hardware</h3>
+<p>To record local guests on separate tracks, you need a multi-channel
+USB audio interface or mixer (such as a Focusrite Scarlett 2i2,
+Rødecaster Pro, or Behringer U-Phoria) connected to your computer. Plug
+each guest's microphone into a different input channel on your
+interface.</p>
+<h3 id="step-2-disable-global-audio-devices-in-obs">Step 2: Disable
+Global Audio Devices in OBS</h3>
+<p>By default, OBS may bundle your audio devices together. To gain
+individual control, you must disable the default global devices:</p>
+<ol type="1">
+<li>Open OBS Studio and go to <strong>Settings</strong> &gt;
+<strong>Audio</strong>.</li>
+<li>Under the <strong>Global Audio Devices</strong> section, set all
+devices (Desktop Audio, Mic/Auxiliary Audio) to
+<strong>Disabled</strong>.</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong>.</li>
+</ol>
+<h3 id="step-3-add-individual-audio-sources">Step 3: Add Individual
+Audio Sources</h3>
+<p>Now, you will add each microphone manually as an individual source in
+your scene:</p>
+<ol type="1">
+<li>In the <strong>Sources</strong> dock, click the <strong>+</strong>
+icon and select <strong>Audio Input Capture</strong>.</li>
+<li>Name the source for the first speaker (e.g., "Host Mic") and click
+<strong>OK</strong>.</li>
+<li>In the device dropdown menu, select your audio interface. If your
+interface maps channels as separate inputs, select the specific channel
+for that mic. Click <strong>OK</strong>.</li>
+<li>Repeat this process for your guest, creating a new <strong>Audio
+Input Capture</strong> source (e.g., "Guest Mic") and selecting the
+corresponding input channel.</li>
+</ol>
+<p><em>(Note: If your audio interface sends all inputs as a single
+stereo mix where Mic 1 is Left and Mic 2 is Right, you will need to
+downmix them to mono. Click the gear icon next to each source in the
+Audio Mixer, select <strong>Advanced Audio Properties</strong>, and
+check the <strong>Mono</strong> box for both sources.)</em></p>
+<h3 id="step-4-route-sources-to-separate-audio-tracks">Step 4: Route
+Sources to Separate Audio Tracks</h3>
+<p>To ensure each microphone records to its own track in the final video
+file, you must configure the track routing matrix:</p>
+<ol type="1">
+<li>Click the gear icon next to any audio source in the <strong>Audio
+Mixer</strong> dock and select <strong>Advanced Audio
+Properties</strong>.</li>
+<li>On the far right of the window, you will see a grid of checkboxes
+labeled <strong>Tracks</strong> (1 through 6).</li>
+<li>Uncheck all boxes for all sources.</li>
+<li>Check <strong>Track 1</strong> only for the "Host Mic" row.</li>
+<li>Check <strong>Track 2</strong> only for the "Guest Mic" row.</li>
+<li>Click <strong>Close</strong>.</li>
+</ol>
+<h3 id="step-5-configure-recording-output-settings">Step 5: Configure
+Recording Output Settings</h3>
+<p>Finally, you must tell OBS to record multiple tracks to your output
+file:</p>
+<ol type="1">
+<li>Go to <strong>Settings</strong> &gt; <strong>Output</strong>.</li>
+<li>Set the <strong>Output Mode</strong> dropdown at the top to
+<strong>Advanced</strong>.</li>
+<li>Click on the <strong>Recording</strong> tab.</li>
+<li>Set your <strong>Recording Format</strong> to a container that
+supports multi-track audio, such as <strong>MKV</strong> or
+<strong>MP4</strong> (MKV is highly recommended, as it prevents file
+corruption if OBS crashes).</li>
+<li>In the <strong>Audio Track</strong> section, check the boxes for
+<strong>1</strong> and <strong>2</strong> (corresponding to the tracks
+we assigned in Step 4).</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong>.</li>
+</ol>
+<h3 id="step-6-test-and-import">Step 6: Test and Import</h3>
+<p>Click <strong>Start Recording</strong> and have everyone speak into
+their microphones. Stop the recording and import the resulting file into
+a video editor (like Premiere Pro or DaVinci Resolve) or a digital audio
+workstation (DAW) like Audacity. You will see two distinct audio tracks
+beneath your video file, ready for independent editing.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

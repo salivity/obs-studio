@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map 8-Channel Audio to Stereo in OBS Studio - obs-studio</title>
+    <meta name="description" content="When an 8-channel (7.1 surround) discrete audio input is fed into OBS Studio configured for stereo output, the software relies on an automated, internal downmixing matrix based on standard ITU-R downmixing algorithms to condense the multi-channel feed in">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/map-8-channel-audio-to-stereo-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Map 8-Channel Audio to Stereo in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/map-8-channel-audio-to-stereo-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When an 8-channel (7.1 surround) discrete audio input is fed into OBS Studio configured for stereo output, the software relies on an automated, internal downmixing matrix based on standard ITU-R downmixing algorithms to condense the multi-channel feed in" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="map-8-channel-audio-to-stereo-in-obs-studio">Map 8-Channel Audio
+to Stereo in OBS Studio</h1>
+<p>When an 8-channel (7.1 surround) discrete audio input is fed into OBS
+Studio configured for stereo output, the software relies on an
+automated, internal downmixing matrix based on standard ITU-R downmixing
+algorithms to condense the multi-channel feed into two channels. This
+article covers how OBS Studio handles discrete channel assignments, how
+it mathematically folds surround and center channels into left and right
+stereo outputs, and what tools you can use if you need granular control
+over the mapping process.</p>
+<h3 id="the-automatic-downmixing-matrix">The Automatic Downmixing
+Matrix</h3>
+<p>OBS Studio automatically downmixes multichannel audio when the
+project's global audio setting is set to stereo under <strong>Settings
+&gt; Audio &gt; Channels</strong>. If a source delivers 8 discrete
+channels (standard 7.1 surround: Left, Right, Center, LFE/Subwoofer,
+Left Surround, Right Surround, Left Back, and Right Back), OBS applies a
+standardized summing algorithm:</p>
+<ul>
+<li><strong>Left (L) and Right (R):</strong> Channels 1 and 2 pass
+directly to their respective stereo outputs at full scale (0 dB).</li>
+<li><strong>Center (C):</strong> Channel 3 is split equally and folded
+into both the Left and Right stereo channels, typically attenuated by -3
+dB to compensate for acoustic summing and maintain consistent perceived
+loudness.</li>
+<li><strong>Low-Frequency Effects (LFE):</strong> Channel 4 is either
+dropped or heavily attenuated depending on the underlying audio driver
+and operating system framework (such as CoreAudio or WASAPI) to prevent
+clipping and low-end muddiness in stereo mixes.</li>
+<li><strong>Surrounds and Rears (Ls, Rs, Lb, Rb):</strong> Channels 5
+through 8 are summed into their corresponding Left and Right channels.
+They are attenuated (generally between -3 dB and -6 dB) to ensure
+background spatial information does not overpower primary front-stage
+elements.</li>
+</ul>
+<h3 id="native-track-routing-and-limitations">Native Track Routing and
+Limitations</h3>
+<p>Under <strong>Edit &gt; Advanced Audio Properties</strong>, OBS
+Studio allows users to assign inputs to six discrete recording/streaming
+tracks. When the global audio mode is configured to Stereo:</p>
+<ul>
+<li>Each of the six tracks operates strictly as a two-channel stereo
+bus.</li>
+<li>Checking a track box routes the <em>already downmixed</em> stereo
+sum of that source to the target track.</li>
+<li>Selecting the "Downmix to Mono" checkbox forces the entire 8-channel
+sum into an identical, dual-mono signal sent to both stereo
+channels.</li>
+</ul>
+<p>OBS Studio does not natively include an interactive matrix mixer in
+the core user interface. You cannot adjust individual discrete channel
+faders (such as attenuating channel 4 or soloing channel 3) using
+standard OBS properties alone.</p>
+<h3 id="overriding-the-default-mapping">Overriding the Default
+Mapping</h3>
+<p>If the automatic downmix causes phase issues, muddiness, or improper
+balance, you must use external routing or plugins to handle custom
+channel mapping:</p>
+<ol type="1">
+<li><strong>VST Plugins:</strong> Add a multichannel VST plugin (such as
+a matrix mixer, surround utility, or channel-strip plugin) to the
+source's <strong>Filters</strong> list. This allows you to mute,
+balance, or reposition specific discrete channels before the signal hits
+the OBS master output.</li>
+<li><strong>OBS Plugins:</strong> Community tools like the <em>OBS Audio
+Monitor</em> or custom matrix mapper plugins expose discrete pin-mapping
+inside the mixer UI, letting you selectively route channels 1–8 directly
+to discrete virtual destinations.</li>
+<li><strong>Virtual Audio Interfaces:</strong> Digital audio
+workstations (DAWs) or software mixers (such as Voicemeeter or Loopback)
+can accept the 8-channel hardware stream, perform the desired submixing,
+and deliver a clean two-channel output directly to OBS.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

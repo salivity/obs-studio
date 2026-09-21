@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Fix OBS Audio Popping When Switching Scenes - obs-studio</title>
+    <meta name="description" content="Audio popping or clicking sounds in OBS Studio during scene transitions can ruin the professionalism of a stream or recording. This guide outlines the most effective methods to eliminate these audio artifacts, focusing on media source settings, audio mon">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-fix-obs-audio-popping-when-switching-scenes">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Fix OBS Audio Popping When Switching Scenes - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-fix-obs-audio-popping-when-switching-scenes" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Audio popping or clicking sounds in OBS Studio during scene transitions can ruin the professionalism of a stream or recording. This guide outlines the most effective methods to eliminate these audio artifacts, focusing on media source settings, audio mon" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-fix-obs-audio-popping-when-switching-scenes">How to Fix
+OBS Audio Popping When Switching Scenes</h1>
+<p>Audio popping or clicking sounds in OBS Studio during scene
+transitions can ruin the professionalism of a stream or recording. This
+guide outlines the most effective methods to eliminate these audio
+artifacts, focusing on media source settings, audio monitoring, sample
+rate synchronization, and transition configurations.</p>
+<h2 id="disable-unload-source-when-not-showing">Disable "Unload source
+when not showing"</h2>
+<p>When this option is enabled, OBS completely unloads the media file
+from memory when you switch away from the scene. When you switch back,
+the sudden loading of the file can cause an audio pop.</p>
+<ol type="1">
+<li>Right-click on the media source in your <strong>Sources</strong>
+list and select <strong>Properties</strong>.</li>
+<li>Scroll down to find the option <strong>Unload source when not
+showing</strong>.</li>
+<li>Uncheck this box.</li>
+<li>Click <strong>OK</strong>.</li>
+</ol>
+<h2 id="use-nested-scenes-for-audio">Use Nested Scenes for Audio</h2>
+<p>If an audio or media source is only present in some scenes, switching
+to a scene without it causes OBS to instantly terminate the audio
+stream, resulting in a pop. Using a nested scene keeps the audio
+active.</p>
+<ol type="1">
+<li>Create a new scene and name it "Audio Source".</li>
+<li>Add your media source to this new scene.</li>
+<li>Go to your main scenes, click the <strong>+</strong> icon in the
+<strong>Sources</strong> dock, select <strong>Scene</strong>, and choose
+the "Audio Source" scene to nest it.</li>
+<li>This keeps the audio pipeline open across transitions, preventing
+sudden cuts.</li>
+</ol>
+<h2 id="adjust-scene-transition-fade-duration">Adjust Scene Transition
+Fade Duration</h2>
+<p>Sudden audio cuts during transitions are a primary cause of clicking
+sounds. Increasing the transition duration allows OBS to smoothly
+crossfade the audio.</p>
+<ol type="1">
+<li>Locate the <strong>Scene Transitions</strong> dock in OBS.</li>
+<li>Ensure your transition is set to <strong>Fade</strong> (or another
+transition that supports audio crossfading).</li>
+<li>Increase the <strong>Duration</strong> to at least
+<strong>300ms</strong> or <strong>500ms</strong> to soften the audio
+cutoff.</li>
+</ol>
+<h2 id="match-os-and-obs-sample-rates">Match OS and OBS Sample
+Rates</h2>
+<p>A mismatch between the audio sample rates of your operating system
+and OBS Studio forces resampling, which causes periodic pops and
+clicks.</p>
+<ol type="1">
+<li>In OBS, go to <strong>Settings &gt; Audio</strong> and note the
+<strong>Sample Rate</strong> (typically 48 kHz or 44.1 kHz).</li>
+<li>On Windows, right-click the speaker icon in your system tray, select
+<strong>Sounds</strong>, and go to the <strong>Playback</strong> and
+<strong>Recording</strong> tabs.</li>
+<li>Right-click your active devices, select <strong>Properties</strong>,
+go to the <strong>Advanced</strong> tab, and set the default format to
+match the OBS sample rate (e.g., 24-bit, 48000 Hz).</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

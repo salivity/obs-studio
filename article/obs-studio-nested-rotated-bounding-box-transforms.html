@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Nested Rotated Bounding Box Transforms - obs-studio</title>
+    <meta name="description" content="OBS Studio resolves complex layouts of nested, rotated sources by evaluating hierarchical 2D affine transformation matrices across a scene graph. When sources reside within nested scenes or groups, OBS does not compute complex polygon boolean intersectio">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-nested-rotated-bounding-box-transforms">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Nested Rotated Bounding Box Transforms - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-nested-rotated-bounding-box-transforms" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio resolves complex layouts of nested, rotated sources by evaluating hierarchical 2D affine transformation matrices across a scene graph. When sources reside within nested scenes or groups, OBS does not compute complex polygon boolean intersectio" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-nested-rotated-bounding-box-transforms">OBS Studio
+Nested Rotated Bounding Box Transforms</h1>
+<p>OBS Studio resolves complex layouts of nested, rotated sources by
+evaluating hierarchical 2D affine transformation matrices across a scene
+graph. When sources reside within nested scenes or groups, OBS does not
+compute complex polygon boolean intersections directly; instead, it
+accumulates translation, rotation, scale, and alignment into a global
+transform matrix or resolves nested scenes sequentially through
+off-screen render targets. This article details the mathematical
+pipeline, coordinate spaces, and rasterization methods OBS Studio uses
+to compute these nested transforms and intersections.</p>
+<h2 id="hierarchical-scene-graph-and-local-transforms">Hierarchical
+Scene Graph and Local Transforms</h2>
+<p>OBS Studio organizes sources, groups, and nested scenes into a
+parent-child hierarchy. Every visual item in a scene possesses an
+individual transform state consisting of:</p>
+<ul>
+<li><strong>Position:</strong> The <span class="math inline">\((X,
+Y)\)</span> offset relative to the parent container.</li>
+<li><strong>Rotation:</strong> An angular rotation value (in degrees)
+around a defined origin point.</li>
+<li><strong>Scale and Size:</strong> The horizontal and vertical scaling
+factors derived from source dimensions or designated bounding box
+sizes.</li>
+<li><strong>Alignment (Pivot Point):</strong> An anchor point (e.g.,
+top-left, center) that determines the local origin <span
+class="math inline">\((0, 0)\)</span> for scaling and rotation
+operations.</li>
+</ul>
+<p>To place an element on the screen, OBS calculates a <span
+class="math inline">\(3 \times 3\)</span> affine transformation matrix
+(<span class="math inline">\(M\)</span>) in homogeneous 2D coordinates
+for each item:</p>
+<p><span class="math display">\[M_{\text{local}} = T(\text{position})
+\times R(\text{rotation}) \times S(\text{scale}) \times
+T(-\text{pivot})\]</span></p>
+<h2 id="nested-matrix-multiplication">Nested Matrix Multiplication</h2>
+<p>When elements are nested inside groups, OBS multiplies the child’s
+local matrix by the parent's accumulated transformation matrix:</p>
+<p><span class="math display">\[M_{\text{final}} = M_{\text{parent}}
+\times M_{\text{local}}\]</span></p>
+<p>This sequential matrix multiplication propagates rotation,
+translation, and non-uniform scaling down the tree. A vertex <span
+class="math inline">\(V_{\text{local}} = (x, y, 1)^T\)</span> defined in
+the local space of the innermost child is mapped to canvas space
+coordinates via:</p>
+<p><span class="math display">\[V_{\text{canvas}} = M_{\text{final}}
+\times V_{\text{local}}\]</span></p>
+<p>Because matrix multiplication preserves collinearity and ratios of
+distances, applying consecutive rotations produces a combined rotation
+equal to the sum of the angles (modulo <span
+class="math inline">\(360^\circ\)</span>), adjusted for any non-uniform
+scale introduced by parent containers.</p>
+<h2 id="nested-scenes-vs-groups-the-render-target-difference">Nested
+Scenes vs. Groups: The Render Target Difference</h2>
+<p>OBS Studio handles nested transformations differently depending on
+whether the container is a Group or a Nested Scene:</p>
+<h3 id="1-groups-direct-transform-pass-through">1. Groups (Direct
+Transform Pass-Through)</h3>
+<p>Groups act as coordinate-space containers. The vertices of sources
+inside a group are transformed directly by the group’s matrix and drawn
+directly to the main canvas backbuffer. If two rotated sources within a
+group intersect, their four-corner quad coordinates are transformed
+independently into canvas space, and the graphical overlap is resolved
+per-pixel via the depth/blend state during rasterization.</p>
+<h3 id="2-nested-scenes-texture-flattening">2. Nested Scenes (Texture
+Flattening)</h3>
+<p>When an entire Scene is added as a source into another Scene, OBS
+treats the child scene as an isolated sub-graph:</p>
+<ul>
+<li>The child scene renders all of its internal rotated sources into an
+intermediate off-screen render target (a separate 2D texture) sized to
+that scene’s defined dimensions.</li>
+<li>Internal rotations and intersections are fully rasterized and
+blended inside this intermediate buffer.</li>
+<li>The resulting texture is then assigned a single four-point bounding
+quad in the parent scene.</li>
+<li>The parent's rotation and scaling transformations are subsequently
+applied to this flattened rectangular quad.</li>
+</ul>
+<p>Consequently, any rotation applied inside the nested scene affects
+only the pixels within the intermediate texture, while the parent
+rotation rotates the entire boundary of that intermediate texture.</p>
+<h2 id="bounding-box-types-and-alignment-calculation">Bounding Box Types
+and Alignment Calculation</h2>
+<p>OBS allows users to wrap sources in distinct bounding box types
+(e.g., <em>Scale to inner bounds</em>, <em>Scale to outer bounds</em>,
+<em>Stretch to bounds</em>). When a source with an explicit bounding box
+is rotated:</p>
+<ol type="1">
+<li><strong>Local Axis Alignment:</strong> The bounding box is
+established in the source’s local unrotated coordinate space.</li>
+<li><strong>Corner Projection:</strong> The four corners of the bounding
+box are multiplied by the accumulated rotation and scale matrix.</li>
+<li><strong>Oriented Bounding Box (OBB):</strong> The interactive
+selection box in the OBS preview window displays the true Oriented
+Bounding Box (OBB) by drawing lines between the four transformed
+vertices.</li>
+<li><strong>Axis-Aligned Bounding Box (AABB) Computation:</strong> When
+OBS needs to determine clipping or visibility rejection against the
+viewport, it calculates an AABB by taking the minimum and maximum <span
+class="math inline">\(X\)</span> and <span
+class="math inline">\(Y\)</span> coordinates from the four transformed
+corners: <span class="math display">\[X_{\min} = \min(x_1, x_2, x_3,
+x_4), \quad X_{\max} = \max(x_1, x_2, x_3, x_4)\]</span> <span
+class="math display">\[Y_{\min} = \min(y_1, y_2, y_3, y_4), \quad
+Y_{\max} = \max(y_1, y_2, y_3, y_4)\]</span></li>
+</ol>
+<h2 id="intersection-and-hit-testing">Intersection and Hit-Testing</h2>
+<p>When multiple nested, rotated sources intersect on the canvas, OBS
+resolves intersections at two levels:</p>
+<ul>
+<li><strong>Hit-Testing (Selection in Preview):</strong> To determine
+which rotated item is clicked, OBS maps the mouse cursor coordinate
+<span class="math inline">\((X_{\text{mouse}},
+Y_{\text{mouse}})\)</span> from canvas space back into the local space
+of each source using the inverse matrix (<span
+class="math inline">\(M_{\text{final}}^{-1}\)</span>). If the resulting
+point falls within the source's local <span class="math inline">\([0,
+\text{width}]\)</span> and <span class="math inline">\([0,
+\text{height}]\)</span> range, a hit is registered. In cases of
+intersection, the item highest in the scene tree order (top-most layer)
+takes precedence.</li>
+<li><strong>Visual Intersection:</strong> Visual overlap between
+intersecting bounding quads is executed on the GPU. Vertices generated
+from the final accumulated transformation matrix are submitted as
+triangle strips. The GPU’s rasterizer determines pixel ownership, and
+standard alpha blending combines overlapping areas from back to front
+according to the scene's layer hierarchy.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

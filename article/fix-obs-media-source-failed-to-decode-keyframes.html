@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix OBS Media Source Failed to Decode Keyframes - obs-studio</title>
+    <meta name="description" content="When OBS Studio reports that a media source failed to decode keyframes in its log files, it typically points to video corruption, an unsupported codec profile, hardware acceleration failure, or an irregular Group of Pictures (GOP) structure. This error c">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/fix-obs-media-source-failed-to-decode-keyframes">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Fix OBS Media Source Failed to Decode Keyframes - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/fix-obs-media-source-failed-to-decode-keyframes" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When OBS Studio reports that a media source failed to decode keyframes in its log files, it typically points to video corruption, an unsupported codec profile, hardware acceleration failure, or an irregular Group of Pictures (GOP) structure. This error c" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="fix-obs-media-source-failed-to-decode-keyframes">Fix OBS Media
+Source Failed to Decode Keyframes</h1>
+<p>When OBS Studio reports that a media source failed to decode
+keyframes in its log files, it typically points to video corruption, an
+unsupported codec profile, hardware acceleration failure, or an
+irregular Group of Pictures (GOP) structure. This error causes visual
+stuttering, frozen video frames, or a persistent black screen in your
+scene. The following diagnostic steps will help you isolate the root
+cause, repair the media source, and restore stable playback within OBS
+Studio.</p>
+<h3 id="1-toggle-hardware-decoding-in-media-source-properties">1. Toggle
+Hardware Decoding in Media Source Properties</h3>
+<p>Hardware-accelerated decoding depends on your GPU's dedicated
+decoders (such as NVDEC, Intel QuickSync, or AMD AMF). If the media file
+uses a profile or pixel format unsupported by your GPU driver, the
+decoder will fail to parse incoming keyframes (I-frames).</p>
+<ul>
+<li>Open OBS Studio and locate the problematic source in your
+<strong>Sources</strong> list.</li>
+<li>Double-click the source to open its
+<strong>Properties</strong>.</li>
+<li>Look for the option labeled <strong>Apply hardware decoding when
+available</strong>.</li>
+<li>If it is checked, uncheck it to force OBS Studio's internal FFmpeg
+software decoder to process the frames.</li>
+<li>If it is already unchecked, check it to determine if your hardware
+decoder can process the stream instead of CPU-based decoding.</li>
+<li>Click <strong>OK</strong>, restart the playback, and check the OBS
+log (<code>Help</code> &gt; <code>Log Files</code> &gt;
+<code>View Current Log</code>) to see if the keyframe decode error
+persists.</li>
+</ul>
+<h3 id="2-inspect-the-video-codec-and-keyframe-interval">2. Inspect the
+Video Codec and Keyframe Interval</h3>
+<p>Files recorded with Variable Frame Rates (VFR) or unusually long
+keyframe intervals (GOP sizes exceeding several seconds) can trigger
+decode timeouts in OBS.</p>
+<ul>
+<li>Use a diagnostic utility such as <strong>MediaInfo</strong> to
+inspect the file's video stream.</li>
+<li>Check the <strong>Format Profile</strong> and <strong>Frame Rate
+Mode</strong>. If the frame rate mode is variable, or if the video uses
+atypical profiles (such as 10-bit H.264 High 10 or 4:4:4 chroma
+subsampling), OBS’s native media source demuxer may struggle to parse
+keyframes reliably.</li>
+<li>Verify that the file uses standard Constant Frame Rate (CFR) video
+with 4:2:0 chroma subsampling (YUV420P) and 8-bit color depth.</li>
+</ul>
+<h3 id="3-re-encode-the-media-file">3. Re-Encode the Media File</h3>
+<p>Re-encoding the file into a standardized, production-ready format
+resolves missing header data, broken index tables, and non-standard
+keyframe intervals.</p>
+<ul>
+<li>Open an encoder like HandBrake, Avidemux, or use an FFmpeg
+command.</li>
+<li>Set the video encoder to standard <strong>H.264
+(x264)</strong>.</li>
+<li>Set the framerate to <strong>Constant Framerate (CFR)</strong>.</li>
+<li>Explicitly define a keyframe interval (GOP size) of 1 to 2 seconds.
+In HandBrake, this is managed via the <strong>Keyframe Interval</strong>
+field; in FFmpeg, pass <code>-g 60</code> (for 30 FPS content) or
+<code>-g 120</code> (for 60 FPS content).</li>
+<li>Save the output as a standard <code>.mp4</code> container and
+replace the old asset inside OBS Studio.</li>
+</ul>
+<h3 id="4-switch-to-the-vlc-video-source-alternative">4. Switch to the
+VLC Video Source Alternative</h3>
+<p>OBS Studio features an alternative video playback engine via the VLC
+Video Source plugin, which uses VLC's native demuxers rather than the
+standard OBS FFmpeg implementation.</p>
+<ul>
+<li>Ensure you have the 64-bit version of VLC Media Player installed on
+your operating system.</li>
+<li>In OBS Studio, click the <strong>+</strong> (Add) button in the
+<strong>Sources</strong> dock.</li>
+<li>Select <strong>VLC Video Source</strong>. If the option is absent,
+reinstall the 64-bit release of VLC and restart OBS.</li>
+<li>Add your media file to the playlist inside the VLC Video Source
+properties.</li>
+<li>Test playback. VLC handles malformed keyframes, non-standard
+containers, and network-streamed media with greater fault tolerance than
+the default Media Source.</li>
+</ul>
+<h3 id="5-check-disk-io-and-file-location">5. Check Disk I/O and File
+Location</h3>
+<p>A file that cannot read fast enough off storage can drop packets and
+fail keyframe reconstruction, especially with high-bitrate video clips
+(such as ProRes or lossless AVI).</p>
+<ul>
+<li>Move the video file to a local, high-speed solid-state drive
+(SSD).</li>
+<li>Avoid sourcing active media files directly from network-attached
+storage (NAS), cloud-synced folders (OneDrive, Google Drive), or
+low-power external USB drives that may sleep or throttle read
+speeds.</li>
+</ul>
+<h3 id="6-update-or-clean-install-graphics-drivers">6. Update or
+Clean-Install Graphics Drivers</h3>
+<p>If software decoding functions properly but hardware decoding
+continuously fails on keyframes, your graphics driver's media pipeline
+may be corrupted or out of date.</p>
+<ul>
+<li>Download the latest driver release directly from your GPU
+manufacturer (NVIDIA, AMD, or Intel).</li>
+<li>Perform a clean installation of the driver to reset the hardware
+video decoding configurations.</li>
+<li>Restart your PC and re-enable hardware decoding inside OBS Studio to
+verify the fix.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

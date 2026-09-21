@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Use Multiple Twitch Accounts in OBS Studio - obs-studio</title>
+    <meta name="description" content="Managing multiple Twitch accounts in OBS Studio is essential for creators who run personal, brand, or collaborative channels. This article provides a straightforward guide on how to seamlessly swap between different Twitch accounts using OBS Studio’s b">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-use-multiple-twitch-accounts-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Use Multiple Twitch Accounts in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-use-multiple-twitch-accounts-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Managing multiple Twitch accounts in OBS Studio is essential for creators who run personal, brand, or collaborative channels. This article provides a straightforward guide on how to seamlessly swap between different Twitch accounts using OBS Studio’s b" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-use-multiple-twitch-accounts-in-obs-studio">How to Use
+Multiple Twitch Accounts in OBS Studio</h1>
+<p>Managing multiple Twitch accounts in OBS Studio is essential for
+creators who run personal, brand, or collaborative channels. This
+article provides a straightforward guide on how to seamlessly swap
+between different Twitch accounts using OBS Studio’s built-in Profile
+system, ensuring you can switch your stream keys, chat docks, and
+integration settings in just a few clicks without losing your
+configurations.</p>
+<h3 id="the-best-method-using-obs-profiles">The Best Method: Using OBS
+Profiles</h3>
+<p>The most efficient and clean way to manage multiple Twitch accounts
+in OBS Studio is by using <strong>Profiles</strong>. Profiles save all
+of your settings, stream keys, and connected accounts, while leaving
+your visual assets (scenes and sources) untouched.</p>
+<p>Here is how to set up and swap between multiple Twitch accounts using
+Profiles:</p>
+<h4 id="step-1-create-a-profile-for-your-first-account">Step 1: Create a
+Profile for Your First Account</h4>
+<ol type="1">
+<li>Open OBS Studio.</li>
+<li>Click on <strong>Profile</strong> in the top menu bar.</li>
+<li>Select <strong>Rename</strong> to label your current profile (e.g.,
+"Twitch - Main Account").</li>
+<li>Go to <strong>Settings</strong> &gt; <strong>Stream</strong>, ensure
+your service is set to <strong>Twitch</strong>, and connect your first
+account.</li>
+</ol>
+<h4 id="step-2-create-a-profile-for-your-second-account">Step 2: Create
+a Profile for Your Second Account</h4>
+<ol type="1">
+<li>Click on <strong>Profile</strong> in the top menu bar.</li>
+<li>Select <strong>New</strong> to create a blank profile, or select
+<strong>Duplicate</strong> if you want to copy your current output,
+video, and audio settings to save time.</li>
+<li>Name this new profile after your second account (e.g., "Twitch - Alt
+Account").</li>
+<li>Go to <strong>Settings</strong> &gt; <strong>Stream</strong>.</li>
+<li>Click <strong>Disconnect Account</strong> (if you duplicated the
+profile) and then click <strong>Connect Account</strong> to log in with
+your second Twitch account credentials.</li>
+<li>Click <strong>Apply</strong> and <strong>OK</strong>.</li>
+</ol>
+<h4 id="step-3-swapping-between-accounts">Step 3: Swapping Between
+Accounts</h4>
+<p>Whenever you want to switch accounts, simply click on
+<strong>Profile</strong> in the top menu and select the profile
+associated with the account you want to stream to.</p>
+<p>OBS Studio will instantly update:</p>
+<ul>
+<li>Your stream key and destination server.</li>
+<li>Your Twitch-integrated docks (such as Chat, Stream Information, and
+Activity Feed).</li>
+<li>Your stream output settings (bitrate, resolution, etc., if they
+differ between accounts).</li>
+</ul>
+<h3 id="keeping-your-overlays-consistent-scene-collections">Keeping Your
+Overlays Consistent (Scene Collections)</h3>
+<p>It is important to understand the difference between
+<strong>Profiles</strong> and <strong>Scene Collections</strong> in
+OBS:</p>
+<ul>
+<li><strong>Profiles</strong> control <em>where</em> you stream
+(accounts, stream keys, settings, hotkeys).</li>
+<li><strong>Scene Collections</strong> control <em>what</em> you stream
+(overlays, cameras, game captures, alerts).</li>
+</ul>
+<p>If you want to use the exact same overlays for both Twitch accounts,
+you do not need to change anything in your Scene Collections. When you
+switch Profiles, your current scenes will remain active on your screen,
+but they will stream to the newly selected Twitch account. If you want
+unique overlays for each account, you can create separate Scene
+Collections by going to <strong>Scene Collection</strong> &gt;
+<strong>New</strong> and switching them manually alongside your
+profiles.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

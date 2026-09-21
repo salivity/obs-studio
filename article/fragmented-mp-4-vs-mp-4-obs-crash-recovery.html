@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fragmented MP4 vs MP4 OBS Crash Recovery - obs-studio</title>
+    <meta name="description" content="This article explains the critical differences between standard MP4 and Fragmented MP4 (fMP4) container formats in OBS Studio, focusing specifically on how each format handles sudden system crashes, power outages, or software freezes during recording. St">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/fragmented-mp-4-vs-mp-4-obs-crash-recovery">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Fragmented MP4 vs MP4 OBS Crash Recovery - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/fragmented-mp-4-vs-mp-4-obs-crash-recovery" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains the critical differences between standard MP4 and Fragmented MP4 (fMP4) container formats in OBS Studio, focusing specifically on how each format handles sudden system crashes, power outages, or software freezes during recording. St" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="fragmented-mp4-vs-mp4-obs-crash-recovery">Fragmented MP4 vs MP4
+OBS Crash Recovery</h1>
+<p>This article explains the critical differences between standard MP4
+and Fragmented MP4 (fMP4) container formats in OBS Studio, focusing
+specifically on how each format handles sudden system crashes, power
+outages, or software freezes during recording.</p>
+<h2 id="the-vulnerability-of-standard-mp4">The Vulnerability of Standard
+MP4</h2>
+<p>Standard MP4 is a widely compatible video container, but it is highly
+vulnerable to data corruption. In a standard MP4 file, the crucial
+metadata—known as the "moov atom" or movie header—is written at the very
+end of the recording process. This metadata acts as an index, telling
+media players how to interpret and play the video and audio tracks.</p>
+<p>If OBS Studio crashes, the computer loses power, or the system
+freezes before you manually stop the recording, the moov atom is never
+written. As a result, the entire video file becomes corrupted and
+unreadable. Recovering data from a corrupted standard MP4 file is
+incredibly difficult, and in most cases, the footage is permanently
+lost.</p>
+<h2 id="how-fragmented-mp4-prevents-data-loss">How Fragmented MP4
+Prevents Data Loss</h2>
+<p>Fragmented MP4 (fMP4) addresses this vulnerability by changing how
+data and metadata are written to the disk. Instead of saving all
+metadata at the end of the recording, fMP4 splits the video into small,
+self-contained chunks or "fragments."</p>
+<p>Each fragment contains its own video data and corresponding metadata.
+As you record in OBS Studio, these fragments are written and sealed to
+your drive in real-time.</p>
+<p>If a crash or power failure occurs while recording in Fragmented
+MP4:</p>
+<ul>
+<li>Only the active fragment currently being written at the millisecond
+of the crash is lost.</li>
+<li>All previously recorded fragments are already safely saved and fully
+readable.</li>
+<li>The resulting file remains completely intact and playable up to the
+moment right before the crash, requiring no repair tools.</li>
+</ul>
+<h2 id="key-takeaway-for-obs-users">Key Takeaway for OBS Users</h2>
+<p>While standard MP4 remains popular for its broad compatibility with
+older video editing software, OBS Studio strongly discourages its use
+for direct recording. Utilizing Fragmented MP4 (or MKV, which behaves
+similarly during crashes) ensures that your hard work is protected
+against unexpected system interruptions.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

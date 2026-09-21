@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Format Text Files for OBS Studio - obs-studio</title>
+    <meta name="description" content="Using a text file to display dynamic information on your stream—such as current music, latest subscribers, or custom alerts—is an excellent way to keep your broadcast engaging. To ensure OBS Studio reads and updates your text source continuously with">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-format-text-files-for-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Format Text Files for OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-format-text-files-for-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Using a text file to display dynamic information on your stream—such as current music, latest subscribers, or custom alerts—is an excellent way to keep your broadcast engaging. To ensure OBS Studio reads and updates your text source continuously with" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-format-text-files-for-obs-studio">How to Format Text
+Files for OBS Studio</h1>
+<p>Using a text file to display dynamic information on your stream—such
+as current music, latest subscribers, or custom alerts—is an excellent
+way to keep your broadcast engaging. To ensure OBS Studio reads and
+updates your text source continuously without errors, you must format
+the text file correctly and configure the OBS source settings properly.
+This guide covers the exact file preparation, encoding, and formatting
+rules required for seamless, real-time updates in OBS.</p>
+<h2 id="1-choose-the-correct-file-type-and-encoding">1. Choose the
+Correct File Type and Encoding</h2>
+<p>OBS Studio requires a plain text file to read data continuously.</p>
+<ul>
+<li><strong>File Extension:</strong> Use a standard plain text file
+ending in <code>.txt</code>. Do not use rich text formats like
+<code>.rtf</code>, <code>.docx</code>, or <code>.pdf</code>.</li>
+<li><strong>Encoding:</strong> Save your text file using
+<strong>UTF-8</strong> encoding. This ensures that special characters,
+non-English scripts, and emojis display correctly on your stream without
+turning into broken code.
+<ul>
+<li><em>On Windows (Notepad):</em> Click <code>File</code> &gt;
+<code>Save As</code>, and select <code>UTF-8</code> from the "Encoding"
+dropdown menu at the bottom before saving.</li>
+<li><em>On Mac (TextEdit):</em> Go to <code>Format</code> &gt;
+<code>Make Plain Text</code>, then save the file with UTF-8
+encoding.</li>
+</ul></li>
+</ul>
+<h2 id="2-formatting-the-text-content">2. Formatting the Text
+Content</h2>
+<p>How you format the text inside the file determines how it will render
+in your OBS scene.</p>
+<ul>
+<li><strong>For Static/Single-Line Displays:</strong> Keep all text on a
+single line. If you plan to use the "Filters &gt; Scroll" effect in OBS
+to create a moving ticker, add a few blank spaces or a separator (like
+<code>|</code> or <code>•</code>) at the very end of your text line.
+This prevents the end of the text from running directly into the
+beginning when it loops.</li>
+<li><strong>For Multi-Line Blocks:</strong> Press <code>Enter</code> to
+create line breaks. OBS will respect these line breaks and display the
+text as a block.</li>
+<li><strong>Keep it clean:</strong> Avoid leaving empty lines at the
+bottom of the document unless you want blank space to appear in your OBS
+layout.</li>
+</ul>
+<h2 id="3-configuring-obs-studio-to-read-the-file">3. Configuring OBS
+Studio to Read the File</h2>
+<p>Once your file is formatted and saved, you must configure OBS to
+monitor it for changes.</p>
+<ol type="1">
+<li>Open OBS Studio and go to your <strong>Sources</strong> dock.</li>
+<li>Click the <strong>+</strong> (Add) icon and select <strong>Text
+(GDI+)</strong> (Windows) or <strong>Text (FreeType 2)</strong> (Mac).
+Name your source and click OK.</li>
+<li>In the properties window, check the box labeled <strong>Read from
+file</strong>.</li>
+<li>Click <strong>Browse</strong> and select your saved
+<code>.txt</code> file.</li>
+<li>Set your desired font, color, and size, then click
+<strong>OK</strong>.</li>
+</ol>
+<h2 id="4-enabling-continuous-and-automatic-updates">4. Enabling
+Continuous and Automatic Updates</h2>
+<p>OBS Studio automatically monitors the selected <code>.txt</code>
+file. Whenever the file is updated and saved, OBS instantly refreshes
+the text on your screen.</p>
+<ul>
+<li><strong>Manual Updates:</strong> If you are updating the text
+manually, simply type the new text in your text editor and press
+<code>Ctrl + S</code> (Windows) or <code>Cmd + S</code> (Mac). The
+change will reflect on your stream immediately.</li>
+<li><strong>Automated Updates:</strong> If you are using third-party
+apps, chatbots, or music players (like Snip or Spotify controllers) to
+output text, ensure these programs are configured to overwrite the exact
+same <code>.txt</code> file path. OBS will continuously read the file as
+the external application updates it.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why OBS Audio Crackles from CPU Priority Conflicts - obs-studio</title>
+    <meta name="description" content="Sudden crackling, popping, or robotic artifacts in OBS Studio audio typically occur when resource-intensive games starve background audio processing threads of essential CPU cycles. This article examines how operating system thread scheduling, digital au">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/why-obs-audio-crackles-from-cpu-priority-conflicts">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why OBS Audio Crackles from CPU Priority Conflicts - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/why-obs-audio-crackles-from-cpu-priority-conflicts" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Sudden crackling, popping, or robotic artifacts in OBS Studio audio typically occur when resource-intensive games starve background audio processing threads of essential CPU cycles. This article examines how operating system thread scheduling, digital au" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-obs-audio-crackles-from-cpu-priority-conflicts">Why OBS
+Audio Crackles from CPU Priority Conflicts</h1>
+<p>Sudden crackling, popping, or robotic artifacts in OBS Studio audio
+typically occur when resource-intensive games starve background audio
+processing threads of essential CPU cycles. This article examines how
+operating system thread scheduling, digital audio buffer underruns, and
+competing process priorities interact to disrupt the real-time audio
+pipeline in OBS Studio, and how these performance bottlenecks can be
+resolved.</p>
+<h3 id="the-role-of-audio-buffer-underruns">The Role of Audio Buffer
+Underruns</h3>
+<p>Digital audio relies on a continuous, uninterrupted stream of data
+processed in discrete time blocks called buffers. In OBS Studio, audio
+capture sources—such as desktop audio, game capture, and microphone
+inputs—feed into an internal mixer that processes and encodes the sound
+in real time.</p>
+<p>When the CPU fails to process and deliver an audio buffer before the
+output device or encoder requests the next one, a buffer underrun (or
+buffer dropout) occurs. The resulting gap in the audio waveform
+manifests audibly as a sharp click, pop, or sustained crackling. Because
+human hearing is exceptionally sensitive to discontinuities in sound
+waves, even a microsecond delay in processing can cause noticeable audio
+degradation.</p>
+<h3 id="thread-priority-and-cpu-scheduling">Thread Priority and CPU
+Scheduling</h3>
+<p>Modern operating systems, such as Windows, manage CPU time through a
+preemptive scheduler. Threads are assigned priority levels ranging from
+idle to real-time. When a game demands maximum system resources, several
+scheduling conflicts can arise:</p>
+<ul>
+<li><strong>Game Engine Priority Bias:</strong> Many modern games
+automatically elevate their main rendering, physics, or anti-cheat
+threads to above-normal or high priority to maintain stable frame
+rates.</li>
+<li><strong>Deprioritization of Background Tasks:</strong> If OBS Studio
+is running at normal process priority or minimized in the background,
+the scheduler treats its threads with lower urgency than the foreground
+game.</li>
+<li><strong>Preemption of Real-Time Audio Threads:</strong> Windows uses
+the Multimedia Class Scheduler Service (MMCSS) to grant real-time
+priority to audio threads. However, if heavily loaded game threads
+saturate the CPU cores assigned to audio, the scheduler may delay the
+execution of OBS's audio rendering loops.</li>
+</ul>
+<h3 id="cpu-core-contention-and-thread-starvation">CPU Core Contention
+and Thread Starvation</h3>
+<p>When a game attempts to utilize 100% of available CPU capacity,
+thread contention becomes severe. OBS Studio relies on multiple
+asynchronous threads: video rendering, scene compositing, encoding, and
+audio mixing.</p>
+<p>If a multi-threaded game consumes all available execution pipelines
+on physical and logical cores, the operating system must constantly swap
+context between game threads and OBS threads. If context switching
+stalls the OBS audio thread—even for a few milliseconds—the mixer falls
+behind the game's actual audio output, creating a backlog that results
+in repetitive audio distortion and stutter.</p>
+<h3 id="solutions-to-cpu-priority-conflicts">Solutions to CPU Priority
+Conflicts</h3>
+<p>Eliminating priority-induced audio crackling requires restoring
+predictable CPU access to OBS Studio's audio sub-system:</p>
+<ul>
+<li><strong>Run OBS as Administrator:</strong> Launching OBS Studio with
+administrative privileges enables it to leverage hardware-accelerated
+GPU scheduling and hook into Windows MMCSS, elevating its internal
+threads above standard background tasks.</li>
+<li><strong>Adjust Process Priority in OBS:</strong> Within OBS Studio,
+navigate to <strong>Settings &gt; Advanced &gt; General</strong> and
+ensure the <strong>Process Priority</strong> is set to <strong>Above
+Normal</strong> or <strong>High</strong>. This instructs the OS
+scheduler to serve OBS threads before standard game threads.</li>
+<li><strong>Cap In-Game Frame Rates:</strong> Uncapped frame rates force
+the CPU and GPU to run at maximum capacity, leaving zero overhead for
+background capture software. Capping the game's frame rate to match the
+monitor’s refresh rate immediately frees up scheduling headroom.</li>
+<li><strong>Manage Core Affinity:</strong> On CPUs with hybrid
+architectures (such as Intel Performance and Efficient cores) or high
+thread counts, manually assigning CPU affinity via Task Manager can
+prevent games and OBS from fighting over the same execution cores.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

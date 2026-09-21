@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Browser Source Remote Input Event Handling - obs-studio</title>
+    <meta name="description" content="This article explores how OBS Studio captures, serializes, and transmits keyboard and mouse input events to embedded browser source panels using remote control APIs. By leveraging the Chromium Embedded Framework (CEF) in conjunction with control interfac">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-browser-source-remote-input-event-handling">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Browser Source Remote Input Event Handling - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-browser-source-remote-input-event-handling" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores how OBS Studio captures, serializes, and transmits keyboard and mouse input events to embedded browser source panels using remote control APIs. By leveraging the Chromium Embedded Framework (CEF) in conjunction with control interfac" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-browser-source-remote-input-event-handling">OBS Browser
+Source Remote Input Event Handling</h1>
+<p>This article explores how OBS Studio captures, serializes, and
+transmits keyboard and mouse input events to embedded browser source
+panels using remote control APIs. By leveraging the Chromium Embedded
+Framework (CEF) in conjunction with control interfaces like the OBS
+WebSocket API, external clients can programmatically interact with
+web-based overlays and interactive widgets. The following sections break
+down the underlying architecture, event translation pipeline, and API
+mechanics that make remote interaction possible.</p>
+<h3 id="architecture-cef-and-off-screen-rendering">Architecture: CEF and
+Off-Screen Rendering</h3>
+<p>OBS Studio renders web content using the <code>obs-browser</code>
+plugin, which integrates the Chromium Embedded Framework (CEF). Because
+OBS integrates browser rendering directly into its compositing pipeline,
+CEF runs in Off-Screen Rendering (OSR) mode. In OSR mode, the browser
+does not create a native platform window; instead, it renders directly
+to a shared texture in memory and relies on OBS to pass hardware events
+to it.</p>
+<p>When a user interacts with a browser source locally, OBS uses a
+Qt-based "Interact" dialog that listens to native operating system
+events and forwards them directly to the underlying CEF browser
+instance. For remote control, this direct OS-level hook is bypassed in
+favor of remote procedure calls.</p>
+<h3 id="the-remote-input-pipeline">The Remote Input Pipeline</h3>
+<p>Passing input remotely requires an external client to transmit user
+actions to an API server running within OBS—most commonly
+<code>obs-websocket</code>. The end-to-end data flow operates through
+several distinct stages:</p>
+<ol type="1">
+<li><strong>Client-Side Event Capture:</strong> An external controller,
+web panel, or stream deck captures raw input (e.g., mouse clicks, cursor
+movement, or keystrokes).</li>
+<li><strong>Message Serialization:</strong> The client serializes the
+event data into a structured payload (typically JSON) containing event
+types, relative coordinates, key codes, and modifier flags.</li>
+<li><strong>Transport via API:</strong> The payload is sent over a
+WebSocket connection to OBS Studio via dedicated request methods.</li>
+<li><strong>Coordinate and Key Mapping:</strong> OBS deserializes the
+request, validates the target browser source, and normalizes coordinates
+and key codes.</li>
+<li><strong>CEF Injection:</strong> The <code>obs-browser</code> plugin
+invokes CEF’s internal input dispatch APIs, simulating native user
+action directly on the rendered DOM.</li>
+</ol>
+<h3 id="input-translation-and-normalization">Input Translation and
+Normalization</h3>
+<p>Because remote clients may run on different display scales and screen
+resolutions, input parameters must be normalized before reaching the
+browser context:</p>
+<ul>
+<li><strong>Mouse Coordinates:</strong> Browser sources in OBS have
+defined canvas dimensions (e.g., 1920x1080). Remote APIs accept target
+coordinates relative to this defined width and height. If an external
+client uses a responsive or scaled preview, the client or the API layer
+must scale the coordinates from the preview window to the source's
+native pixel grid.</li>
+<li><strong>Mouse Clicks and Scrolling:</strong> Mouse events are
+categorized into <code>MouseButtonDown</code>,
+<code>MouseButtonUp</code>, and mouse wheel delta events. The API
+specifies which button is involved (Left, Middle, Right) along with
+modifier states (Shift, Ctrl, Alt).</li>
+<li><strong>Keyboard Events:</strong> Remote keystroke payloads contain
+standard Web or Virtual Key codes, character representations, and
+modifier bitmasks. These must be formatted so that CEF interprets them
+as corresponding <code>RawKeyDown</code>, <code>KeyDown</code>,
+<code>Char</code>, or <code>KeyUp</code> states.</li>
+</ul>
+<h3 id="cef-event-injection-methods">CEF Event Injection Methods</h3>
+<p>Once the API receives and maps the payload, the
+<code>obs-browser</code> source interacts with the
+<code>CefBrowserHost</code> instance assigned to that specific source.
+CEF exposes several low-level methods designed for off-screen rendering
+input injection:</p>
+<ul>
+<li><code>SendMouseMoveEvent(const CefMouseEvent&amp; event, bool mouseLeave)</code>:
+Updates the virtual cursor position, triggering CSS <code>:hover</code>
+states and JavaScript <code>mousemove</code> listeners within the
+page.</li>
+<li><code>SendMouseClickEvent(const CefMouseEvent&amp; event, CefBrowserHost::MouseButtonType type, bool mouseUp, int clickCount)</code>:
+Dispatches click events, allowing interaction with links, buttons, and
+custom canvas elements.</li>
+<li><code>SendMouseWheelEvent(const CefMouseEvent&amp; event, int deltaX, int deltaY)</code>:
+Simulates scroll wheel actions for scrolling through pages or zooming
+interactive elements.</li>
+<li><code>SendKeyEvent(const CefKeyEvent&amp; event)</code>: Injects
+keyboard inputs directly into active DOM elements, updating text fields
+and triggering browser key event listeners.</li>
+</ul>
+<h3 id="direct-dom-manipulation-alternative">Direct DOM Manipulation
+Alternative</h3>
+<p>In scenarios where remote control APIs do not expose full granular
+CEF input bindings, automation is achieved by dispatching synthetic DOM
+events via JavaScript execution. Remote control APIs provide methods to
+execute arbitrary JavaScript within a browser source's execution
+context. Clients can synthesize and dispatch standard
+<code>MouseEvent</code> or <code>KeyboardEvent</code> objects directly
+via script injection, bypassing the CEF host input layer entirely while
+achieving equivalent interaction within the embedded web
+application.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

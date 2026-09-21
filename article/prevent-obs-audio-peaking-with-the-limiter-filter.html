@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prevent OBS Audio Peaking with the Limiter Filter - obs-studio</title>
+    <meta name="description" content="In this guide, you will learn how to use the Limiter filter in OBS Studio to prevent your microphone and desktop audio from clipping or peaking. We will cover what a Limiter is, how to apply it to your audio sources step-by-step, and the ideal settings t">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/prevent-obs-audio-peaking-with-the-limiter-filter">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Prevent OBS Audio Peaking with the Limiter Filter - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/prevent-obs-audio-peaking-with-the-limiter-filter" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In this guide, you will learn how to use the Limiter filter in OBS Studio to prevent your microphone and desktop audio from clipping or peaking. We will cover what a Limiter is, how to apply it to your audio sources step-by-step, and the ideal settings t" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="prevent-obs-audio-peaking-with-the-limiter-filter">Prevent OBS
+Audio Peaking with the Limiter Filter</h1>
+<p>In this guide, you will learn how to use the Limiter filter in OBS
+Studio to prevent your microphone and desktop audio from clipping or
+peaking. We will cover what a Limiter is, how to apply it to your audio
+sources step-by-step, and the ideal settings to ensure your stream or
+recording maintains professional, distortion-free sound quality.</p>
+<h3 id="what-is-a-limiter">What is a Limiter?</h3>
+<p>A Limiter is an audio processor that acts as a strict ceiling for
+your volume. No matter how loudly you shout or how loud an in-game
+explosion gets, the Limiter prevents the audio signal from exceeding a
+set decibel (dB) threshold. This stops your audio from entering the "red
+zone" in OBS, which causes digital distortion and clipping that can hurt
+your viewers' ears.</p>
+<h3 id="how-to-add-the-limiter-filter-in-obs-studio">How to Add the
+Limiter Filter in OBS Studio</h3>
+<p>Follow these steps to apply a Limiter to any audio source in OBS:</p>
+<ol type="1">
+<li><strong>Locate the Audio Mixer:</strong> Open OBS Studio and find
+the <strong>Audio Mixer</strong> dock, which displays the volume meters
+for your microphone and desktop audio.</li>
+<li><strong>Open the Filters Menu:</strong> Click on the <strong>three
+vertical dots</strong> (or gear icon in older versions) next to the
+audio source you want to limit (usually your Mic/Aux) and select
+<strong>Filters</strong>.</li>
+<li><strong>Add the Limiter:</strong> In the new Filters window, click
+the <strong>+ (plus) icon</strong> in the bottom-left corner, select
+<strong>Limiter</strong> from the list, name it (e.g., "Limiter"), and
+click <strong>OK</strong>.</li>
+</ol>
+<h3 id="configuring-the-limiter-settings">Configuring the Limiter
+Settings</h3>
+<p>Once the Limiter is added, you will see two adjustable sliders:
+<strong>Threshold</strong> and <strong>Release</strong>.</p>
+<ul>
+<li><strong>Threshold (dB):</strong> This is the maximum level your
+audio is allowed to reach.
+<ul>
+<li><em>Recommended Setting:</em> Set this between <strong>-3.0
+dB</strong> and <strong>-6.0 dB</strong>. Setting it to -3.0 dB ensures
+your audio remains loud and clear but never hits 0.0 dB (the clipping
+point).</li>
+</ul></li>
+<li><strong>Release (ms):</strong> This determines how quickly the
+Limiter stops compressing the audio once the volume drops below the
+threshold.
+<ul>
+<li><em>Recommended Setting:</em> Leave this at the default
+<strong>60ms</strong>. This provides a smooth transition without causing
+a "pumping" effect in your audio.</li>
+</ul></li>
+</ul>
+<h3 id="testing-your-settings">Testing Your Settings</h3>
+<p>After configuring the filter, speak loudly into your microphone.
+Watch the visual meter in the OBS Audio Mixer. The green/yellow bar
+should bounce freely, but even if you shout, the bar should stop exactly
+at the threshold you set (e.g., -3.0 dB) and should never hit the very
+end of the red zone.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

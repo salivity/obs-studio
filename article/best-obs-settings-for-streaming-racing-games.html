@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Best OBS Settings for Streaming Racing Games - obs-studio</title>
+    <meta name="description" content="Streaming fast-paced racing games like Forza, F1, or iRacing often leads to blocky pixelation and compression artifacts due to the rapid movement of the track and scenery. This guide provides the optimal OBS Studio settings—focusing on encoder selectio">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/best-obs-settings-for-streaming-racing-games">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Best OBS Settings for Streaming Racing Games - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/best-obs-settings-for-streaming-racing-games" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Streaming fast-paced racing games like Forza, F1, or iRacing often leads to blocky pixelation and compression artifacts due to the rapid movement of the track and scenery. This guide provides the optimal OBS Studio settings—focusing on encoder selectio" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="best-obs-settings-for-streaming-racing-games">Best OBS Settings
+for Streaming Racing Games</h1>
+<p>Streaming fast-paced racing games like Forza, F1, or iRacing often
+leads to blocky pixelation and compression artifacts due to the rapid
+movement of the track and scenery. This guide provides the optimal OBS
+Studio settings—focusing on encoder selection, bitrate maximization,
+resolution scaling, and advanced output parameters—to eliminate blur and
+ensure your high-speed gameplay remains crisp and clear for your
+audience.</p>
+<h2 id="choose-the-right-encoder">Choose the Right Encoder</h2>
+<p>The encoder is responsible for compressing your gameplay. For
+fast-paced games, hardware encoders are highly recommended because they
+handle high-motion rendering without overloading your CPU.</p>
+<ul>
+<li><strong>NVIDIA NVENC H.264 (New):</strong> The best option for
+NVIDIA GPU users streaming to Twitch.</li>
+<li><strong>AV1 / HEVC:</strong> If you are streaming to YouTube and
+have a compatible modern GPU (RTX 40-series, AMD RX 7000-series), use
+AV1. It offers superior compression and virtually eliminates pixelation
+even at lower bitrates.</li>
+<li><strong>x264:</strong> Use this CPU-based encoder only if you have a
+dedicated dual-PC streaming setup with a powerful processor.</li>
+</ul>
+<h2 id="use-constant-bitrate-cbr-and-maximize-bitrate">Use Constant
+Bitrate (CBR) and Maximize Bitrate</h2>
+<p>Racing games require a continuous stream of data to render
+fast-moving environments. Any dip in data allocation results in instant
+pixelation.</p>
+<ul>
+<li><strong>Rate Control:</strong> Set this strictly to
+<strong>CBR</strong> (Constant Bitrate).</li>
+<li><strong>Twitch Bitrate:</strong> Set to <strong>6000 Kbps</strong>
+(or up to 8000 Kbps if you are a Twitch Affiliate/Partner and your
+upload speed supports it).</li>
+<li><strong>YouTube Bitrate:</strong> Set between <strong>10,000 Kbps
+and 15,000 Kbps</strong> for 1080p60, or higher if streaming in
+1440p.</li>
+</ul>
+<h2 id="lower-the-output-resolution-the-secret-to-smooth-motion">Lower
+the Output Resolution (The Secret to Smooth Motion)</h2>
+<p>If you are streaming on Twitch with a maximum bitrate limit of 6000
+to 8000 Kbps, attempting to stream at 1080p at 60 FPS during high-speed
+motion will almost always cause pixelation.</p>
+<ul>
+<li><strong>Downscale to 900p or 720p:</strong> Go to Settings &gt;
+Video. Set your Output (Scaled) Resolution to <strong>1600x900</strong>
+or <strong>1280x720</strong> at <strong>60 FPS</strong>.</li>
+<li><strong>Why this works:</strong> Lowering the resolution reduces the
+number of pixels the encoder has to process. This allows your allocated
+bitrate to distribute more data per pixel, resulting in a significantly
+sharper image during high-speed turns.</li>
+</ul>
+<h2 id="adjust-advanced-encoder-settings">Adjust Advanced Encoder
+Settings</h2>
+<p>Fine-tuning the internal settings of your encoder in the Output tab
+(set Output Mode to "Advanced") will yield the best visual results. Use
+these specific values:</p>
+<ul>
+<li><strong>Keyframe Interval:</strong> 2s (Seconds)</li>
+<li><strong>Preset:</strong> P6: Slower (Better Quality) or P5: Slow
+(Good Quality). Avoid P7 unless you have a high-end dedicated GPU.</li>
+<li><strong>Tuning:</strong> High Quality</li>
+<li><strong>Multipass Mode:</strong> Two Passes (Quarter
+Resolution)</li>
+<li><strong>Profile:</strong> high</li>
+<li><strong>Look-ahead:</strong> Unchecked (Disabled)</li>
+<li><strong>Psycho Visual Tuning:</strong> Checked (Enabled). This
+setting optimizes your GPU's bitrate allocation to reduce banding and
+pixelation in fast-moving areas of the screen.</li>
+<li><strong>Max B-frames:</strong> 2</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

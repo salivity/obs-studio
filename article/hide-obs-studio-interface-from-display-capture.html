@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hide OBS Studio Interface from Display Capture - obs-studio</title>
+    <meta name="description" content="When using Display Capture in OBS Studio, the software often captures its own window, creating an annoying "mirror-in-a-mirror" feedback loop. This article provides a quick, step-by-step guide on how to hide the OBS Studio user interface from your record">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/hide-obs-studio-interface-from-display-capture">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Hide OBS Studio Interface from Display Capture - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/hide-obs-studio-interface-from-display-capture" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When using Display Capture in OBS Studio, the software often captures its own window, creating an annoying "mirror-in-a-mirror" feedback loop. This article provides a quick, step-by-step guide on how to hide the OBS Studio user interface from your record" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="hide-obs-studio-interface-from-display-capture">Hide OBS Studio
+Interface from Display Capture</h1>
+<p>When using Display Capture in OBS Studio, the software often captures
+its own window, creating an annoying "mirror-in-a-mirror" feedback loop.
+This article provides a quick, step-by-step guide on how to hide the OBS
+Studio user interface from your recordings and streams using a simple
+built-in setting.</p>
+<h3 id="steps-to-hide-the-obs-studio-interface">Steps to Hide the OBS
+Studio Interface</h3>
+<p>OBS Studio includes a native feature designed specifically to prevent
+the application from capturing itself. Follow these steps to enable
+it:</p>
+<ol type="1">
+<li>Open <strong>OBS Studio</strong>.</li>
+<li>Click on <strong>Settings</strong> in the bottom-right "Controls"
+dock (or go to <strong>File</strong> &gt; <strong>Settings</strong> in
+the top menu).</li>
+<li>Ensure you are on the <strong>General</strong> tab in the left-hand
+sidebar.</li>
+<li>Scroll down to the <strong>General</strong> section and locate the
+option labeled <strong>"Hide OBS windows from screen
+capture"</strong>.</li>
+<li>Check the box next to this option.</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong> to save
+your changes.</li>
+</ol>
+<p>Once enabled, the OBS Studio interface will immediately become
+invisible to your Display Capture source, though it will remain fully
+visible to you on your monitor.</p>
+<h3 id="troubleshooting-and-requirements">Troubleshooting and
+Requirements</h3>
+<p>If the interface is still appearing after enabling this setting, keep
+the following in mind:</p>
+<ul>
+<li><strong>Windows OS Requirement:</strong> This feature relies on
+Windows API updates and is supported on Windows 10 (version 1903 and
+newer) and Windows 11.</li>
+<li><strong>Display Capture Method:</strong> If the feedback loop
+persists, double-click your <strong>Display Capture</strong> source in
+the "Sources" dock and ensure the <strong>Capture Method</strong> is set
+to <strong>Windows 10 (1903 and up)</strong> or
+<strong>Automatic</strong> rather than "DXGI Desktop Duplication."</li>
+<li><strong>Displaying Projectors:</strong> If you use Fullscreen or
+Windowed Projectors, this setting will also hide those projector windows
+from being captured.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

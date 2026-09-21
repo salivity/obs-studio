@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Color Space Override Explained - obs-studio</title>
+    <meta name="description" content="This article explains the purpose of the "Color Space" override option found within individual media source properties in OBS Studio. It covers how this setting corrects color rendering discrepancies, why OBS sometimes misinterprets video files, and how">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-color-space-override-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Color Space Override Explained - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-color-space-override-explained" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains the purpose of the "Color Space" override option found within individual media source properties in OBS Studio. It covers how this setting corrects color rendering discrepancies, why OBS sometimes misinterprets video files, and how" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-color-space-override-explained">OBS Studio Color
+Space Override Explained</h1>
+<p>This article explains the purpose of the "Color Space" override
+option found within individual media source properties in OBS Studio. It
+covers how this setting corrects color rendering discrepancies, why OBS
+sometimes misinterprets video files, and how to use the override to
+ensure your stream or recording displays accurate, vibrant colors.</p>
+<h2 id="what-is-the-color-space-override">What is the "Color Space"
+Override?</h2>
+<p>The "Color Space" override in OBS Studio is a manual control that
+forces the software to interpret a video file’s color profile using a
+specific standard, rather than relying on automatic detection.</p>
+<p>Every video file contains color space metadata (such as Rec. 601,
+Rec. 709, or Rec. 2100) that tells media players how to map digital
+color values to the screen. If this metadata is missing, corrupted, or
+misread by OBS, the software will fall back on default assumptions. This
+often results in colors that look washed out, overly saturated, or
+slightly tinted. The override option allows you to bypass these
+assumptions and manually select the correct standard.</p>
+<h2 id="why-use-the-color-space-override">Why Use the Color Space
+Override?</h2>
+<p>The primary reason to use the color space override is to fix visual
+inaccuracies during playback.</p>
+<ul>
+<li><strong>Resolving Metadata Errors:</strong> Some video editing
+software or older cameras export videos without proper color space tags.
+When imported into OBS, these files may render with incorrect contrast
+or hue.</li>
+<li><strong>Preventing "Washed Out" Videos:</strong> A common issue
+occurs when a standard high-definition video (Rec. 709) is incorrectly
+interpreted as standard definition (Rec. 601), making colors look dull
+or grayed out. Manually forcing the color space to Rec. 709 resolves
+this.</li>
+<li><strong>HDR to SDR Management:</strong> If you are importing
+high-dynamic-range (HDR) assets into a standard-definition (SDR) stream,
+forcing the correct HDR color space (such as Rec. 2100) helps OBS
+tone-map the colors down to SDR more accurately.</li>
+</ul>
+<h2 id="common-color-space-options-in-obs">Common Color Space Options in
+OBS</h2>
+<p>When configuring the override, you will typically choose between
+three main standards:</p>
+<ul>
+<li><strong>Rec. 601:</strong> The legacy standard used for
+standard-definition (SD) video. You should rarely need this unless you
+are playing back retro gaming footage or vintage video files.</li>
+<li><strong>Rec. 709:</strong> The industry standard for high-definition
+(HD) video. This is the most common setting for standard gameplay clips,
+overlays, and web video assets.</li>
+<li><strong>Rec. 2100:</strong> The standard for ultra-high-definition
+(UHD) and high-dynamic-range (HDR) video. Use this option if your source
+video was recorded in HDR.</li>
+</ul>
+<h2 id="how-to-access-the-setting">How to Access the Setting</h2>
+<p>To apply a color space override to a specific video or media file in
+OBS Studio:</p>
+<ol type="1">
+<li>Right-click the media source in your <strong>Sources</strong> list
+and select <strong>Properties</strong>.</li>
+<li>Scroll down to find the <strong>Color Space</strong> dropdown
+menu.</li>
+<li>Change the setting from <strong>Default</strong> to the specific
+color space that matches your source video (usually <strong>Rec.
+709</strong> for modern HD clips).</li>
+<li>Click <strong>OK</strong> to save the changes.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

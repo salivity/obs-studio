@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS High Socket Queue Latency on Gigabit Fiber - obs-studio</title>
+    <meta name="description" content="High socket queue latency in OBS Studio can lead to severe frame drops, stuttering, and disconnected streams, even when operating over an ultra-fast gigabit fiber-optic connection. While gigabit fiber provides abundant raw bandwidth, socket queue latency">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-high-socket-queue-latency-on-gigabit-fiber">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS High Socket Queue Latency on Gigabit Fiber - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-high-socket-queue-latency-on-gigabit-fiber" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="High socket queue latency in OBS Studio can lead to severe frame drops, stuttering, and disconnected streams, even when operating over an ultra-fast gigabit fiber-optic connection. While gigabit fiber provides abundant raw bandwidth, socket queue latency" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-high-socket-queue-latency-on-gigabit-fiber">OBS High Socket
+Queue Latency on Gigabit Fiber</h1>
+<p>High socket queue latency in OBS Studio can lead to severe frame
+drops, stuttering, and disconnected streams, even when operating over an
+ultra-fast gigabit fiber-optic connection. While gigabit fiber provides
+abundant raw bandwidth, socket queue latency is primarily governed by
+packet travel time, TCP acknowledgments, operating system buffer
+handling, and route quality rather than throughput capacity. This
+article breaks down the primary technical reasons why your OBS socket
+queue backs up despite having a gigabit connection.</p>
+<h3 id="tcp-windowing-and-bufferbloat">TCP Windowing and
+Bufferbloat</h3>
+<p>Streaming platforms using RTMP rely on the TCP protocol, which
+guarantees packet delivery through acknowledgments (ACKs). If an ACK
+packet is delayed or dropped along the route, the local operating
+system's TCP socket holds subsequent data in memory until the missing
+packet is retransmitted and acknowledged. On a gigabit connection, OBS
+can push data into the local socket buffer far faster than the network
+can resolve transmission errors. When intermediate routers or modems
+possess unmanaged, oversized packet buffers (bufferbloat), data sits
+queued in hardware, creating massive latency spikes that directly
+reflect as high socket queue times in OBS.</p>
+<h3 id="isp-peering-and-ingest-server-routing">ISP Peering and Ingest
+Server Routing</h3>
+<p>A gigabit fiber connection only guarantees high bandwidth between
+your residence and your local Internet Service Provider (ISP). Once
+traffic exits your ISP's local network, it traverses transit providers
+to reach ingest servers hosted by platforms like Twitch or YouTube. If
+your ISP has poor peering agreements or encounters congested
+intermediate hops on that specific path, packet loss will occur. Even a
+0.5% packet loss rate on a fiber line can force TCP to repeatedly drop
+its congestion window, causing the OBS socket queue to fill up instantly
+as outbound data waits for a clear transmission window.</p>
+<h3 id="network-adapter-offloads-and-driver-bottlenecks">Network Adapter
+Offloads and Driver Bottlenecks</h3>
+<p>Features built into modern network interface cards (NICs) can
+actively interfere with continuous, low-latency live streaming. Settings
+such as Large Send Offload (LSO), Interrupt Moderation, and Energy
+Efficient Ethernet (EEE) batch network data to minimize CPU usage. While
+optimal for bulk file transfers, batching delays real-time packet
+dispatch, creating artificial bottlenecks at the hardware level.
+Additionally, specialized network software—such as "gaming" network
+optimizers (e.g., Killer Control Center, ASUS ROG GameFirst)—often
+prioritizes game traffic over OBS, intercepting and delaying outgoing
+RTMP packets.</p>
+<h3 id="security-software-and-packet-inspection">Security Software and
+Packet Inspection</h3>
+<p>Third-party firewalls and antivirus suites with real-time web
+protection or Deep Packet Inspection (DPI) monitor all outbound socket
+traffic. These services intercept data between the OBS application layer
+and the Windows network stack to scan payloads. If the scanning engine
+cannot process the data rate synchronously with OBS's output pacing, the
+socket queue fills up waiting for permission from the security software
+to transmit.</p>
+<h3 id="obs-advanced-network-settings">OBS Advanced Network
+Settings</h3>
+<p>OBS Studio includes network optimization features that alter socket
+behavior. Under the Advanced settings menu, the "Enable network
+optimizations" option switches OBS to an event-driven socket write
+system rather than a blocking loop. If this setting is misconfigured or
+fails to synchronize with specific fiber ONT (Optical Network Terminal)
+routers, socket buffer flushing can stall. Similarly, disabling
+"Dynamically change bitrate to manage congestion" means OBS will
+continue dumping full-bitrate video frames into a congested socket queue
+rather than proactively reducing output to match actual path
+throughput.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

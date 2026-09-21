@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove Black or White Backgrounds in OBS Studio - obs-studio</title>
+    <meta name="description" content="Removing solid black or white backgrounds from graphics, alerts, or videos in OBS Studio is easily achieved using the Luma Key filter. This guide provides a direct, step-by-step walkthrough on how to apply and configure the Luma Key filter in OBS Studio,">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/remove-black-or-white-backgrounds-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Remove Black or White Backgrounds in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/remove-black-or-white-backgrounds-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Removing solid black or white backgrounds from graphics, alerts, or videos in OBS Studio is easily achieved using the Luma Key filter. This guide provides a direct, step-by-step walkthrough on how to apply and configure the Luma Key filter in OBS Studio," />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="remove-black-or-white-backgrounds-in-obs-studio">Remove Black or
+White Backgrounds in OBS Studio</h1>
+<p>Removing solid black or white backgrounds from graphics, alerts, or
+videos in OBS Studio is easily achieved using the Luma Key filter. This
+guide provides a direct, step-by-step walkthrough on how to apply and
+configure the Luma Key filter in OBS Studio, allowing you to seamlessly
+integrate overlays into your live streams or recordings without needing
+a green screen.</p>
+<h2 id="step-1-add-your-source-to-obs-studio">Step 1: Add Your Source to
+OBS Studio</h2>
+<p>Before applying the filter, ensure your graphic or video is loaded
+into your scene:</p>
+<ol type="1">
+<li>Open OBS Studio.</li>
+<li>In the <strong>Sources</strong> dock, click the <strong>+</strong>
+(plus) icon.</li>
+<li>Select the appropriate source type (such as <strong>Media
+Source</strong> for videos, <strong>Image</strong> for static graphics,
+or <strong>Browser</strong> for web-based alerts).</li>
+<li>Locate and select your file, then click <strong>OK</strong>.</li>
+</ol>
+<h2 id="step-2-open-the-filters-menu">Step 2: Open the Filters Menu</h2>
+<ol type="1">
+<li>Right-click on the newly added source in the
+<strong>Sources</strong> list (or in the preview window).</li>
+<li>Click on <strong>Filters</strong> from the context menu. This will
+open the Filters window for that specific source.</li>
+</ol>
+<h2 id="step-3-add-the-luma-key-filter">Step 3: Add the Luma Key
+Filter</h2>
+<ol type="1">
+<li>In the Filters window, look at the section labeled <strong>Effect
+Filters</strong> on the bottom half of the screen.</li>
+<li>Click the <strong>+</strong> (plus) icon at the bottom of this
+section.</li>
+<li>Select <strong>Luma Key</strong> from the list of available
+filters.</li>
+<li>Name the filter and click <strong>OK</strong>.</li>
+</ol>
+<h2 id="step-4-adjust-settings-to-remove-the-background">Step 4: Adjust
+Settings to Remove the Background</h2>
+<p>The Luma Key filter targets brightness levels (luminance) to create
+transparency. Depending on the background color you want to remove,
+adjust the following sliders:</p>
+<h3 id="to-remove-a-black-background">To Remove a Black Background</h3>
+<ol type="1">
+<li>Locate the <strong>Luma Min</strong> slider, which controls the
+threshold for dark pixels.</li>
+<li>Slowly drag the <strong>Luma Min</strong> slider to the right. You
+will see the black background begin to disappear.</li>
+<li>Adjust the <strong>Luma Min Smooth</strong> slider to soften the
+edges of your graphic and eliminate harsh pixelation around the
+borders.</li>
+</ol>
+<h3 id="to-remove-a-white-background">To Remove a White Background</h3>
+<ol type="1">
+<li>Locate the <strong>Luma Max</strong> slider, which controls the
+threshold for bright pixels.</li>
+<li>Slowly drag the <strong>Luma Max</strong> slider to the left. The
+white background will start to become transparent.</li>
+<li>Adjust the <strong>Luma Max Smooth</strong> slider to blend the
+edges smoothly and prevent jagged borders.</li>
+</ol>
+<h2 id="step-5-fine-tune-and-close">Step 5: Fine-Tune and Close</h2>
+<p>Review the graphic over your main scene to ensure no desired parts of
+the graphic are accidentally keyed out (for example, white text on a
+white background might also disappear). If necessary, make
+micro-adjustments to the sliders. Once you are satisfied with the
+result, click <strong>Close</strong> on the Filters window to save your
+settings.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

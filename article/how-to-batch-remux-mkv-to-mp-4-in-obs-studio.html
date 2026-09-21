@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Batch Remux MKV to MP4 in OBS Studio - obs-studio</title>
+    <meta name="description" content="This article provides a step-by-step guide on how to use the built-in "Remux Recordings" feature in OBS Studio to batch-convert multiple MKV video files into MP4 format simultaneously. By utilizing this method, you can quickly change your video file cont">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-batch-remux-mkv-to-mp-4-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Batch Remux MKV to MP4 in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-batch-remux-mkv-to-mp-4-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides a step-by-step guide on how to use the built-in "Remux Recordings" feature in OBS Studio to batch-convert multiple MKV video files into MP4 format simultaneously. By utilizing this method, you can quickly change your video file cont" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-batch-remux-mkv-to-mp4-in-obs-studio">How to Batch Remux
+MKV to MP4 in OBS Studio</h1>
+<p>This article provides a step-by-step guide on how to use the built-in
+"Remux Recordings" feature in OBS Studio to batch-convert multiple MKV
+video files into MP4 format simultaneously. By utilizing this method,
+you can quickly change your video file containers in bulk without losing
+any video quality or undergoing a time-consuming re-encoding
+process.</p>
+<h2 id="why-use-obs-studio-to-remux-mkv-files">Why Use OBS Studio to
+Remux MKV Files?</h2>
+<p>Recording in MKV is highly recommended because it protects your
+footage from corruption if OBS Studio or your computer crashes
+mid-record. However, many video editing platforms do not natively
+support MKV. Remuxing solves this by changing the container format from
+MKV to MP4 without re-encoding the underlying video and audio data. This
+process is nearly instantaneous and preserves 100% of the original video
+quality.</p>
+<h2 id="step-by-step-guide-to-batch-remuxing">Step-by-Step Guide to
+Batch Remuxing</h2>
+<h3 id="step-1-open-the-remux-interface">Step 1: Open the Remux
+Interface</h3>
+<p>Launch OBS Studio on your computer. In the top-left menu bar, click
+on <strong>File</strong> and select <strong>Remux Recordings</strong>
+from the dropdown menu. This will open the dedicated Remux
+interface.</p>
+<h3 id="step-2-import-your-mkv-files-in-bulk">Step 2: Import Your MKV
+Files in Bulk</h3>
+<p>You can quickly load dozens of MKV files into the interface using one
+of two methods:</p>
+<ul>
+<li><strong>Drag and Drop:</strong> Open the folder containing your MKV
+files in your operating system's file explorer. Select all the files you
+wish to convert, then drag and drop them directly into the list area of
+the OBS Remux window.</li>
+<li><strong>File Browser:</strong> Click the three dots icon
+(<strong>...</strong>) under the "OBS Recording" column. In the file
+explorer window, hold down <code>Ctrl</code> (Windows) or
+<code>Cmd</code> (Mac) to select multiple specific files, or press
+<code>Ctrl + A</code> / <code>Cmd + A</code> to select all files in the
+folder, then click <strong>Open</strong>.</li>
+</ul>
+<h3 id="step-3-verify-output-destinations">Step 3: Verify Output
+Destinations</h3>
+<p>Once imported, OBS Studio will automatically populate the "Target
+File" column. By default, it will save the new MP4 files in the same
+folder as your original MKV files, maintaining the same filenames but
+changing the extension to <code>.mp4</code>.</p>
+<h3 id="step-4-execute-the-batch-remux">Step 4: Execute the Batch
+Remux</h3>
+<p>After verifying that all your files are listed in the queue, click
+the <strong>Remux</strong> button at the bottom right of the window.</p>
+<p>OBS Studio will process all the files in rapid succession. Because
+the system is only copying the data streams into a new container rather
+than re-rendering the video, converting dozens of large files will
+typically finish in just a few seconds. Once complete, a pop-up window
+will appear stating "Recording remuxed." Click <strong>OK</strong> to
+finish, and your MP4 files will be ready for use.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

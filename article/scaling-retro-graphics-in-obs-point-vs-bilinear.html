@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scaling Retro Graphics in OBS: Point vs Bilinear - obs-studio</title>
+    <meta name="description" content="When capturing retro video games in OBS Studio, choosing the correct scale filtering method determines whether your output displays crisp, authentic pixels or a smeared, blurry image. Nearest-neighbor (labeled as "Point" in OBS) duplicates existing pixel">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/scaling-retro-graphics-in-obs-point-vs-bilinear">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Scaling Retro Graphics in OBS: Point vs Bilinear - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/scaling-retro-graphics-in-obs-point-vs-bilinear" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When capturing retro video games in OBS Studio, choosing the correct scale filtering method determines whether your output displays crisp, authentic pixels or a smeared, blurry image. Nearest-neighbor (labeled as "Point" in OBS) duplicates existing pixel" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="scaling-retro-graphics-in-obs-point-vs-bilinear">Scaling Retro
+Graphics in OBS: Point vs Bilinear</h1>
+<p>When capturing retro video games in OBS Studio, choosing the correct
+scale filtering method determines whether your output displays crisp,
+authentic pixels or a smeared, blurry image. Nearest-neighbor (labeled
+as "Point" in OBS) duplicates existing pixels to preserve sharp edges
+and distinct color boundaries, while bilinear interpolation averages
+adjacent pixels to smooth transitions. Understanding how these two
+algorithms handle low-resolution raster graphics ensures your stream or
+recording maintains the intended visual aesthetic of classic games.</p>
+<h3 id="how-nearest-neighbor-point-scaling-works">How Nearest-Neighbor
+(Point) Scaling Works</h3>
+<p>Nearest-neighbor interpolation, designated as <strong>Point</strong>
+filtering in OBS Studio, is the simplest scaling algorithm. When an
+image is enlarged, the algorithm maps each new pixel coordinate to the
+closest matching pixel in the original low-resolution source and
+directly copies its color value without modification.</p>
+<ul>
+<li><strong>Aesthetic Result:</strong> It produces hard, well-defined
+rectangular edges. Individual pixels remain clearly visible and maintain
+their original palette purity without introducing new intermediate
+colors.</li>
+<li><strong>Best Use Case:</strong> It is the standard choice for retro
+consoles (NES, SNES, Genesis, Game Boy) and 2D pixel-art indie
+games.</li>
+<li><strong>Limitations:</strong> If scaled to non-integer multiples
+(such as stretching a 240p source by 4.5x instead of 4x or 5x),
+nearest-neighbor can cause "pixel shimmering" or uneven pixel widths
+during horizontal or vertical movement.</li>
+</ul>
+<h3 id="how-bilinear-interpolation-works">How Bilinear Interpolation
+Works</h3>
+<p>Bilinear interpolation is a continuous resampling algorithm. When
+scaling up, it samples the four nearest pixels (a 2x2 grid) from the
+source image, calculates a weighted average based on their relative
+distances to the target coordinate, and creates a newly calculated blend
+of colors.</p>
+<ul>
+<li><strong>Aesthetic Result:</strong> Hard edges are eliminated in
+favor of smooth, gradual color transitions. For low-resolution raster
+graphics, this results in a cloudy, out-of-focus appearance commonly
+referred to as "vaseline over the screen."</li>
+<li><strong>Best Use Case:</strong> It works well for continuous-tone
+imagery, live camera feeds, and modern 3D games where hard pixel
+boundaries are unwanted artifacts.</li>
+<li><strong>Limitations:</strong> It actively destroys the geometric
+definition and stylistic sharpness that define 8-bit and 16-bit retro
+graphics.</li>
+</ul>
+<h3 id="direct-comparison-for-retro-content">Direct Comparison for Retro
+Content</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Point (Nearest-Neighbor)</th>
+<th style="text-align: left;">Bilinear Interpolation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Edge Sharpness</strong></td>
+<td style="text-align: left;">Completely sharp; zero blur</td>
+<td style="text-align: left;">Softened, blended transitions</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Color Fidelity</strong></td>
+<td style="text-align: left;">Retains original, exact color palette</td>
+<td style="text-align: left;">Introduces hybrid gradient colors</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Pixel Grid
+Preservation</strong></td>
+<td style="text-align: left;">Preserved</td>
+<td style="text-align: left;">Eliminated/Smudged</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Motion Clarity</strong></td>
+<td style="text-align: left;">Crisp, but prone to jitter on non-integer
+scales</td>
+<td style="text-align: left;">Uniformly soft throughout motion</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Computational
+Overhead</strong></td>
+<td style="text-align: left;">Extremely low</td>
+<td style="text-align: left;">Very low, but slightly higher than
+Point</td>
+</tr>
+</tbody>
+</table>
+<h3 id="applying-the-settings-in-obs-studio">Applying the Settings in
+OBS Studio</h3>
+<p>OBS Studio defaults to bilinear filtering for most captured sources
+to prevent aliasing on standard video feeds. To switch to
+nearest-neighbor for a retro game capture:</p>
+<ol type="1">
+<li>Right-click the game capture, window capture, or capture card source
+in the <strong>Sources</strong> list.</li>
+<li>Hover over <strong>Scale Filtering</strong>.</li>
+<li>Select <strong>Point</strong>.</li>
+</ol>
+<p>To avoid uneven pixel distortion when using Point filtering, ensure
+the source is scaled using integer scaling factors (e.g., 200%, 300%,
+400%) or positioned using canvas dimensions that divide evenly into the
+source's native resolution.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

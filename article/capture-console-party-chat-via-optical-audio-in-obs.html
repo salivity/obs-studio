@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capture Console Party Chat via Optical Audio in OBS - obs-studio</title>
+    <meta name="description" content="Capturing clear console party chat for your livestream or recording can be challenging due to platform restrictions. This guide explains how to route your PlayStation or Xbox party chat and game audio directly into OBS Studio using an optical audio (TOSL">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/capture-console-party-chat-via-optical-audio-in-obs">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Capture Console Party Chat via Optical Audio in OBS - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/capture-console-party-chat-via-optical-audio-in-obs" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Capturing clear console party chat for your livestream or recording can be challenging due to platform restrictions. This guide explains how to route your PlayStation or Xbox party chat and game audio directly into OBS Studio using an optical audio (TOSL" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="capture-console-party-chat-via-optical-audio-in-obs">Capture
+Console Party Chat via Optical Audio in OBS</h1>
+<p>Capturing clear console party chat for your livestream or recording
+can be challenging due to platform restrictions. This guide explains how
+to route your PlayStation or Xbox party chat and game audio directly
+into OBS Studio using an optical audio (TOSLINK) cable. By outputting
+your console's digital audio and utilizing a PC optical input or a
+compatible USB audio interface, you can feed high-quality, lag-free
+audio straight into your PC for seamless broadcasting.</p>
+<h3 id="hardware-requirements">Hardware Requirements</h3>
+<p>To use this method, you will need the following equipment:</p>
+<ul>
+<li><strong>A Console with an Optical Port:</strong> PlayStation 4
+(original/Pro) or Xbox One. For PlayStation 5 and Xbox Series X/S, you
+will need an HDMI audio extractor with an optical output.</li>
+<li><strong>Optical Audio Cable (TOSLINK):</strong> To transmit the
+digital audio signal from the console.</li>
+<li><strong>An Optical Input Device for PC:</strong> A PC motherboard
+with a built-in optical input (S/PDIF In) port, or an external USB sound
+card/audio interface that features an optical input port.</li>
+<li><strong>An Optical Splitter (Optional):</strong> If you also need to
+send the optical audio signal to a mixamp or wireless headset base
+station simultaneously.</li>
+</ul>
+<h3 id="step-1-connect-the-hardware">Step 1: Connect the Hardware</h3>
+<ol type="1">
+<li>Connect one end of the optical cable to the optical output port on
+your console (or your HDMI audio extractor).</li>
+<li>If you are using a headset mixamp that requires an optical
+connection, plug the console cable into the input of an active (powered)
+optical splitter. Run one output cable from the splitter to your headset
+mixamp, and another output cable to your PC.</li>
+<li>Plug the remaining end of the optical cable into the S/PDIF input
+port on your PC motherboard or external USB audio interface.</li>
+</ol>
+<h3 id="step-2-configure-console-audio-settings">Step 2: Configure
+Console Audio Settings</h3>
+<p>You must configure your console to send both game audio and voice
+chat through the optical port.</p>
+<ul>
+<li><strong>For PlayStation:</strong> Go to Settings &gt; Sound and
+Screen &gt; Audio Output Settings. Set the Primary Output Port to
+"Digital Out (Optical)" and set the Audio Format to "Linear PCM" (to
+avoid Dolby decoding latency in OBS). Under Devices &gt; Audio Devices,
+ensure "Output to Headphones" is set to "Chat Audio" so that game audio
+and party chat are separated, allowing the system to route game/chat
+through the optical output.</li>
+<li><strong>For Xbox:</strong> Go to Settings &gt; General &gt; Volume
+&amp; audio output. Under "Party chat output," select "Headset &amp;
+speakers" or "Speakers." This forces the console to clone the party chat
+audio and send it through the optical port alongside the game
+audio.</li>
+</ul>
+<h3 id="step-3-configure-windows-sound-settings">Step 3: Configure
+Windows Sound Settings</h3>
+<ol type="1">
+<li>On your PC, right-click the speaker icon in the taskbar and select
+<strong>Sound settings</strong> (or open the Control Panel and go to
+Sound &gt; Recording tab).</li>
+<li>Locate your optical input device, which is usually labeled as
+<strong>Digital Input</strong>, <strong>S/PDIF In</strong>, or the name
+of your USB audio interface.</li>
+<li>Right-click the device, select <strong>Properties</strong>, go to
+the <strong>Listen</strong> tab, and ensure "Listen to this device" is
+<strong>unchecked</strong>. This prevents you from hearing a
+double-audio echo on your PC, as OBS will handle the monitoring.</li>
+<li>Go to the <strong>Advanced</strong> tab and ensure the default
+format matches the sample rate of your console (usually 2-channel,
+16-bit, 48000 Hz).</li>
+</ol>
+<h3 id="step-4-add-the-audio-source-to-obs-studio">Step 4: Add the Audio
+Source to OBS Studio</h3>
+<ol type="1">
+<li>Launch OBS Studio.</li>
+<li>In the <strong>Sources</strong> dock, click the <strong>+</strong>
+icon and select <strong>Audio Input Capture</strong>.</li>
+<li>Name the source (e.g., "Console Optical Audio") and click
+<strong>OK</strong>.</li>
+<li>In the properties window, click the <strong>Device</strong> dropdown
+menu and select your optical input device (e.g., "Realtek S/PDIF" or
+your USB interface).</li>
+<li>Click <strong>OK</strong>.</li>
+</ol>
+<p>You will now see the volume levels bounce in the OBS Audio Mixer dock
+whenever game audio is playing or party members are speaking. Adjust the
+volume slider in OBS to balance the console audio with your
+microphone.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Run a 24/7 OBS Stream Without Memory Leaks - obs-studio</title>
+    <meta name="description" content="Running a continuous, 24/7 broadcast using OBS Studio requires specific configurations to prevent memory degradation and application crashes over time. This guide provides a step-by-step walkthrough to optimize your media sources, streamline rendering se">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-run-a-24-7-obs-stream-without-memory-leaks">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Run a 24/7 OBS Stream Without Memory Leaks - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-run-a-24-7-obs-stream-without-memory-leaks" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Running a continuous, 24/7 broadcast using OBS Studio requires specific configurations to prevent memory degradation and application crashes over time. This guide provides a step-by-step walkthrough to optimize your media sources, streamline rendering se" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-run-a-247-obs-stream-without-memory-leaks">How to Run a
+24/7 OBS Stream Without Memory Leaks</h1>
+<p>Running a continuous, 24/7 broadcast using OBS Studio requires
+specific configurations to prevent memory degradation and application
+crashes over time. This guide provides a step-by-step walkthrough to
+optimize your media sources, streamline rendering settings, and
+implement stability practices that ensure your stream runs indefinitely
+without exhausting your system's RAM.</p>
+<h2 id="use-vlc-video-source-instead-of-media-source">Use VLC Video
+Source Instead of Media Source</h2>
+<p>The default OBS "Media Source" is prone to memory accumulation when
+looping videos for extended periods. To prevent this:</p>
+<ol type="1">
+<li>Install the 64-bit version of VLC Media Player on your system; this
+integrates the <strong>VLC Video Source</strong> option directly into
+OBS.</li>
+<li>In OBS, add a new source and select <strong>VLC Video
+Source</strong> instead of Media Source.</li>
+<li>Add your video file to the playlist, and ensure
+<strong>Loop</strong> is checked. VLC handles memory management and
+cache release much more efficiently over long cycles.</li>
+</ol>
+<h2 id="disable-the-obs-preview-window">Disable the OBS Preview
+Window</h2>
+<p>Rendering the live preview inside the OBS interface constantly
+consumes GPU and RAM resources.</p>
+<ul>
+<li>Right-click anywhere on the central OBS video preview screen and
+uncheck <strong>Enable Preview</strong>.</li>
+<li>This reduces local resource consumption, allowing the program to run
+with a much smaller memory footprint.</li>
+</ul>
+<h2 id="optimize-browser-source-settings">Optimize Browser Source
+Settings</h2>
+<p>If your stream requires browser sources (like alerts or chat
+overlays), they can cause severe memory leaks over days of continuous
+operation.</p>
+<ul>
+<li>Double-click your browser source and check the box for
+<strong>Refresh browser when scene becomes active</strong>.</li>
+<li>In OBS <em>Settings &gt; Advanced</em>, ensure <strong>Enable
+Browser Source Hardware Acceleration</strong> is checked, as this
+offloads the rendering process from the system RAM to your GPU.</li>
+<li>Remove any inactive or unnecessary browser sources from your scenes
+entirely.</li>
+</ul>
+<h2 id="force-regular-cache-clearing-with-a-scheduled-restart">Force
+Regular Cache Clearing with a Scheduled Restart</h2>
+<p>Even with optimized settings, system-level memory fragmentation can
+occur over weeks of uninterrupted streaming. The safest way to guarantee
+long-term uptime without degradation is to schedule an automatic daily
+restart.</p>
+<ul>
+<li>Use the <strong>Advanced Scene Switcher</strong> plugin (built into
+modern OBS versions) to schedule a stream stop, OBS restart, and stream
+start during your lowest-viewership hour of the day.</li>
+<li>Alternatively, set up a simple Windows Batch script (.bat) paired
+with Task Scheduler to close and reopen OBS once every 24 or 48 hours.
+This completely flushes the RAM.</li>
+</ul>
+<h2 id="adjust-output-and-encoding-settings">Adjust Output and Encoding
+Settings</h2>
+<p>Reduce encoding strain to prevent buffer overflows and memory
+bottlenecks:</p>
+<ul>
+<li>Use hardware encoding (<strong>NVIDIA NVENC</strong> or <strong>AMD
+AMF</strong>) instead of software encoding (x264) to offload processing
+to the GPU.</li>
+<li>Set your Process Priority to <strong>Above Normal</strong> in
+<em>Settings &gt; Advanced &gt; General</em> to prevent Windows from
+deprioritizing OBS memory allocation.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Audio Syncs Decoupled Audio and Video Clocks - obs-studio</title>
+    <meta name="description" content="This article examines the internal architecture of the OBS Studio audio engine (obs-audio) and its mechanisms for resolving clock drift between decoupled audio and video inputs. Readers will learn how the engine captures monotonic hardware timestamps, bu">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-audio-syncs-decoupled-audio-and-video-clocks">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Audio Syncs Decoupled Audio and Video Clocks - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-audio-syncs-decoupled-audio-and-video-clocks" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines the internal architecture of the OBS Studio audio engine (obs-audio) and its mechanisms for resolving clock drift between decoupled audio and video inputs. Readers will learn how the engine captures monotonic hardware timestamps, bu" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-audio-syncs-decoupled-audio-and-video-clocks">How OBS
+Audio Syncs Decoupled Audio and Video Clocks</h1>
+<p>This article examines the internal architecture of the OBS Studio
+audio engine (<code>obs-audio</code>) and its mechanisms for resolving
+clock drift between decoupled audio and video inputs. Readers will learn
+how the engine captures monotonic hardware timestamps, buffers
+asynchronous data streams, performs dynamic resampling, and synchronizes
+audio samples with video rendering frames to guarantee drift-free
+multiplexing and streaming.</p>
+<h3 id="the-problem-of-decoupled-hardware-clocks">The Problem of
+Decoupled Hardware Clocks</h3>
+<p>In a typical production environment, audio interfaces, capture cards,
+and webcams rely on independent physical crystal oscillators. A 48 kHz
+audio interface might run at an actual 48,001 Hz, while a video capture
+device running at a nominal 60 fps may deliver frames slightly faster or
+slower. Because these devices do not share a common word clock or
+genlock, their data streams inherently drift over time. Without an
+active reconciliation mechanism, this divergence causes noticeable
+audio-video synchronization errors (lip-sync drift), buffer underruns,
+or buffer overflows.</p>
+<h3 id="ingestion-and-monotonic-timestamping">Ingestion and Monotonic
+Timestamping</h3>
+<p>The <code>obs-audio</code> engine neutralizes hardware-level timing
+discrepancies at the point of capture. When an audio packet arrives from
+an input driver (such as WASAPI, CoreAudio, or ALSA), OBS immediately
+stamps the buffer with a high-resolution timestamp using the system's
+monotonic clock (<code>os_gettime_ns</code>).</p>
+<p>Crucially, the engine does not trust the nominal hardware sample
+count alone to calculate elapsed time over long durations. Instead, it
+measures the rate at which samples are delivered relative to the system
+monotonic clock. This anchors the audio stream to the same timeline used
+by the OBS video rendering thread.</p>
+<h3 id="the-audio-ring-buffer-and-frame-alignment">The Audio Ring Buffer
+and Frame Alignment</h3>
+<p>Captured audio chunks pass into circular ring buffers maintained by
+the <code>audio-io</code> subsystem. The video engine ticks at discrete
+frame intervals dictated by the configured project framerate (for
+example, every 16.66 ms for 60 fps). During each video render tick, the
+audio engine computes the exact time window represented by the current
+video frame.</p>
+<p>The audio engine processes samples in discrete blocks—typically 1,024
+samples per mix buffer. It uses the monotonic timestamps to slice and
+advance audio buffers, aligning incoming sample boundaries with the
+corresponding video frame's Presentation Timestamp (PTS).</p>
+<h3 id="drift-compensation-and-resampling">Drift Compensation and
+Resampling</h3>
+<p>When the audio capture clock deviates from the system clock, the
+audio buffer will either fill faster than the rendering pipeline
+consumes it (clock too fast) or run dry (clock too slow). The
+<code>obs-audio</code> engine continuously monitors the offset between
+the audio arrival timestamps and the render timeline.</p>
+<p>To correct divergence without causing audible pops, clicks, or pitch
+shifts:</p>
+<ol type="1">
+<li><strong>Timestamp Adjustment:</strong> Minor phase jitters within
+normal operating tolerances are absorbed by the internal ring buffer
+margins.</li>
+<li><strong>Resampling:</strong> If a sustained drift rate is detected
+between the source's native clock and the target timeline, OBS passes
+the stream through an internal resampler (often backed by
+<code>libsamplerate</code> or <code>speexdsp</code>). The engine
+dynamically modulates the conversion ratio by minute fractions,
+imperceptibly stretching or compressing the audio samples to keep the
+buffer centered.</li>
+<li><strong>Buffer Clamping:</strong> In extreme cases where hardware
+stalls or disconnects cause an unrecoverable gap, the engine drops
+excess samples or injects silence to realign the stream to the current
+timeline rather than allowing persistent desynchronization.</li>
+</ol>
+<h3 id="downstream-mixing-and-muxer-handoff">Downstream Mixing and Muxer
+Handoff</h3>
+<p>Once synchronized, multiple audio inputs are mixed into the
+configured output tracks. The mixed audio blocks are tagged with final
+presentation timestamps synchronized precisely to the video frame
+presentation timestamps. When passed to the encoding subsystem (such as
+FFmpeg or native hardware encoders), both elementary streams share a
+unified timeline. The container muxer (such as MP4, MKV, or FLV) can
+then interleave the audio and video packets with matching timecodes,
+ensuring that client media players decode and present both tracks in
+perfect synchronization.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

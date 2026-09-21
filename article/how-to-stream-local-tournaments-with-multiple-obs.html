@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Stream Local Tournaments with Multiple OBS - obs-studio</title>
+    <meta name="description" content="Streaming a local network multiplayer tournament using multiple OBS Studio instances requires a reliable way to aggregate multiple video feeds into a single, cohesive broadcast. This guide covers the most efficient method for achieving this: utilizing a">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-stream-local-tournaments-with-multiple-obs">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Stream Local Tournaments with Multiple OBS - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-stream-local-tournaments-with-multiple-obs" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Streaming a local network multiplayer tournament using multiple OBS Studio instances requires a reliable way to aggregate multiple video feeds into a single, cohesive broadcast. This guide covers the most efficient method for achieving this: utilizing a" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-stream-local-tournaments-with-multiple-obs">How to Stream
+Local Tournaments with Multiple OBS</h1>
+<p>Streaming a local network multiplayer tournament using multiple OBS
+Studio instances requires a reliable way to aggregate multiple video
+feeds into a single, cohesive broadcast. This guide covers the most
+efficient method for achieving this: utilizing a local Gigabit network,
+sending player feeds via NDI (Network Device Interface) or SRT (Secure
+Reliable Transport) protocols, and managing the final broadcast from a
+dedicated master production PC.</p>
+<h3 id="the-network-foundation">The Network Foundation</h3>
+<p>Before configuring OBS, you must establish a robust local area
+network (LAN). Because high-quality video feeds consume massive amounts
+of bandwidth, do not use Wi-Fi. Connect all player PCs and the master
+production PC to a high-quality, unmanaged Gigabit Ethernet switch using
+Cat6 cables. This ensures low latency and prevents packet loss during
+the broadcast.</p>
+<h3 id="method-1-using-ndi-recommended-for-lan">Method 1: Using NDI
+(Recommended for LAN)</h3>
+<p>The easiest and most common way to send video between OBS instances
+over a local network is NewTek’s NDI protocol.</p>
+<ol type="1">
+<li><strong>Install the Tools:</strong> Download and install the NDI
+Tools launcher and the <code>obs-ndi</code> plugin on every player PC
+and the master production PC.</li>
+<li><strong>Configure Player OBS Instances:</strong> On each player’s
+PC, open OBS Studio. Go to <em>Tools</em> &gt; <em>NDI Output
+Settings</em>. Check the box for "Main Output" and give the source a
+recognizable name (e.g., "Player_01"). This outputs the player's
+gameplay and webcam over the local network with virtually zero
+latency.</li>
+<li><strong>Receive Feeds on the Master PC:</strong> On the master
+production PC, open OBS. Add a new source to your scene and select
+<em>NDI Source</em>. Choose the player's feed from the dropdown menu.
+Repeat this process for all players to bring their screens and cameras
+into your production layout.</li>
+</ol>
+<h3 id="method-2-using-srt-alternative-for-lower-bandwidth">Method 2:
+Using SRT (Alternative for Lower Bandwidth)</h3>
+<p>If your network switch is congested or you need to compress the video
+feeds further to save bandwidth, use SRT. OBS Studio supports SRT
+natively.</p>
+<ol type="1">
+<li><strong>Set Up the Master PC as a Listener:</strong> On the master
+production PC, create a Media Source in OBS. Uncheck "Local File" and
+input the SRT URL format:
+<code>srt://[Master_PC_IP]:[Port]?mode=listener</code> (e.g.,
+<code>srt://192.168.1.50:5001?mode=listener</code>). Use a unique port
+number for each player feed.</li>
+<li><strong>Set Up Player PCs as Callers:</strong> On each player's OBS,
+go to <em>Settings</em> &gt; <em>Stream</em>. Set the Service to
+<em>Custom</em>. In the Server box, enter
+<code>srt://[Master_PC_IP]:[Port]?mode=caller</code>, matching the
+specific port assigned to them on the master PC. Use a high bitrate
+(e.g., 6000–10000 Kbps) for crisp quality.</li>
+</ol>
+<h3 id="managing-audio-and-production">Managing Audio and
+Production</h3>
+<p>To prevent audio clutter, mute the gameplay audio on the player PCs'
+NDI/SRT outputs if you plan to only use the audio of the player
+currently being spectated. Keep the commentators’ microphones plugged
+directly into the master production PC or an external audio mixer.</p>
+<p>From the master OBS instance, the director can seamlessly switch
+between player perspectives, add tournament overlays, and stream the
+final output to platforms like Twitch or YouTube without putting any
+rendering or streaming strain on the players' gaming rigs.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

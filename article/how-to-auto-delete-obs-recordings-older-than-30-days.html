@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Auto Delete OBS Recordings Older Than 30 Days - obs-studio</title>
+    <meta name="description" content="OBS Studio does not include a native feature to purge old video files, which can cause local storage drives to fill up quickly. You can automate the deletion of recordings older than thirty days by writing a lightweight external script and scheduling it">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-auto-delete-obs-recordings-older-than-30-days">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Auto Delete OBS Recordings Older Than 30 Days - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-auto-delete-obs-recordings-older-than-30-days" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio does not include a native feature to purge old video files, which can cause local storage drives to fill up quickly. You can automate the deletion of recordings older than thirty days by writing a lightweight external script and scheduling it" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-auto-delete-obs-recordings-older-than-30-days">How to
+Auto Delete OBS Recordings Older Than 30 Days</h1>
+<p>OBS Studio does not include a native feature to purge old video
+files, which can cause local storage drives to fill up quickly. You can
+automate the deletion of recordings older than thirty days by writing a
+lightweight external script and scheduling it to run automatically via
+your operating system's task scheduler. This guide covers how to
+identify your OBS recording directory, write the cleanup script for
+Windows or Linux/macOS, and automate the process.</p>
+<hr />
+<h3 id="step-1-identify-your-obs-recording-directory">Step 1: Identify
+Your OBS Recording Directory</h3>
+<p>Before creating a script, you must determine where OBS Studio saves
+your video files.</p>
+<ol type="1">
+<li>Open <strong>OBS Studio</strong>.</li>
+<li>Navigate to <strong>Settings</strong> in the bottom-right corner (or
+go to <strong>File</strong> &gt; <strong>Settings</strong>).</li>
+<li>Select the <strong>Output</strong> tab from the left sidebar.</li>
+<li>Locate the <strong>Recording Path</strong> under the
+<em>Recording</em> section.</li>
+<li>Note this folder path, as it will be used directly in your cleanup
+script.</li>
+</ol>
+<hr />
+<h3 id="step-2-create-the-deletion-script">Step 2: Create the Deletion
+Script</h3>
+<p>Choose the appropriate script based on your operating system.</p>
+<h4 id="windows-powershell">Windows (PowerShell)</h4>
+<ol type="1">
+<li>Open Notepad or a text editor.</li>
+<li>Paste the following script:</li>
+</ol>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="va">$TargetFolder</span> <span class="op">=</span> <span class="st">&quot;C:\Users\YourUsername\Videos&quot;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="va">$Days</span> <span class="op">=</span> <span class="dv">30</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="va">$Extension</span> <span class="op">=</span> <span class="st">&quot;*.mp4&quot;</span> <span class="co"># Change or remove to match your recording format (e.g., *.mkv)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-ChildItem</span> <span class="op">-</span>Path <span class="va">$TargetFolder</span> <span class="op">-</span>Filter <span class="va">$Extension</span> <span class="op">-</span>Recurse <span class="op">-</span>File <span class="op">|</span> </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">Where-Object</span> <span class="op">{</span> <span class="va">$_</span><span class="op">.</span><span class="fu">LastWriteTime</span> <span class="op">-lt</span> <span class="op">(</span><span class="fu">Get-Date</span><span class="op">).</span><span class="fu">AddDays</span><span class="op">(-</span><span class="va">$Days</span><span class="op">)</span> <span class="op">}</span> <span class="op">|</span> </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">Remove-Item</span> <span class="op">-</span>Force</span></code></pre></div>
+<ol start="3" type="1">
+<li>Replace <code>C:\Users\YourUsername\Videos</code> with your actual
+OBS recording path.</li>
+<li>Save the file with a <code>.ps1</code> extension (for example,
+<code>clean_obs_recordings.ps1</code>).</li>
+</ol>
+<h4 id="linux-and-macos-bash">Linux and macOS (Bash)</h4>
+<ol type="1">
+<li>Open a terminal and create a shell script:</li>
+</ol>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nano</span> clean_obs.sh</span></code></pre></div>
+<ol start="2" type="1">
+<li>Add the following command:</li>
+</ol>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="va">TARGET_DIR</span><span class="op">=</span><span class="st">&quot;/path/to/your/recordings&quot;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> <span class="st">&quot;</span><span class="va">$TARGET_DIR</span><span class="st">&quot;</span> <span class="at">-type</span> f <span class="dt">\(</span> <span class="at">-name</span> <span class="st">&quot;*.mp4&quot;</span> <span class="at">-o</span> <span class="at">-name</span> <span class="st">&quot;*.mkv&quot;</span> <span class="dt">\)</span> <span class="at">-mtime</span> +30 <span class="at">-exec</span> rm <span class="at">-f</span> {} <span class="dt">\;</span></span></code></pre></div>
+<ol start="3" type="1">
+<li>Replace <code>/path/to/your/recordings</code> with your actual
+directory path.</li>
+<li>Save and exit, then make the script executable:</li>
+</ol>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> +x clean_obs.sh</span></code></pre></div>
+<hr />
+<h3 id="step-3-automate-the-script">Step 3: Automate the Script</h3>
+<p>To ensure recordings are removed without manual intervention,
+configure your system to run the script on a recurring schedule.</p>
+<h4 id="setting-up-windows-task-scheduler">Setting Up Windows Task
+Scheduler</h4>
+<ol type="1">
+<li>Press <code>Win + R</code>, type <code>taskschd.msc</code>, and
+press <strong>Enter</strong>.</li>
+<li>Click <strong>Create Basic Task</strong> in the right-hand
+panel.</li>
+<li>Name the task (e.g., <code>OBS Auto-Cleanup</code>) and click
+<strong>Next</strong>.</li>
+<li>Set the trigger to <strong>Daily</strong> and choose a preferred
+time.</li>
+<li>Under Action, select <strong>Start a program</strong> and click
+<strong>Next</strong>.</li>
+<li>In the <strong>Program/script</strong> field, type:
+<pre class="text"><code>powershell.exe</code></pre></li>
+<li>In the <strong>Add arguments</strong> field, enter:
+<pre class="text"><code>-ExecutionPolicy Bypass -File &quot;C:\Path\To\clean_obs_recordings.ps1&quot;</code></pre>
+<em>(Ensure you use the full path to your saved script).</em></li>
+<li>Click <strong>Finish</strong>.</li>
+</ol>
+<h4 id="setting-up-linuxmacos-cron">Setting Up Linux/macOS Cron</h4>
+<ol type="1">
+<li>Open the cron table by running:
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">crontab</span> <span class="at">-e</span></span></code></pre></div></li>
+<li>Add a line to execute the script daily (for example, every day at
+midnight):
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">0</span> 0 <span class="pp">*</span> <span class="pp">*</span> <span class="pp">*</span> /path/to/clean_obs.sh <span class="op">&gt;</span>/dev/null <span class="dv">2</span><span class="op">&gt;&amp;</span><span class="dv">1</span></span></code></pre></div></li>
+<li>Save and close the editor.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

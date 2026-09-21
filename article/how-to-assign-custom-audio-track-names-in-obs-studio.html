@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Assign Custom Audio Track Names in OBS Studio - obs-studio</title>
+    <meta name="description" content="Managing multiple audio sources in OBS Studio can get confusing if they are labeled generically. This guide provides a straightforward, step-by-step walkthrough on how to assign custom names to your discrete audio tracks in OBS Studio's settings. By labe">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-assign-custom-audio-track-names-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Assign Custom Audio Track Names in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-assign-custom-audio-track-names-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Managing multiple audio sources in OBS Studio can get confusing if they are labeled generically. This guide provides a straightforward, step-by-step walkthrough on how to assign custom names to your discrete audio tracks in OBS Studio's settings. By labe" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-assign-custom-audio-track-names-in-obs-studio">How to
+Assign Custom Audio Track Names in OBS Studio</h1>
+<p>Managing multiple audio sources in OBS Studio can get confusing if
+they are labeled generically. This guide provides a straightforward,
+step-by-step walkthrough on how to assign custom names to your discrete
+audio tracks in OBS Studio's settings. By labeling your tracks, you can
+easily identify your microphone, game audio, music, and Discord feeds
+during post-production or when managing your stream's output.</p>
+<h3 id="step-1-open-obs-studio-settings">Step 1: Open OBS Studio
+Settings</h3>
+<ol type="1">
+<li>Launch OBS Studio on your computer.</li>
+<li>In the bottom-right corner of the screen, click on the
+<strong>Settings</strong> button (or go to <strong>File</strong> &gt;
+<strong>Settings</strong> in the top menu).</li>
+</ol>
+<h3 id="step-2-navigate-to-the-audio-settings">Step 2: Navigate to the
+Audio Settings</h3>
+<ol type="1">
+<li>In the left-hand sidebar of the Settings window, click on the
+<strong>Audio</strong> tab.</li>
+<li>Scroll down to the very bottom of the Audio settings page until you
+find the <strong>Track Names</strong> section.</li>
+</ol>
+<h3 id="step-3-name-your-audio-tracks">Step 3: Name Your Audio
+Tracks</h3>
+<ol type="1">
+<li>Under the <strong>Track Names</strong> section, you will see text
+fields labeled <strong>Track 1</strong> through <strong>Track
+6</strong>.</li>
+<li>Type your preferred custom names into these fields (for example,
+name Track 1 "Master Mix", Track 2 "Microphone", Track 3 "Game Audio",
+and Track 4 "Discord").</li>
+<li>Click <strong>Apply</strong> in the bottom-right corner, then click
+<strong>OK</strong> to save your changes.</li>
+</ol>
+<h3 id="step-4-route-your-audio-sources-advanced-audio-properties">Step
+4: Route Your Audio Sources (Advanced Audio Properties)</h3>
+<p>To ensure your newly named tracks actually carry the correct
+audio:</p>
+<ol type="1">
+<li>Locate the <strong>Audio Mixer</strong> dock on the main OBS Studio
+interface.</li>
+<li>Click the three dots (gear icon) next to any audio source and select
+<strong>Advanced Audio Properties</strong>.</li>
+<li>In the grid on the right, check the boxes (1 through 6) to route
+your specific audio sources to their newly designated tracks.</li>
+</ol>
+<h3 id="step-5-enable-the-tracks-in-output-settings">Step 5: Enable the
+Tracks in Output Settings</h3>
+<ol type="1">
+<li>Go back to <strong>Settings</strong> &gt;
+<strong>Output</strong>.</li>
+<li>Set the <strong>Output Mode</strong> at the top of the window to
+<strong>Advanced</strong>.</li>
+<li>Go to the <strong>Recording</strong> tab.</li>
+<li>Check the boxes next to the audio tracks you want to include in your
+final video file.</li>
+</ol>
+<p>When you record your stream, the custom track names will be embedded
+directly into the video file container (such as MKV or MP4). When you
+import your video into a video editor like DaVinci Resolve or Premiere
+Pro, or play it back in a compatible media player like VLC, the tracks
+will display your custom names instead of generic numbers.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

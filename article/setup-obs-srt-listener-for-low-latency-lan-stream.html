@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup OBS SRT Listener for Low Latency LAN Stream - obs-studio</title>
+    <meta name="description" content="This guide explains how to configure OBS Studio to broadcast high-quality, low-latency video across your local area network (LAN) using the Secure Reliable Transport (SRT) protocol in listener mode. You will learn how to configure OBS as an SRT host, opt">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/setup-obs-srt-listener-for-low-latency-lan-stream">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Setup OBS SRT Listener for Low Latency LAN Stream - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/setup-obs-srt-listener-for-low-latency-lan-stream" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide explains how to configure OBS Studio to broadcast high-quality, low-latency video across your local area network (LAN) using the Secure Reliable Transport (SRT) protocol in listener mode. You will learn how to configure OBS as an SRT host, opt" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="setup-obs-srt-listener-for-low-latency-lan-stream">Setup OBS SRT
+Listener for Low Latency LAN Stream</h1>
+<p>This guide explains how to configure OBS Studio to broadcast
+high-quality, low-latency video across your local area network (LAN)
+using the Secure Reliable Transport (SRT) protocol in listener mode. You
+will learn how to configure OBS as an SRT host, optimize your encoder
+settings for sub-second delay, and connect receiving devices on your
+network to view the broadcast.</p>
+<h2 id="step-1-find-your-local-ip-address">Step 1: Find Your Local IP
+Address</h2>
+<p>To connect other devices to your OBS stream, you need the local IP
+address of the computer running OBS.</p>
+<ul>
+<li><strong>On Windows:</strong> Open Command Prompt, type
+<code>ipconfig</code>, and look for the <strong>IPv4 Address</strong>
+(e.g., <code>192.168.1.50</code>).</li>
+<li><strong>On macOS/Linux:</strong> Open Terminal, type
+<code>ifconfig</code> or <code>ip route</code>, and locate your active
+network interface IP address.</li>
+</ul>
+<p>Keep this IP address ready for the final step.</p>
+<h2 id="step-2-configure-obs-stream-settings">Step 2: Configure OBS
+Stream Settings</h2>
+<p>Instead of pushing the stream to an external server, you will
+configure OBS to wait for incoming connections from your local
+network.</p>
+<ol type="1">
+<li>Open OBS Studio and go to <strong>Settings</strong> &gt;
+<strong>Stream</strong>.</li>
+<li>Set the <strong>Service</strong> dropdown to
+<strong>Custom...</strong>.</li>
+<li>In the <strong>Server</strong> field, enter the following URL:
+<code>srt://0.0.0.0:9999?mode=listener&amp;latency=120000</code>
+<ul>
+<li><em>Note:</em> <code>0.0.0.0</code> tells OBS to listen on all
+available network adapters. <code>9999</code> is the port number (you
+can change this if needed). <code>latency=120000</code> sets the SRT
+latency buffer to 120 milliseconds (measured in microseconds).</li>
+</ul></li>
+<li>Leave the <strong>Stream Key</strong> field completely blank.</li>
+<li>Click <strong>Apply</strong>.</li>
+</ol>
+<h2 id="step-3-optimize-encoder-settings-for-low-latency">Step 3:
+Optimize Encoder Settings for Low Latency</h2>
+<p>To achieve the lowest possible latency over your LAN, you must
+optimize your video encoder settings to prevent frame buffering.</p>
+<ol type="1">
+<li>In the OBS Settings window, navigate to
+<strong>Output</strong>.</li>
+<li>Change the <strong>Output Mode</strong> dropdown at the top to
+<strong>Advanced</strong>.</li>
+<li>Under the <strong>Streaming</strong> tab, select your hardware
+encoder (such as <strong>NVIDIA NVENC H.264</strong> or <strong>AMD HW
+H.264</strong>) or <strong>x264</strong> if hardware encoding is
+unavailable.</li>
+<li>Set <strong>Rate Control</strong> to <strong>CBR</strong> (Constant
+Bitrate).</li>
+<li>Set the <strong>Bitrate</strong> according to your network
+capability. For a high-quality 1080p60 local stream, <strong>6000 Kbps
+to 10000 Kbps</strong> is recommended.</li>
+<li>Set <strong>Keyframe Interval</strong> to <strong>1s</strong> or
+<strong>2s</strong>.</li>
+<li>Set your <strong>Preset</strong> to a low-latency option (e.g.,
+<strong>Low-Latency</strong> or <strong>Fastest / Speed</strong>).</li>
+<li>Set <strong>Max B-frames</strong> (or <strong>B-frames</strong>) to
+<strong>0</strong>. Disabling B-frames is critical for achieving
+sub-second latency.</li>
+<li>Click <strong>OK</strong> to save and close the settings.</li>
+<li>Click <strong>Start Streaming</strong> in the main OBS window. OBS
+is now running as an active SRT listener on your network.</li>
+</ol>
+<h2 id="step-4-receive-the-srt-stream-on-other-devices">Step 4: Receive
+the SRT Stream on Other Devices</h2>
+<p>You can now connect to your OBS stream from any computer, tablet, or
+media player connected to the same local network.</p>
+<h3 id="option-a-viewing-in-vlc-media-player">Option A: Viewing in VLC
+Media Player</h3>
+<ol type="1">
+<li>Open VLC on the receiving device.</li>
+<li>Go to <strong>Media</strong> (or <strong>File</strong> on macOS)
+&gt; <strong>Open Network Stream</strong>.</li>
+<li>Enter the SRT URL using the IP address of the OBS computer:
+<code>srt://[OBS-Computer-IP]:9999?mode=caller</code> <em>(Example:
+<code>srt://192.168.1.50:9999?mode=caller</code>)</em></li>
+<li>Click <strong>Play</strong> to start the low-latency stream.</li>
+</ol>
+<h3 id="option-b-viewing-in-another-obs-studio-instance">Option B:
+Viewing in another OBS Studio instance</h3>
+<ol type="1">
+<li>Open OBS Studio on the receiving computer.</li>
+<li>Add a new <strong>Media Source</strong> to your Sources list.</li>
+<li>Uncheck the box for <strong>Local File</strong>.</li>
+<li>In the <strong>Input</strong> field, enter:
+<code>srt://[OBS-Computer-IP]:9999?mode=caller</code></li>
+<li>In the <strong>Input Format</strong> field, type
+<code>mpegts</code>.</li>
+<li>Set <strong>Network Buffering</strong> to <strong>1 MB</strong> (or
+the lowest setting) to keep latency minimal.</li>
+<li>Click <strong>OK</strong> to view the incoming network stream.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Clear Text Source with Hotkey in OBS Studio - obs-studio</title>
+    <meta name="description" content="Operating text sources in OBS Studio during a live stream often requires quick updates or sudden clearing. This article provides a step-by-step guide on how to configure a custom keyboard shortcut (hotkey) in OBS Studio to instantly clear all text from a">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-clear-text-source-with-hotkey-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Clear Text Source with Hotkey in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-clear-text-source-with-hotkey-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Operating text sources in OBS Studio during a live stream often requires quick updates or sudden clearing. This article provides a step-by-step guide on how to configure a custom keyboard shortcut (hotkey) in OBS Studio to instantly clear all text from a" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-clear-text-source-with-hotkey-in-obs-studio">How to Clear
+Text Source with Hotkey in OBS Studio</h1>
+<p>Operating text sources in OBS Studio during a live stream often
+requires quick updates or sudden clearing. This article provides a
+step-by-step guide on how to configure a custom keyboard shortcut
+(hotkey) in OBS Studio to instantly clear all text from a specific text
+source, helping you streamline your broadcast workflow using a simple,
+native Lua script.</p>
+<hr />
+<h2 id="why-use-a-script-to-clear-text">Why Use a Script to Clear
+Text?</h2>
+<p>While OBS Studio allows you to set hotkeys to hide or show sources,
+hiding a source only makes it invisible; it does not delete the text
+inside it. If you want to keep the text source active but completely
+empty its contents at the press of a button, you must use OBS Studio's
+built-in scripting engine.</p>
+<p>Below is the step-by-step process to set up a dedicated "Clear Text"
+hotkey.</p>
+<hr />
+<h2 id="step-1-create-the-lua-script">Step 1: Create the Lua Script</h2>
+<p>OBS Studio can run lightweight Lua scripts. You can create a simple
+script that targets your text source and replaces its text with
+nothing.</p>
+<ol type="1">
+<li>Open a basic text editor like <strong>Notepad</strong> (Windows) or
+<strong>TextEdit</strong> (Mac).</li>
+<li>Copy and paste the following code block into the document:</li>
+</ol>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode lua"><code class="sourceCode lua"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="va">obs</span> <span class="op">=</span> <span class="va">obslua</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="va">source_name</span> <span class="op">=</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> script_description<span class="op">()</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">&quot;Adds a custom hotkey to instantly clear all text from a specified Text (GDI+) source.&quot;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> script_properties<span class="op">()</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">local</span> <span class="va">props</span> <span class="op">=</span> <span class="va">obs</span><span class="op">.</span>obs_properties_create<span class="op">()</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">local</span> <span class="va">p</span> <span class="op">=</span> <span class="va">obs</span><span class="op">.</span>obs_properties_add_list<span class="op">(</span><span class="va">props</span><span class="op">,</span> <span class="st">&quot;source_name&quot;</span><span class="op">,</span> <span class="st">&quot;Select Text Source&quot;</span><span class="op">,</span> <span class="va">obs</span><span class="op">.</span><span class="cn">OBS_COMBO_TYPE_EDITABLE</span><span class="op">,</span> <span class="va">obs</span><span class="op">.</span><span class="cn">OBS_COMBO_FORMAT_STRING</span><span class="op">)</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">local</span> <span class="va">sources</span> <span class="op">=</span> <span class="va">obs</span><span class="op">.</span>obs_enum_sources<span class="op">()</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="va">sources</span> <span class="op">~=</span> <span class="kw">nil</span> <span class="cf">then</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="cn">_</span><span class="op">,</span> <span class="va">source</span> <span class="kw">in</span> <span class="fu">ipairs</span><span class="op">(</span><span class="va">sources</span><span class="op">)</span> <span class="cf">do</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>            <span class="kw">local</span> <span class="va">id</span> <span class="op">=</span> <span class="va">obs</span><span class="op">.</span>obs_source_get_unversioned_id<span class="op">(</span><span class="va">source</span><span class="op">)</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="va">id</span> <span class="op">==</span> <span class="st">&quot;text_gdiplus&quot;</span> <span class="kw">or</span> <span class="va">id</span> <span class="op">==</span> <span class="st">&quot;text_ft2_source&quot;</span> <span class="cf">then</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>                <span class="kw">local</span> <span class="va">name</span> <span class="op">=</span> <span class="va">obs</span><span class="op">.</span>obs_source_get_name<span class="op">(</span><span class="va">source</span><span class="op">)</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>                <span class="va">obs</span><span class="op">.</span>obs_property_list_add_string<span class="op">(</span><span class="va">p</span><span class="op">,</span> <span class="va">name</span><span class="op">,</span> <span class="va">name</span><span class="op">)</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>            <span class="cf">end</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        <span class="va">obs</span><span class="op">.</span>source_list_release<span class="op">(</span><span class="va">sources</span><span class="op">)</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">props</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> script_update<span class="op">(</span><span class="va">settings</span><span class="op">)</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="va">source_name</span> <span class="op">=</span> <span class="va">obs</span><span class="op">.</span>obs_data_get_string<span class="op">(</span><span class="va">settings</span><span class="op">,</span> <span class="st">&quot;source_name&quot;</span><span class="op">)</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> hotkey_triggered<span class="op">(</span><span class="va">pressed</span><span class="op">)</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> <span class="va">pressed</span> <span class="cf">then</span> <span class="cf">return</span> <span class="cf">end</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="kw">local</span> <span class="va">source</span> <span class="op">=</span> <span class="va">obs</span><span class="op">.</span>obs_get_source_by_name<span class="op">(</span><span class="va">source_name</span><span class="op">)</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="va">source</span> <span class="op">~=</span> <span class="kw">nil</span> <span class="cf">then</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>        <span class="kw">local</span> <span class="va">settings</span> <span class="op">=</span> <span class="va">obs</span><span class="op">.</span>obs_data_create<span class="op">()</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>        <span class="va">obs</span><span class="op">.</span>obs_data_set_string<span class="op">(</span><span class="va">settings</span><span class="op">,</span> <span class="st">&quot;text&quot;</span><span class="op">,</span> <span class="st">&quot;&quot;</span><span class="op">)</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>        <span class="va">obs</span><span class="op">.</span>obs_source_update<span class="op">(</span><span class="va">source</span><span class="op">,</span> <span class="va">settings</span><span class="op">)</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>        <span class="va">obs</span><span class="op">.</span>obs_data_release<span class="op">(</span><span class="va">settings</span><span class="op">)</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>        <span class="va">obs</span><span class="op">.</span>obs_source_release<span class="op">(</span><span class="va">source</span><span class="op">)</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> script_load<span class="op">(</span><span class="va">settings</span><span class="op">)</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    <span class="va">hotkey_id</span> <span class="op">=</span> <span class="va">obs</span><span class="op">.</span>obs_hotkey_register_frontend<span class="op">(</span><span class="st">&quot;clear_text_hotkey&quot;</span><span class="op">,</span> <span class="st">&quot;Clear Text Source&quot;</span><span class="op">,</span> <span class="va">hotkey_triggered</span><span class="op">)</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    <span class="kw">local</span> <span class="va">hotkey_save_array</span> <span class="op">=</span> <span class="va">obs</span><span class="op">.</span>obs_data_get_array<span class="op">(</span><span class="va">settings</span><span class="op">,</span> <span class="st">&quot;clear_text_hotkey_array&quot;</span><span class="op">)</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    <span class="va">obs</span><span class="op">.</span>obs_hotkey_load<span class="op">(</span><span class="va">hotkey_id</span><span class="op">,</span> <span class="va">hotkey_save_array</span><span class="op">)</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    <span class="va">obs</span><span class="op">.</span>obs_data_array_release<span class="op">(</span><span class="va">hotkey_save_array</span><span class="op">)</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> script_save<span class="op">(</span><span class="va">settings</span><span class="op">)</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>    <span class="kw">local</span> <span class="va">hotkey_save_array</span> <span class="op">=</span> <span class="va">obs</span><span class="op">.</span>obs_hotkey_save<span class="op">(</span><span class="va">hotkey_id</span><span class="op">)</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>    <span class="va">obs</span><span class="op">.</span>obs_data_set_array<span class="op">(</span><span class="va">settings</span><span class="op">,</span> <span class="st">&quot;clear_text_hotkey_array&quot;</span><span class="op">,</span> <span class="va">hotkey_save_array</span><span class="op">)</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>    <span class="va">obs</span><span class="op">.</span>obs_data_array_release<span class="op">(</span><span class="va">hotkey_save_array</span><span class="op">)</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+<ol start="3" type="1">
+<li>Save the file. Name it <code>clear_text.lua</code> (ensure the file
+extension is <code>.lua</code> and not <code>.txt</code>).</li>
+</ol>
+<hr />
+<h2 id="step-2-load-the-script-into-obs-studio">Step 2: Load the Script
+into OBS Studio</h2>
+<ol type="1">
+<li>Open <strong>OBS Studio</strong>.</li>
+<li>Click on <strong>Tools</strong> in the top menu bar, then select
+<strong>Scripts</strong>.</li>
+<li>In the Scripts window, click the <strong>+ (Plus)</strong> icon in
+the bottom-left corner.</li>
+<li>Navigate to where you saved <code>clear_text.lua</code>, select it,
+and click <strong>Open</strong>.</li>
+<li>Click on the loaded script in the list. Under the <strong>Script
+Properties</strong> section on the right, use the dropdown menu next to
+<strong>Select Text Source</strong> to choose the specific text source
+you want to clear.</li>
+</ol>
+<hr />
+<h2 id="step-3-assign-your-custom-hotkey">Step 3: Assign Your Custom
+Hotkey</h2>
+<p>Now that the script is linked to your text source, you can assign a
+keyboard shortcut to it.</p>
+<ol type="1">
+<li>Go to <strong>Settings</strong> in OBS Studio (File &gt; Settings,
+or click Settings in the Controls dock).</li>
+<li>Select the <strong>Hotkeys</strong> tab from the left sidebar.</li>
+<li>In the search box at the top, type
+<code>Clear Text Source</code>.</li>
+<li>Locate the binding field for <strong>Clear Text
+Source</strong>.</li>
+<li>Click inside the field and press the key combination you want to use
+(e.g., <code>Ctrl + Shift + C</code> or <code>NumPad 0</code>).</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong>.</li>
+</ol>
+<p>Pressing your chosen key combination will now instantly wipe out all
+text in the selected OBS text source.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

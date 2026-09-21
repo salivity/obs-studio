@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>59.94 FPS and Broadcast Genlock in OBS Studio - obs-studio</title>
+    <meta name="description" content="Setting the canvas frame rate to a fractional value like 59.94 frames per second (fps) in OBS Studio bridges the timing gap between software-based rendering and traditional NTSC broadcast infrastructure. While OBS Studio cannot natively slave its interna">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/59-94-fps-and-broadcast-genlock-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="59.94 FPS and Broadcast Genlock in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/59-94-fps-and-broadcast-genlock-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Setting the canvas frame rate to a fractional value like 59.94 frames per second (fps) in OBS Studio bridges the timing gap between software-based rendering and traditional NTSC broadcast infrastructure. While OBS Studio cannot natively slave its interna" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="5994-fps-and-broadcast-genlock-in-obs-studio">59.94 FPS and
+Broadcast Genlock in OBS Studio</h1>
+<p>Setting the canvas frame rate to a fractional value like 59.94 frames
+per second (fps) in OBS Studio bridges the timing gap between
+software-based rendering and traditional NTSC broadcast infrastructure.
+While OBS Studio cannot natively slave its internal render loop to a
+physical hardware genlock reference signal, configuring the canvas to
+precise fractional timing minimizes frame drops, frame duplications, and
+audio drift when ingesting or outputting video through professional SDI
+and SMPTE-compliant hardware.</p>
+<h3 id="fractional-frame-rates-vs-whole-numbers">Fractional Frame Rates
+vs. Whole Numbers</h3>
+<p>In North American and Japanese broadcast standards (NTSC), standard
+high-definition video runs at a fractional rate derived from the formula
+60 × (1000 / 1001), which is approximately 59.94 fps. In contrast,
+standard computer displays and consumer digital video run at an exact
+integer rate of 60.00 fps.</p>
+<p>If OBS Studio is set to an integer 60.00 fps while interfacing with a
+59.94 fps broadcast feed, there is a discrepancy of roughly 3.6 frames
+every minute. Over time, this discrepancy forces the software or output
+capture card to drop or duplicate frames to maintain synchronization,
+which causes visible stuttering and eventual audio
+desynchronization.</p>
+<h3 id="the-limits-of-genlock-in-software">The Limits of Genlock in
+Software</h3>
+<p>True broadcast genlock (generator locking) synchronizes video
+equipment down to the exact horizontal and vertical blanking intervals
+using an external reference signal, such as Black Burst or Tri-Level
+Sync. This ensures that multiple video sources switch seamlessly without
+frame buffers or visual tearing.</p>
+<p>OBS Studio operates within standard desktop operating systems
+(Windows, macOS, Linux) that rely on internal system clocks rather than
+hardware sync pulses. As a result:</p>
+<ul>
+<li><strong>OBS cannot achieve phase-accurate genlock:</strong> OBS
+cannot force its graphics pipeline to begin rendering a frame at the
+exact microsecond an external reference pulse arrives.</li>
+<li><strong>Clock drift still occurs:</strong> Even when configured to
+59.94 fps, the computer’s motherboard or GPU clock will drift slightly
+relative to an external master broadcast clock.</li>
+</ul>
+<h3 id="how-5994-fps-improves-hardware-compatibility">How 59.94 FPS
+Improves Hardware Compatibility</h3>
+<p>Despite the lack of true phase-level genlock, selecting fractional
+frame rates directly impacts how OBS interacts with professional
+broadcast capture and playback cards (such as Blackmagic DeckLink or AJA
+devices):</p>
+<ol type="1">
+<li><strong>Cadence Matching:</strong> Configuring the OBS canvas to
+fractional 59.94 fps aligns the frame delivery cadence with the expected
+refresh rate of broadcast hardware. This allows SDI output cards to read
+frames from the buffer at the same rate OBS produces them.</li>
+<li><strong>Reduced Buffer Overflows and Underflows:</strong> When the
+frame rates match, the hardware frame store on an SDI output card
+remains stable. The card is far less likely to run out of frames
+(causing a glitch/black frame) or accumulate excess frames (increasing
+transmission latency).</li>
+<li><strong>Cleaner Frame Rate Conversion (FRC):</strong> If an external
+frame synchronizer or broadcast switcher is placed downstream from the
+OBS system, feeding it a clean 59.94 fps signal allows the hardware
+synchronizer to lock the signal to the house reference with only an
+occasional, imperceptible single-frame drop or repeat, rather than
+continuous stutter.</li>
+</ol>
+<h3 id="recommended-obs-settings-for-broadcast-workflows">Recommended
+OBS Settings for Broadcast Workflows</h3>
+<p>To optimize OBS Studio for broadcast environments requiring
+fractional timing:</p>
+<ul>
+<li>Navigate to <strong>Settings &gt; Video</strong>.</li>
+<li>Set <strong>FPS Values</strong> to <strong>Fractional FPS
+Value</strong> rather than "Common FPS Values."</li>
+<li>Set the <strong>Numerator</strong> to <code>60000</code> and the
+<strong>Denominator</strong> to <code>1001</code> (yielding 59.94 fps)
+instead of relying on rounded decimal inputs.</li>
+<li>Ensure all physical capture cards and camera inputs are explicitly
+configured to 59.94 fps or 1080i 59.94 to avoid internal resampling
+inside OBS.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

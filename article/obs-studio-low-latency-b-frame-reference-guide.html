@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Low-Latency B-Frame Reference Guide - obs-studio</title>
+    <meta name="description" content="Bi-directional predictive frames (B-frames) increase video compression efficiency by referencing both preceding and subsequent frames, but this process introduces intrinsic pipeline delay that conflicts with low-latency delivery. When configuring OBS Stu">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-low-latency-b-frame-reference-guide">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Low-Latency B-Frame Reference Guide - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-low-latency-b-frame-reference-guide" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Bi-directional predictive frames (B-frames) increase video compression efficiency by referencing both preceding and subsequent frames, but this process introduces intrinsic pipeline delay that conflicts with low-latency delivery. When configuring OBS Stu" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-low-latency-b-frame-reference-guide">OBS Studio
+Low-Latency B-Frame Reference Guide</h1>
+<p>Bi-directional predictive frames (B-frames) increase video
+compression efficiency by referencing both preceding and subsequent
+frames, but this process introduces intrinsic pipeline delay that
+conflicts with low-latency delivery. When configuring OBS Studio for
+real-time cloud platforms and interactive gaming, managing B-frame
+references requires directly balancing visual fidelity against buffer
+lag. OBS Studio facilitates this by allowing streamers to limit,
+reconfigure, or completely disable B-frame generation across various
+hardware and software encoders.</p>
+<h3 id="the-mechanics-of-b-frames-and-encoder-latency">The Mechanics of
+B-Frames and Encoder Latency</h3>
+<p>B-frames calculate motion vectors by looking backward to earlier I-
+or P-frames and forward to future frames in the display order. For an
+encoder to construct a B-frame, it cannot output frames immediately; it
+must hold the current frame in memory, ingest and compress the upcoming
+reference frame, and then encode the intermediate B-frame.</p>
+<p>This out-of-order processing creates two distinct latency
+penalties:</p>
+<ul>
+<li><strong>Encode Buffer Lag:</strong> The encoder must maintain a
+lookahead buffer to analyze future frames.</li>
+<li><strong>Decode Buffer Lag:</strong> The cloud ingest server and
+client media player must hold incoming frames in a reorder buffer
+(presentation time vs. decode time) before rendering them to the
+viewer.</li>
+</ul>
+<p>In ultra-low-latency scenarios, such as cloud gaming or interactive
+live-streaming where inputs dictate gameplay, this reordering buffer
+adds between 33 and 100 milliseconds of unavoidable pipeline
+latency.</p>
+<h3 id="how-obs-controls-b-frames-by-encoder">How OBS Controls B-Frames
+by Encoder</h3>
+<p>OBS Studio does not process frame references internally; instead, it
+exposes the reference parameters of the underlying encoder library
+(NVIDIA NVENC, AMD AMF, Intel QuickSync, or x264).</p>
+<h4 id="nvidia-nvenc">NVIDIA NVENC</h4>
+<p>Within OBS Studio’s Advanced Output settings, NVENC provides explicit
+control over the "Max B-frames" setting:</p>
+<ul>
+<li><strong>Zero B-Frames (<code>Max B-frames = 0</code>):</strong>
+Setting this to zero disables B-frame generation entirely. The video
+stream consists strictly of an IPPP cadence. This eliminates the frame
+reorder buffer, allowing the cloud platform to decode and present each
+frame the instant it arrives over the network.</li>
+<li><strong>B-Frame Reference Mode:</strong> Modern NVENC architectures
+(Turing, Ampere, and Ada Lovelace) support using B-frames as references
+for other B-frames (hierarchical B-frames). When low-latency presets
+(such as P1–P3) or the "Low Latency" tuning modes are selected in OBS,
+the software automatically instructs the NVENC SDK to disable B-frame
+referencing to prioritize rapid throughput over bitrate efficiency.</li>
+</ul>
+<h4 id="software-x264">Software (x264)</h4>
+<p>When encoding via the CPU using x264, low latency is enforced through
+custom encoder options or tuning parameters:</p>
+<ul>
+<li>Setting the <strong>Tune</strong> dropdown to
+<code>zerolatency</code> forces <code>bframes=0</code> alongside
+disabling the lookahead buffer (<code>rc-lookahead=0</code>) and sliced
+threads.</li>
+<li>Alternatively, manual configuration via the custom x264 settings box
+using <code>bframes=0</code> disables bi-directional referencing while
+leaving spatial compression settings intact.</li>
+</ul>
+<h4 id="amd-amf-and-intel-quicksync">AMD AMF and Intel QuickSync</h4>
+<p>Both hardware encoders mimic NVENC's implementation in OBS. Setting
+the B-frame pattern or count to 0 prevents the generation of
+backward-dependent frames, restricting the stream to I- and P-frame
+hierarchies suitable for immediate cloud transcoding.</p>
+<h3 id="cloud-platform-ingest-requirements">Cloud Platform Ingest
+Requirements</h3>
+<p>The optimal B-frame reference configuration in OBS Studio depends on
+the ingest protocol used by the target cloud infrastructure:</p>
+<ul>
+<li><strong>WebRTC and Real-Time Streaming Platforms:</strong>
+WebRTC-based interactive setups cannot handle frame reordering buffers.
+OBS streams targeting WebRTC must have B-frames strictly set to 0. Any
+non-zero B-frame value will lead to decoding artifacts, packet drops, or
+outright stream rejection by the media server.</li>
+<li><strong>Low-Latency HLS (LL-HLS) and Low-Latency DASH
+(LL-DASH):</strong> Cloud ingest engines using chunked transfer modes
+can tolerate 1 or 2 B-frames if bandwidth conservation is vital.
+However, for fast-motion gaming content, configuring 0 B-frames ensures
+uniform packet sizing, which stabilizes chunk transmission and mitigates
+jitter across edge nodes.</li>
+<li><strong>Enhanced RTMP and SRT:</strong> Secure Reliable Transport
+(SRT) manages latency via a configured hardware buffer. Disabling
+B-frames in OBS allows users to lower the SRT latency multiplier to its
+minimum thresholds without inducing presentation-timestamp (PTS)
+delivery errors.</li>
+</ul>
+<p>Disabling B-frames increases the bitrate required to maintain high
+visual clarity during high-motion gaming scenes. To offset the loss of
+B-frame compression efficiency in zero-latency OBS profiles, allocate a
+higher Constant Bitrate (CBR) or utilize more aggressive spatial
+quantization settings within the encoder.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Setup OBS Studio SRT Stream with AES Encryption - obs-studio</title>
+    <meta name="description" content="This guide provides a straightforward, step-by-step walkthrough on how to configure OBS Studio to stream using the Secure Reliable Transport (SRT) protocol secured with Advanced Encryption Standard (AES) encryption. You will learn how to format the SRT c">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-setup-obs-studio-srt-stream-with-aes-encryption">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Setup OBS Studio SRT Stream with AES Encryption - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-setup-obs-studio-srt-stream-with-aes-encryption" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide provides a straightforward, step-by-step walkthrough on how to configure OBS Studio to stream using the Secure Reliable Transport (SRT) protocol secured with Advanced Encryption Standard (AES) encryption. You will learn how to format the SRT c" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-setup-obs-studio-srt-stream-with-aes-encryption">How to
+Setup OBS Studio SRT Stream with AES Encryption</h1>
+<p>This guide provides a straightforward, step-by-step walkthrough on
+how to configure OBS Studio to stream using the Secure Reliable
+Transport (SRT) protocol secured with Advanced Encryption Standard (AES)
+encryption. You will learn how to format the SRT connection URL, apply
+the correct encryption parameters, and configure OBS Studio's stream
+settings for a secure, low-latency broadcast.</p>
+<h2 id="step-1-understand-the-srt-aes-url-syntax">Step 1: Understand the
+SRT AES URL Syntax</h2>
+<p>OBS Studio supports SRT natively. To enable AES encryption, you do
+not use separate input fields for passwords; instead, you append the
+encryption parameters directly to the SRT destination URL in the query
+string.</p>
+<p>The standard format for an encrypted SRT URL is:
+<code>srt://[IP_Address]:[Port]?mode=caller&amp;passphrase=[Your_Password]&amp;pbkeylen=[Key_Length]</code></p>
+<h3 id="key-parameters-explained">Key Parameters Explained:</h3>
+<ul>
+<li><strong>srt://[IP_Address]:[Port]</strong>: The IP address and port
+of your receiving server (e.g.,
+<code>srt://192.168.1.100:5000</code>).</li>
+<li><strong>mode=caller</strong>: Defines OBS as the sender initiating
+the connection.</li>
+<li><strong>passphrase</strong>: The secret password used to encrypt the
+stream. This must be between 10 and 79 characters long.</li>
+<li><strong>pbkeylen</strong>: The Crypto Key Length in bytes. This
+defines the AES encryption strength.
+<ul>
+<li><code>16</code> = AES-128 (128-bit encryption)</li>
+<li><code>24</code> = AES-192 (192-bit encryption)</li>
+<li><code>32</code> = AES-256 (256-bit encryption)</li>
+</ul></li>
+</ul>
+<p><em>Example URL using AES-256:</em><br />
+<code>srt://stream.example.com:5000?mode=caller&amp;passphrase=MySecurePassword123&amp;pbkeylen=32</code></p>
+<hr />
+<h2 id="step-2-configure-obs-studio-stream-settings">Step 2: Configure
+OBS Studio Stream Settings</h2>
+<p>Once you have formulated your SRT URL, apply it inside OBS
+Studio:</p>
+<ol type="1">
+<li>Open <strong>OBS Studio</strong>.</li>
+<li>Click on <strong>Settings</strong> in the bottom-right control panel
+(or go to <em>File</em> &gt; <em>Settings</em>).</li>
+<li>Select the <strong>Stream</strong> tab from the left-hand menu.</li>
+<li>In the <strong>Service</strong> dropdown menu, select
+<strong>Custom...</strong>.</li>
+<li>In the <strong>Server</strong> text field, paste your formatted SRT
+URL (e.g.,
+<code>srt://stream.example.com:5000?mode=caller&amp;passphrase=MySecurePassword123&amp;pbkeylen=32</code>).</li>
+<li>Leave the <strong>Stream Key</strong> field completely blank (unless
+your receiving server specifically requires a <code>streamid</code>
+parameter, which would also be appended to the Server URL as
+<code>&amp;streamid=your_stream_id</code>).</li>
+<li>Click <strong>Apply</strong>, then click <strong>OK</strong>.</li>
+</ol>
+<hr />
+<h2 id="step-3-configure-output-settings-for-srt">Step 3: Configure
+Output Settings for SRT</h2>
+<p>SRT works best with hardware encoders and specific bitrate settings.
+For an optimal experience:</p>
+<ol type="1">
+<li>Go back to <strong>Settings</strong> and select the
+<strong>Output</strong> tab.</li>
+<li>Set the <strong>Output Mode</strong> to
+<strong>Advanced</strong>.</li>
+<li>Under the <strong>Streaming</strong> tab, select your encoder (e.g.,
+<strong>NVIDIA NVENC H.264</strong> or <strong>AMD HW
+H.264</strong>).</li>
+<li>Set the <strong>Rate Control</strong> to <strong>CBR</strong>
+(Constant Bitrate).</li>
+<li>Set the <strong>Keyframe Interval</strong> to <strong>2
+seconds</strong> (crucial for SRT stream stability).</li>
+</ol>
+<hr />
+<h2 id="step-4-start-and-verify-the-stream">Step 4: Start and Verify the
+Stream</h2>
+<ol type="1">
+<li>Click <strong>Start Streaming</strong> in the main OBS window.</li>
+<li>Monitor the status bar at the bottom right. A green square indicates
+a stable, secure connection.</li>
+<li>Ensure that your receiving decoder (such as VLC, vMix, or a hardware
+decoder) is configured with the exact same <strong>passphrase</strong>
+and <strong>pbkeylen</strong> settings. If the encryption keys do not
+match, the receiver will not be able to decrypt and display the video
+feed.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

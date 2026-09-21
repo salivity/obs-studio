@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Causes of 1080i Combing Artifacts in OBS Studio - obs-studio</title>
+    <meta name="description" content="Interlace combing artifacts occur in OBS Studio when capturing 1080i signals because legacy interlaced video delivers alternating fields at different points in time, while modern streaming pipelines and computer monitors operate entirely in progressive f">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/causes-of-1080-i-combing-artifacts-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Causes of 1080i Combing Artifacts in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/causes-of-1080-i-combing-artifacts-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Interlace combing artifacts occur in OBS Studio when capturing 1080i signals because legacy interlaced video delivers alternating fields at different points in time, while modern streaming pipelines and computer monitors operate entirely in progressive f" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="causes-of-1080i-combing-artifacts-in-obs-studio">Causes of 1080i
+Combing Artifacts in OBS Studio</h1>
+<p>Interlace combing artifacts occur in OBS Studio when capturing 1080i
+signals because legacy interlaced video delivers alternating fields at
+different points in time, while modern streaming pipelines and computer
+monitors operate entirely in progressive frames. When OBS Studio
+receives an interlaced signal without active deinterlacing, it weaves
+two temporally offset fields into a single frame, resulting in jagged,
+horizontal "combing" or "feathering" lines along the edges of moving
+objects.</p>
+<h3 id="the-mechanics-of-1080i-interlaced-video">The Mechanics of 1080i
+Interlaced Video</h3>
+<p>A 1080i broadcast signal does not transmit full 1920x1080 video
+frames all at once. Instead, it divides each frame into two separate
+halves called "fields":</p>
+<ul>
+<li><strong>Field 1 (Odd lines):</strong> Contains lines 1, 3, 5,
+through 1079.</li>
+<li><strong>Field 2 (Even lines):</strong> Contains lines 2, 4, 6,
+through 1080.</li>
+</ul>
+<p>In standard broadcast formats (such as 1080i at 59.94 Hz or 50 Hz),
+these fields are captured sequentially rather than simultaneously. In a
+59.94i stream, a new field is captured every 1/59.94th of a second. As a
+result, Field 2 records visual data that occurred slightly later in time
+than Field 1.</p>
+<h3 id="the-progressive-processing-pipeline-in-obs-studio">The
+Progressive Processing Pipeline in OBS Studio</h3>
+<p>OBS Studio processes, renders, and outputs video exclusively as
+progressive frames (such as 1080p). Modern computer monitors, graphics
+cards, and web video players (like YouTube and Twitch) also strictly
+display progressive content, drawing the entire frame line-by-line from
+top to bottom at the same instant.</p>
+<p>When a capture card sends a raw 1080i signal into OBS Studio, the
+software must interpret the incoming data. By default, unless configured
+otherwise, the software simply meshes (or "weaves") the incoming odd and
+even lines together to construct a single 1920x1080 frame.</p>
+<h3 id="temporal-disparity-the-root-cause-of-combing">Temporal
+Disparity: The Root Cause of Combing</h3>
+<p>When there is no movement in the video feed, the time difference
+between fields is unnoticeable because objects occupy the exact same
+coordinate space in both Field 1 and Field 2.</p>
+<p>However, when an object moves horizontally or vertically across the
+screen:</p>
+<ol type="1">
+<li>Field 1 captures the object at Position A.</li>
+<li>Roughly 16.7 milliseconds later (in 60 Hz systems), Field 2 captures
+the object at Position B.</li>
+<li>OBS displays Field 1 and Field 2 simultaneously on a progressive
+screen.</li>
+</ol>
+<p>Because the object shifted between the capture of the alternating
+lines, every other horizontal line displays the object in an offset
+position. The visual consequence is the classic "comb"
+artifact—serrated, stair-stepped lines protruding from the edges of
+moving elements.</p>
+<h3 id="capture-card-pass-through-behavior">Capture Card Pass-Through
+Behavior</h3>
+<p>Capture cards typically handle 1080i in one of two ways:</p>
+<ul>
+<li><strong>Hardware Deinterlacing:</strong> Certain capture cards
+automatically deinterlace the signal on-board before passing a 1080p
+image to the operating system.</li>
+<li><strong>Direct Pass-Through:</strong> Most capture cards pass the
+raw, un-deinterlaced 1080i fields directly to the driver to reduce
+latency and processing overhead.</li>
+</ul>
+<p>When using a direct pass-through capture card, OBS Studio receives
+the raw interlaced fields unmodified. If the user has not explicitly
+enabled a deinterlacing filter (such as Yadif 2x or Linear) in the
+capture card's source properties within OBS, the temporal mismatch
+remains visible in the preview window, canvas recordings, and outgoing
+stream.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

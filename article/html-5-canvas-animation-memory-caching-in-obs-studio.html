@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML5 Canvas Animation Memory Caching in OBS Studio - obs-studio</title>
+    <meta name="description" content="Running multiple interactive HTML5 canvas animations inside OBS Studio relies on the Chromium Embedded Framework (CEF), triggering complex memory caching behaviors across system RAM and VRAM. This article examines how Chromium's rendering pipeline handle">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/html-5-canvas-animation-memory-caching-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="HTML5 Canvas Animation Memory Caching in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/html-5-canvas-animation-memory-caching-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Running multiple interactive HTML5 canvas animations inside OBS Studio relies on the Chromium Embedded Framework (CEF), triggering complex memory caching behaviors across system RAM and VRAM. This article examines how Chromium's rendering pipeline handle" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="html5-canvas-animation-memory-caching-in-obs-studio">HTML5
+Canvas Animation Memory Caching in OBS Studio</h1>
+<p>Running multiple interactive HTML5 canvas animations inside OBS
+Studio relies on the Chromium Embedded Framework (CEF), triggering
+complex memory caching behaviors across system RAM and VRAM. This
+article examines how Chromium's rendering pipeline handles off-screen
+canvas buffers, the memory footprint of active browser sources, the risk
+of GPU texture thrashing, and best practices for optimizing memory
+retention during live streaming.</p>
+<h3 id="the-underlying-architecture-obs-and-cef">The Underlying
+Architecture: OBS and CEF</h3>
+<p>OBS Studio renders web content through integrated Chromium Embedded
+Framework (CEF) processes. When an HTML5 canvas animation is loaded, CEF
+evaluates whether to process the rendering via software or GPU hardware
+acceleration.</p>
+<p>By default, modern OBS Studio versions enable hardware acceleration
+for browser sources. This delegates the rasterization of
+<code>&lt;canvas&gt;</code> elements directly to the GPU. Each canvas
+allocates an internal render buffer and backbuffer to handle interactive
+redrawing. When multiple instances run simultaneously, CEF must manage
+separate rendering contexts, V8 JavaScript engine heaps, and composited
+layer caches for each browser source.</p>
+<h3 id="vram-allocation-and-texture-caching">VRAM Allocation and Texture
+Caching</h3>
+<p>Interactive HTML5 canvas animations do not behave like static web
+pages. Because interactive elements redraw constantly—often at 60 frames
+per second using <code>requestAnimationFrame</code>—the browser engine
+cannot rely on static bitmap caches.</p>
+<ol type="1">
+<li><strong>Continuous Buffer Swapping:</strong> Every active 2D or
+WebGL canvas creates an off-screen surface that updates each frame.
+These surfaces are cached directly in VRAM as GPU textures to allow
+rapid compositing.</li>
+<li><strong>OBS Texture Sharing:</strong> On Windows, OBS captures CEF
+output via shared DirectX 11 textures. When you run multiple browser
+sources, OBS and CEF allocate independent shared texture handles for
+each source.</li>
+<li><strong>VRAM Saturation:</strong> With several canvas animations
+active, the accumulated texture memory scales linearly. If the available
+GPU memory bandwidth is saturated by rendering these textures while the
+NVENC/AMF video encoder is running, the encoder may suffer from frame
+drops or rendering lag inside OBS.</li>
+</ol>
+<h3 id="system-ram-heap-allocation-and-garbage-collection">System RAM,
+Heap Allocation, and Garbage Collection</h3>
+<p>While visual output resides in VRAM, the logic driving interactive
+canvas animations resides in system RAM within CEF’s V8 engine.</p>
+<ul>
+<li><strong>Retained Canvas State:</strong> Complex paths, dynamic
+sprite caches, and offscreen scratchpad canvases
+(<code>document.createElement('canvas')</code>) consume significant
+system memory if they are continuously instantiated rather than
+reused.</li>
+<li><strong>Garbage Collection (GC) Pauses:</strong> Interactive
+animations that generate frequent short-lived objects (such as particle
+systems or dynamic text overlays) trigger aggressive V8 garbage
+collection cycles. These GC sweeps can cause micro-stutters in the
+animation, which OBS captures as dropped or uneven frames.</li>
+<li><strong>DOM and Context Leaks:</strong> Failing to remove event
+listeners, unbind WebGL contexts, or clear canvas references keeps
+textures and script states alive in CEF’s internal cache indefinitely,
+leading to steady memory growth over long streaming sessions.</li>
+</ul>
+<h3 id="multi-source-process-overhead">Multi-Source Process
+Overhead</h3>
+<p>By default, OBS may launch distinct CEF render processes for
+different browser sources depending on domain isolation policies and
+source configuration.</p>
+<p>Running five separate browser sources running canvas animations
+consumes considerably more base memory than running a single browser
+source containing five canvas elements. Each distinct source incurs its
+own baseline process overhead, compositor tree, and layer cache,
+severely compounding memory utilization.</p>
+<h3 id="optimization-strategies">Optimization Strategies</h3>
+<p>To minimize the memory caching footprint of multiple canvas
+animations:</p>
+<ul>
+<li><strong>Consolidate Browser Sources:</strong> Group multiple
+animated overlays into a single HTML page loaded through a single OBS
+Browser Source. This consolidates execution into one V8 instance and one
+compositing tree.</li>
+<li><strong>Control Visibility and Unloading:</strong> Check the option
+to <strong>"Shutdown source when not visible"</strong> in the OBS
+Browser Source properties. This purges the shared textures and cached
+buffers from memory when switching scenes.</li>
+<li><strong>Manage Canvas Dimensions Explicitly:</strong> Always set the
+canvas <code>width</code> and <code>height</code> attributes to the
+exact pixel dimensions required. Oversized canvases waste significant
+texture cache memory regardless of CSS display size.</li>
+<li><strong>Reuse Render Contexts:</strong> Avoid creating offscreen
+canvas objects inside render loops. Maintain persistent scratchpad
+buffers and call <code>context.clearRect()</code> rather than resizing
+the canvas to reset it, which forces expensive internal texture
+reallocation.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why OBS Drops Audio Frames With Low CPU Usage - obs-studio</title>
+    <meta name="description" content="Seeing audio frame drops or buffer underruns in your OBS Studio log file when total system CPU usage sits comfortably below forty percent is a common and frustrating issue. This article breaks down the technical reasons behind this paradox, explaining wh">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/why-obs-drops-audio-frames-with-low-cpu-usage">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why OBS Drops Audio Frames With Low CPU Usage - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/why-obs-drops-audio-frames-with-low-cpu-usage" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Seeing audio frame drops or buffer underruns in your OBS Studio log file when total system CPU usage sits comfortably below forty percent is a common and frustrating issue. This article breaks down the technical reasons behind this paradox, explaining wh" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-obs-drops-audio-frames-with-low-cpu-usage">Why OBS Drops
+Audio Frames With Low CPU Usage</h1>
+<p>Seeing audio frame drops or buffer underruns in your OBS Studio log
+file when total system CPU usage sits comfortably below forty percent is
+a common and frustrating issue. This article breaks down the technical
+reasons behind this paradox, explaining why overall CPU percentages can
+be misleading, and highlights the primary culprits, including
+single-thread CPU starvation, DPC latency spikes, mismatched sample
+rates, USB bus saturation, and unoptimized audio filters.</p>
+<h2 id="single-core-cpu-saturation">Single-Core CPU Saturation</h2>
+<p>Windows Task Manager displays CPU usage as an aggregate across all
+physical and logical cores. If your system has an 8-core, 16-thread
+processor, an overall CPU usage reading of 35% can easily hide the fact
+that one or two individual cores are pegged at 100%.</p>
+<p>Audio processing in OBS Studio operates on a dedicated, real-time
+thread that is highly sensitive to timing. If the specific core handling
+the OBS audio subsystem, your operating system's audio engine, or audio
+driver interrupts reaches its maximum capacity, it will fail to process
+the audio buffer in time. This delay results in dropped audio frames,
+regardless of how much headroom exists on your other CPU cores.</p>
+<h2 id="high-dpc-latency-and-driver-delays">High DPC Latency and Driver
+Delays</h2>
+<p>Deferred Procedure Call (DPC) latency is one of the leading causes of
+audio dropouts in low-CPU scenarios. When hardware drivers communicate
+with the operating system, they execute tasks via DPCs. If a poorly
+optimized driver takes too long to complete its execution, it blocks the
+CPU from handling real-time audio threads.</p>
+<p>Common culprits for DPC latency spikes include:</p>
+<ul>
+<li>Outdated or conflicting GPU drivers (especially Nvidia and AMD
+high-definition audio drivers).</li>
+<li>Network adapter drivers, particularly Wi-Fi cards and power-saving
+features.</li>
+<li>Outdated motherboard chipsets and storage controller drivers.</li>
+</ul>
+<p>When a DPC routine blocks the CPU, the audio buffer starves before
+the audio thread can be serviced, logging an audio frame drop in
+OBS.</p>
+<h2 id="sample-rate-mismatches">Sample Rate Mismatches</h2>
+<p>OBS Studio natively supports either 44.1 kHz or 48 kHz sample rates.
+When your operating system, input devices (such as USB microphones or
+audio interfaces), output devices, and OBS are not configured to the
+exact same frequency, real-time resampling must occur.</p>
+<p>While simple resampling requires minimal CPU overhead, it introduces
+micro-buffering. If your audio interface runs at 44.1 kHz and OBS is set
+to 48 kHz, slight clock drift between the hardware clock and software
+timer will periodically exhaust or overflow the audio buffer, causing
+dropped frames without any noticeable spike in CPU consumption.</p>
+<h2 id="usb-bus-saturation-and-bandwidth-bottlenecks">USB Bus Saturation
+and Bandwidth Bottlenecks</h2>
+<p>Audio interfaces and USB microphones require consistent,
+uninterrupted data transfers via USB endpoints. However, most
+motherboards share USB controllers across multiple ports.</p>
+<p>If your audio interface shares a USB host controller or root hub with
+high-bandwidth devices—such as 1080p/4K webcams, capture cards, or
+external hard drives—the controller may delay audio packets at the
+hardware level. The CPU remains largely idle, but the audio packets
+arrive late to OBS, resulting in dropped frames in the log.</p>
+<h2 id="heavy-audio-filters-and-vst-plugins">Heavy Audio Filters and VST
+Plugins</h2>
+<p>OBS Studio allows you to apply filters (such as noise suppression,
+limiters, compressors, and third-party VST 2.x plugins) directly to
+audio sources. Unlike video rendering, which can easily buffer frames
+across several milliseconds, audio filters must process data
+synchronously in tiny block sizes (typically 10 to 20 milliseconds).</p>
+<p>Complex VST plugins, unoptimized noise reduction tools, or
+chain-processing multiple filters on a single source can introduce
+processing delays that exceed the allocated buffer window. When a filter
+fails to return processed audio before the next cycle begins, OBS drops
+the frame to prevent desyncing from the video track.</p>
+<h2 id="summary-checklist-to-resolve-audio-drops">Summary Checklist to
+Resolve Audio Drops</h2>
+<ol type="1">
+<li><strong>Match Sample Rates:</strong> Set Windows Sound Control Panel
+(both playback and recording tabs) and OBS Studio Settings &gt; Audio to
+match (ideally 48 kHz).</li>
+<li><strong>Test for DPC Latency:</strong> Run a diagnostic tool like
+LatencyMon to identify misbehaving drivers causing interrupt
+delays.</li>
+<li><strong>Rebalance USB Ports:</strong> Move your audio interface to a
+dedicated USB controller port away from capture cards and
+high-resolution cameras.</li>
+<li><strong>Isolate Audio Filters:</strong> Disable VST plugins and
+advanced noise suppression algorithms (such as RNNoise) to see if
+dropped frames cease.</li>
+<li><strong>Set High Process Priority:</strong> Ensure OBS Studio is set
+to "Above Normal" or "High" priority under Settings &gt; Advanced to
+prevent background tasks from preempting the real-time audio
+thread.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

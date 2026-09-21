@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Use macOS ScreenCaptureKit in OBS Studio - obs-studio</title>
+    <meta name="description" content="This guide explains how to utilize Apple's ScreenCaptureKit API within OBS Studio to achieve high-performance, low-latency screen, window, and application capturing on macOS. By leveraging this modern framework, Mac users can capture high-framerate video">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/use-mac-os-screen-capture-kit-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Use macOS ScreenCaptureKit in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/use-mac-os-screen-capture-kit-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide explains how to utilize Apple's ScreenCaptureKit API within OBS Studio to achieve high-performance, low-latency screen, window, and application capturing on macOS. By leveraging this modern framework, Mac users can capture high-framerate video" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="use-macos-screencapturekit-in-obs-studio">Use macOS
+ScreenCaptureKit in OBS Studio</h1>
+<p>This guide explains how to utilize Apple's ScreenCaptureKit API
+within OBS Studio to achieve high-performance, low-latency screen,
+window, and application capturing on macOS. By leveraging this modern
+framework, Mac users can capture high-framerate video with minimal CPU
+overhead and seamlessly capture independent application audio.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>To use ScreenCaptureKit in OBS Studio, your system must meet the
+following requirements:</p>
+<ul>
+<li><strong>macOS Version:</strong> macOS Monterey 12.3 or later (macOS
+Sonoma or later is recommended for advanced audio features).</li>
+<li><strong>OBS Studio Version:</strong> OBS Studio 28.0 or later, which
+natively integrates ScreenCaptureKit.</li>
+</ul>
+<h2 id="step-1-add-a-macos-screen-capture-source">Step 1: Add a macOS
+Screen Capture Source</h2>
+<ol type="1">
+<li>Launch <strong>OBS Studio</strong> on your Mac.</li>
+<li>Navigate to the <strong>Sources</strong> dock at the bottom of the
+screen.</li>
+<li>Click the <strong>+</strong> (plus) icon to add a new source.</li>
+<li>Select <strong>macOS Screen Capture</strong> from the dropdown
+menu.</li>
+<li>Name the source (e.g., "Game Capture" or "Display Capture") and
+click <strong>OK</strong>.</li>
+</ol>
+<h2 id="step-2-configure-capture-settings">Step 2: Configure Capture
+Settings</h2>
+<p>Once the source is added, a properties window will appear. Configure
+the settings to utilize ScreenCaptureKit:</p>
+<ol type="1">
+<li><strong>Method:</strong> Ensure this is set to
+<strong>ScreenCaptureKit</strong> (this is the default on supported
+macOS versions).</li>
+<li><strong>Capture Type:</strong> Choose what you want to capture:
+<ul>
+<li><strong>Display Capture:</strong> Captures your entire physical
+monitor. Ideal for tutorials or showing multiple applications.</li>
+<li><strong>Window Capture:</strong> Captures a single, specific
+application window.</li>
+<li><strong>Application Capture:</strong> Captures all windows
+associated with a specific application (e.g., all Google Chrome
+windows).</li>
+</ul></li>
+<li><strong>Display/Window/Application Selection:</strong> Use the
+corresponding dropdown menu to select the specific screen, window, or
+app you wish to capture.</li>
+<li><strong>Show Cursor:</strong> Check or uncheck this box depending on
+whether you want your mouse pointer to be visible in the capture.</li>
+</ol>
+<h2 id="step-3-configure-application-audio-capture">Step 3: Configure
+Application Audio Capture</h2>
+<p>One of the primary benefits of ScreenCaptureKit is its ability to
+capture application-specific audio without requiring third-party virtual
+audio cables.</p>
+<ol type="1">
+<li>In the properties window of your <strong>macOS Screen
+Capture</strong> source, locate the audio options.</li>
+<li>Check the box labeled <strong>Route Application Audio</strong>
+(available in macOS 13 Ventura and later).</li>
+<li>This adds a dedicated audio meter for your captured application to
+the <strong>Audio Mixer</strong> dock in OBS, allowing you to control
+the source's volume independently.</li>
+</ol>
+<h2 id="performance-optimization-tips">Performance Optimization
+Tips</h2>
+<p>While ScreenCaptureKit is highly optimized, you can maximize
+performance by applying these settings:</p>
+<ul>
+<li><strong>Match Resolutions:</strong> Set your OBS canvas resolution
+to match your display's native aspect ratio to avoid unnecessary scaling
+overhead.</li>
+<li><strong>Disable Preview:</strong> If you experience performance
+drops on older Mac hardware, right-click the OBS preview window and
+uncheck <strong>Enable Preview</strong> to save GPU resources while
+streaming or recording.</li>
+<li><strong>Keep macOS Updated:</strong> Apple frequently updates
+ScreenCaptureKit to resolve bugs and improve hardware acceleration. Keep
+your macOS system updated to the latest version for the best
+performance.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

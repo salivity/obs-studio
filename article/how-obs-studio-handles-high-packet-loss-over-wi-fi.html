@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Studio Handles High Packet Loss Over Wi-Fi - obs-studio</title>
+    <meta name="description" content="This article examines how OBS Studio mitigates network instability, addressing how it handles packet fragmentation and retransmission when streaming across high-packet-loss wireless connections. While OBS Studio delegates low-level packet reconstruction">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-studio-handles-high-packet-loss-over-wi-fi">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Studio Handles High Packet Loss Over Wi-Fi - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-studio-handles-high-packet-loss-over-wi-fi" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines how OBS Studio mitigates network instability, addressing how it handles packet fragmentation and retransmission when streaming across high-packet-loss wireless connections. While OBS Studio delegates low-level packet reconstruction" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-studio-handles-high-packet-loss-over-wi-fi">How OBS
+Studio Handles High Packet Loss Over Wi-Fi</h1>
+<p>This article examines how OBS Studio mitigates network instability,
+addressing how it handles packet fragmentation and retransmission when
+streaming across high-packet-loss wireless connections. While OBS Studio
+delegates low-level packet reconstruction to the underlying transport
+protocols, its overall resilience depends heavily on the selected
+protocol—such as RTMP over TCP, or SRT and RIST over UDP—combined with
+internal frame-dropping mechanisms and dynamic bitrate controls.</p>
+<h3 id="transport-protocol-architecture">Transport Protocol
+Architecture</h3>
+<p>OBS Studio does not implement an independent, proprietary network
+transport layer. Instead, it relies on open-source libraries to package
+and transmit encoded video frames. How a dropped or fragmented packet is
+retransmitted depends directly on the protocol chosen in the output
+settings.</p>
+<h4 id="rtmp-tcp-based-delivery">RTMP (TCP-Based Delivery)</h4>
+<p>Traditional live streaming with OBS Studio uses RTMP, which runs over
+TCP.</p>
+<ul>
+<li><strong>OS-Level Handling:</strong> TCP guarantees in-order packet
+delivery. When a packet or an IP fragment is lost over Wi-Fi, the
+operating system's network stack handles the retransmission via standard
+TCP Automatic Repeat reQuest (ARQ).</li>
+<li><strong>Head-of-Line Blocking:</strong> Because TCP enforces strict
+ordering, a missing packet halts the delivery of subsequent packets. In
+high-loss environments, this causes latency to spike as the sender waits
+for retransmissions.</li>
+<li><strong>OBS Internal Dropping:</strong> OBS Studio monitors its
+internal send buffer. If TCP retransmissions stall the connection and
+the internal buffer fills up, OBS Studio will proactively drop entire
+encoded video frames to prevent infinite delay, resulting in visible
+stuttering or dropped frames on the broadcast.</li>
+</ul>
+<h4 id="srt-and-rist-udp-based-delivery">SRT and RIST (UDP-Based
+Delivery)</h4>
+<p>To combat wireless instability, OBS Studio natively supports Secure
+Reliable Transport (SRT) and Reliable Internet Stream Transport (RIST),
+both of which operate over UDP.</p>
+<ul>
+<li><strong>Selective Retransmission (ARQ):</strong> Unlike TCP, SRT and
+RIST do not enforce strict byte-stream ordering at the OS level. When a
+UDP datagram containing fragmented video data is lost, the receiver
+detects the gap in sequence numbers and sends a Negative Acknowledgment
+(NAK) back to OBS.</li>
+<li><strong>Latency Buffers:</strong> OBS Studio retransmits only the
+specific lost packets flagged by NAKs. This process occurs within a
+user-configured latency buffer (typically 200ms to 2000ms). If a packet
+cannot be recovered before its playout timestamp expires, the protocol
+drops that specific packet rather than freezing the entire stream.</li>
+</ul>
+<h3 id="packet-fragmentation-and-mtu-considerations">Packet
+Fragmentation and MTU Considerations</h3>
+<p>In wireless environments, physical layer interference often causes
+large network packets to be corrupted or fragmented across the IP
+layer.</p>
+<ul>
+<li><strong>IP Fragmentation Risks:</strong> If a video packet exceeds
+the network Maximum Transmission Unit (MTU)—typically 1500 bytes on
+standard Ethernet and Wi-Fi—the IP layer splits it into multiple
+fragments. If a single Wi-Fi drop occurs on any fragment, the entire
+datagram is invalidated.</li>
+<li><strong>UDP Protocol Sizing:</strong> Both SRT and RIST in OBS
+Studio default to packet payload sizes that fit comfortably within
+standard MTU limits (typically around 1316 bytes of payload plus
+headers) to prevent IP-level fragmentation before the data leaves the
+machine.</li>
+</ul>
+<h3 id="dynamic-bitrate-and-congestion-control">Dynamic Bitrate and
+Congestion Control</h3>
+<p>Under persistent wireless degradation, retransmissions alone cannot
+solve bandwidth saturation because retransmitting packets consumes extra
+throughput, further worsening congestion.</p>
+<p>OBS Studio includes a feature called <strong>Dynamically change
+bitrate to manage congestion (Beta)</strong>. When enabled:</p>
+<ol type="1">
+<li>OBS monitors transport-layer congestion signals (socket write stalls
+in TCP or round-trip time and buffer inflation in SRT).</li>
+<li>Instead of allowing retransmissions to overflow the local outbound
+queue, OBS Studio throttles the video encoder to a lower target bitrate
+in real time.</li>
+<li>Once the packet loss clears and retransmission overhead drops, OBS
+scales the encoder bitrate back up to the configured maximum,
+stabilizing the wireless connection.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

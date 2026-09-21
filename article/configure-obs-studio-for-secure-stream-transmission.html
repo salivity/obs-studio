@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configure OBS Studio for Secure Stream Transmission - obs-studio</title>
+    <meta name="description" content="To prevent unauthorized users from intercepting your stream key and hijacking your broadcast, you must encrypt the data sent from OBS Studio to your streaming platform. This article explains how to configure OBS Studio to transmit your stream key and pas">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/configure-obs-studio-for-secure-stream-transmission">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Configure OBS Studio for Secure Stream Transmission - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/configure-obs-studio-for-secure-stream-transmission" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="To prevent unauthorized users from intercepting your stream key and hijacking your broadcast, you must encrypt the data sent from OBS Studio to your streaming platform. This article explains how to configure OBS Studio to transmit your stream key and pas" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="configure-obs-studio-for-secure-stream-transmission">Configure
+OBS Studio for Secure Stream Transmission</h1>
+<p>To prevent unauthorized users from intercepting your stream key and
+hijacking your broadcast, you must encrypt the data sent from OBS Studio
+to your streaming platform. This article explains how to configure OBS
+Studio to transmit your stream key and password securely over the
+network using encrypted protocols like RTMPS and SRT.</p>
+<h3 id="step-1-use-rtmps-instead-of-rtmp">Step 1: Use RTMPS Instead of
+RTMP</h3>
+<p>Standard RTMP (Real-Time Messaging Protocol) transmits your stream
+key in plain text, making it vulnerable to packet sniffing on public or
+compromised networks. RTMPS (RTMP over TLS/SSL) encrypts this
+connection.</p>
+<ol type="1">
+<li>Open OBS Studio and go to <strong>Settings</strong> &gt;
+<strong>Stream</strong>.</li>
+<li>Under <strong>Service</strong>, select your streaming platform
+(e.g., YouTube, Facebook Live). Major platforms default to RTMPS
+automatically when using their built-in connectors.</li>
+<li>If you are using a custom streaming server, change the
+<strong>Service</strong> dropdown to <strong>Custom...</strong>.</li>
+<li>In the <strong>Server</strong> field, ensure the URL begins with
+<code>rtmps://</code> instead of <code>rtmp://</code>. This forces OBS
+to establish a secure, encrypted handshake on port 443.</li>
+<li>Paste your stream key into the <strong>Stream Key</strong> field and
+click <strong>Apply</strong>.</li>
+</ol>
+<h3 id="step-2-configure-srt-with-aes-encryption">Step 2: Configure SRT
+with AES Encryption</h3>
+<p>Secure Reliable Transport (SRT) is a modern streaming protocol that
+supports high-security AES encryption. If your ingest server supports
+SRT, you can configure OBS to encrypt the stream at the protocol
+level.</p>
+<ol type="1">
+<li>In OBS Studio, go to <strong>Settings</strong> &gt;
+<strong>Stream</strong>.</li>
+<li>Set the <strong>Service</strong> dropdown to
+<strong>Custom...</strong>.</li>
+<li>In the <strong>Server</strong> field, enter your SRT destination URL
+using the following format to enable encryption:
+<code>srt://example.com:port?mode=caller&amp;passphrase=YOUR_SECRET_PASSPHRASE&amp;pbkeylen=32</code>
+<ul>
+<li>Replace <code>example.com:port</code> with your destination address
+and port.</li>
+<li>Replace <code>YOUR_SECRET_PASSPHRASE</code> with a strong password
+(minimum 10 characters).</li>
+<li>The <code>pbkeylen=32</code> parameter specifies AES-256 encryption
+(use <code>16</code> for AES-128 or <code>24</code> for AES-192).</li>
+</ul></li>
+<li>Leave the <strong>Stream Key</strong> field blank, as the security
+is handled by the passphrase in the URL. Click
+<strong>Apply</strong>.</li>
+</ol>
+<h3 id="step-3-enable-secure-rtmp-authentication">Step 3: Enable Secure
+RTMP Authentication</h3>
+<p>If you are streaming to a private server that requires a username and
+password but does not support RTMPS, you can still encrypt the login
+credentials using built-in OBS authentication.</p>
+<ol type="1">
+<li>Go to <strong>Settings</strong> &gt; <strong>Stream</strong> and
+select <strong>Custom...</strong>.</li>
+<li>Enter your server URL and Stream Key.</li>
+<li>Check the box for <strong>Use authentication</strong>.</li>
+<li>Enter the <strong>Username</strong> and <strong>Password</strong>
+provided by your streaming host.</li>
+<li>Note that while this secures your login credentials during the
+handshake, it does not encrypt the video data itself. For full security,
+always pair this with an <code>rtmps://</code> server URL.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configure OBS Multi-Track Streaming with Hardware Encoding - obs-studio</title>
+    <meta name="description" content="This article provides a step-by-step guide on how to configure OBS Studio to stream multiple video bitrates simultaneously using your computer's hardware encoder. By utilizing features like Enhanced Broadcasting, you can offload the heavy lifting of enco">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/configure-obs-multi-track-streaming-with-hardware-encoding">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Configure OBS Multi-Track Streaming with Hardware Encoding - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/configure-obs-multi-track-streaming-with-hardware-encoding" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides a step-by-step guide on how to configure OBS Studio to stream multiple video bitrates simultaneously using your computer's hardware encoder. By utilizing features like Enhanced Broadcasting, you can offload the heavy lifting of enco" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1
+id="configure-obs-multi-track-streaming-with-hardware-encoding">Configure
+OBS Multi-Track Streaming with Hardware Encoding</h1>
+<p>This article provides a step-by-step guide on how to configure OBS
+Studio to stream multiple video bitrates simultaneously using your
+computer's hardware encoder. By utilizing features like Enhanced
+Broadcasting, you can offload the heavy lifting of encoding multiple
+streams to your GPU (NVIDIA, AMD, or Intel QuickSync), allowing viewers
+with different internet speeds to watch your stream smoothly without
+overloading your CPU.</p>
+<h3 id="step-1-enable-multi-track-streaming-in-stream-settings">Step 1:
+Enable Multi-Track Streaming in Stream Settings</h3>
+<p>To stream multiple bitrates natively, you must use a streaming
+service and protocol that support multi-track video (such as Twitch's
+Enhanced Broadcasting or compatible RTMP/WHIP endpoints).</p>
+<ol type="1">
+<li>Open <strong>OBS Studio</strong> (ensure you are on version 30.2 or
+newer).</li>
+<li>Click on <strong>Settings</strong> in the bottom right corner.</li>
+<li>Navigate to the <strong>Stream</strong> tab on the left menu.</li>
+<li>Select your streaming service (e.g., <strong>Twitch</strong>).</li>
+<li>Check the box labeled <strong>Enable Enhanced Broadcasting</strong>
+(or <strong>Multi-Track Video</strong>, depending on your platform).
+This tells OBS to negotiate multiple resolution and bitrate tracks
+directly with the ingest server.</li>
+</ol>
+<h3 id="step-2-configure-the-hardware-encoder">Step 2: Configure the
+Hardware Encoder</h3>
+<p>Once the service is configured to accept multiple tracks, you must
+assign a dedicated hardware encoder to handle the simultaneous video
+encodes.</p>
+<ol type="1">
+<li>In the Settings window, click on the <strong>Output</strong>
+tab.</li>
+<li>Change the <strong>Output Mode</strong> dropdown at the top to
+<strong>Advanced</strong>.</li>
+<li>Select the <strong>Streaming</strong> tab.</li>
+<li>Set the <strong>Video Encoder</strong> to your GPU's hardware
+encoder. Depending on your system components, select:
+<ul>
+<li><strong>NVIDIA NVENC H.264</strong> or <strong>AV1</strong> (for
+NVIDIA GeForce cards)</li>
+<li><strong>AMD HW H.264</strong> or <strong>AV1</strong> (for AMD
+Radeon cards)</li>
+<li><strong>Intel QuickSync H.264</strong> or <strong>AV1</strong> (for
+Intel Arc or integrated graphics)</li>
+</ul></li>
+<li>Avoid using <em>x264</em>, as software-based multi-encoding will
+severely degrade your CPU performance.</li>
+</ol>
+<h3 id="step-3-adjust-multi-track-video-settings">Step 3: Adjust
+Multi-Track Video Settings</h3>
+<p>With multi-track streaming enabled, OBS Studio automatically
+configures the creation of the lower-resolution encodes based on your
+hardware capabilities and available upload bandwidth.</p>
+<ol type="1">
+<li>Under the <strong>Streaming</strong> tab in Output settings, locate
+the <strong>Enhanced Broadcasting Settings</strong> section.</li>
+<li>Check the box to <strong>Check system configuration</strong> to let
+OBS automatically optimize the encoder loads.</li>
+<li>Set your maximum aggregate upload limit under the <strong>Maximum
+Bandwidth</strong> option. Ensure this total fit within your internet
+connection's upload speed (retaining a 30% safety overhead is
+recommended).</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong> to save
+your settings.</li>
+</ol>
+<p>Once configured, starting your stream will automatically prompt your
+GPU to generate and broadcast multiple video pipelines (such as 1080p,
+720p, and 480p) directly to the streaming server natively.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

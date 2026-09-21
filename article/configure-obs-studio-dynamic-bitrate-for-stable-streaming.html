@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configure OBS Studio Dynamic Bitrate for Stable Streaming - obs-studio</title>
+    <meta name="description" content="Maintaining a stable live stream during network fluctuations is critical for any content creator. While OBS Studio does not support changing the physical output resolution (such as shifting from 1080p to 720p) mid-stream, it offers a robust "Dynamic Bitr">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/configure-obs-studio-dynamic-bitrate-for-stable-streaming">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Configure OBS Studio Dynamic Bitrate for Stable Streaming - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/configure-obs-studio-dynamic-bitrate-for-stable-streaming" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Maintaining a stable live stream during network fluctuations is critical for any content creator. While OBS Studio does not support changing the physical output resolution (such as shifting from 1080p to 720p) mid-stream, it offers a robust "Dynamic Bitr" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1
+id="configure-obs-studio-dynamic-bitrate-for-stable-streaming">Configure
+OBS Studio Dynamic Bitrate for Stable Streaming</h1>
+<p>Maintaining a stable live stream during network fluctuations is
+critical for any content creator. While OBS Studio does not support
+changing the physical output resolution (such as shifting from 1080p to
+720p) mid-stream, it offers a robust "Dynamic Bitrate" feature. This
+setting automatically scales your stream's upload bitrate down during
+network congestion to prevent dropped frames and buffering, restoring it
+once your connection stabilizes. This guide provides a straightforward
+walk-through on how to enable and optimize this setting in OBS
+Studio.</p>
+<h3 id="how-to-enable-dynamic-bitrate-in-obs-studio">How to Enable
+Dynamic Bitrate in OBS Studio</h3>
+<p>To configure OBS Studio to dynamically adjust its output quality
+based on your network health, follow these steps:</p>
+<ol type="1">
+<li><p><strong>Open OBS Studio Settings</strong><br />
+Launch OBS Studio, and click on the <strong>Settings</strong> button
+located in the bottom-right "Controls" dock, or go to
+<strong>File</strong> &gt; <strong>Settings</strong> in the top
+menu.</p></li>
+<li><p><strong>Navigate to Advanced Settings</strong><br />
+In the left-hand sidebar of the Settings window, click on the
+<strong>Advanced</strong> tab.</p></li>
+<li><p><strong>Locate the Network Section</strong><br />
+Scroll down through the Advanced settings until you find the section
+labeled <strong>Network</strong>.</p></li>
+<li><p><strong>Enable Dynamic Bitrate</strong><br />
+Check the box next to <strong>"Dynamically change bitrate to manage
+congestion"</strong>. <em>(Note: In some versions of OBS, this may have
+a "Beta" tag, but it is highly stable and recommended for variable
+connections).</em></p></li>
+<li><p><strong>Apply and Save</strong><br />
+Click <strong>Apply</strong> in the bottom-right corner, and then click
+<strong>OK</strong> to close the Settings window.</p></li>
+</ol>
+<h3 id="how-dynamic-bitrate-works">How Dynamic Bitrate Works</h3>
+<p>When this feature is disabled, network drops force OBS to drop video
+frames to keep up with the broadcast, resulting in a stuttering,
+freezing, or disconnected stream for your viewers.</p>
+<p>With Dynamic Bitrate enabled:</p>
+<ul>
+<li><strong>Congestion Detection:</strong> OBS monitors your upload
+connection. If your network speed drops below your target bitrate, OBS
+temporarily decreases the bitrate instead of dropping frames.</li>
+<li><strong>Visual Adjustment:</strong> To the viewer, this will
+temporarily lower the visual quality (making the image look more
+compressed or pixelated), but the stream will remain active and
+fluid.</li>
+<li><strong>Automatic Recovery:</strong> As soon as your network
+bandwidth recovers, OBS automatically scales the bitrate back up to your
+maximum target setting.</li>
+</ul>
+<h3 id="requirements-and-limitations">Requirements and Limitations</h3>
+<ul>
+<li><strong>RTMP Only:</strong> This feature currently only works when
+streaming via the RTMP protocol (supported by Twitch, YouTube, and
+Facebook Live).</li>
+<li><strong>Encoder Type:</strong> Dynamic Bitrate works best with
+hardware encoders (like NVIDIA NVENC, AMD AMF, or Intel QuickSync) as
+they handle rapid bitrate changes more efficiently than software (x264)
+encoding.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

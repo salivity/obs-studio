@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Stream 3D SBS Video with OBS Studio - obs-studio</title>
+    <meta name="description" content="This article provides a step-by-step guide on how to configure OBS Studio to broadcast a 3D side-by-side (SBS) stereoscopic video feed. You will learn how to set up your canvas resolution, arrange your left- and right-eye camera sources, and adjust your">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-stream-3-d-sbs-video-with-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Stream 3D SBS Video with OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-stream-3-d-sbs-video-with-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides a step-by-step guide on how to configure OBS Studio to broadcast a 3D side-by-side (SBS) stereoscopic video feed. You will learn how to set up your canvas resolution, arrange your left- and right-eye camera sources, and adjust your" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-stream-3d-sbs-video-with-obs-studio">How to Stream 3D SBS
+Video with OBS Studio</h1>
+<p>This article provides a step-by-step guide on how to configure OBS
+Studio to broadcast a 3D side-by-side (SBS) stereoscopic video feed. You
+will learn how to set up your canvas resolution, arrange your left- and
+right-eye camera sources, and adjust your encoding settings to deliver a
+seamless 3D viewing experience to your audience.</p>
+<h2 id="step-1-choose-your-3d-sbs-format">Step 1: Choose Your 3D SBS
+Format</h2>
+<p>Before configuring OBS, decide whether you are streaming in
+<strong>Half-SBS</strong> or <strong>Full-SBS</strong>:</p>
+<ul>
+<li><strong>Half-SBS:</strong> Squeezes both the left and right eye
+frames into a standard 16:9 resolution (e.g., 1920x1080). Each eye gets
+a horizontally squashed 960x1080 image, which the viewer's 3D hardware
+stretches back to normal.</li>
+<li><strong>Full-SBS:</strong> Keeps both frames at their native
+resolution side-by-side. For dual 1080p feeds, this requires a 32:9
+aspect ratio canvas with a resolution of 3840x1080.</li>
+</ul>
+<h2 id="step-2-configure-obs-canvas-resolution">Step 2: Configure OBS
+Canvas Resolution</h2>
+<ol type="1">
+<li>Open OBS Studio and go to <strong>Settings</strong> &gt;
+<strong>Video</strong>.</li>
+<li>For <strong>Half-SBS</strong>, set both the <strong>Base (Canvas)
+Resolution</strong> and <strong>Output (Scaled) Resolution</strong> to a
+standard 16:9 resolution, such as <code>1920x1080</code>.</li>
+<li>For <strong>Full-SBS</strong>, manually type in a double-width
+resolution. For dual 1080p feeds, enter <code>3840x1080</code> in both
+fields.</li>
+<li>Set your desired <strong>Common FPS Values</strong> (typically 30 or
+60 fps) and click <strong>Apply</strong>.</li>
+</ol>
+<h2 id="step-3-arrange-the-left-and-right-video-sources">Step 3: Arrange
+the Left and Right Video Sources</h2>
+<p>To broadcast stereoscopic 3D, you must position the left-eye feed on
+the left side of the screen and the right-eye feed on the right
+side.</p>
+<ol type="1">
+<li>In the <strong>Sources</strong> dock, click the <strong>+</strong>
+icon and add your video capture devices or media sources (one for the
+Left eye, one for the Right eye).</li>
+<li>Select your <strong>Left Eye</strong> source. Right-click it, go to
+<strong>Transform</strong> &gt; <strong>Edit Transform</strong>.</li>
+<li>Set the <strong>Size</strong> according to your format:
+<ul>
+<li>For <strong>Half-SBS</strong> (on a 1920x1080 canvas): Set the width
+to <code>960</code> and height to <code>1080</code>. Set the
+<strong>Position</strong> to <code>X: 0, Y: 0</code>.</li>
+<li>For <strong>Full-SBS</strong> (on a 3840x1080 canvas): Set the width
+to <code>1920</code> and height to <code>1080</code>. Set the
+<strong>Position</strong> to <code>X: 0, Y: 0</code>.</li>
+</ul></li>
+<li>Select your <strong>Right Eye</strong> source. Right-click it, go to
+<strong>Transform</strong> &gt; <strong>Edit Transform</strong>.</li>
+<li>Set the <strong>Size</strong> to match the left source.</li>
+<li>Set the <strong>Position</strong> so it sits exactly on the right
+half of the canvas:
+<ul>
+<li>For <strong>Half-SBS</strong>: Set <strong>Position</strong> to
+<code>X: 960, Y: 0</code>.</li>
+<li>For <strong>Full-SBS</strong>: Set <strong>Position</strong> to
+<code>X: 1920, Y: 0</code>.</li>
+</ul></li>
+</ol>
+<h2 id="step-4-adjust-encoding-and-bitrate-settings">Step 4: Adjust
+Encoding and Bitrate Settings</h2>
+<p>Streaming 3D content—especially Full-SBS—requires higher bandwidth
+due to the increased pixel count.</p>
+<ol type="1">
+<li>Go to <strong>Settings</strong> &gt; <strong>Output</strong>.</li>
+<li>Set the <strong>Output Mode</strong> to
+<strong>Advanced</strong>.</li>
+<li>Under the <strong>Streaming</strong> tab, select a hardware encoder
+(like NVIDIA NVENC or AMD AMF) to reduce CPU strain.</li>
+<li>Adjust your <strong>Bitrate</strong> based on your resolution:
+<ul>
+<li>For <strong>Half-SBS (1080p 60fps)</strong>: Aim for <strong>6,000
+to 9,000 Kbps</strong>.</li>
+<li>For <strong>Full-SBS (3840x1080 60fps)</strong>: Aim for
+<strong>12,000 to 18,000 Kbps</strong> to prevent compression
+artifacts.</li>
+</ul></li>
+</ol>
+<h2 id="step-5-start-the-broadcast">Step 5: Start the Broadcast</h2>
+<p>Input your stream key from your chosen platform (such as YouTube or
+VR-friendly streaming servers) under <strong>Settings</strong> &gt;
+<strong>Stream</strong>. Once configured, click <strong>Start
+Streaming</strong>. Viewers using 3D TVs, VR headsets, or stereoscopic
+players will be able to merge the side-by-side feed into a single 3D
+image.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

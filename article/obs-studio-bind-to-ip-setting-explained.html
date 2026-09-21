@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Bind to IP Setting Explained - obs-studio</title>
+    <meta name="description" content="The "Bind to IP" setting in OBS Studio is a crucial advanced network configuration designed for users with multiple Network Interface Cards (NICs) or multiple active internet connections. This article explains the exact purpose of this setting, how it ro">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-bind-to-ip-setting-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Bind to IP Setting Explained - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-bind-to-ip-setting-explained" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The "Bind to IP" setting in OBS Studio is a crucial advanced network configuration designed for users with multiple Network Interface Cards (NICs) or multiple active internet connections. This article explains the exact purpose of this setting, how it ro" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-bind-to-ip-setting-explained">OBS Studio Bind to IP
+Setting Explained</h1>
+<p>The "Bind to IP" setting in OBS Studio is a crucial advanced network
+configuration designed for users with multiple Network Interface Cards
+(NICs) or multiple active internet connections. This article explains
+the exact purpose of this setting, how it routes your streaming data
+through a specific network interface, and why it is essential for
+preventing lag and ensuring stream stability in multi-network
+environments.</p>
+<h2 id="the-purpose-of-bind-to-ip">The Purpose of "Bind to IP"</h2>
+<p>By default, OBS Studio relies on your operating system (Windows,
+macOS, or Linux) to decide which network adapter to use when sending
+your stream data to platforms like Twitch, YouTube, or Kick. In a
+standard computer setup with only one internet connection (such as a
+single Ethernet cable), this system works perfectly.</p>
+<p>However, if your computer has multiple network connections—such as a
+wired Ethernet port and a Wi-Fi card, or dual Ethernet ports connected
+to different internet service providers (ISPs)—the operating system may
+dynamically shift traffic between them. This can cause dropped frames,
+sudden bitrate drops, or complete stream disconnections.</p>
+<p>The <strong>Bind to IP</strong> setting forces OBS Studio to bypass
+the operating system's default routing decision. It locks OBS Studio's
+outbound stream traffic to one specific network adapter by binding the
+software to that adapter's local IP address.</p>
+<h2 id="key-benefits-in-multi-nic-setups">Key Benefits in Multi-NIC
+Setups</h2>
+<h3 id="1-dedicated-streaming-bandwidth">1. Dedicated Streaming
+Bandwidth</h3>
+<p>In a dual-WAN or dual-NIC setup, you can connect one network card to
+a dedicated streaming internet line (ISP A) and the other to your
+gaming/general-use internet line (ISP B). By binding OBS Studio to the
+IP address of ISP A, you ensure your stream never competes with your
+game, downloads, or voice chat for bandwidth.</p>
+<h3 id="2-stream-stability-and-reliability">2. Stream Stability and
+Reliability</h3>
+<p>If your primary network connection becomes unstable, an operating
+system might attempt to route traffic through a secondary adapter (like
+Wi-Fi). While this sounds beneficial, the transition often causes OBS to
+disconnect. Binding OBS to your most stable, wired connection prevents
+the software from shifting to a slower, high-latency wireless
+connection.</p>
+<h3 id="3-network-traffic-segregation">3. Network Traffic
+Segregation</h3>
+<p>Content creators using NDI (Network Device Interface) or local RTMP
+servers to capture gameplay from a secondary PC often have one network
+card dedicated to local high-speed intranet traffic and another
+dedicated to the internet. Binding OBS to the WAN-facing network card
+ensures the stream goes out to the public internet while local ingest
+tools utilize the private local network.</p>
+<h2 id="how-to-configure-bind-to-ip-in-obs-studio">How to Configure
+"Bind to IP" in OBS Studio</h2>
+<p>To configure this setting, follow these steps:</p>
+<ol type="1">
+<li>Open OBS Studio and go to <strong>Settings</strong>.</li>
+<li>Click on the <strong>Advanced</strong> tab in the left-hand
+menu.</li>
+<li>Scroll down to the <strong>Network</strong> section.</li>
+<li>Locate the <strong>Bind to IP</strong> dropdown menu.</li>
+<li>By default, this is set to <strong>Default</strong>. Click the
+dropdown to see a list of your network adapters, displayed by their
+local IP addresses (e.g., <code>192.168.1.15</code> or
+<code>10.0.0.42</code>).</li>
+<li>Select the IP address corresponding to the network adapter you want
+to use exclusively for streaming.</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong>.</li>
+</ol>
+<p><em>Note: If your local IP address changes frequently due to DHCP,
+you may need to assign a static IP to your preferred network adapter in
+your operating system settings to prevent OBS from losing the binding
+connection in the future.</em></p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Studio Handles Constant-Power Audio Panning - obs-studio</title>
+    <meta name="description" content="This article explains how OBS Studio calculates and applies constant-power panning to maintain consistent perceived loudness across stereo outputs. It breaks down the mathematical sine/cosine panning laws, the handling of mono versus stereo inputs within">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-studio-handles-constant-power-audio-panning">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Studio Handles Constant-Power Audio Panning - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-studio-handles-constant-power-audio-panning" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how OBS Studio calculates and applies constant-power panning to maintain consistent perceived loudness across stereo outputs. It breaks down the mathematical sine/cosine panning laws, the handling of mono versus stereo inputs within" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-studio-handles-constant-power-audio-panning">How OBS
+Studio Handles Constant-Power Audio Panning</h1>
+<p>This article explains how OBS Studio calculates and applies
+constant-power panning to maintain consistent perceived loudness across
+stereo outputs. It breaks down the mathematical sine/cosine panning
+laws, the handling of mono versus stereo inputs within the OBS audio
+pipeline, and the acoustic principles that prevent perceived volume
+drops when moving audio between channels.</p>
+<h3 id="the-need-for-constant-power-panning">The Need for Constant-Power
+Panning</h3>
+<p>When moving a sound source across a stereo field, simply adjusting
+the volume of the left and right channels linearly causes an acoustic
+phenomenon known as the "center dip." If both channels are set to 50%
+gain at the center position, the combined acoustic energy drops by
+approximately 3 dB compared to when the sound is hard-panned to a single
+side at 100% gain. Conversely, if both channels are kept at 100% in the
+center, the acoustic energy increases by +3 dB, making centered audio
+sound significantly louder.</p>
+<p>To prevent this variation, digital audio workstations and
+broadcasting engines like OBS Studio employ a constant-power panning
+law. This law ensures that the total acoustic energy (<span
+class="math inline">\(L^2 + R^2 = 1\)</span>) remains uniform regardless
+of the pan knob's position.</p>
+<h3 id="the-mathematical-model-sinecosine-law">The Mathematical Model
+(Sine/Cosine Law)</h3>
+<p>OBS Studio's underlying audio engine (<code>libobs</code>) utilizes a
+standard equal-power trigonometric curve, often referred to as the
+standard 3 dB constant-power law. Instead of linear attenuation, the
+gain multipliers for the left (<span class="math inline">\(G_L\)</span>)
+and right (<span class="math inline">\(G_R\)</span>) channels are
+derived using sine and cosine functions.</p>
+<p>Given a normalized panning value <span
+class="math inline">\(p\)</span> ranging from <span
+class="math inline">\(-1.0\)</span> (hard left) to <span
+class="math inline">\(+1.0\)</span> (hard right):</p>
+<ol type="1">
+<li><p><strong>Angle Normalization</strong>: The pan position is mapped
+to an angle <span class="math inline">\(\theta\)</span> across a
+90-degree (<span class="math inline">\(\pi / 2\)</span> radians)
+quadrant: <span class="math display">\[\theta = \frac{\pi}{4} \times (p
++ 1)\]</span></p></li>
+<li><p><strong>Gain Calculation</strong>:</p>
+<ul>
+<li>Left Channel Gain: <span class="math inline">\(G_L =
+\cos(\theta)\)</span></li>
+<li>Right Channel Gain: <span class="math inline">\(G_R =
+\sin(\theta)\)</span></li>
+</ul></li>
+</ol>
+<h4 id="practical-application-across-pan-positions">Practical
+Application Across Pan Positions:</h4>
+<ul>
+<li><strong>Hard Left (<span class="math inline">\(p =
+-1.0\)</span>):</strong> <span class="math inline">\(\theta = 0\)</span>
+radians. <span class="math inline">\(G_L = \cos(0) = 1.0\)</span> (0
+dB), <span class="math inline">\(G_R = \sin(0) = 0.0\)</span> (<span
+class="math inline">\(-\infty\)</span> dB).</li>
+<li><strong>Center (<span class="math inline">\(p =
+0.0\)</span>):</strong> <span class="math inline">\(\theta = \pi /
+4\)</span> radians (<span class="math inline">\(45^\circ\)</span>).
+<span class="math inline">\(G_L = \cos(\pi / 4) \approx 0.7071\)</span>
+(<span class="math inline">\(-3\text{ dB}\)</span>), <span
+class="math inline">\(G_R = \sin(\pi / 4) \approx 0.7071\)</span> (<span
+class="math inline">\(-3\text{ dB}\)</span>).</li>
+<li><strong>Hard Right (<span class="math inline">\(p =
+1.0\)</span>):</strong> <span class="math inline">\(\theta = \pi /
+2\)</span> radians (<span class="math inline">\(90^\circ\)</span>).
+<span class="math inline">\(G_L = \cos(\pi / 2) = 0.0\)</span> (<span
+class="math inline">\(-\infty\)</span> dB), <span
+class="math inline">\(G_R = \sin(\pi / 2) = 1.0\)</span> (0 dB).</li>
+</ul>
+<p>Because <span class="math inline">\((0.7071)^2 + (0.7071)^2 = 0.5 +
+0.5 = 1.0\)</span>, the combined power of both channels at center equals
+the power of either channel when fully panned, maintaining smooth
+perceived volume during panning automation or adjustments.</p>
+<h3 id="panning-mono-sources-vs-stereo-balancing">Panning Mono Sources
+vs. Stereo Balancing</h3>
+<p>OBS Studio handles mono and stereo inputs differently when routing
+them to a stereo bus:</p>
+<ul>
+<li><strong>Mono Inputs:</strong> When a source is configured as mono
+(or downmixed via Advanced Audio Properties), the single incoming audio
+stream is cloned to both output channels. The constant-power panning
+algorithm directly modulates these two streams using the calculated
+<span class="math inline">\(G_L\)</span> and <span
+class="math inline">\(G_R\)</span> coefficients.</li>
+<li><strong>Stereo Inputs (Balance Control):</strong> For stereo
+sources, applying the panning slider functions primarily as a stereo
+balance control. In standard operation, rather than collapsing both
+channels to mono and re-panning them, the engine scales the existing
+left and right channels using the power-law coefficients to avoid phase
+issues or altering the existing stereo image. If true panning of a
+stereo source is required, downmixing to mono first allows the audio
+engine to treat the track as a single point source within the stereo
+field.</li>
+</ul>
+<h3 id="processing-within-the-obs-audio-pipeline">Processing Within the
+OBS Audio Pipeline</h3>
+<p>Audio processing in OBS Studio occurs in real-time floating-point
+format (typically 32-bit float). Panning calculations are applied during
+the mixing stage inside <code>libobs</code>:</p>
+<ol type="1">
+<li>The raw audio frame is captured from the input device.</li>
+<li>Channel layout checks determine whether the input requires
+conversion, channel mapping, or downmixing.</li>
+<li>The panning multipliers (<span class="math inline">\(G_L,
+G_R\)</span>) are computed from the user's mixer settings.</li>
+<li>The floating-point samples are multiplied by the respective gain
+coefficients.</li>
+<li>The processed channels are summed into the master stereo bus before
+hitting output limiters and the final streaming/recording encoder.</li>
+</ol>
+<p>By applying these constant-power calculations directly within the
+32-bit floating-point mixing stage, OBS avoids clipping artifacts,
+prevents center-channel volume dips, and guarantees that audio
+positioning remains acoustically transparent to listeners.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

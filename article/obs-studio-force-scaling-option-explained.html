@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Force Scaling Option Explained - obs-studio</title>
+    <meta name="description" content="Enabling the "Force scaling" option in an OBS Studio source forces the software to resize the source's resolution to a specific, user-defined dimension before it is rendered on the preview canvas. This feature is primarily used to reduce GPU overhead, im">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-force-scaling-option-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Force Scaling Option Explained - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-force-scaling-option-explained" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Enabling the "Force scaling" option in an OBS Studio source forces the software to resize the source's resolution to a specific, user-defined dimension before it is rendered on the preview canvas. This feature is primarily used to reduce GPU overhead, im" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-force-scaling-option-explained">OBS Studio Force
+Scaling Option Explained</h1>
+<p>Enabling the "Force scaling" option in an OBS Studio source forces
+the software to resize the source's resolution to a specific,
+user-defined dimension before it is rendered on the preview canvas. This
+feature is primarily used to reduce GPU overhead, improve stream
+performance, and maintain consistent layout dimensions when dealing with
+high-resolution inputs or sources that frequently change
+resolutions.</p>
+<h2 id="how-force-scaling-works-in-obs-studio">How Force Scaling Works
+in OBS Studio</h2>
+<p>When you add a source to OBS Studio—such as a Game Capture, Window
+Capture, or Video Capture Device—it natively renders at its base
+resolution. If you have a 4K game capture but your stream canvas is only
+1080p, OBS has to scale that 4K image down in real-time.</p>
+<p>By enabling "Force scaling" (often found in the source's properties
+or transform settings) and setting a specific resolution, you instruct
+OBS to resize the input texture at the capture level.</p>
+<h2 id="key-effects-of-enabling-force-scaling">Key Effects of Enabling
+Force Scaling</h2>
+<h3 id="1-significant-gpu-and-vram-savings">1. Significant GPU and VRAM
+Savings</h3>
+<p>Rendering high-resolution sources (like 4K or 1440p) takes a toll on
+your graphics card. When you force scale a 4K source down to 1080p, OBS
+processes the smaller 1080p texture instead of the massive 4K texture.
+This frees up VRAM and GPU clock cycles, which can resolve rendering lag
+and dropped frames during intensive gaming.</p>
+<h3 id="2-prevention-of-layout-disruption">2. Prevention of Layout
+Disruption</h3>
+<p>Some applications and games dynamically change resolutions based on
+in-game settings or loading screens. Without force scaling, a resolution
+drop will cause the source to shrink on your OBS canvas, ruining your
+stream layout. Enabling force scaling locks the source to your specified
+dimensions, ensuring it always fits its designated spot on your screen
+regardless of the game's internal resolution.</p>
+<h3 id="3-application-of-custom-scale-filters">3. Application of Custom
+Scale Filters</h3>
+<p>When you force scaling, you can choose how OBS resamples the image.
+You can select different scale filters to prioritize either performance
+or image sharpness:</p>
+<ul>
+<li><strong>Bilinear:</strong> Fastest performance, but can look
+blurry.</li>
+<li><strong>Bicubic:</strong> A balanced option offering good sharpness
+with moderate resource usage.</li>
+<li><strong>Lanczos:</strong> The sharpest option, but demands the most
+processing power.</li>
+</ul>
+<h2 id="when-should-you-enable-it">When Should You Enable It?</h2>
+<p>You should enable force scaling if you are capturing a
+high-resolution display (1440p or 4K) but streaming in 1080p or 720p, or
+if you notice your stream lag whenever a captured window changes
+size.</p>
+<p>Conversely, you should avoid enabling it if your source resolution
+already matches your canvas resolution, as forcing unnecessary scaling
+can introduce artificial blurriness and waste system resources.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

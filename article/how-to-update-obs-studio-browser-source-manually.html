@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Update OBS Studio Browser Source Manually - obs-studio</title>
+    <meta name="description" content="The built-in browser source in OBS Studio, powered by the Chromium Embedded Framework (CEF), is essential for displaying web-based overlays, alerts, and widgets. While OBS Studio typically updates this component automatically during major software releas">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-update-obs-studio-browser-source-manually">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Update OBS Studio Browser Source Manually - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-update-obs-studio-browser-source-manually" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The built-in browser source in OBS Studio, powered by the Chromium Embedded Framework (CEF), is essential for displaying web-based overlays, alerts, and widgets. While OBS Studio typically updates this component automatically during major software releas" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-update-obs-studio-browser-source-manually">How to Update
+OBS Studio Browser Source Manually</h1>
+<p>The built-in browser source in OBS Studio, powered by the Chromium
+Embedded Framework (CEF), is essential for displaying web-based
+overlays, alerts, and widgets. While OBS Studio typically updates this
+component automatically during major software releases, there are times
+when you may need to update or reinstall it manually to resolve
+performance issues, rendering bugs, or compatibility errors. This guide
+provides a straightforward, step-by-step process to manually update or
+repair the CEF browser source in OBS Studio.</p>
+<h2 id="understanding-obs-browser-source-updates">Understanding OBS
+Browser Source Updates</h2>
+<p>Because the Chromium Embedded Framework (CEF) is deeply integrated
+into the OBS Studio architecture, you cannot update the CEF version
+independently of the OBS Browser plugin. To manually update or fix the
+browser source, you must either replace the browser plugin files
+manually or run a clean installation of OBS Studio.</p>
+<p>Here are the two primary methods to accomplish this.</p>
+<hr />
+<h2 id="method-1-manually-replacing-the-obs-browser-plugin-files">Method
+1: Manually Replacing the OBS Browser Plugin Files</h2>
+<p>If you want to update the browser source without reinstalling the
+entire OBS Studio application, you can manually replace the plugin files
+with the latest version from the official OBS Project repository.</p>
+<h3 id="step-1-download-the-latest-browser-plugin">Step 1: Download the
+Latest Browser Plugin</h3>
+<ol type="1">
+<li>Open your web browser and navigate to the official GitHub repository
+for the OBS Browser plugin
+(<code>github.com/obsproject/obs-browser/releases</code>).</li>
+<li>Look for the latest release compatible with your version of OBS
+Studio.</li>
+<li>Download the <code>.zip</code> file designated for your operating
+system (e.g., <code>obs-browser-windows.zip</code> for Windows).</li>
+</ol>
+<h3 id="step-2-close-obs-studio">Step 2: Close OBS Studio</h3>
+<p>Ensure OBS Studio is completely closed and not running in the
+background or in your system tray before proceeding.</p>
+<h3 id="step-3-extract-and-replace-the-files">Step 3: Extract and
+Replace the Files</h3>
+<ol type="1">
+<li>Locate your OBS Studio installation directory. By default, this is:
+<ul>
+<li><strong>Windows:</strong>
+<code>C:\Program Files\obs-studio\</code></li>
+<li><strong>macOS:</strong>
+<code>/Applications/OBS.app/Contents/Resources/</code></li>
+</ul></li>
+<li>Open the downloaded <code>.zip</code> file.</li>
+<li>Drag and drop the contents of the <code>.zip</code> file (usually
+containing <code>obs-plugins</code> and <code>data</code> folders)
+directly into your main OBS Studio installation directory.</li>
+<li>When prompted, select <strong>Replace the files in the
+destination</strong> and grant administrator permission if
+required.</li>
+</ol>
+<hr />
+<h2 id="method-2-manually-reinstalling-obs-studio-recommended">Method 2:
+Manually Reinstalling OBS Studio (Recommended)</h2>
+<p>Since the browser source is tied to specific OBS builds, the safest
+and most stable way to ensure you have the latest CEF version is to run
+a manual reinstall of OBS Studio. This process will update the browser
+source without deleting your scenes, sources, or profiles.</p>
+<h3 id="step-1-backup-your-settings-optional-but-safe">Step 1: Backup
+Your Settings (Optional but Safe)</h3>
+<p>While updating OBS does not delete your settings, creating a backup
+is highly recommended:</p>
+<ol type="1">
+<li>In OBS Studio, go to <strong>Profile</strong> &gt;
+<strong>Export</strong> to save your profile.</li>
+<li>Go to <strong>Scene Collection</strong> &gt; <strong>Export</strong>
+to save your scenes.</li>
+</ol>
+<h3 id="step-2-download-the-latest-obs-studio-installer">Step 2:
+Download the Latest OBS Studio Installer</h3>
+<ol type="1">
+<li>Go to the official OBS Studio website.</li>
+<li>Download the installer for your operating system.</li>
+</ol>
+<h3 id="step-3-run-the-installer">Step 3: Run the Installer</h3>
+<ol type="1">
+<li>Run the downloaded installer.</li>
+<li>If prompted, allow the installer to overwrite your existing OBS
+Studio installation.</li>
+<li>Make sure the option for the <strong>Browser Source</strong> is
+checked during the component selection screen (if applicable).</li>
+<li>Complete the installation process and restart your computer.</li>
+</ol>
+<hr />
+<h2
+id="troubleshooting-browser-source-issues-after-updating">Troubleshooting
+Browser Source Issues After Updating</h2>
+<p>If you still experience issues with your browser source after a
+manual update, try the following quick fixes:</p>
+<ul>
+<li><strong>Clear the Cache:</strong> In OBS Studio, double-click your
+browser source to open its properties, scroll to the bottom, and click
+the <strong>Refresh cache of current page</strong> button.</li>
+<li><strong>Toggle Hardware Acceleration:</strong> Go to
+<strong>Settings</strong> &gt; <strong>Advanced</strong> in OBS Studio.
+Under the <strong>Sources</strong> section, check or uncheck
+<strong>Enable Browser Source Hardware Acceleration</strong> to see if
+performance improves.</li>
+<li><strong>Check Security Software:</strong> Ensure your antivirus or
+Windows Defender is not blocking the <code>obs-browser-page.exe</code>
+process, which runs the CEF instance.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

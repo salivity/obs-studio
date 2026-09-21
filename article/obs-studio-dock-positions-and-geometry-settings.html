@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Dock Positions and Geometry Settings - obs-studio</title>
+    <meta name="description" content="OBS Studio manages dock positions, window sizes, and custom user dock arrangements by serializing Qt application states directly into its core configuration files. Instead of storing human-readable layout coordinates for every panel, OBS relies on Qt’s">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-dock-positions-and-geometry-settings">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Dock Positions and Geometry Settings - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-dock-positions-and-geometry-settings" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio manages dock positions, window sizes, and custom user dock arrangements by serializing Qt application states directly into its core configuration files. Instead of storing human-readable layout coordinates for every panel, OBS relies on Qt’s" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-dock-positions-and-geometry-settings">OBS Studio Dock
+Positions and Geometry Settings</h1>
+<p>OBS Studio manages dock positions, window sizes, and custom user dock
+arrangements by serializing Qt application states directly into its core
+configuration files. Instead of storing human-readable layout
+coordinates for every panel, OBS relies on Qt’s native state-saving
+mechanisms, converting complex UI hierarchies into encoded binary
+strings. This article explains where these settings reside, how OBS
+processes custom browser docks, and how dock layout data is written to
+and restored from the configuration files.</p>
+<h3 id="configuration-file-locations">Configuration File Locations</h3>
+<p>OBS Studio maintains its interface settings within user configuration
+directories specific to the host operating system:</p>
+<ul>
+<li><strong>Windows:</strong> <code>%APPDATA%\obs-studio\</code></li>
+<li><strong>macOS:</strong>
+<code>~/Library/Application Support/obs-studio/</code></li>
+<li><strong>Linux:</strong> <code>~/.config/obs-studio/</code></li>
+</ul>
+<p>While streaming parameters and output configurations are managed
+within profile-specific folders, main window parameters, custom browser
+dock definitions, and layout structures are primarily handled in the
+<code>global.ini</code> configuration file.</p>
+<h3 id="qt-state-serialization-and-base64-encoding">Qt State
+Serialization and Base64 Encoding</h3>
+<p>OBS Studio’s user interface is built on the Qt framework, utilizing
+the <code>QMainWindow</code> class. To manage dock layouts, Qt provides
+two primary functions: <code>saveGeometry()</code> and
+<code>saveState()</code>.</p>
+<p>When OBS closes or when docks are rearranged:</p>
+<ol type="1">
+<li><strong>Window Geometry:</strong> OBS captures the main window size,
+screen coordinates, and maximized/minimized status using
+<code>saveGeometry()</code>.</li>
+<li><strong>Dock State:</strong> OBS captures the status of all internal
+panels—including native docks (Scenes, Sources, Audio Mixer) and custom
+docks—using <code>saveState()</code>. This function records whether
+docks are pinned, tabbed, floating, closed, or nested, alongside their
+relative pixel dimensions.</li>
+</ol>
+<p>These functions output binary data as a <code>QByteArray</code>.
+Because <code>.ini</code> files require text-based key-value pairs, OBS
+converts these binary blobs into Base64-encoded strings. In
+<code>global.ini</code>, these appear under the
+<code>[BasicWindow]</code> section as:</p>
+<ul>
+<li><code>geometry</code>: The Base64 string containing the main
+window's physical dimensions and screen positioning.</li>
+<li><code>DockState</code>: The Base64 string containing the full
+hierarchical layout and visibility status of all docked and floating
+panels.</li>
+</ul>
+<h3 id="management-of-custom-browser-docks">Management of Custom Browser
+Docks</h3>
+<p>Custom browser docks—user-defined web panels such as chat feeds or
+stream analytics—require a two-step management process:</p>
+<ol type="1">
+<li><strong>Dock Metadata Definition:</strong> OBS Studio saves the
+metadata for custom browser docks (titles and target URLs) as a
+JSON-formatted string or discrete keys within <code>global.ini</code>
+under entries such as <code>ExtraBrowsers</code>. This preserves the
+unique identifiers and source paths for each custom panel.</li>
+<li><strong>Layout Association:</strong> When OBS generates the custom
+dock widget, it assigns an internal Qt object name
+(<code>objectName</code>) based on the dock’s unique identifier. The
+general <code>DockState</code> string uses this object name to anchor
+the custom dock to its respective location alongside native UI
+elements.</li>
+</ol>
+<h3 id="the-restoration-process-on-launch">The Restoration Process on
+Launch</h3>
+<p>During startup, OBS Studio initializes the core application and
+constructs the main window framework before reading
+<code>global.ini</code>:</p>
+<ol type="1">
+<li>OBS reads the custom dock definitions and generates the
+corresponding <code>QDockWidget</code> containers with their embedded
+web views.</li>
+<li>The application passes the Base64-decoded <code>geometry</code> data
+to <code>restoreGeometry()</code>, repositioning the outer application
+frame to the user's previous monitor and coordinates.</li>
+<li>The Base64-decoded <code>DockState</code> data is passed to
+<code>restoreState()</code>. Qt matches the saved
+<code>objectName</code> identifiers against the newly instantiated
+native and custom docks, automatically restoring dock widths, splitters,
+tabbed groups, and floating positions to their exact previous
+state.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

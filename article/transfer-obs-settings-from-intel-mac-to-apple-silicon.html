@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfer OBS Settings from Intel Mac to Apple Silicon - obs-studio</title>
+    <meta name="description" content="Moving your OBS Studio configuration, including scenes, profiles, and sources, from an older Intel-based Mac to a newer Apple Silicon (M-series) Mac is a straightforward process when done correctly. This guide provides a step-by-step walkthrough on how t">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/transfer-obs-settings-from-intel-mac-to-apple-silicon">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Transfer OBS Settings from Intel Mac to Apple Silicon - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/transfer-obs-settings-from-intel-mac-to-apple-silicon" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Moving your OBS Studio configuration, including scenes, profiles, and sources, from an older Intel-based Mac to a newer Apple Silicon (M-series) Mac is a straightforward process when done correctly. This guide provides a step-by-step walkthrough on how t" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="transfer-obs-settings-from-intel-mac-to-apple-silicon">Transfer
+OBS Settings from Intel Mac to Apple Silicon</h1>
+<p>Moving your OBS Studio configuration, including scenes, profiles, and
+sources, from an older Intel-based Mac to a newer Apple Silicon
+(M-series) Mac is a straightforward process when done correctly. This
+guide provides a step-by-step walkthrough on how to locate, backup, and
+restore your OBS data folder to ensure a seamless transition without
+losing your custom stream layouts or configurations.</p>
+<h3
+id="step-1-locate-and-copy-the-obs-config-folder-on-your-intel-mac">Step
+1: Locate and Copy the OBS Config Folder on your Intel Mac</h3>
+<p>All of your OBS profiles, scenes, and settings are stored in a
+specific system folder. You need to copy this folder to transfer them to
+your new Mac.</p>
+<ol type="1">
+<li>Open <strong>Finder</strong> on your Intel Mac.</li>
+<li>Click on <strong>Go</strong> in the top menu bar, then select
+<strong>Go to Folder...</strong> (or press
+<code>Cmd + Shift + G</code>).</li>
+<li>Type or paste the following path and press Enter:
+<code>~/Library/Application Support/</code></li>
+<li>Locate the folder named <strong>obs-studio</strong>.</li>
+<li>Copy this entire folder to an external drive, USB flash drive, or
+upload it to a cloud storage service like iCloud, Google Drive, or
+AirDrop it directly to your new Mac.</li>
+</ol>
+<h3 id="step-2-install-obs-studio-on-the-apple-silicon-mac">Step 2:
+Install OBS Studio on the Apple Silicon Mac</h3>
+<p>Before restoring your settings, you must install the correct version
+of OBS Studio on your new Mac.</p>
+<ol type="1">
+<li>Go to the official OBS Studio website.</li>
+<li>Download the <strong>Apple Silicon</strong> installer (do not
+download the Intel version, as the native Apple Silicon version offers
+significantly better performance).</li>
+<li>Open the downloaded <code>.dmg</code> file and drag OBS Studio into
+your <strong>Applications</strong> folder.</li>
+<li>Launch OBS Studio once to let it generate the necessary system
+folders, then close the application completely.</li>
+</ol>
+<h3 id="step-3-restore-the-config-folder-on-the-apple-silicon-mac">Step
+3: Restore the Config Folder on the Apple Silicon Mac</h3>
+<p>Now you will replace the default configuration files on your new Mac
+with the backup from your Intel Mac.</p>
+<ol type="1">
+<li>Open <strong>Finder</strong> on your new Apple Silicon Mac.</li>
+<li>Click on <strong>Go</strong> in the top menu bar, select <strong>Go
+to Folder...</strong>, and enter:
+<code>~/Library/Application Support/</code></li>
+<li>Locate the newly created <strong>obs-studio</strong> folder and
+delete it (or rename it to <code>obs-studio-old</code> as a
+backup).</li>
+<li>Paste the <strong>obs-studio</strong> folder that you copied from
+your Intel Mac into this directory.</li>
+</ol>
+<h3 id="step-4-handle-plugins-and-virtual-cameras">Step 4: Handle
+Plugins and Virtual Cameras</h3>
+<p>Because you are transitioning from an Intel (x86_64) architecture to
+Apple Silicon (ARM64), there are a few compatibility factors to keep in
+mind regarding plugins:</p>
+<ul>
+<li><strong>Native Apple Silicon Plugins:</strong> If you run the native
+Apple Silicon version of OBS, any third-party plugins you used on your
+Intel Mac must also have Apple Silicon native versions. You will need to
+download and install the ARM64/Apple Silicon versions of these plugins
+manually on your new Mac.</li>
+<li><strong>Incompatible Plugins:</strong> If a plugin does not have an
+Apple Silicon version, it will not load. If you absolutely require an
+older Intel-only plugin, you can force OBS to run under Rosetta 2
+emulation by right-clicking the OBS app icon in Finder, selecting
+<strong>Get Info</strong>, and checking <strong>Open using
+Rosetta</strong>. However, this will result in lower performance
+compared to running OBS natively.</li>
+<li><strong>Media Sources:</strong> If your scenes use local media files
+(like overlays, videos, or audio files), ensure those files are moved to
+the exact same file paths on the new Mac, or you will need to manually
+re-link them inside OBS.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

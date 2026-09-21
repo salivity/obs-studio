@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Set Up Closed Captions in OBS Studio - obs-studio</title>
+    <meta name="description" content="This guide provides a straightforward, step-by-step tutorial on how to set up closed captions for your live stream using OBS Studio. You will learn how to install and configure the most popular captioning plugin to make your broadcasts accessible, compli">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-set-up-closed-captions-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Set Up Closed Captions in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-set-up-closed-captions-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide provides a straightforward, step-by-step tutorial on how to set up closed captions for your live stream using OBS Studio. You will learn how to install and configure the most popular captioning plugin to make your broadcasts accessible, compli" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-set-up-closed-captions-in-obs-studio">How to Set Up
+Closed Captions in OBS Studio</h1>
+<p>This guide provides a straightforward, step-by-step tutorial on how
+to set up closed captions for your live stream using OBS Studio. You
+will learn how to install and configure the most popular captioning
+plugin to make your broadcasts accessible, compliant, and engaging for
+all viewers without requiring expensive hardware.</p>
+<h2 id="step-1-install-the-obs-closed-captions-plugin">Step 1: Install
+the OBS Closed Captions Plugin</h2>
+<p>While OBS Studio does not have a built-in automatic captioning tool,
+you can easily add this functionality using a free, high-quality plugin
+called <strong>OBS Cloud Closed Captions</strong> (developed by
+ratwithacompiler).</p>
+<ol type="1">
+<li>Search for the <strong>OBS Cloud Closed Captions</strong> plugin on
+the official OBS Studio Resources forum.</li>
+<li>Download the installer compatible with your operating system
+(Windows or macOS).</li>
+<li>Close OBS Studio.</li>
+<li>Run the installer or manually extract the files to your OBS Studio
+installation folder.</li>
+<li>Relaunch OBS Studio.</li>
+</ol>
+<h2 id="step-2-access-and-enable-the-captioning-tool">Step 2: Access and
+Enable the Captioning Tool</h2>
+<p>Once the plugin is installed, you need to activate it within OBS
+Studio.</p>
+<ol type="1">
+<li>Open OBS Studio.</li>
+<li>In the top menu bar, click on <strong>Tools</strong>.</li>
+<li>Select <strong>Cloud Closed Captions</strong> from the dropdown
+menu. A new settings window will appear.</li>
+<li>Toggle the switch at the top to enable the captions.</li>
+</ol>
+<h2 id="step-3-configure-your-audio-and-language-settings">Step 3:
+Configure Your Audio and Language Settings</h2>
+<p>To ensure the plugin accurately transcribes your voice, you must
+point it to the correct microphone.</p>
+<ol type="1">
+<li>In the Cloud Closed Captions settings window, locate the
+<strong>Audio Source</strong> dropdown.</li>
+<li>Select your primary microphone or audio input capture device.</li>
+<li>Choose your spoken language under the <strong>Language</strong>
+dropdown (the plugin supports dozens of languages and regional
+accents).</li>
+<li>(Optional) Adjust the <strong>Caption Timeout</strong> to determine
+how long text remains on the screen after you finish speaking.</li>
+</ol>
+<h2 id="step-4-choose-how-to-display-your-captions">Step 4: Choose How
+to Display Your Captions</h2>
+<p>You can display closed captions in two different ways depending on
+your streaming platform and preferences:</p>
+<h3
+id="option-a-send-captions-to-the-streaming-platform-twitchyoutube-cc">Option
+A: Send Captions to the Streaming Platform (Twitch/YouTube CC)</h3>
+<p>This method sends the captions directly to the video player's
+metadata. Viewers can turn them on or off using the "CC" button on
+Twitch or YouTube.</p>
+<ol type="1">
+<li>In the plugin settings, check the box for <strong>Save Captions to
+Stream / Local Recording</strong>.</li>
+<li>This will automatically embed the captions into the stream signal.
+Note that this requires your streaming platform to support CEA-608/708
+captions (Twitch and YouTube support this natively).</li>
+</ol>
+<h3 id="option-b-display-captions-directly-on-the-screen-overlay">Option
+B: Display Captions directly on the Screen (Overlay)</h3>
+<p>If you want the captions to be permanently visible on the screen
+(known as open captions), you can output them to an OBS text source.</p>
+<ol type="1">
+<li>Create a new <strong>Text (GDI+)</strong> source in your OBS Sources
+dock and name it "Live Captions".</li>
+<li>Open the <strong>Cloud Closed Captions</strong> settings again.</li>
+<li>Look for the <strong>Target Text Source</strong> option and select
+your newly created "Live Captions" text source.</li>
+<li>The plugin will now output your spoken words directly to that text
+source, which you can style, resize, and position anywhere on your
+stream layout.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

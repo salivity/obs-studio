@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Gain Staging for Line-Level Mixers - obs-studio</title>
+    <meta name="description" content="This article explains how OBS Studio processes and manages audio gain staging when ingesting professional +4 dBu line-level signals from broadcast mixing desks. It outlines the transition from professional analog reference levels to the digital domain, d">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-gain-staging-for-line-level-mixers">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Gain Staging for Line-Level Mixers - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-gain-staging-for-line-level-mixers" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how OBS Studio processes and manages audio gain staging when ingesting professional +4 dBu line-level signals from broadcast mixing desks. It outlines the transition from professional analog reference levels to the digital domain, d" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-gain-staging-for-line-level-mixers">OBS Studio Gain
+Staging for Line-Level Mixers</h1>
+<p>This article explains how OBS Studio processes and manages audio gain
+staging when ingesting professional +4 dBu line-level signals from
+broadcast mixing desks. It outlines the transition from professional
+analog reference levels to the digital domain, details OBS Studio's
+internal 32-bit floating-point audio processing, and provides clear
+steps to establish proper headroom, avoid digital clipping, and ensure
+broadcast-compliant streaming output.</p>
+<h3 id="the-analog-to-digital-transition-4-dbu-to-dbfs">The
+Analog-to-Digital Transition (+4 dBu to dBFS)</h3>
+<p>Professional broadcast mixing desks operate at a nominal analog
+standard of +4 dBu (typically reading 0 VU on analog meters). OBS
+Studio, however, operates strictly in the digital domain where signal
+levels are measured in decibels relative to full scale (dBFS), where 0
+dBFS represents the absolute digital ceiling.</p>
+<p>OBS Studio itself does not contain analog hardware; it relies
+entirely on the audio interface, capture card, or digital network
+protocol (such as Dante via virtual soundcards) converting the signal.
+To preserve gain staging:</p>
+<ul>
+<li><strong>Calibration Standards:</strong> Professional converters
+typically align +4 dBu (0 VU) to either -18 dBFS (EBU standard) or -20
+dBFS (SMPTE standard).</li>
+<li><strong>Preventing Converter Clipping:</strong> If an analog desk
+pushes peaks up to +24 dBu, an interface calibrated to -20 dBFS headroom
+will hit +4 dBFS on the analog side relative to full scale, resulting in
+irreversible converter clipping before the signal ever reaches OBS.
+Ensure the hardware interface has sufficient input pad or headroom to
+absorb the desk's maximum output without clipping.</li>
+</ul>
+<h3 id="obs-studio-internal-audio-engine-processing">OBS Studio Internal
+Audio Engine Processing</h3>
+<p>Once the audio passes the Analog-to-Digital Converter (ADC) into the
+operating system driver, OBS ingests the stream into its internal audio
+pipeline.</p>
+<ul>
+<li><strong>32-Bit Float Architecture:</strong> OBS Studio processes
+audio internally using 32-bit floating-point precision. Within the OBS
+mixing environment, audio tracks theoretically have virtually unlimited
+dynamic range above 0 dBFS, meaning internal operations (such as summing
+multiple sources or applying EQ) will not clip mathematically between
+processes.</li>
+<li><strong>The Input Limitation:</strong> Floating-point headroom
+applies only <em>after</em> ingestion. If the incoming hardware driver
+clips at standard 24-bit or 16-bit integer depths (0 dBFS), the incoming
+audio is already distorted. Lowering the OBS fader cannot repair a
+signal that clipped at the audio interface level.</li>
+</ul>
+<h3 id="digital-faders-and-gain-scaling">Digital Faders and Gain
+Scaling</h3>
+<p>The faders in the OBS Studio Audio Mixer act as digital multipliers
+applied to the incoming data stream:</p>
+<ul>
+<li><strong>0.0 dB Fader Setting:</strong> Leaves the digital stream
+from the audio driver bit-transparent (unity gain). For broadcast desks
+delivering a fully pre-mixed feed, the OBS fader should remain locked at
+<strong>0.0 dB</strong>.</li>
+<li><strong>Fader Color Zones:</strong> OBS meters provide visual
+feedback in dBFS:
+<ul>
+<li><strong>Green (-inf to -20 dBFS):</strong> Safe baseline noise and
+low-level signal.</li>
+<li><strong>Yellow (-20 to -9 dBFS):</strong> Target zone for nominal
+broadcast dialogue and program content.</li>
+<li><strong>Red (-9 to 0 dBFS):</strong> Peak zone; signals approaching
+-3 to 0 dBFS risk clipping final lossy broadcast encoders (such as AAC
+or Opus).</li>
+</ul></li>
+</ul>
+<h3 id="managing-output-and-encoder-headroom">Managing Output and
+Encoder Headroom</h3>
+<p>While OBS avoids internal clipping via floating-point mathematics,
+the final destination—the stream or recording encoder—outputs to fixed
+integer formats (such as 16-bit PCM or lossy AAC).</p>
+<ol type="1">
+<li><strong>Unity Pass-Through:</strong> Manage all dynamic control,
+leveling, and ducking at the broadcast console rather than inside OBS.
+The broadcast console's master output meter should reflect the target
+program level.</li>
+<li><strong>Target Levels:</strong> Ensure average dialogue settles
+around -18 to -14 dBFS on the OBS meters, with transients never
+exceeding -2 dBFS.</li>
+<li><strong>True Peak Limiting:</strong> Lossy compression algorithms
+used in live streaming (such as AAC) can cause inter-sample peaks that
+generate audible distortion if the pre-encoded signal sits too close to
+0 dBFS. Add an OBS Limiter filter on the master output with a threshold
+set to <strong>-2.0 dB</strong> with a fast release (around 60 ms)
+strictly as a brickwall safety measure, ensuring the broadcast console
+retains primary control over the mix dynamics.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

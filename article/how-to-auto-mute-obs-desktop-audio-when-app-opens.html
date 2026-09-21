@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Auto Mute OBS Desktop Audio When App Opens - obs-studio</title>
+    <meta name="description" content="Managing audio sources in OBS Studio is crucial for a professional stream or recording, especially when you want to prevent specific applications—like Discord, copyrighted music players, or private messaging apps—from being heard by your audience. Wh">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-auto-mute-obs-desktop-audio-when-app-opens">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Auto Mute OBS Desktop Audio When App Opens - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-auto-mute-obs-desktop-audio-when-app-opens" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Managing audio sources in OBS Studio is crucial for a professional stream or recording, especially when you want to prevent specific applications—like Discord, copyrighted music players, or private messaging apps—from being heard by your audience. Wh" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-auto-mute-obs-desktop-audio-when-app-opens">How to Auto
+Mute OBS Desktop Audio When App Opens</h1>
+<p>Managing audio sources in OBS Studio is crucial for a professional
+stream or recording, especially when you want to prevent specific
+applications—like Discord, copyrighted music players, or private
+messaging apps—from being heard by your audience. While OBS Studio does
+not have a single default button to mute desktop audio when a specific
+app opens, you can easily automate this process. This article outlines
+the two best methods to achieve this: using the powerful "Advanced Scene
+Switcher" plugin for full automation, or utilizing OBS's native
+Application Audio Capture to exclude specific apps entirely.</p>
+<h2
+id="method-1-automate-muting-using-the-advanced-scene-switcher-plugin">Method
+1: Automate Muting Using the Advanced Scene Switcher Plugin</h2>
+<p>The most effective way to automatically mute your global Desktop
+Audio when a specific application opens is by using the free,
+widely-used <strong>Advanced Scene Switcher</strong> plugin for OBS
+Studio.</p>
+<h3 id="step-1-install-the-plugin">Step 1: Install the Plugin</h3>
+<ol type="1">
+<li>Download and install the <strong>Advanced Scene Switcher</strong>
+plugin from the official OBS Resources forum.</li>
+<li>Restart OBS Studio after installation.</li>
+</ol>
+<h3 id="step-2-configure-the-mute-macro">Step 2: Configure the Mute
+Macro</h3>
+<ol type="1">
+<li>In OBS Studio, go to the top menu and select <strong>Tools</strong>
+&gt; <strong>Advanced Scene Switcher</strong>.</li>
+<li>Click on the <strong>Macro</strong> tab.</li>
+<li>Click the <strong>+</strong> (plus) button at the bottom left to
+create a new macro and name it (e.g., "Mute Desktop Audio").</li>
+<li>Set up the <strong>Condition</strong> (the "If" statement):
+<ul>
+<li>Select <strong>Process</strong> from the first dropdown.</li>
+<li>Select the name of the application you want to trigger the mute
+(e.g., <code>discord.exe</code> or <code>spotify.exe</code>).</li>
+<li>Set the state to <strong>is running</strong> or <strong>is active
+window</strong> (depending on whether you want it muted only when you
+are actively using it, or simply when it is open in the
+background).</li>
+</ul></li>
+<li>Set up the <strong>Action</strong> (the "Then" statement):
+<ul>
+<li>Click the <strong>+</strong> button in the action section.</li>
+<li>Select <strong>Audio</strong>.</li>
+<li>Choose your <strong>Desktop Audio</strong> source.</li>
+<li>Set the action to <strong>Mute</strong>.</li>
+</ul></li>
+</ol>
+<h3 id="step-3-configure-the-unmute-macro">Step 3: Configure the Unmute
+Macro</h3>
+<p>To ensure your desktop audio turns back on when you close the
+application, you need a reverse macro.</p>
+<ol type="1">
+<li>Click the <strong>+</strong> button to create another macro and name
+it (e.g., "Unmute Desktop Audio").</li>
+<li>Set up the <strong>Condition</strong>:
+<ul>
+<li>Select <strong>Process</strong> &gt; [Your Application] &gt;
+<strong>is not running</strong>.</li>
+</ul></li>
+<li>Set up the <strong>Action</strong>:
+<ul>
+<li>Select <strong>Audio</strong> &gt; <strong>Desktop Audio</strong>
+&gt; <strong>Unmute</strong>.</li>
+</ul></li>
+<li>Go to the <strong>General</strong> tab of the Advanced Scene
+Switcher and click <strong>Start</strong> to enable the automation.</li>
+</ol>
+<hr />
+<h2
+id="method-2-use-native-application-audio-capture-alternative">Method 2:
+Use Native Application Audio Capture (Alternative)</h2>
+<p>If you want to avoid installing plugins, the modern way to handle
+this in OBS Studio is to stop using global "Desktop Audio" altogether.
+Instead, you can target and capture only the specific applications you
+want your audience to hear.</p>
+<h3 id="step-1-disable-global-desktop-audio">Step 1: Disable Global
+Desktop Audio</h3>
+<ol type="1">
+<li>Go to <strong>Settings</strong> in the bottom right of OBS.</li>
+<li>Click on the <strong>Audio</strong> tab.</li>
+<li>Under <strong>Global Audio Devices</strong>, set <strong>Desktop
+Audio</strong> to <strong>Disabled</strong>.</li>
+<li>Click <strong>Apply</strong> and <strong>OK</strong>. Your mixer
+will now be silent.</li>
+</ol>
+<h3 id="step-2-add-specific-app-audio-sources">Step 2: Add Specific App
+Audio Sources</h3>
+<ol type="1">
+<li>Go to your desired Scene.</li>
+<li>In the <strong>Sources</strong> dock, click the <strong>+</strong>
+icon.</li>
+<li>Select <strong>Application Audio Capture (BETA)</strong> (Windows)
+or <strong>Screen Capture</strong> (macOS).</li>
+<li>Name the source after the application you want to hear (e.g., "Game
+Audio" or "Chrome").</li>
+<li>In the properties window, select the window of the running
+application you want to capture.</li>
+<li>Repeat this process for every application you <em>do</em> want your
+stream to hear.</li>
+</ol>
+<p>By using this method, any application you do not explicitly add as a
+source—such as private communication apps or music players—will
+automatically be muted, eliminating the need for automated muting
+triggers.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

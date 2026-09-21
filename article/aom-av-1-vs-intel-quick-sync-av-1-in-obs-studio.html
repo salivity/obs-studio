@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AOM-AV1 vs Intel QuickSync AV1 in OBS Studio - obs-studio</title>
+    <meta name="description" content="When setting up AV1 encoding in OBS Studio, you will encounter different encoder options depending on your hardware. This article compares AOM-AV1 and Intel QuickSync (QSV) AV1, highlighting their key differences in performance, resource utilization, and">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/aom-av-1-vs-intel-quick-sync-av-1-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="AOM-AV1 vs Intel QuickSync AV1 in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/aom-av-1-vs-intel-quick-sync-av-1-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When setting up AV1 encoding in OBS Studio, you will encounter different encoder options depending on your hardware. This article compares AOM-AV1 and Intel QuickSync (QSV) AV1, highlighting their key differences in performance, resource utilization, and" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="aom-av1-vs-intel-quicksync-av1-in-obs-studio">AOM-AV1 vs Intel
+QuickSync AV1 in OBS Studio</h1>
+<p>When setting up AV1 encoding in OBS Studio, you will encounter
+different encoder options depending on your hardware. This article
+compares AOM-AV1 and Intel QuickSync (QSV) AV1, highlighting their key
+differences in performance, resource utilization, and video quality so
+you can choose the best option for your streaming or recording
+setup.</p>
+<h3 id="core-differences-software-vs-hardware-encoding">Core
+Differences: Software vs. Hardware Encoding</h3>
+<p>The primary distinction between these two encoders lies in how they
+process video data:</p>
+<ul>
+<li><strong>AOM-AV1 (Software Encoding):</strong> This is a CPU-based
+encoder developed by the Alliance for Open Media. Because it relies
+entirely on your system's processor to compress video, it is highly
+resource-intensive.</li>
+<li><strong>Intel QuickSync AV1 (Hardware Encoding):</strong> Often
+abbreviated as QSV, this encoder utilizes dedicated hardware ASIC chips
+built into compatible Intel graphics cards (such as Intel Arc GPUs) and
+select Intel CPUs. It offloads the encoding process entirely from the
+main CPU.</li>
+</ul>
+<h3 id="performance-and-system-impact">Performance and System
+Impact</h3>
+<p>Because AV1 is a highly complex codec, encoding it in real-time
+requires immense processing power.</p>
+<ul>
+<li><strong>AOM-AV1</strong> will heavily tax your CPU. If you are
+playing a demanding PC game on the same computer you are streaming from,
+using AOM-AV1 will likely cause massive frame drops, high CPU usage
+warnings, and lag in your stream or game. It is generally only viable on
+high-end, dedicated streaming PCs with many CPU cores.</li>
+<li><strong>Intel QuickSync AV1</strong> has virtually zero impact on
+your CPU or gaming performance. Because it uses dedicated hardware on
+the Intel GPU, your CPU is left completely free to handle game logic,
+background apps, and OBS scene rendering.</li>
+</ul>
+<h3 id="video-quality-and-efficiency">Video Quality and Efficiency</h3>
+<p>Both encoders deliver the high-efficiency benefits of the AV1
+codec—such as superior quality at lower bitrates compared to H.264—but
+they handle compression differently.</p>
+<ul>
+<li><strong>AOM-AV1</strong> can theoretically achieve slightly higher
+quality-per-bitrate than hardware encoders because software encoding
+allows for more complex, multi-pass rendering algorithms. However, to
+run in real-time for live streaming, you must lower the encoder presets,
+which diminishes this quality advantage.</li>
+<li><strong>Intel QuickSync AV1</strong> offers incredibly fast,
+hardware-level encoding speed with excellent visual fidelity. The
+quality is highly optimized for live streaming and recording, easily
+matching or exceeding the quality of Nvidia's NVENC AV1 and AMD's AMF
+AV1 at identical bitrates.</li>
+</ul>
+<h3 id="hardware-compatibility">Hardware Compatibility</h3>
+<p>Your choice of encoder will ultimately be limited by your computer's
+components.</p>
+<ul>
+<li><strong>AOM-AV1</strong> is universal. It runs on any modern CPU
+(Intel or AMD), making it accessible even if you do not have an
+AV1-compliant graphics card.</li>
+<li><strong>Intel QuickSync AV1</strong> requires specific Intel
+hardware that supports AV1 hardware encoding, such as Intel Arc discrete
+GPUs (Alchemist series or newer) or Intel Core Ultra processors with
+integrated Xe graphics.</li>
+</ul>
+<h3 id="summary-which-one-should-you-choose">Summary: Which One Should
+You Choose?</h3>
+<p>For 99% of creators, <strong>Intel QuickSync AV1 is the superior
+choice</strong> if you have the supported Intel hardware. It allows you
+to stream or record high-quality AV1 video without sacrificing gaming
+performance.</p>
+<p>You should only use <strong>AOM-AV1</strong> if you do not own an
+AV1-compatible graphics card, are running a dedicated dual-PC streaming
+setup with an exceptionally powerful CPU, or are rendering offline video
+recordings where encoding speed is not a priority.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

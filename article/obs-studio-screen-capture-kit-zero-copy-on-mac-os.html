@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio ScreenCaptureKit Zero-Copy on macOS - obs-studio</title>
+    <meta name="description" content="This article explains how OBS Studio leverages Apple’s ScreenCaptureKit framework on macOS Sonoma to deliver high-performance screen and window capture. By utilizing an end-to-end GPU workflow, OBS Studio eliminates unnecessary CPU memory transfers thr">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-screen-capture-kit-zero-copy-on-mac-os">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio ScreenCaptureKit Zero-Copy on macOS - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-screen-capture-kit-zero-copy-on-mac-os" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how OBS Studio leverages Apple’s ScreenCaptureKit framework on macOS Sonoma to deliver high-performance screen and window capture. By utilizing an end-to-end GPU workflow, OBS Studio eliminates unnecessary CPU memory transfers thr" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-screencapturekit-zero-copy-on-macos">OBS Studio
+ScreenCaptureKit Zero-Copy on macOS</h1>
+<p>This article explains how OBS Studio leverages Apple’s
+ScreenCaptureKit framework on macOS Sonoma to deliver high-performance
+screen and window capture. By utilizing an end-to-end GPU workflow, OBS
+Studio eliminates unnecessary CPU memory transfers through a zero-copy
+pipeline. This modern architecture bypasses legacy capture bottlenecks,
+significantly lowering CPU and power consumption while maximizing
+capture frame rates on Apple silicon and modern Intel Macs.</p>
+<h3 id="the-shift-from-legacy-apis-to-screencapturekit">The Shift from
+Legacy APIs to ScreenCaptureKit</h3>
+<p>Prior to the introduction of ScreenCaptureKit, macOS screen capture
+in broadcasting software relied on deprecated APIs such as
+<code>CGDisplayStream</code> and <code>CGWindowListCreateImage</code>.
+These older interfaces required the operating system's window server to
+capture a frame, write it into system memory, and force OBS to read it
+back into the CPU before transferring it to the GPU for rendering. This
+constant copying across memory spaces generated high CPU utilization,
+increased system temperatures, and caused frequent frame drops during
+high-resolution or high-refresh-rate streaming.</p>
+<h3 id="the-zero-copy-mechanism-via-iosurface">The Zero-Copy Mechanism
+via IOSurface</h3>
+<p>OBS Studio implements ScreenCaptureKit by taking direct advantage of
+Apple's unified memory architecture and the <code>IOSurface</code>
+framework.</p>
+<p>When OBS initiates a capture session using <code>SCStream</code>, the
+ScreenCaptureKit daemon captures display output or application windows
+directly on the GPU. Instead of passing raw pixel arrays to the client
+application, ScreenCaptureKit wraps each captured frame inside a
+<code>CMSampleBuffer</code>. Within this buffer lies a
+<code>CVPixelBuffer</code> that is backed directly by an
+<code>IOSurface</code>.</p>
+<p>An <code>IOSurface</code> is an operating-system-level handle to
+shared hardware memory. Because macOS allows an <code>IOSurface</code>
+to be accessed across process boundaries without duplicating the
+underlying buffer, OBS Studio can access the frame data instantaneously.
+No memory is duplicated between the macOS WindowServer and the OBS
+rendering process, fulfilling the technical definition of a zero-copy
+pipeline.</p>
+<h3 id="integration-with-the-obs-metal-render-pipeline">Integration with
+the OBS Metal Render Pipeline</h3>
+<p>Once the capture plugin in OBS receives the
+<code>CMSampleBuffer</code>, the integration process proceeds entirely
+on the graphics hardware:</p>
+<ol type="1">
+<li><strong>Surface Extraction:</strong> The OBS capture module extracts
+the <code>IOSurfaceRef</code> from the incoming
+<code>CVPixelBuffer</code> via Core Video.</li>
+<li><strong>Texture Binding:</strong> OBS utilizes the Apple Metal
+graphics backend to bind the extracted <code>IOSurface</code> directly
+into a Metal texture (<code>id&lt;MTLTexture&gt;</code>).</li>
+<li><strong>Scene Compositing:</strong> The Metal texture is passed into
+the core OBS rendering engine as a source texture. The compositor uses
+this texture directly when rendering the output canvas.</li>
+</ol>
+<p>Because the data never moves out of VRAM—or unified system memory in
+Apple silicon architectures—the CPU is entirely relieved from handling
+raw frame pixels.</p>
+<h3 id="macos-sonoma-advancements">macOS Sonoma Advancements</h3>
+<p>macOS Sonoma introduced low-level refinements to ScreenCaptureKit
+that OBS Studio utilizes to further stabilize capture:</p>
+<ul>
+<li><strong>Lower Ingestion Latency:</strong> Sonoma reduces internal
+queuing delays within the <code>SCStream</code> rendering pipeline,
+ensuring that captured frames align closely with real-time screen
+updates.</li>
+<li><strong>Per-App and Multi-Window Synchronization:</strong>
+Independent window streams maintain smooth frame pacing without
+requiring capture of the entire desktop context.</li>
+<li><strong>HDR and Wide Color Gamut (P3):</strong> Frames encoded in
+10-bit and P3 color spaces are mapped directly into compatible rendering
+formats without manual pixel conversions.</li>
+<li><strong>Integrated Audio Capture:</strong> System and application
+audio streams arrive synchronized with corresponding video frames within
+the same session callback, avoiding drift.</li>
+</ul>
+<p>By routing frames through shared <code>IOSurface</code> references
+directly to Metal textures, OBS Studio achieves near-zero CPU capture
+overhead on macOS Sonoma, offering an efficient solution for
+high-framerate streaming and recording.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NDI Bandwidth Overhead for 10-Bit YUV 4:2:2 Video - obs-studio</title>
+    <meta name="description" content="This article breaks down the bandwidth requirements and network overhead associated with transmitting 10-bit YUV 4:2:2 video over local NDI networks into OBS Studio. It covers the underlying mathematical formulas for raw data rates, the protocol-level ne">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/ndi-bandwidth-overhead-for-10-bit-yuv-4-2-2-video">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="NDI Bandwidth Overhead for 10-Bit YUV 4:2:2 Video - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/ndi-bandwidth-overhead-for-10-bit-yuv-4-2-2-video" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article breaks down the bandwidth requirements and network overhead associated with transmitting 10-bit YUV 4:2:2 video over local NDI networks into OBS Studio. It covers the underlying mathematical formulas for raw data rates, the protocol-level ne" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="ndi-bandwidth-overhead-for-10-bit-yuv-422-video">NDI Bandwidth
+Overhead for 10-Bit YUV 4:2:2 Video</h1>
+<p>This article breaks down the bandwidth requirements and network
+overhead associated with transmitting 10-bit YUV 4:2:2 video over local
+NDI networks into OBS Studio. It covers the underlying mathematical
+formulas for raw data rates, the protocol-level network overhead
+introduced by transport framing and NDI metadata, and how OBS Studio
+handles these feeds in local production environments.</p>
+<h3 id="raw-bitrate-calculation-for-10-bit-yuv-422">Raw Bitrate
+Calculation for 10-Bit YUV 4:2:2</h3>
+<p>To determine network overhead, you must first calculate the
+uncompressed baseband video data rate.</p>
+<p>In a YUV 4:2:2 chroma subsampling scheme, the luma channel (Y) is
+sampled at full resolution, while the two chroma channels (U and V) are
+horizontally subsampled by half. This results in an average of two
+samples per pixel. At a bit depth of 10 bits per sample:</p>
+<ul>
+<li><strong>Bits Per Pixel (bpp):</strong> <span class="math inline">\(2
+\text{ samples} \times 10 \text{ bits} = 20 \text{ bpp}\)</span></li>
+<li><strong>Bitrate Formula:</strong> <span
+class="math inline">\(\text{Width} \times \text{Height} \times
+\text{Frame Rate} \times 20\text{ bits}\)</span></li>
+</ul>
+<h4 id="baseline-uncompressed-data-rates">Baseline Uncompressed Data
+Rates:</h4>
+<ul>
+<li><strong>1080p at 60 fps (1920 × 1080):</strong> <span
+class="math inline">\(1920 \times 1080 \times 60 \times 20 \approx
+2.488\text{ Gbps}\)</span></li>
+<li><strong>4K UHD at 60 fps (3840 × 2160):</strong> <span
+class="math inline">\(3840 \times 2160 \times 60 \times 20 \approx
+9.953\text{ Gbps}\)</span></li>
+</ul>
+<h3 id="network-and-transport-protocol-overhead">Network and Transport
+Protocol Overhead</h3>
+<p>Streaming video over a local area network wraps raw frames into
+multiple network layers, each introducing additional data overhead.</p>
+<ol type="1">
+<li><p><strong>Packet Encapsulation (Ethernet, IP,
+Transport):</strong></p>
+<ul>
+<li><strong>Standard MTU (1500 bytes):</strong> Each network packet
+carries approximately 1460 bytes of video payload and roughly 40 to 54
+bytes of combined Ethernet, IPv4, and TCP/UDP headers. This introduces
+an overhead of approximately <strong>3% to 4%</strong>.</li>
+<li><strong>Jumbo Frames (9000 bytes):</strong> By expanding the payload
+size per frame, header overhead drops to roughly <strong>0.5% to
+1%</strong>.</li>
+</ul></li>
+<li><p><strong>NDI Protocol Packaging and Metadata:</strong></p>
+<ul>
+<li>NDI transmits frames using either multi-TCP or Reliable UDP
+(R-UDP).</li>
+<li>Beyond raw image data, the NDI stream packages clock
+synchronization, uncompressed floating-point or 24-bit PCM audio,
+timecodes, and XML-based metadata (such as tally state and source
+framing info).</li>
+<li>This structural overhead typically adds another <strong>1% to
+2%</strong> to the stream.</li>
+</ul></li>
+<li><p><strong>Total Protocol Overhead:</strong> On a standard network
+configuration (1500 MTU), the combined transport and metadata overhead
+for streaming an uncompressed bitstream is between <strong>4% and
+6%</strong>.</p></li>
+</ol>
+<p>Applying this overhead to the baseband calculations:</p>
+<ul>
+<li><strong>1080p60 Uncompressed Stream:</strong> <span
+class="math inline">\(\approx 2.59\text{ Gbps}\)</span> to <span
+class="math inline">\(2.64\text{ Gbps}\)</span> of total network
+throughput.</li>
+<li><strong>4K60 Uncompressed Stream:</strong> <span
+class="math inline">\(\approx 10.35\text{ Gbps}\)</span> to <span
+class="math inline">\(10.55\text{ Gbps}\)</span> of total network
+throughput.</li>
+</ul>
+<h3 id="ndi-behavior-in-obs-studio">NDI Behavior in OBS Studio</h3>
+<p>When ingesting feeds via the <code>obs-ndi</code> plugin, it is
+critical to distinguish between raw uncompressed baseband video and
+standard "High Bandwidth" NDI:</p>
+<ul>
+<li><strong>High Bandwidth NDI (SpeedHQ):</strong> Standard NDI does not
+transmit purely uncompressed video. Instead, it utilizes the SpeedHQ
+intra-frame codec. With the release of NDI 6, 10-bit YUV 4:2:2 HDR
+pipelines are supported natively. Rather than consuming 2.5 Gbps or 10
+Gbps, SpeedHQ compresses the stream at roughly a 15:1 to 20:1 ratio. A
+1080p60 10-bit stream typically consumes <strong>150 to 180
+Mbps</strong>, while 4K60 consumes <strong>300 to 450
+Mbps</strong>.</li>
+<li><strong>True Uncompressed Transmission:</strong> If bypassing
+intra-frame compression using custom NDI SDK implementations or raw
+uncompressed SMPTE ST 2110 bridges into OBS, the overhead requires a
+minimum of a <strong>10 GbE</strong> network link for 1080p60 and a
+<strong>25 GbE</strong> link for 4K60 to prevent packet drops and buffer
+exhaustion in OBS Studio.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

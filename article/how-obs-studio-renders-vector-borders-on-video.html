@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Studio Renders Vector Borders on Video - obs-studio</title>
+    <meta name="description" content="OBS Studio renders custom vector borders around cropped camera frames through a multi-stage graphics pipeline that involves coordinate mapping, vector rasterization, shader-based masking, and GPU hardware compositing. Because OBS operates natively on ras">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-studio-renders-vector-borders-on-video">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Studio Renders Vector Borders on Video - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-studio-renders-vector-borders-on-video" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio renders custom vector borders around cropped camera frames through a multi-stage graphics pipeline that involves coordinate mapping, vector rasterization, shader-based masking, and GPU hardware compositing. Because OBS operates natively on ras" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-studio-renders-vector-borders-on-video">How OBS Studio
+Renders Vector Borders on Video</h1>
+<p>OBS Studio renders custom vector borders around cropped camera frames
+through a multi-stage graphics pipeline that involves coordinate
+mapping, vector rasterization, shader-based masking, and GPU hardware
+compositing. Because OBS operates natively on raster textures within its
+rendering subsystem (<code>libobs/graphics</code>), vector paths
+defining custom borders must be translated into pixel coordinates and
+blended with the cropped video texture using custom HLSL or GLSL
+shaders.</p>
+<h3 id="1-frame-acquisition-and-texture-cropping">1. Frame Acquisition
+and Texture Cropping</h3>
+<p>When a camera capture device feeds video into OBS Studio, the raw
+video frames are uploaded into VRAM as 2D textures using Direct3D 11
+(Windows), Metal (macOS), or OpenGL (Linux).</p>
+<p>When a user applies a crop—either via scene item transform settings
+or the dedicated Crop/Pad filter—OBS modifies the texture coordinates
+(UV coordinates) rather than cutting the underlying buffer
+immediately:</p>
+<ul>
+<li>The source frame's UV mapping <code>[0.0, 1.0]</code> is re-scaled
+to the cropped dimensions.</li>
+<li>The vertex buffer for the source quad is recalculated to match the
+cropped bounding box.</li>
+<li>Non-destructive cropping is maintained in VRAM, allowing dynamic
+border alignment around changing frame boundaries.</li>
+</ul>
+<h3 id="2-vector-path-ingestion-and-rasterization">2. Vector Path
+Ingestion and Rasterization</h3>
+<p>OBS Studio does not contain a native vector rendering engine (such as
+Skia) in its core compositing loop. Instead, vector paths used for
+borders and masks—typically supplied as SVG files or parametric shapes
+via plugins—are processed using one of two methods:</p>
+<ul>
+<li><strong>Pre-Rasterization via CPU/Libraries:</strong> External
+vector paths (SVGs) are commonly rasterized upon loading using
+integrated libraries like <code>librsvg</code> or Qt's SVG rendering
+tools. The vector path is converted into an offscreen RGBA texture at
+the project’s canvas resolution or the source's native resolution.</li>
+<li><strong>Signed Distance Fields (SDF) or Procedural Shaders:</strong>
+Advanced border plugins generate shapes mathematically inside the
+fragment shader using Signed Distance Fields. This method preserves
+crisp vector edges dynamically without requiring intermediate raster
+textures.</li>
+</ul>
+<h3 id="3-coordinate-alignment-and-aspect-ratio-normalization">3.
+Coordinate Alignment and Aspect Ratio Normalization</h3>
+<p>To accurately trace the outline of a cropped camera frame, the
+border's path coordinates must align with the post-crop bounding box.
+OBS normalizes the dimensions:</p>
+<ol type="1">
+<li><strong>Resolution Matching:</strong> The vector path's aspect ratio
+is matched to the post-crop resolution of the camera frame.</li>
+<li><strong>Padding and Stroke Allocation:</strong> If an outer border
+is applied, the source quad is expanded outward by the pixel width of
+the stroke to prevent edge-clipping. If an inner border is applied, the
+stroke is clamped to the interior bounds of the cropped frame.</li>
+</ol>
+<h3 id="4-shader-execution-and-blending">4. Shader Execution and
+Blending</h3>
+<p>The final integration of the vector border and cropped video frame is
+executed via an effect file (HLSL/GLSL pixel shader):</p>
+<ul>
+<li><strong>Masking (Alpha Channel):</strong> If the vector path defines
+a non-rectangular shape (such as rounded corners or an angled polygon),
+the path’s rasterized alpha channel is sampled. The camera texture's
+alpha is multiplied by the mask alpha, discarding pixels outside the
+boundary.</li>
+<li><strong>Border Compositing:</strong> The border path texture (or
+procedurally generated stroke) is overlaid on top of the masked camera
+frame. The shader checks the distance from the path edge to perform
+analytical anti-aliasing via functions like <code>fwidth()</code> and
+<code>smoothstep()</code>.</li>
+<li><strong>Blend States:</strong> The resulting color is calculated
+using standard alpha blending (<code>SRC_ALPHA</code>,
+<code>ONE_MINUS_SRC_ALPHA</code>) to seamlessly merge the border stroke
+with both the video feed and the scenes below it.</li>
+</ul>
+<h3 id="5-final-canvas-pass">5. Final Canvas Pass</h3>
+<p>Once the shader completes execution, the combined texture (the
+cropped, masked camera frame and its rendered vector border) is drawn
+onto the scene’s main render target. This frame is then passed along to
+the OBS rendering pipeline for preview rendering and stream/recording
+encoding.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

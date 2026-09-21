@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Create an OBS Profile for Local Recording - obs-studio</title>
+    <meta name="description" content="This guide provides a step-by-step walkthrough on how to set up a dedicated secondary profile in OBS Studio configured specifically for high-quality local recording. By separating your streaming and recording settings into different profiles, you can max">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-create-an-obs-profile-for-local-recording">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Create an OBS Profile for Local Recording - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-create-an-obs-profile-for-local-recording" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide provides a step-by-step walkthrough on how to set up a dedicated secondary profile in OBS Studio configured specifically for high-quality local recording. By separating your streaming and recording settings into different profiles, you can max" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-create-an-obs-profile-for-local-recording">How to Create
+an OBS Profile for Local Recording</h1>
+<p>This guide provides a step-by-step walkthrough on how to set up a
+dedicated secondary profile in OBS Studio configured specifically for
+high-quality local recording. By separating your streaming and recording
+settings into different profiles, you can maximize your system's
+performance and achieve the best possible offline video quality without
+altering your broadcast settings.</p>
+<h3 id="step-1-create-a-new-profile">Step 1: Create a New Profile</h3>
+<p>Profiles in OBS Studio save your output resolution, encoders,
+bitrates, and file paths, allowing you to switch settings instantly.</p>
+<ol type="1">
+<li>Open OBS Studio.</li>
+<li>Click on <strong>Profile</strong> in the top menu bar.</li>
+<li>Select <strong>New</strong>.</li>
+<li>Name the profile (e.g., "Local Recording") and click
+<strong>OK</strong>.</li>
+<li>If the Auto-Configuration Wizard pops up, you can cancel it to
+configure the settings manually for optimal control.</li>
+</ol>
+<p><em>(Optional)</em> You can also create a new <strong>Scene
+Collection</strong> from the top menu if you want a clean canvas of
+sources and scenes specifically for recording, separate from your
+streaming overlays.</p>
+<h3 id="step-2-configure-the-output-settings-for-recording">Step 2:
+Configure the Output Settings for Recording</h3>
+<p>With your new profile active, you need to adjust the settings to
+prioritize visual quality over bandwidth.</p>
+<ol type="1">
+<li>Click <strong>Settings</strong> in the bottom right corner of
+OBS.</li>
+<li>Select the <strong>Output</strong> tab on the left.</li>
+<li>Change the <strong>Output Mode</strong> dropdown at the top from
+<em>Simple</em> to <strong>Advanced</strong>.</li>
+<li>Click on the <strong>Recording</strong> tab.</li>
+<li>Configure the following settings:
+<ul>
+<li><strong>Type</strong>: Standard</li>
+<li><strong>Recording Path</strong>: Choose a high-speed hard drive or
+SSD with plenty of storage space.</li>
+<li><strong>Recording Format</strong>: Select <strong>mkv</strong> or
+<strong>fragmented mp4</strong>. (MKV is highly recommended because if
+OBS crashes or your computer loses power, the recording up to that point
+will not be corrupted).</li>
+<li><strong>Video Encoder</strong>: Choose a hardware encoder if
+available, such as <strong>NVIDIA NVENC H.264</strong> (or HEVC/AV1 if
+your GPU supports it) or <strong>AMD HW H.264/HEVC</strong>. If you do
+not have a dedicated GPU, use <strong>x264</strong> (CPU).</li>
+</ul></li>
+</ol>
+<h3 id="step-3-optimize-encoder-settings-for-high-quality">Step 3:
+Optimize Encoder Settings for High Quality</h3>
+<p>Because you are recording locally, you do not need to use Constant
+Bitrate (CBR), which is designed for streaming. Instead, use a
+quality-based rate control.</p>
+<ol type="1">
+<li><strong>Rate Control</strong>: Change this to <strong>CQP</strong>
+(Constant Quality) for hardware encoders, or <strong>CRF</strong>
+(Constant Rate Factor) if using x264.</li>
+<li><strong>CQ Level / CRF</strong>: Set this between <strong>18 and
+23</strong>.
+<ul>
+<li>A lower number increases quality and file size (16-18 is
+near-lossless).</li>
+<li>A higher number decreases file size and slightly lowers quality.
+<strong>20</strong> is the sweet spot for most systems.</li>
+</ul></li>
+<li><strong>Keyframe Interval</strong>: Set to <strong>2 s</strong>
+(seconds).</li>
+<li><strong>Preset</strong>: Set to <strong>Quality</strong> or
+<strong>P5 / P6</strong> (depending on your GPU encoder version).</li>
+<li><strong>Profile</strong>: High</li>
+</ol>
+<h3 id="step-4-adjust-video-resolution-and-frame-rate">Step 4: Adjust
+Video Resolution and Frame Rate</h3>
+<p>Ensure your video canvas match your target recording
+specifications.</p>
+<ol type="1">
+<li>Click on the <strong>Video</strong> tab in the Settings window.</li>
+<li><strong>Base (Canvas) Resolution</strong>: Set this to your
+monitor's native resolution (e.g., 1920x1080).</li>
+<li><strong>Output (Scaled) Resolution</strong>: Set this to match your
+Base Resolution to avoid downscaling, ensuring the sharpest possible
+recording.</li>
+<li><strong>Common FPS Values</strong>: Set to <strong>60</strong> for
+smooth gameplay, or <strong>30</strong> for standard desktop
+tutorials.</li>
+</ol>
+<p>Click <strong>Apply</strong> and then <strong>OK</strong> to save
+your changes.</p>
+<h3 id="how-to-switch-profiles">How to Switch Profiles</h3>
+<p>To toggle between your streaming setup and your recording setup,
+simply click <strong>Profile</strong> in the top menu of OBS Studio and
+select the profile you want to use. The interface and encoder settings
+will instantly adapt to your choice.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Install and Configure OBS Advanced Scene Switcher - obs-studio</title>
+    <meta name="description" content="This guide provides a step-by-step walkthrough on how to install and configure the Advanced Scene Switcher plugin for OBS Studio. You will learn how to download the plugin, install it on your system, and set up automated rules to switch scenes seamlessly">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/install-and-configure-obs-advanced-scene-switcher">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Install and Configure OBS Advanced Scene Switcher - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/install-and-configure-obs-advanced-scene-switcher" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide provides a step-by-step walkthrough on how to install and configure the Advanced Scene Switcher plugin for OBS Studio. You will learn how to download the plugin, install it on your system, and set up automated rules to switch scenes seamlessly" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="install-and-configure-obs-advanced-scene-switcher">Install and
+Configure OBS Advanced Scene Switcher</h1>
+<p>This guide provides a step-by-step walkthrough on how to install and
+configure the Advanced Scene Switcher plugin for OBS Studio. You will
+learn how to download the plugin, install it on your system, and set up
+automated rules to switch scenes seamlessly based on active windows,
+timers, or other triggers.</p>
+<h2 id="step-1-download-and-install-the-plugin">Step 1: Download and
+Install the Plugin</h2>
+<p>The Advanced Scene Switcher plugin can be installed on Windows,
+macOS, and Linux.</p>
+<ol type="1">
+<li>Close OBS Studio if it is currently running.</li>
+<li>Visit the official OBS Studio Resources website or the plugin's
+GitHub repository to download the latest release.</li>
+<li>Download the installer compatible with your operating system:
+<ul>
+<li><strong>Windows:</strong> Download the <code>.exe</code> installer
+for an automatic setup, or the <code>.zip</code> file for a manual
+installation.</li>
+<li><strong>macOS:</strong> Download the <code>.pkg</code>
+installer.</li>
+</ul></li>
+<li>Run the installer and follow the on-screen prompts. If you
+downloaded a <code>.zip</code> file, extract its contents directly into
+your OBS Studio installation folder (usually
+<code>C:\Program Files\obs-studio</code>).</li>
+</ol>
+<h2 id="step-2-access-the-plugin-in-obs-studio">Step 2: Access the
+Plugin in OBS Studio</h2>
+<p>Once installed, verify that the plugin is active within OBS
+Studio.</p>
+<ol type="1">
+<li>Open OBS Studio.</li>
+<li>In the top menu bar, click on <strong>Tools</strong>.</li>
+<li>Select <strong>Advanced Scene Switcher</strong> from the dropdown
+menu. If you do not see it, restart your computer or double-check that
+the files were installed in the correct directory.</li>
+</ol>
+<h2 id="step-3-configure-your-first-automation-macro">Step 3: Configure
+Your First Automation (Macro)</h2>
+<p>The modern version of Advanced Scene Switcher uses a powerful "Macro"
+system based on <strong>Conditions</strong> (If) and
+<strong>Actions</strong> (Then).</p>
+<p>To create a basic rule that switches to a specific scene when a
+particular software or game is in focus:</p>
+<ol type="1">
+<li>Open the <strong>Advanced Scene Switcher</strong> window from the
+Tools menu.</li>
+<li>Navigate to the <strong>Macro</strong> tab.</li>
+<li>Click the <strong>+</strong> (plus) button at the bottom left to
+create a new macro and give it a name (e.g., "Switch to Game
+Scene").</li>
+<li>In the <strong>Conditions</strong> section (the top area), click the
+<strong>+</strong> button.</li>
+<li>Set the condition parameters. For example: <code>If</code> -&gt;
+<code>Window</code> -&gt; <code>[Your Game/Software Executable]</code>
+-&gt; <code>is in focus</code>.</li>
+<li>In the <strong>Actions</strong> section (the bottom area), click the
+<strong>+</strong> button.</li>
+<li>Set the action parameters. For example: <code>Then</code> -&gt;
+<code>Scene</code> -&gt; <code>Switch scene</code> -&gt;
+<code>[Your desired OBS Scene]</code>.</li>
+</ol>
+<h2 id="step-4-enable-the-switcher">Step 4: Enable the Switcher</h2>
+<p>By default, the plugin is inactive to prevent accidental scene
+switching while you are configuring rules.</p>
+<ol type="1">
+<li>Navigate to the <strong>General</strong> tab of the Advanced Scene
+Switcher window.</li>
+<li>Click the <strong>Start</strong> button to activate the plugin.</li>
+<li>The status indicator will change from "Inactive" to "Running".</li>
+</ol>
+<p>You can now minimize the plugin window and test your automation. The
+plugin will continue to run in the background as long as OBS Studio is
+open.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

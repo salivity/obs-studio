@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Audio Volume Levels in OBS Studio Lua API - obs-studio</title>
+    <meta name="description" content="The OBS Studio Lua API allows developers to monitor real-time audio levels and construct custom VU meters through its dedicated volmeter (volume meter) subsystem. By creating a volume meter object, binding it to a target audio source, and registering a l">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/access-audio-volume-levels-in-obs-studio-lua-api">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Access Audio Volume Levels in OBS Studio Lua API - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/access-audio-volume-levels-in-obs-studio-lua-api" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The OBS Studio Lua API allows developers to monitor real-time audio levels and construct custom VU meters through its dedicated volmeter (volume meter) subsystem. By creating a volume meter object, binding it to a target audio source, and registering a l" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="access-audio-volume-levels-in-obs-studio-lua-api">Access Audio
+Volume Levels in OBS Studio Lua API</h1>
+<p>The OBS Studio Lua API allows developers to monitor real-time audio
+levels and construct custom VU meters through its dedicated
+<code>volmeter</code> (volume meter) subsystem. By creating a volume
+meter object, binding it to a target audio source, and registering a
+level callback, scripts can continuously receive magnitude and peak
+values for all active audio channels. These values can then be
+translated into decibels or linear percentages to drive dynamic
+on-screen graphics, source transforms, or custom text readouts within
+your scenes.</p>
+<h3 id="creating-and-attaching-the-volume-meter">Creating and Attaching
+the Volume Meter</h3>
+<p>The core interface for reading audio metrics in the OBS API is the
+<code>obs_volmeter_t</code> object. To begin tracking an audio source,
+you must instantiate a volume meter using
+<code>obs_volmeter_create</code> and specify an audio fader type,
+typically <code>OBS_FADER_LOG</code> for logarithmic decibel scaling or
+<code>OBS_FADER_CUBIC</code>.</p>
+<p>Once the meter is created, locate your target audio source using
+<code>obs_get_source_by_name</code> and attach it to the meter using
+<code>obs_volmeter_attach_source</code>.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode lua"><code class="sourceCode lua"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="va">volmeter</span> <span class="op">=</span> <span class="va">obs</span><span class="op">.</span>obs_volmeter_create<span class="op">(</span><span class="va">obs</span><span class="op">.</span><span class="cn">OBS_FADER_LOG</span><span class="op">)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="va">source</span> <span class="op">=</span> <span class="va">obs</span><span class="op">.</span>obs_get_source_by_name<span class="op">(</span><span class="st">&quot;Desktop Audio&quot;</span><span class="op">)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">source</span> <span class="cf">then</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">obs</span><span class="op">.</span>obs_volmeter_attach_source<span class="op">(</span><span class="va">volmeter</span><span class="op">,</span> <span class="va">source</span><span class="op">)</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="va">obs</span><span class="op">.</span>obs_source_release<span class="op">(</span><span class="va">source</span><span class="op">)</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span></code></pre></div>
+<p>Always release the source reference after attaching it, as the volume
+meter maintains its own internal reference.</p>
+<h3 id="registering-the-audio-callback">Registering the Audio
+Callback</h3>
+<p>Volume level updates are pushed asynchronously to a callback function
+rather than being polled frame-by-frame. You attach a callback function
+to the meter using <code>obs_volmeter_add_callback</code>.</p>
+<p>The registered function receives three float array pointers
+representing the audio channels (such as channel 0 for Left and channel
+1 for Right):</p>
+<ul>
+<li><strong>Magnitude (<code>mag</code>):</strong> Represents the
+root-mean-square (RMS) level, ideal for smooth, averaged volume
+representation.</li>
+<li><strong>Peak (<code>peak</code>):</strong> Captures transient spikes
+in the signal, essential for standard VU meter peak indicators.</li>
+<li><strong>Input Peak (<code>input_peak</code>):</strong> Reflects the
+raw incoming audio signal prior to any faders or volume filters applied
+within OBS.</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode lua"><code class="sourceCode lua"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="kw">function</span> volmeter_callback<span class="op">(</span><span class="va">data</span><span class="op">,</span> <span class="va">volmeter</span><span class="op">,</span> <span class="va">mag</span><span class="op">,</span> <span class="va">peak</span><span class="op">,</span> <span class="va">input_peak</span><span class="op">)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">-- mag and peak are C arrays wrapped for Lua</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">local</span> <span class="va">left_peak</span> <span class="op">=</span> <span class="va">obs</span><span class="op">.</span>float_array_getitem<span class="op">(</span><span class="va">peak</span><span class="op">,</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">local</span> <span class="va">right_peak</span> <span class="op">=</span> <span class="va">obs</span><span class="op">.</span>float_array_getitem<span class="op">(</span><span class="va">peak</span><span class="op">,</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">-- Process levels for visual display</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    update_vu_display<span class="op">(</span><span class="va">left_peak</span><span class="op">,</span> <span class="va">right_peak</span><span class="op">)</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="va">obs</span><span class="op">.</span>obs_volmeter_add_callback<span class="op">(</span><span class="va">volmeter</span><span class="op">,</span> <span class="va">volmeter_callback</span><span class="op">,</span> <span class="kw">nil</span><span class="op">)</span></span></code></pre></div>
+<h3 id="converting-raw-levels-to-decibels">Converting Raw Levels to
+Decibels</h3>
+<p>The values emitted in the callback are normalized scalar values
+between <code>0.0</code> and <code>1.0</code>. To build an accurate VU
+meter, these values are typically converted to decibels using standard
+audio math:</p>
+<p><span class="math display">\[\text{dB} = 20 \times
+\log_{10}(\text{level})\]</span></p>
+<p>In Lua, a value of <code>1.0</code> equates to <code>0 dB</code>
+(maximum volume before clipping), while values approaching
+<code>0.0</code> decay down toward <code>-inf dB</code>. You can set a
+noise floor threshold (commonly <code>-60 dB</code>) to clamp
+lower-bound values and prevent math errors with zero values:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode lua"><code class="sourceCode lua"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">local</span> <span class="kw">function</span> to_db<span class="op">(</span><span class="va">val</span><span class="op">)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="va">val</span> <span class="op">&lt;=</span> <span class="dv">0.0001</span> <span class="cf">then</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="op">-</span><span class="dv">60.0</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">20.0</span> <span class="op">*</span> <span class="er">math.log10</span><span class="op">(</span><span class="va">val</span><span class="op">)</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+<h3 id="driving-visual-vu-meters">Driving Visual VU Meters</h3>
+<p>Once converted, the numeric levels can manipulate visual elements
+directly within OBS:</p>
+<ul>
+<li><strong>Crop Filters:</strong> Modifying the right or top crop
+setting of a color source or image source to make a visual bar grow or
+shrink.</li>
+<li><strong>Transform Scaling:</strong> Adjusting the scale vector of a
+meter element using <code>obs_sceneitem_set_scale</code>.</li>
+<li><strong>Text Sources:</strong> Setting the text of a GDI+ or
+FreeType text source to display active decibel numbers.</li>
+</ul>
+<p>Because audio callbacks run on an audio thread at high frequencies,
+avoid heavy API calls inside the callback directly. Instead, store the
+latest peak and magnitude values in global script variables, then apply
+the visual transforms inside the <code>script_tick(seconds)</code>
+function to sync updates directly with OBS rendering frames.</p>
+<h3 id="memory-cleanup-and-lifecycle">Memory Cleanup and Lifecycle</h3>
+<p>Failing to detach and destroy volume meters results in memory leaks
+and audio thread overhead. Always release callbacks and destroy meter
+instances inside the script lifecycle functions:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode lua"><code class="sourceCode lua"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> script_unload<span class="op">()</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="va">volmeter</span> <span class="cf">then</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">obs</span><span class="op">.</span>obs_volmeter_remove_callback<span class="op">(</span><span class="va">volmeter</span><span class="op">,</span> <span class="va">volmeter_callback</span><span class="op">,</span> <span class="kw">nil</span><span class="op">)</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">obs</span><span class="op">.</span>obs_volmeter_destroy<span class="op">(</span><span class="va">volmeter</span><span class="op">)</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">volmeter</span> <span class="op">=</span> <span class="kw">nil</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

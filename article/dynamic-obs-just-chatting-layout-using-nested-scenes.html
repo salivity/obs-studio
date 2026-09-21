@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic OBS Just Chatting Layout Using Nested Scenes - obs-studio</title>
+    <meta name="description" content="This guide explains how to build a dynamic "Just Chatting" scene layout in OBS Studio using the power of nested scenes. By treating individual scenes as sources within other scenes, you can create a highly flexible, professional stream layout. This metho">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/dynamic-obs-just-chatting-layout-using-nested-scenes">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Dynamic OBS Just Chatting Layout Using Nested Scenes - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/dynamic-obs-just-chatting-layout-using-nested-scenes" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide explains how to build a dynamic "Just Chatting" scene layout in OBS Studio using the power of nested scenes. By treating individual scenes as sources within other scenes, you can create a highly flexible, professional stream layout. This metho" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="dynamic-obs-just-chatting-layout-using-nested-scenes">Dynamic
+OBS Just Chatting Layout Using Nested Scenes</h1>
+<p>This guide explains how to build a dynamic "Just Chatting" scene
+layout in OBS Studio using the power of nested scenes. By treating
+individual scenes as sources within other scenes, you can create a
+highly flexible, professional stream layout. This method allows you to
+easily resize, reposition, and apply filters to your webcam, chat, and
+gameplay captures globally without cluttering your main scenes or
+repeating tedious setup steps.</p>
+<h2 id="step-1-create-your-source-scenes">Step 1: Create Your Source
+Scenes</h2>
+<p>Before building the final layout, you must create the individual
+"building block" scenes. By separating these elements, any changes you
+make to them will automatically update across all scenes where they are
+used.</p>
+<ol type="1">
+<li><p><strong>Create the Webcam Scene:</strong></p>
+<ul>
+<li>Click the <strong>+</strong> icon under the <strong>Scenes</strong>
+dock and name it <code>[Source] Webcam</code>.</li>
+<li>Under the <strong>Sources</strong> dock, add your camera (Video
+Capture Device).</li>
+<li>Adjust your camera's color correction, filters, or crop settings
+here.</li>
+</ul></li>
+<li><p><strong>Create the Chat Scene:</strong></p>
+<ul>
+<li>Create a new scene named <code>[Source] Chat</code>.</li>
+<li>Add your chat widget (typically a Browser Source from services like
+Streamelements or Streamlabs).</li>
+<li>Size the browser source to fit the canvas.</li>
+</ul></li>
+<li><p><strong>Create the Gameplay/Background Scene
+(Optional):</strong></p>
+<ul>
+<li>Create a scene named <code>[Source] Gameplay</code> or
+<code>[Source] Desktop</code>.</li>
+<li>Add your Game Capture, Window Capture, or Video Capture Device for
+your console.</li>
+</ul></li>
+</ol>
+<h2 id="step-2-assemble-the-just-chatting-scene">Step 2: Assemble the
+"Just Chatting" Scene</h2>
+<p>Now that your individual source scenes are ready, you will nest them
+inside your main "Just Chatting" presentation scene.</p>
+<ol type="1">
+<li>Create a new scene and name it <code>Just Chatting</code>.</li>
+<li>Add a background to this scene first (an image, a looping video, or
+a color source) so it sits at the bottom of your sources list.</li>
+<li>Click the <strong>+</strong> icon in the <strong>Sources</strong>
+dock, select <strong>Scene</strong>, and choose
+<code>[Source] Webcam</code>.</li>
+<li>Click the <strong>+</strong> icon again, select
+<strong>Scene</strong>, and choose <code>[Source] Chat</code>.</li>
+<li>If you want to show game footage or a desktop capture in a small
+window, add the <code>[Source] Gameplay</code> scene as a source.</li>
+</ol>
+<h2 id="step-3-arrange-and-format-your-layout">Step 3: Arrange and
+Format Your Layout</h2>
+<p>With your nested scenes added as sources, you can now freely
+manipulate them on your canvas without affecting the original
+assets.</p>
+<ul>
+<li><strong>Resize and Position:</strong> Click on the
+<code>[Source] Webcam</code> scene in your preview window. Resize it and
+place it where you want. Do the same for your <code>[Source] Chat</code>
+and <code>[Source] Gameplay</code> scenes.</li>
+<li><strong>Apply Borders and Masks:</strong> If you want to apply a
+border or a rounded-corner mask to your webcam, you can apply the effect
+directly to the <code>[Source] Webcam</code> layer inside your
+<code>Just Chatting</code> scene.</li>
+<li><strong>Add Overlay Graphics:</strong> Add any static overlays,
+stream labels (like latest follower), or alert packages on top of these
+nested scenes.</li>
+</ul>
+<h2 id="why-this-method-is-superior">Why This Method is Superior</h2>
+<p>Using nested scenes for your "Just Chatting" layout offers several
+distinct workflow advantages:</p>
+<ul>
+<li><strong>Single-Point Editing:</strong> If you get a new webcam or
+need to adjust your camera's color grading, you only have to update the
+<code>[Source] Webcam</code> scene. The changes will instantly reflect
+in your "Just Chatting", "Main Gameplay", and "Be Right Back"
+scenes.</li>
+<li><strong>Performance Optimization:</strong> OBS handles nested scenes
+efficiently. It prevents the system from loading duplicate instances of
+the same hardware device or browser source, reducing CPU and GPU
+overhead.</li>
+<li><strong>Flawless Transitions:</strong> When transitioning between
+different scenes that use the same nested source, OBS will smoothly
+animate the source's movement and scale using the "Move" transition
+plugin or standard studio transitions, preventing jarring flickers.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

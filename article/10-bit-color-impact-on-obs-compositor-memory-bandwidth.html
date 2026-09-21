@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10-Bit Color Impact on OBS Compositor Memory Bandwidth - obs-studio</title>
+    <meta name="description" content="Enabling 10-bit color formats in OBS Studio increases GPU texture memory bandwidth consumption by expanding the data footprint of intermediate render targets and video frames. Because 10-bit processing frequently relies on 16-bit data containers and high">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/10-bit-color-impact-on-obs-compositor-memory-bandwidth">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="10-Bit Color Impact on OBS Compositor Memory Bandwidth - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/10-bit-color-impact-on-obs-compositor-memory-bandwidth" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Enabling 10-bit color formats in OBS Studio increases GPU texture memory bandwidth consumption by expanding the data footprint of intermediate render targets and video frames. Because 10-bit processing frequently relies on 16-bit data containers and high" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="10-bit-color-impact-on-obs-compositor-memory-bandwidth">10-Bit
+Color Impact on OBS Compositor Memory Bandwidth</h1>
+<p>Enabling 10-bit color formats in OBS Studio increases GPU texture
+memory bandwidth consumption by expanding the data footprint of
+intermediate render targets and video frames. Because 10-bit processing
+frequently relies on 16-bit data containers and high-precision
+floating-point canvas surfaces, the compositor must read and write
+substantially more bytes per pixel across every rendering pass. This
+article explains how OBS handles 10-bit textures, why memory throughput
+scales non-linearly, and the performance implications for the rendering
+pipeline.</p>
+<h3 id="how-the-obs-compositor-processes-color">How the OBS Compositor
+Processes Color</h3>
+<p>OBS Studio executes scene composition entirely on the GPU via
+Direct3D 11 on Windows, Metal on macOS, or OpenGL on Linux. During a
+standard frame render, input sources (such as capture cards, game
+captures, and media files) are decoded into memory, uploaded to GPU
+textures, converted to RGB, and blended onto a master canvas texture.
+Filters, transformations, and alpha blending are applied as sequential
+render passes, writing intermediate results to offscreen buffers before
+generating the final composited frame for the video encoder.</p>
+<h3 id="pixel-layout-and-format-expansion">Pixel Layout and Format
+Expansion</h3>
+<p>The primary driver of increased bandwidth is how 10-bit samples are
+represented in memory:</p>
+<ul>
+<li><strong>Source Textures (P010 vs. NV12):</strong> Standard 8-bit
+4:2:0 video feeds use formats like NV12, requiring 12 bits (1.5 bytes)
+per pixel. Most 10-bit 4:2:0 capture feeds use the P010 format. In P010,
+the 10-bit values are packed into 16-bit words (with 6 bits padded).
+This increases the memory footprint to 24 bits (3.0 bytes) per pixel—a
+100% increase in raw texture data read from VRAM before any composition
+takes place.</li>
+<li><strong>Internal Render Targets (RGBA16F vs. RGBA8):</strong> In
+standard SDR mode, OBS composites scenes using 8-bit integer buffers
+(<code>DXGI_FORMAT_B8G8R8A8_UNORM</code>), which cost 32 bits (4 bytes)
+per pixel. When configured for 10-bit or HDR color spaces (such as Rec.
+2100 PQ or HLG), the internal compositor transitions intermediate render
+targets to 16-bit floating-point textures
+(<code>DXGI_FORMAT_R16G16B16A16_FLOAT</code>). This prevents banding,
+rounding errors, and color clipping during blend operations. This format
+requires 64 bits (8 bytes) per pixel, directly doubling the data payload
+for every draw call and compositing operation.</li>
+</ul>
+<h3 id="multiplied-bandwidth-across-render-passes">Multiplied Bandwidth
+Across Render Passes</h3>
+<p>The bandwidth penalty is not limited to a single read and write. The
+OBS compositor executes multiple operations per frame:</p>
+<ol type="1">
+<li><strong>Format Conversion:</strong> Planar 10-bit textures (P010)
+are sampled and converted into linear floating-point RGB textures.</li>
+<li><strong>Layer Compositing:</strong> Each visible source is sampled
+from its source texture and blended into the intermediate canvas
+texture.</li>
+<li><strong>Filter Application:</strong> Color correction, scaling,
+sharpening, and blur filters read from one intermediate 64-bit-per-pixel
+texture and write to another.</li>
+<li><strong>Final Staging:</strong> The combined frame is converted back
+to an encoder-compatible format (such as P010 or NV12) and staged for
+hardware encoding.</li>
+</ol>
+<p>Because the internal render canvas is 8 bytes per pixel rather than 4
+bytes, every intermediate pass moves twice as much data over the GPU's
+memory bus. In a complex scene with multiple nested scenes, transitions,
+and overlays, the cumulative memory throughput scales
+multiplicatively.</p>
+<h3 id="bandwidth-calculation-example">Bandwidth Calculation
+Example</h3>
+<p>For an uncompressed 4K canvas (3840x2160) operating at 60 frames per
+second:</p>
+<ul>
+<li><strong>8-Bit SDR (RGBA8):</strong> A single full-screen canvas read
+or write requires approximately 33.18 MB per frame, translating to
+<strong>1.99 GB/s</strong> of memory bandwidth per pass.</li>
+<li><strong>10-Bit/HDR (RGBA16F):</strong> The same 4K frame requires
+66.36 MB per frame, resulting in <strong>3.98 GB/s</strong> of memory
+bandwidth per pass.</li>
+</ul>
+<p>If a scene requires an average of five composite and filter passes
+before final encoding, the compositor alone demands roughly <strong>19.9
+GB/s</strong> of memory bandwidth for 10-bit floating-point surfaces,
+compared to roughly <strong>9.95 GB/s</strong> for an 8-bit
+pipeline.</p>
+<h3 id="real-world-hardware-implications">Real-World Hardware
+Implications</h3>
+<p>Modern desktop GPUs with wide memory interfaces (192-bit to 384-bit)
+typically possess sufficient memory bandwidth (300 GB/s to 1,000+ GB/s)
+to absorb this overhead without dropped frames. However, the increased
+bandwidth footprint creates noticeable bottlenecks in specific
+scenarios:</p>
+<ul>
+<li><strong>Integrated and Mobile GPUs:</strong> Systems utilizing
+shared system memory (LPDDR4X/DDR5) often have memory bandwidth
+constrained to between 50 GB/s and 100 GB/s. Dedicating 20 GB/s or more
+solely to the OBS compositor can cause rendering lag and frame
+drops.</li>
+<li><strong>Narrow-Bus GPUs:</strong> Entry-level discrete GPUs
+operating on 64-bit or 128-bit memory buses can experience memory bus
+saturation when high-resolution 10-bit composition runs concurrently
+with a graphically demanding game.</li>
+<li><strong>Encoder Starvation:</strong> If the compositor cannot finish
+reading and writing intermediate textures within the frame interval
+(16.67 ms for 60 fps) due to memory bus contention, rendering lag
+occurs, leading to dropped frames before the video data ever reaches the
+hardware encoder.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

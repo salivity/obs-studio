@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Fit Source to Screen in OBS Studio - obs-studio</title>
+    <meta name="description" content="When streaming or recording with OBS Studio, adding a high-resolution image, video, or window capture can often result in a graphic that is too large for your preview canvas. This guide provides a quick, step-by-step walkthrough on how to use the "Fit to">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-fit-source-to-screen-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Fit Source to Screen in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-fit-source-to-screen-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When streaming or recording with OBS Studio, adding a high-resolution image, video, or window capture can often result in a graphic that is too large for your preview canvas. This guide provides a quick, step-by-step walkthrough on how to use the "Fit to" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-fit-source-to-screen-in-obs-studio">How to Fit Source to
+Screen in OBS Studio</h1>
+<p>When streaming or recording with OBS Studio, adding a high-resolution
+image, video, or window capture can often result in a graphic that is
+too large for your preview canvas. This guide provides a quick,
+step-by-step walkthrough on how to use the "Fit to screen" keyboard
+shortcut in OBS Studio to instantly resize any oversized source to
+perfectly match your canvas dimensions without losing its original
+aspect ratio.</p>
+<h3 id="the-keyboard-shortcut">The Keyboard Shortcut</h3>
+<p>To instantly resize any oversized or misaligned source to fit your
+OBS preview canvas, use the following keyboard shortcut:</p>
+<ul>
+<li><strong>Windows and Linux:</strong> <code>Ctrl</code> +
+<code>F</code></li>
+<li><strong>macOS:</strong> <code>Cmd</code> + <code>F</code></li>
+</ul>
+<h3 id="step-by-step-instructions">Step-by-Step Instructions</h3>
+<ol type="1">
+<li><strong>Open OBS Studio</strong> and ensure you are on the scene
+containing the oversized source.</li>
+<li><strong>Select the source</strong> you want to resize. You can do
+this by clicking on the source name in the <strong>Sources</strong> dock
+at the bottom of the screen, or by clicking directly on the source in
+the preview window (a red bounding box will appear around it).</li>
+<li><strong>Press the shortcut:</strong> Press <code>Ctrl + F</code>
+(Windows) or <code>Cmd + F</code> (Mac) on your keyboard.</li>
+</ol>
+<p>The selected source will instantly scale down (or up) to fit the
+boundaries of your canvas while preserving its original aspect
+ratio.</p>
+<h3 id="alternative-method-using-the-mouse">Alternative Method: Using
+the Mouse</h3>
+<p>If you prefer using your mouse instead of keyboard shortcuts, you can
+achieve the same result through the context menu:</p>
+<ol type="1">
+<li><strong>Right-click</strong> on the oversized source in the preview
+window or the <strong>Sources</strong> dock.</li>
+<li>Hover your cursor over <strong>Transform</strong> in the drop-down
+menu.</li>
+<li>Click on <strong>Fit to screen</strong>.</li>
+</ol>
+<h3 id="fit-to-screen-vs-stretch-to-screen">"Fit to Screen" vs. "Stretch
+to Screen"</h3>
+<p>It is important to know the difference between the two main scaling
+options in the Transform menu:</p>
+<ul>
+<li><strong>Fit to Screen (<code>Ctrl + F</code>):</strong> Scales the
+source to be as large as possible within the canvas boundaries while
+keeping its original aspect ratio. If the source aspect ratio differs
+from your canvas, you may see black bars on the sides or
+top/bottom.</li>
+<li><strong>Stretch to Screen (<code>Ctrl + S</code>):</strong> Forces
+the source to fill the entire canvas, ignoring the original aspect
+ratio. This will stretch or squish the graphic if it does not match your
+canvas dimensions.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

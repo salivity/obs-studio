@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio NVIDIA GPU Encoder Saturation Registers - obs-studio</title>
+    <meta name="description" content="This article examines how OBS Studio monitors NVIDIA RTX hardware encoder (NVENC) saturation, clarifying the architectural interaction between user-space streaming software, NVIDIA proprietary drivers, and physical GPU registers. While hardware monitorin">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-nvidia-gpu-encoder-saturation-registers">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio NVIDIA GPU Encoder Saturation Registers - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-nvidia-gpu-encoder-saturation-registers" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines how OBS Studio monitors NVIDIA RTX hardware encoder (NVENC) saturation, clarifying the architectural interaction between user-space streaming software, NVIDIA proprietary drivers, and physical GPU registers. While hardware monitorin" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-nvidia-gpu-encoder-saturation-registers">OBS Studio
+NVIDIA GPU Encoder Saturation Registers</h1>
+<p>This article examines how OBS Studio monitors NVIDIA RTX hardware
+encoder (NVENC) saturation, clarifying the architectural interaction
+between user-space streaming software, NVIDIA proprietary drivers, and
+physical GPU registers. While hardware monitoring often implies direct
+register reads, user-mode applications cannot directly poll
+memory-mapped I/O (MMIO) registers. Instead, OBS Studio evaluates
+encoder saturation through a combination of API-level execution timings,
+NVENC return codes, and driver-mediated performance counters provided by
+the NVIDIA Management Library (NVML).</p>
+<h3 id="user-space-restrictions-and-register-access">User-Space
+Restrictions and Register Access</h3>
+<p>OBS Studio operates strictly within the operating system's user space
+(Ring 3). Direct interaction with hardware registers on NVIDIA RTX
+architectures (Turing, Ampere, Ada Lovelace, and newer) requires Ring 0
+kernel privileges. Modern operating systems and display drivers forbid
+user-mode programs from reading physical MMIO base address ranges
+(typically mapped under <code>NV_PBUS</code>, <code>NV_PCOUNTER</code>,
+or the engine-specific registers for <code>NVENC</code>).</p>
+<p>Consequently, OBS Studio does not query physical hardware registers
+directly. Any attempt to read hardware registers at raw offsets would
+trigger a memory access violation or require a custom kernel-mode
+driver, which OBS does not employ.</p>
+<h3 id="how-obs-studio-detects-nvenc-saturation">How OBS Studio Detects
+NVENC Saturation</h3>
+<p>Rather than querying registers, OBS Studio tracks NVENC saturation
+through timing telemetry and the NVIDIA Video Codec SDK (NVENC API):</p>
+<ol type="1">
+<li><strong>Submission Latency and Frame Timing:</strong> OBS Studio
+measures the wall-clock duration taken by API calls such as
+<code>NvEncEncodePicture</code>. When the NVENC hardware engine reaches
+maximum throughput, asynchronous submission queues fill up, forcing
+subsequent encode calls to block or return high latency. If processing
+time exceeds the frame budget (e.g., 16.6ms for 60 FPS), OBS marks the
+frame as an "encoding lag" drop.</li>
+<li><strong>Asynchronous Query Polling:</strong> When OBS checks the
+status of asynchronous encoding tasks using
+<code>NvEncGetEncodeStats</code> or sync objects (such as CUDA events or
+D3D11/D3D12 fences), delays in task completion signal that the dedicated
+encoding silicon is saturated.</li>
+<li><strong>API Return Flags:</strong> If the encoder queue is
+exhausted, the API returns driver-level status codes such as
+<code>NV_ENC_ERR_ENCODER_BUSY</code> or
+<code>NV_ENC_ERR_OUT_OF_MEMORY</code>.</li>
+</ol>
+<h3 id="driver-level-telemetry-via-nvml">Driver-Level Telemetry via
+NVML</h3>
+<p>For statistical GPU monitoring, applications—including system
+monitoring plugins used alongside OBS—rely on the NVIDIA Management
+Library (NVML).</p>
+<p>NVML provides the function
+<code>nvmlDeviceGetEncoderUtilization()</code>. This call asks the
+NVIDIA kernel driver (<code>nvlddmkm.sys</code> on Windows or
+<code>nvidia.ko</code> on Linux) to report the duty cycle of the NVENC
+engine. The kernel driver derives this by sampling internal hardware
+performance counters, specifically tracking active execution cycles
+versus idle clock cycles of the video coding engine (VCE/NVENC) across a
+moving time window (typically 1/6th of a second).</p>
+<h3 id="the-underlying-hardware-registers">The Underlying Hardware
+Registers</h3>
+<p>At the kernel level, the NVIDIA proprietary driver monitors
+saturation by interfacing with dedicated hardware performance monitor
+units (PMU) and engine-specific counter registers:</p>
+<ul>
+<li><strong>Engine Duty Registers:</strong> The driver samples internal
+counter registers in the NVENC/VCE block that increment during active
+macroblock/transform processing phases.</li>
+<li><strong>NV_PCOUNTER Subsystem:</strong> NVIDIA GPUs contain a
+performance counter block (<code>NV_PCOUNTER</code>) that tracks cycles
+spent by dedicated ASICs, including NVENC, NVDEC, and CUDA streaming
+multiprocessors.</li>
+<li><strong>Host Interface and Work Queues:</strong> The host interface
+registers track command buffer read/write pointers. When the write
+pointer approaches the read pointer limit, the hardware command queue is
+full, signaling hardware backpressure to the kernel driver.</li>
+</ul>
+<p>In summary, OBS Studio determines NVENC saturation programmatically
+by tracking frame processing latency and buffer timeouts via the NVENC
+API, while underlying silicon saturation metrics are managed exclusively
+by the NVIDIA kernel driver reading internal cycle counters.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Does Limit Capture Framerate Do in OBS Studio? - obs-studio</title>
+    <meta name="description" content="The "Limit capture framerate" checkbox in OBS Studio's Game Capture properties is a performance-saving feature designed to prevent OBS from capturing more frames than your stream or recording actually needs. This article explains how this setting works,">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/what-does-limit-capture-framerate-do-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="What Does Limit Capture Framerate Do in OBS Studio? - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/what-does-limit-capture-framerate-do-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The "Limit capture framerate" checkbox in OBS Studio's Game Capture properties is a performance-saving feature designed to prevent OBS from capturing more frames than your stream or recording actually needs. This article explains how this setting works," />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="what-does-limit-capture-framerate-do-in-obs-studio">What Does
+Limit Capture Framerate Do in OBS Studio?</h1>
+<p>The "Limit capture framerate" checkbox in OBS Studio's Game Capture
+properties is a performance-saving feature designed to prevent OBS from
+capturing more frames than your stream or recording actually needs. This
+article explains how this setting works, why you should use it, and how
+it helps optimize your PC's hardware resources during gaming and
+streaming.</p>
+<h3 id="how-limit-capture-framerate-works">How Limit Capture Framerate
+Works</h3>
+<p>When you play a PC game, it may run at a high frame rate, such as 120
+FPS, 144 FPS, or higher. However, your OBS Studio video output is likely
+set to a standard 30 FPS or 60 FPS.</p>
+<p>If "Limit capture framerate" is <strong>unchecked</strong>, OBS will
+hook into the game and capture every single frame the game produces,
+even if it exceeds your OBS output frame rate. OBS then discards the
+extra frames before encoding. This process wastes valuable graphics card
+(GPU) and processor (CPU) resources.</p>
+<p>If "Limit capture framerate" is <strong>checked</strong>, OBS
+restricts its capture hook to match the frame rate specified in your OBS
+Video settings (usually 60 FPS). Instead of capturing all 144 frames,
+OBS only captures 60 frames per second directly from the source.</p>
+<h3 id="why-you-should-enable-it">Why You Should Enable It</h3>
+<p>Enabling this setting is highly recommended for most gamers and
+streamers for several reasons:</p>
+<ul>
+<li><strong>Reduces GPU Overhead:</strong> By capturing fewer frames,
+your graphics card does less work, leaving more resources available to
+run your game smoothly.</li>
+<li><strong>Prevents Rendering Lag:</strong> If your GPU is running at
+100% capacity, OBS may struggle to render frames, leading to stuttering
+or frozen video in your stream or recording. Limiting the capture rate
+prevents this bottleneck.</li>
+<li><strong>Improves Stream Stability:</strong> It ensures a consistent
+flow of frames to the encoder, resulting in a smoother viewing
+experience for your audience.</li>
+</ul>
+<h3 id="when-to-leave-it-unchecked">When to Leave It Unchecked</h3>
+<p>There are very few scenarios where you should disable this feature.
+You might turn it off if you are recording at an ultra-high frame rate
+for slow-motion editing, or if you are troubleshooting a specific
+compatibility issue where the limit causes micro-stuttering in a
+particular game. For standard streaming and recording, keeping this box
+checked is the best practice.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

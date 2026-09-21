@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Nested Scenes in OBS Studio for Overlays - obs-studio</title>
+    <meta name="description" content="Managing multiple branding elements like logos, social media handles, and webcam borders in OBS Studio can quickly clutter your sources list and make live switching stressful. This article provides a straightforward, step-by-step guide on how to use nest">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/create-nested-scenes-in-obs-studio-for-overlays">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Create Nested Scenes in OBS Studio for Overlays - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/create-nested-scenes-in-obs-studio-for-overlays" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Managing multiple branding elements like logos, social media handles, and webcam borders in OBS Studio can quickly clutter your sources list and make live switching stressful. This article provides a straightforward, step-by-step guide on how to use nest" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="create-nested-scenes-in-obs-studio-for-overlays">Create Nested
+Scenes in OBS Studio for Overlays</h1>
+<p>Managing multiple branding elements like logos, social media handles,
+and webcam borders in OBS Studio can quickly clutter your sources list
+and make live switching stressful. This article provides a
+straightforward, step-by-step guide on how to use nested scenes (scenes
+within scenes) to group your branding overlays together. By the end of
+this guide, you will be able to toggle your entire branding package on
+or off across multiple scenes with a single click or hotkey.</p>
+<h3 id="step-1-create-the-branding-child-scene">Step 1: Create the
+Branding "Child" Scene</h3>
+<p>First, you need to create a dedicated scene that will hold only your
+branding assets.</p>
+<ol type="1">
+<li>Go to the <strong>Scenes</strong> dock in OBS Studio and click the
+<strong>+</strong> (plus) icon to create a new scene.</li>
+<li>Name this scene something recognizable, such as
+<code>[SUB] Branding Overlays</code>.</li>
+<li>Select this new scene. In the <strong>Sources</strong> dock, click
+the <strong>+</strong> icon to add your design assets (e.g., Image
+sources for logos, Text sources for social handles, Media sources for
+animated overlays).</li>
+<li>Arrange and position these sources exactly where you want them to
+appear on your stream.</li>
+</ol>
+<h3 id="step-2-nest-the-branding-scene-into-your-live-scenes">Step 2:
+Nest the Branding Scene into Your Live Scenes</h3>
+<p>Now you will import your newly created branding scene into your main
+streaming scenes (such as your gameplay, camera, or "Be Right Back"
+scenes).</p>
+<ol type="1">
+<li>In the <strong>Scenes</strong> dock, select your primary live scene
+(e.g., <code>Gameplay Scene</code>).</li>
+<li>Go to the <strong>Sources</strong> dock and click the
+<strong>+</strong> icon.</li>
+<li>Select <strong>Scene</strong> from the dropdown menu.</li>
+<li>In the pop-up window, choose <strong>Add Existing</strong>, select
+<code>[SUB] Branding Overlays</code> from the list, and click
+<strong>OK</strong>.</li>
+<li>Repeat this process for any other scenes where you want your
+branding overlays to appear.</li>
+</ol>
+<h3 id="step-3-easily-toggle-the-branding-group">Step 3: Easily Toggle
+the Branding Group</h3>
+<p>Once nested, your entire branding package behaves as a single source
+within your main scenes.</p>
+<ul>
+<li><strong>Single-Click Toggle:</strong> To turn all branding elements
+on or off at once, simply click the <strong>eye icon</strong> next to
+the <code>[SUB] Branding Overlays</code> source in your active scene's
+Sources dock.</li>
+<li><strong>Global Updates:</strong> If you need to change a logo or
+update a social media handle, edit it once inside the original
+<code>[SUB] Branding Overlays</code> scene. The changes will instantly
+apply across all scenes where the branding is nested.</li>
+<li><strong>Hotkey Control:</strong> Go to <strong>File &gt; Settings
+&gt; Hotkeys</strong>. Search for your branding scene name to assign a
+single keyboard shortcut to show or hide the entire overlay group
+instantly.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

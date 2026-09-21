@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Set OBS Scale Filtering to Point - obs-studio</title>
+    <meta name="description" content="When streaming or recording pixel art games in OBS Studio, the default scaling settings often result in a blurry, smudged image. This guide provides a direct, step-by-step walkthrough to configure your OBS "Scale Filtering" to "Point" (nearest-neighbor i">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-set-obs-scale-filtering-to-point">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Set OBS Scale Filtering to Point - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-set-obs-scale-filtering-to-point" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When streaming or recording pixel art games in OBS Studio, the default scaling settings often result in a blurry, smudged image. This guide provides a direct, step-by-step walkthrough to configure your OBS "Scale Filtering" to "Point" (nearest-neighbor i" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-set-obs-scale-filtering-to-point">How to Set OBS Scale
+Filtering to Point</h1>
+<p>When streaming or recording pixel art games in OBS Studio, the
+default scaling settings often result in a blurry, smudged image. This
+guide provides a direct, step-by-step walkthrough to configure your OBS
+"Scale Filtering" to "Point" (nearest-neighbor interpolation). By
+changing this setting, you will disable the automatic smoothing filters
+and force OBS to render your pixel art games with sharp, crisp, and
+perfectly defined edges.</p>
+<h2 id="steps-to-enable-point-scale-filtering-in-obs">Steps to Enable
+Point Scale Filtering in OBS</h2>
+<p>To fix the blurriness of your pixel art source, follow these
+steps:</p>
+<ol type="1">
+<li><strong>Launch OBS Studio</strong> and ensure your pixel art game is
+running and captured in your active scene.</li>
+<li>In the <strong>Sources</strong> dock at the bottom of the screen,
+locate the specific source capturing your game (this is usually a
+<em>Game Capture</em>, <em>Window Capture</em>, or <em>Display
+Capture</em>).</li>
+<li><strong>Right-click</strong> on the game source. Alternatively, you
+can right-click the source directly inside the visual Preview
+window.</li>
+<li>In the context menu that appears, hover your mouse over
+<strong>Scale Filtering</strong>.</li>
+<li>A submenu will expand with several filtering options. Click on
+<strong>Point</strong>.</li>
+</ol>
+<p>Once selected, the preview window will immediately update. The blurry
+edges of your game will disappear, replaced by sharp, pixel-perfect
+lines.</p>
+<h2 id="why-point-filtering-is-necessary-for-pixel-art">Why "Point"
+Filtering is Necessary for Pixel Art</h2>
+<p>By default, OBS Studio uses bilinear or bicubic scaling. These
+algorithms are designed for high-resolution 3D graphics or real-life
+camera feeds, where blending adjacent pixels creates a smoother, more
+natural image.</p>
+<p>However, when applied to low-resolution pixel art, this blending
+causes unwanted anti-aliasing, making the retro graphics look fuzzy.
+"Point" filtering (also known as nearest-neighbor scaling) does not
+blend pixels. Instead, it duplicates the existing pixels to fill the
+larger screen space, preserving the exact blocky shape and color of the
+original artwork.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

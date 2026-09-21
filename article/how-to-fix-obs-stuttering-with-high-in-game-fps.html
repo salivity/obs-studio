@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Fix OBS Stuttering with High In-Game FPS - obs-studio</title>
+    <meta name="description" content="Experiencing choppy or stuttering video in OBS Studio while your game runs smoothly at a high frame rate is a common issue caused by GPU resource starvation. When a game runs with an uncapped framerate, it consumes nearly 100% of your graphics card's cap">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-fix-obs-stuttering-with-high-in-game-fps">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Fix OBS Stuttering with High In-Game FPS - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-fix-obs-stuttering-with-high-in-game-fps" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Experiencing choppy or stuttering video in OBS Studio while your game runs smoothly at a high frame rate is a common issue caused by GPU resource starvation. When a game runs with an uncapped framerate, it consumes nearly 100% of your graphics card's cap" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-fix-obs-stuttering-with-high-in-game-fps">How to Fix OBS
+Stuttering with High In-Game FPS</h1>
+<p>Experiencing choppy or stuttering video in OBS Studio while your game
+runs smoothly at a high frame rate is a common issue caused by GPU
+resource starvation. When a game runs with an uncapped framerate, it
+consumes nearly 100% of your graphics card's capacity, leaving no
+resources for OBS to render its canvas. This article provides direct,
+actionable solutions to balance your system's resources and achieve
+buttery-smooth recordings and streams without sacrificing your gaming
+experience.</p>
+<h2 id="run-obs-studio-as-administrator">Run OBS Studio as
+Administrator</h2>
+<p>Running OBS Studio with administrator privileges is the single most
+effective fix for this issue. Windows has a built-in feature that
+prioritizes GPU allocation to software running as administrator.</p>
+<ol type="1">
+<li>Right-click on your <strong>OBS Studio</strong> shortcut.</li>
+<li>Select <strong>Properties</strong>.</li>
+<li>Go to the <strong>Compatibility</strong> tab.</li>
+<li>Check the box that says <strong>Run this program as an
+administrator</strong>.</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong>.</li>
+</ol>
+<p>By doing this, Windows will reserve a small percentage of GPU power
+for OBS to render frames, preventing video encoding lag even if your
+game is demanding.</p>
+<h2 id="limit-your-in-game-framerate">Limit Your In-Game Framerate</h2>
+<p>When your in-game FPS is allowed to run completely uncapped (e.g.,
+200+ FPS), your GPU will work at maximum capacity to push those frames,
+depriving OBS of the processing power it needs.</p>
+<ul>
+<li><strong>Cap your FPS:</strong> Open your game's video settings and
+cap the maximum framerate.</li>
+<li><strong>Choose a clean mathematical divisor:</strong> For the
+smoothest video, limit your game's FPS to a multiple of your OBS
+recording framerate. If you stream or record in OBS at 60 FPS, cap your
+in-game FPS to 60, 120, or 180 FPS.</li>
+<li><strong>Use V-Sync or G-Sync/FreeSync:</strong> Enabling these
+technologies helps stabilize frame delivery and prevents your GPU from
+overworking itself.</li>
+</ul>
+<h2 id="enable-windows-game-mode">Enable Windows Game Mode</h2>
+<p>In the past, Windows Game Mode caused performance issues with
+streaming software, but modern updates have optimized it. Game Mode now
+works in tandem with OBS (when run as administrator) to allocate
+hardware resources dynamically.</p>
+<ol type="1">
+<li>Press the <strong>Windows Key + I</strong> to open Settings.</li>
+<li>Navigate to <strong>Gaming</strong> and select <strong>Game
+Mode</strong>.</li>
+<li>Toggle Game Mode to <strong>On</strong>.</li>
+</ol>
+<h2 id="use-hardware-encoding-nvenc-or-amf">Use Hardware Encoding (NVENC
+or AMF)</h2>
+<p>Using your CPU (x264) to encode video while running high-framerate
+games can overload your system. Switching to your graphics card's
+dedicated hardware encoder offloads this work entirely.</p>
+<ol type="1">
+<li>Open OBS and go to <strong>Settings</strong> &gt;
+<strong>Output</strong>.</li>
+<li>Set the Output Mode to <strong>Advanced</strong>.</li>
+<li>In the <strong>Streaming</strong> or <strong>Recording</strong> tab,
+change the Video Encoder to <strong>NVIDIA NVENC H.264</strong> (for
+NVIDIA cards) or <strong>AMD HW H.264</strong> (for AMD cards).</li>
+</ol>
+<p>Because these hardware encoders run on a separate physical chip on
+your GPU, they will not impact your in-game FPS or cause OBS to
+stutter.</p>
+<h2 id="disable-hags-hardware-accelerated-gpu-scheduling">Disable HAGS
+(Hardware-Accelerated GPU Scheduling)</h2>
+<p>In some system configurations, Windows' Hardware-Accelerated GPU
+Scheduling (HAGS) interferes with OBS's ability to capture frames
+smoothly.</p>
+<ol type="1">
+<li>Open the Windows Start menu and search for <strong>Graphics
+settings</strong>.</li>
+<li>Click on <strong>Change default graphics settings</strong>.</li>
+<li>Toggle <strong>Hardware-accelerated GPU scheduling</strong> to
+<strong>Off</strong>.</li>
+<li>Restart your computer for the changes to take effect.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

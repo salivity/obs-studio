@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configure OBS Studio for 320kbps Audio Streaming - obs-studio</title>
+    <meta name="description" content="This guide provides a step-by-step walkthrough on how to configure the advanced output settings in OBS Studio to stream audio at a high-fidelity 320kbps bitrate. Adjusting these settings ensures your stream delivers studio-quality sound to your audience,">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/configure-obs-studio-for-320-kbps-audio-streaming">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Configure OBS Studio for 320kbps Audio Streaming - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/configure-obs-studio-for-320-kbps-audio-streaming" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide provides a step-by-step walkthrough on how to configure the advanced output settings in OBS Studio to stream audio at a high-fidelity 320kbps bitrate. Adjusting these settings ensures your stream delivers studio-quality sound to your audience," />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="configure-obs-studio-for-320kbps-audio-streaming">Configure OBS
+Studio for 320kbps Audio Streaming</h1>
+<p>This guide provides a step-by-step walkthrough on how to configure
+the advanced output settings in OBS Studio to stream audio at a
+high-fidelity 320kbps bitrate. Adjusting these settings ensures your
+stream delivers studio-quality sound to your audience, maximizing the
+audio performance of your microphones, instruments, and system
+sounds.</p>
+<h3 id="step-1-access-the-settings-menu">Step 1: Access the Settings
+Menu</h3>
+<p>Open OBS Studio on your computer. In the bottom-right corner of the
+interface, click on the <strong>Settings</strong> button (or navigate to
+<strong>File</strong> &gt; <strong>Settings</strong> in the top menu
+bar).</p>
+<h3 id="step-2-switch-to-advanced-output-mode">Step 2: Switch to
+Advanced Output Mode</h3>
+<p>In the Settings window, locate and click on the
+<strong>Output</strong> tab in the left-hand sidebar. At the top of the
+Output menu, locate the <strong>Output Mode</strong> dropdown menu. By
+default, this is set to <em>Simple</em>. Click the dropdown and select
+<strong>Advanced</strong>. This unlocks the granular settings required
+to customize your audio tracks.</p>
+<h3 id="step-3-configure-the-audio-bitrate">Step 3: Configure the Audio
+Bitrate</h3>
+<p>With the Advanced Output Mode active, you will see several tabs at
+the top of the window (such as Streaming, Recording, Audio, and Replay
+Buffer).</p>
+<ol type="1">
+<li>Click on the <strong>Audio</strong> tab.</li>
+<li>You will see a list of numbered Audio Tracks (Track 1 through Track
+6). Most standard streams use <strong>Track 1</strong> for their primary
+broadcast mix.</li>
+<li>Locate the <strong>Audio Bitrate</strong> dropdown menu next to
+Track 1 (and any other tracks you plan to stream).</li>
+<li>Click the dropdown and select <strong>320</strong> from the list.
+320kbps is the maximum supported bitrate for high-fidelity stereo audio
+in OBS Studio.</li>
+</ol>
+<h3 id="step-4-verify-your-active-streaming-track">Step 4: Verify Your
+Active Streaming Track</h3>
+<p>To ensure the high-fidelity track is actually being sent to your live
+stream, switch to the <strong>Streaming</strong> tab within the same
+Output window.</p>
+<ol type="1">
+<li>Look for the <strong>Audio Track</strong> setting.</li>
+<li>Ensure the checkbox for the track you just configured to 320kbps
+(typically <strong>Track 1</strong>) is selected.</li>
+</ol>
+<h3 id="step-5-save-and-apply-changes">Step 5: Save and Apply
+Changes</h3>
+<p>Click the <strong>Apply</strong> button in the bottom-right corner of
+the Settings window, then click <strong>OK</strong> to close the menu.
+Your OBS Studio is now configured to encode and stream your audio at
+320kbps.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

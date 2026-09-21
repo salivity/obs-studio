@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix OBS Studio Startup Crash Audio Driver - obs-studio</title>
+    <meta name="description" content="If OBS Studio crashes immediately upon launch, a corrupted or incompatible third-party audio driver or software is often the culprit. This guide provides a straightforward, step-by-step walkthrough to help you identify the problematic audio driver, disab">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/fix-obs-studio-startup-crash-audio-driver">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Fix OBS Studio Startup Crash Audio Driver - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/fix-obs-studio-startup-crash-audio-driver" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="If OBS Studio crashes immediately upon launch, a corrupted or incompatible third-party audio driver or software is often the culprit. This guide provides a straightforward, step-by-step walkthrough to help you identify the problematic audio driver, disab" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="fix-obs-studio-startup-crash-audio-driver">Fix OBS Studio
+Startup Crash Audio Driver</h1>
+<p>If OBS Studio crashes immediately upon launch, a corrupted or
+incompatible third-party audio driver or software is often the culprit.
+This guide provides a straightforward, step-by-step walkthrough to help
+you identify the problematic audio driver, disable or reinstall the
+conflicting software, and restore OBS Studio to full functionality.</p>
+<h3 id="step-1-identify-the-crashing-driver-via-crash-logs">Step 1:
+Identify the Crashing Driver via Crash Logs</h3>
+<p>To fix the issue, you first need to confirm which audio driver is
+causing the crash.</p>
+<ol type="1">
+<li>Press <code>Windows Key + R</code> to open the Run dialog box.</li>
+<li>Type <code>%appdata%\obs-studio\crashes</code> and press
+<strong>Enter</strong>.</li>
+<li>Open the most recent crash log text file.</li>
+<li>Scroll down to the "Thread" section that mentions the crash, or look
+at the "Loaded Modules" list.</li>
+<li>Look for common problematic audio DLLs or drivers, such as:
+<ul>
+<li><strong>Nahimic</strong> (<code>NahimicMSIOps.dll</code> or
+<code>NAHIMICV3OSD.dll</code>)</li>
+<li><strong>A-Volute / Sonic Studio</strong>
+(<code>LgLgKeyHook64.dll</code> or similar)</li>
+<li><strong>Realtek Audio</strong> (<code>rtkaudservice.exe</code>)</li>
+<li><strong>Virtual Audio Cable / Voicemeeter</strong>
+(<code>vbaudio...</code>)</li>
+</ul></li>
+</ol>
+<h3 id="step-2-disable-or-uninstall-the-problematic-audio-software">Step
+2: Disable or Uninstall the Problematic Audio Software</h3>
+<p>Once you have identified the software associated with the crashing
+DLL, you need to disable or remove it.</p>
+<h4 id="option-a-disable-nahimic-services-most-common">Option A: Disable
+Nahimic Services (Most Common)</h4>
+<p>Nahimic audio software, pre-installed on many MSI, ASUS, and Lenovo
+laptops, frequently conflicts with OBS.</p>
+<ol type="1">
+<li>Press <code>Windows Key + R</code>, type <code>services.msc</code>,
+and press <strong>Enter</strong>.</li>
+<li>Scroll down to find <strong>Nahimic Service</strong>.</li>
+<li>Right-click it and select <strong>Properties</strong>.</li>
+<li>Change the <em>Startup type</em> to <strong>Disabled</strong> and
+click <strong>Stop</strong> if the service is running.</li>
+<li>Click <strong>Apply</strong> and <strong>OK</strong>, then restart
+your computer.</li>
+</ol>
+<h4 id="option-b-uninstall-conflicting-drivers">Option B: Uninstall
+Conflicting Drivers</h4>
+<p>If the crash is caused by virtual audio drivers or companion software
+(like Voicemeeter or Sonic Studio):</p>
+<ol type="1">
+<li>Open the Windows <strong>Settings</strong> app and go to
+<strong>Apps &gt; Installed apps</strong>.</li>
+<li>Locate the offending audio software.</li>
+<li>Click the three dots (or select it) and click
+<strong>Uninstall</strong>.</li>
+<li>Restart your computer.</li>
+</ol>
+<h3 id="step-3-reinstall-or-update-essential-audio-drivers">Step 3:
+Reinstall or Update Essential Audio Drivers</h3>
+<p>If the crash is caused by your primary audio interface (like Realtek,
+Focusrite, or Elgato Wave Link), the driver itself may be corrupted.</p>
+<ol type="1">
+<li>Right-click the Windows Start button and select <strong>Device
+Manager</strong>.</li>
+<li>Expand the <strong>Sound, video and game controllers</strong>
+section.</li>
+<li>Right-click your primary audio device and select <strong>Uninstall
+device</strong>. (Check the box that says "Attempt to remove the driver
+for this device" if prompted).</li>
+<li>Restart your PC. Windows will automatically reinstall a clean,
+generic version of the driver.</li>
+<li>Alternatively, visit the manufacturer's official website to download
+and install the latest stable driver version.</li>
+</ol>
+<h3 id="step-4-run-obs-studio-in-safe-mode">Step 4: Run OBS Studio in
+Safe Mode</h3>
+<p>If you have cleared the drivers but OBS still struggles to launch,
+try running it in Safe Mode to bypass third-party plugins that might be
+hooking into your audio system.</p>
+<ol type="1">
+<li>Right-click your OBS Studio shortcut.</li>
+<li>Select <strong>Properties</strong>.</li>
+<li>In the <strong>Target</strong> field, add <code> --safe-mode</code>
+to the very end of the file path (ensure there is a space before the
+dashes).</li>
+<li>Click <strong>Apply</strong> and launch OBS.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

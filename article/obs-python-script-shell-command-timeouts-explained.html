@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Python Script Shell Command Timeouts Explained - obs-studio</title>
+    <meta name="description" content="Executing external shell commands from an OBS Studio Python script often results in script execution timeouts, UI freezes, or aborted processes. This issue primarily stems from running synchronous, blocking subprocesses on OBS Studio’s main scripting t">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-python-script-shell-command-timeouts-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Python Script Shell Command Timeouts Explained - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-python-script-shell-command-timeouts-explained" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Executing external shell commands from an OBS Studio Python script often results in script execution timeouts, UI freezes, or aborted processes. This issue primarily stems from running synchronous, blocking subprocesses on OBS Studio’s main scripting t" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-python-script-shell-command-timeouts-explained">OBS Python
+Script Shell Command Timeouts Explained</h1>
+<p>Executing external shell commands from an OBS Studio Python script
+often results in script execution timeouts, UI freezes, or aborted
+processes. This issue primarily stems from running synchronous, blocking
+subprocesses on OBS Studio’s main scripting thread, unhandled standard
+I/O streams causing deadlocks, or external commands hanging while
+waiting for user interaction or network responses. Understanding how OBS
+executes Python scripts and properly isolating shell calls is essential
+for maintaining script stability and stream performance.</p>
+<h3 id="blocking-the-scripting-thread">Blocking the Scripting
+Thread</h3>
+<p>OBS Studio runs script callbacks—such as event handlers, UI button
+triggers, and timers—synchronously within its execution context. When a
+script runs a synchronous command using functions like
+<code>os.system()</code>, <code>subprocess.run()</code>, or
+<code>subprocess.check_output()</code>, OBS halts execution while
+waiting for the shell process to exit. If the command takes longer than
+expected or exceeds internal execution thresholds, OBS treats the script
+as unresponsive. In severe cases, this locks the OBS interface until the
+operating system or the user terminates the process.</p>
+<h3 id="standard-output-and-error-pipe-deadlocks">Standard Output and
+Error Pipe Deadlocks</h3>
+<p>A common cause of shell command freezes is a pipe deadlock. When
+executing a command using <code>subprocess.Popen</code> with
+<code>stdout=subprocess.PIPE</code> or
+<code>stderr=subprocess.PIPE</code>, the operating system allocates a
+fixed buffer size (often 64 KB). If the external program generates
+output that fills this buffer while the script is waiting for the
+process to exit without actively reading the stream, the external
+process halts indefinitely. Because the child process cannot write
+further output and the parent process is waiting for the child to
+finish, a permanent deadlock occurs, triggering a timeout.</p>
+<h3 id="interactive-prompts-and-missing-standard-input">Interactive
+Prompts and Missing Standard Input</h3>
+<p>External shell commands frequently expect interactive user input
+under certain conditions, such as:</p>
+<ul>
+<li>Requesting administrative permissions (UAC or sudo prompts).</li>
+<li>Prompting for SSH keys, passwords, or SSL certificate
+confirmations.</li>
+<li>Asking for overwrite confirmations (e.g., <code>ffmpeg</code>
+prompting to overwrite an existing output file without the
+<code>-y</code> flag).</li>
+</ul>
+<p>Because OBS runs scripts in a non-interactive background environment,
+the spawned process waits indefinitely for standard input
+(<code>stdin</code>) that will never arrive. Without an explicit timeout
+set on the command, the process hangs until the script execution limit
+is reached.</p>
+<h3 id="network-latency-and-external-dependencies">Network Latency and
+External Dependencies</h3>
+<p>Scripts invoking tools that communicate across the network—such as
+<code>curl</code>, <code>git</code>, or custom API utilities—are subject
+to network latency, DNS resolution failures, and server timeouts. If the
+invoked utility does not have an internal timeout configured, any
+network hang directly stalls the OBS script.</p>
+<h3 id="process-environment-and-shell-path-issues">Process Environment
+and Shell Path Issues</h3>
+<p>OBS does not always inherit the same user environment variables or
+working directory as an interactive terminal. When a shell command
+relies on specific environment variables, user path configurations, or
+relative file paths, it may fail silently or enter an error loop. If the
+shell spawns an interactive error-handling routine or an auxiliary
+subshell to resolve the issue, the script can stall until forced to
+abort.</p>
+<h3 id="how-to-prevent-timeouts-in-obs-scripts">How to Prevent Timeouts
+in OBS Scripts</h3>
+<p>To eliminate timeouts when launching shell processes inside OBS
+Studio Python scripts:</p>
+<ul>
+<li><strong>Use Asynchronous Execution:</strong> Launch tasks in a
+separate thread using Python’s built-in <code>threading</code> module to
+keep the OBS interface and script callbacks responsive.</li>
+<li><strong>Avoid Full Pipe Buffers:</strong> Use
+<code>subprocess.DEVNULL</code> to discard unnecessary output, or use
+<code>communicate()</code> to read streams safely.</li>
+<li><strong>Disable Interactive Flags:</strong> Ensure all external
+commands run in non-interactive batch mode (e.g., using <code>-y</code>,
+<code>--batch</code>, or <code>--non-interactive</code> flags where
+available).</li>
+<li><strong>Define Explicit Timeouts:</strong> Always provide a
+<code>timeout</code> argument to <code>subprocess.run()</code> or
+<code>communicate()</code> to catch and handle stalled commands
+gracefully before they freeze the host application.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

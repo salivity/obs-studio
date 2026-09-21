@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Set Up Audio Ducking in OBS Studio - obs-studio</title>
+    <meta name="description" content="Audio ducking is a technique that automatically lowers the volume of background audio, such as music or game sound, whenever someone speaks into a microphone. This article explains what audio ducking is, why it is essential for streamers and content crea">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-set-up-audio-ducking-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Set Up Audio Ducking in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-set-up-audio-ducking-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Audio ducking is a technique that automatically lowers the volume of background audio, such as music or game sound, whenever someone speaks into a microphone. This article explains what audio ducking is, why it is essential for streamers and content crea" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-set-up-audio-ducking-in-obs-studio">How to Set Up Audio
+Ducking in OBS Studio</h1>
+<p>Audio ducking is a technique that automatically lowers the volume of
+background audio, such as music or game sound, whenever someone speaks
+into a microphone. This article explains what audio ducking is, why it
+is essential for streamers and content creators, and provides a clear,
+step-by-step guide on how to configure this feature in OBS Studio using
+the built-in Compressor filter.</p>
+<h2 id="what-is-audio-ducking">What is Audio Ducking?</h2>
+<p>Audio ducking (also known as sidechain compression) is an audio
+processing method where the level of one audio signal is temporarily
+reduced by the presence of another signal. In broadcasting and
+streaming, it is most commonly used to lower background music or
+gameplay audio whenever the creator speaks.</p>
+<p>Without audio ducking, you must manually adjust your audio levels,
+which often results in the background music either being too quiet
+during pauses or too loud and drowning out your voice. Audio ducking
+automates this process in real-time, ensuring your voice remains clear
+and intelligible without sacrificing the energy of your background
+audio.</p>
+<h2 id="how-to-set-up-audio-ducking-in-obs-studio-1">How to Set Up Audio
+Ducking in OBS Studio</h2>
+<p>To set up audio ducking in OBS Studio, you will apply a
+<strong>Compressor</strong> filter to your background audio source (such
+as Desktop Audio or Game Audio) and link it to your microphone.</p>
+<h3 id="step-1-locate-your-audio-sources">Step 1: Locate Your Audio
+Sources</h3>
+<p>Open OBS Studio and look at the <strong>Audio Mixer</strong> dock.
+Identify the two sources you will use:</p>
+<ol type="1">
+<li><strong>The Controlling Source:</strong> This is your microphone
+(usually labeled <em>Mic/Aux</em>).</li>
+<li><strong>The Target Source:</strong> This is the background audio you
+want to quiet down (usually labeled <em>Desktop Audio</em>, <em>Game
+Audio</em>, or <em>Media Source</em>).</li>
+</ol>
+<h3 id="step-2-add-a-compressor-filter">Step 2: Add a Compressor
+Filter</h3>
+<ol type="1">
+<li>Click the <strong>three dots (Options)</strong> next to your
+background audio source (the target source) in the Audio Mixer.</li>
+<li>Select <strong>Filters</strong> from the dropdown menu.</li>
+<li>Click the <strong>plus (+) icon</strong> in the bottom-left corner
+of the Filters window.</li>
+<li>Select <strong>Compressor</strong> from the list of filters.</li>
+<li>Name the filter "Audio Ducking" or "Compressor" and click
+<strong>OK</strong>.</li>
+</ol>
+<h3 id="step-3-configure-the-sidechain-source">Step 3: Configure the
+Sidechain Source</h3>
+<p>Within the Compressor filter settings, locate the dropdown menu
+labeled <strong>Sidechain/Ducking Source</strong>.</p>
+<ul>
+<li>Click this dropdown and select your <strong>Microphone
+(Mic/Aux)</strong>. This tells OBS to use your voice as the trigger to
+lower the background audio.</li>
+</ul>
+<h3 id="step-4-fine-tune-the-settings">Step 4: Fine-Tune the
+Settings</h3>
+<p>To make the audio ducking sound natural, adjust the compressor
+sliders using these recommended baseline settings:</p>
+<ul>
+<li><strong>Ratio:</strong> Set this between <strong>2.5:1 and
+4:1</strong>. This determines how much the background audio is reduced.
+A higher ratio means the background audio will become quieter when you
+speak.</li>
+<li><strong>Threshold:</strong> Set this between <strong>-30 dB and -40
+dB</strong>. This dictates the microphone volume level required to
+trigger the ducking. If the ducking doesn't activate when you speak
+normally, raise the threshold (move the slider to the right). If it
+activates from background noise, lower the threshold.</li>
+<li><strong>Attack:</strong> Set this between <strong>50 ms and 100
+ms</strong>. This controls how quickly the background audio volume drops
+when you start speaking. A fast attack ensures your first words are not
+drowned out.</li>
+<li><strong>Release:</strong> Set this between <strong>500 ms and 700
+ms</strong>. This controls how quickly the background audio returns to
+its original volume after you stop speaking. A moderate release prevents
+the audio from bouncing back too quickly during brief pauses between
+words.</li>
+<li><strong>Output Gain:</strong> Leave this at <strong>0 dB</strong>.
+You do not need to boost the output level for audio ducking.</li>
+</ul>
+<h3 id="step-5-test-and-adjust">Step 5: Test and Adjust</h3>
+<p>Close the filter window and speak into your microphone while
+background audio is playing. Watch the volume meters in the Audio Mixer.
+You should see the green bar for your background audio visibly drop
+whenever you talk, and smoothly rise back to its original level when you
+are silent. Adjust the <strong>Threshold</strong> and
+<strong>Ratio</strong> sliders as needed until the balance sounds
+natural to your ears.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

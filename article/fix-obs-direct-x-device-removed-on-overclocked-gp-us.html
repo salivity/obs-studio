@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix OBS DirectX Device Removed on Overclocked GPUs - obs-studio</title>
+    <meta name="description" content="When OBS Studio logs display the "DXGIERRORDEVICEREMOVED" error while gaming on an overclocked graphics card, it indicates that the graphics driver crashed and was restarted by the operating system, severing OBS's connection to the rendering pipeline. Th">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/fix-obs-direct-x-device-removed-on-overclocked-gp-us">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Fix OBS DirectX Device Removed on Overclocked GPUs - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/fix-obs-direct-x-device-removed-on-overclocked-gp-us" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When OBS Studio logs display the "DXGIERRORDEVICEREMOVED" error while gaming on an overclocked graphics card, it indicates that the graphics driver crashed and was restarted by the operating system, severing OBS's connection to the rendering pipeline. Th" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="fix-obs-directx-device-removed-on-overclocked-gpus">Fix OBS
+DirectX Device Removed on Overclocked GPUs</h1>
+<p>When OBS Studio logs display the "DXGI_ERROR_DEVICE_REMOVED" error
+while gaming on an overclocked graphics card, it indicates that the
+graphics driver crashed and was restarted by the operating system,
+severing OBS's connection to the rendering pipeline. This article breaks
+down the root causes of this error, explaining how GPU core instability,
+memory clock degradation, and Windows Timeout Detection and Recovery
+(TDR) interact under the simultaneous demands of high-end gaming and OBS
+video rendering.</p>
+<h3 id="understanding-the-device-removed-error">Understanding the
+"Device Removed" Error</h3>
+<p>The error <code>DXGI_ERROR_DEVICE_REMOVED</code> is an
+application-level message returned by Microsoft DirectX. Despite its
+name, the physical graphics card has not been disconnected from the PCIe
+slot. Instead, the operating system's graphics subsystem has terminated
+the hardware adapter's device context because the GPU failed to respond
+to commands within an expected timeframe.</p>
+<h3 id="the-role-of-windows-tdr-timeout-detection-and-recovery">The Role
+of Windows TDR (Timeout Detection and Recovery)</h3>
+<p>Windows continuously monitors the health of graphics processing
+through a watchdog mechanism called Timeout Detection and Recovery
+(TDR).</p>
+<ol type="1">
+<li>When a GPU hangs or encounters a fatal execution stall, Windows
+waits a default period (typically two seconds).</li>
+<li>If the GPU does not report back before this threshold expires,
+Windows preemptively resets the display driver to avoid a full
+blue-screen system crash (BSOD).</li>
+<li>Any running applications actively relying on the DirectX device—such
+as games and OBS Studio—immediately lose their render context. OBS
+records this event in its logs as "device removed" or "device reset" and
+stops capturing the game hook or rendering the preview canvas.</li>
+</ol>
+<h3 id="why-overclocked-gpus-trigger-the-error">Why Overclocked GPUs
+Trigger the Error</h3>
+<p>An overclock that appears stable during standalone gaming often fails
+when streaming or recording with OBS Studio. Several factors cause this
+failure:</p>
+<h4 id="1-dual-workload-stress">1. Dual-Workload Stress</h4>
+<p>OBS Studio uses the GPU not only for NVENC or AMF hardware encoding,
+but also to render and composite the entire scene canvas via Direct3D.
+When you run a demanding game alongside OBS, the GPU operates under two
+distinct, heavy workloads. An aggressive core clock that works fine
+during pure gaming can drop below the stability threshold when the card
+concurrently manages scene compositing, color space conversions, and
+encoder pipelines.</p>
+<h4 id="2-transient-voltage-drops-vdroop">2. Transient Voltage Drops
+(Vdroop)</h4>
+<p>Overclocking pushes the silicon closer to its physical voltage and
+frequency limits. Rapid shifts between 3D scene rendering and OBS video
+capture cause sudden spikes and drops in power demand (transient loads).
+These sudden fluctuations can induce momentary voltage drops (Vdroop),
+starving the GPU core of necessary power for a fraction of a
+millisecond. This micro-stall is enough to freeze the graphics pipeline
+and trip the Windows TDR.</p>
+<h4 id="3-unstable-vram-overclocks">3. Unstable VRAM Overclocks</h4>
+<p>Pushing video memory (VRAM) frequencies too high often introduces
+silent data corruption before causing obvious visual artifacts. Modern
+GDDR6 and GDDR6X memory use error-checking mechanisms that attempt to
+correct transmission faults. While this prevents hard crashes initially,
+re-transmitting corrupt memory requests causes significant latency. When
+the memory controller stalls while OBS attempts to retrieve frame
+buffers from the game capture hook, the rendering pipeline times
+out.</p>
+<h4 id="4-thermal-throttling-shift">4. Thermal Throttling Shift</h4>
+<p>Extended sessions of combined gaming and streaming generate more
+sustained heat than gaming alone. As GPU and VRM temperatures climb,
+dynamic boost algorithms (such as NVIDIA GPU Boost or AMD SmartShift)
+automatically scale voltages down while trying to maintain target
+clocks. An overclock that starts stable at 65°C can become unstable as
+temperatures reach 75°C to 80°C, causing calculation errors that trigger
+a driver crash.</p>
+<h3 id="how-to-prevent-the-error">How to Prevent the Error</h3>
+<p>To eliminate the "device removed" error while maintaining
+performance:</p>
+<ul>
+<li><strong>Revert to Stock Clocks to Baseline:</strong> Reset the GPU
+core and memory clocks to factory defaults in your tuning software (such
+as MSI Afterburner) to confirm the overclock is the exact cause.</li>
+<li><strong>Reduce the Memory Clock First:</strong> Lower your VRAM
+overclock by 100–200 MHz. Memory instability is the leading cause of
+silent DirectX timeouts in capture software.</li>
+<li><strong>Apply an Undervolt Profile:</strong> Instead of a
+traditional manual overclock, use a voltage-frequency curve
+(undervolting) to lock in a stable frequency at a fixed, safe voltage.
+This limits thermal output and eliminates transient voltage drops.</li>
+<li><strong>Run OBS as Administrator:</strong> Running OBS with
+administrative privileges allows Windows to properly prioritize OBS's
+DirectX capture hooks, minimizing synchronization delays between the
+game and the capture software.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

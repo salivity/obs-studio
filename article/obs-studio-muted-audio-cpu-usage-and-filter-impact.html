@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Muted Audio: CPU Usage and Filter Impact - obs-studio</title>
+    <meta name="description" content="Muting an audio source in OBS Studio directly affects system performance by halting digital signal processing (DSP) chains and eliminating downstream mixing calculations. While the underlying audio capture thread remains active to prevent latency and har">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-muted-audio-cpu-usage-and-filter-impact">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Muted Audio: CPU Usage and Filter Impact - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-muted-audio-cpu-usage-and-filter-impact" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Muting an audio source in OBS Studio directly affects system performance by halting digital signal processing (DSP) chains and eliminating downstream mixing calculations. While the underlying audio capture thread remains active to prevent latency and har" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-muted-audio-cpu-usage-and-filter-impact">OBS Studio
+Muted Audio: CPU Usage and Filter Impact</h1>
+<p>Muting an audio source in OBS Studio directly affects system
+performance by halting digital signal processing (DSP) chains and
+eliminating downstream mixing calculations. While the underlying audio
+capture thread remains active to prevent latency and hardware
+reinitialization delays, OBS Studio bypasses the execution of active
+filters—such as noise suppression, equalizers, and VST plugins—resulting
+in a measurable reduction in CPU processing overhead.</p>
+<h3 id="audio-capture-vs-dsp-execution">Audio Capture vs. DSP
+Execution</h3>
+<p>When an audio source is active in OBS Studio, its processing pipeline
+consists of two distinct stages: device capture and the filter
+processing chain.</p>
+<ol type="1">
+<li><strong>Hardware Capture Stage:</strong> The capture driver (such as
+WASAPI on Windows, CoreAudio on macOS, or PulseAudio/PipeWire on Linux)
+continues to read incoming audio samples into memory even when muted.
+OBS maintains this connection continuously so that when you unmute the
+source, audio resumes instantaneously without clicks, pops, or device
+initialization stutter.</li>
+<li><strong>DSP Filter Pipeline:</strong> Once a source is flagged as
+muted, OBS Studio bypasses the filter chain. Built-in filters (including
+Gain, Noise Gate, Compressor, Limiter, and Expander) as well as
+third-party VST 2.x plugins stop processing incoming sample
+buffers.</li>
+</ol>
+<p>Because computationally demanding algorithms like RNNoise suppression
+or convolution-based VSTs are no longer calculating sample modifications
+44,100 or 48,000 times per second, the source's CPU consumption drops
+significantly.</p>
+<h3 id="impact-on-cpu-processing-overhead">Impact on CPU Processing
+Overhead</h3>
+<p>The reduction in CPU usage when muting a source depends on the
+complexity of the applied filters:</p>
+<ul>
+<li><strong>Sources Without Filters:</strong> Muting a raw microphone or
+desktop audio source with no DSP filters yields negligible CPU savings.
+The small overhead of copying raw PCM audio buffers and calculating
+mixer volume levels is minimal.</li>
+<li><strong>Sources With Standard Built-in Filters:</strong> Light
+filters like Noise Gate, Gain, or basic Limiters consume very little
+processing power; muting them produces minor, often unnoticeable CPU
+improvements.</li>
+<li><strong>Sources With AI or Spectral Filters:</strong> Features like
+RNNoise (AI-powered noise suppression) or multi-band parametric
+equalizers require substantial math operations per audio buffer. Muting
+sources utilizing these filters immediately reclaims that processing
+power.</li>
+<li><strong>Sources With Third-Party VSTs:</strong> Complex VST plugins,
+such as pitch correctors, reverbs, or heavy mastering suites, cease
+sample processing when muted, eliminating the primary source of
+audio-related CPU spikes. Note that while execution halts, the plugin
+remains loaded in RAM.</li>
+</ul>
+<h3 id="audio-mixing-and-encoding-stages">Audio Mixing and Encoding
+Stages</h3>
+<p>Beyond DSP filters, muting removes the audio data from the OBS mixing
+bus. During normal operation, OBS mixes all active audio channels down
+to the selected output tracks and sends them to the audio encoder (such
+as AAC or Opus).</p>
+<p>When a source is muted:</p>
+<ul>
+<li>It is excluded from the mix matrix.</li>
+<li>No audio data from that source is sent to track mixing buffers.</li>
+<li>The encoder receives a silent or empty channel from that source,
+slightly reducing mixing math.</li>
+</ul>
+<h3 id="audio-monitoring-behavior">Audio Monitoring Behavior</h3>
+<p>If a source is configured for "Monitor and Output" or "Monitor Only"
+in the Advanced Audio Properties, muting the source via the main mixer
+mutes both the broadcast output and the monitor output simultaneously.
+Consequently, monitor processing is bypassed, and DSP filters remain
+inactive across all monitoring channels.</p>
+<h3 id="muting-vs-deactivating-sources">Muting vs. Deactivating
+Sources</h3>
+<p>Muting is designed as a fast-toggle operation that minimizes
+processing load while preserving hardware readiness:</p>
+<ul>
+<li><strong>Mute:</strong> Keeps the hardware device open and streaming
+raw data, halts DSP filter execution, bypasses mixer tracks, and keeps
+memory fully allocated.</li>
+<li><strong>Deactivate / Hide:</strong> Shuts down the hardware capture
+device or media decoder entirely, releasing both the capture thread and
+the device handle.</li>
+</ul>
+<p>For maximum performance reclamation on complex setups, deactivating
+unneeded devices releases capture threads and hardware resources, but
+for standard operation, muting is sufficient to eliminate almost all
+filter-related CPU overhead.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Causes of Dante Audio Phase Drift in OBS Studio - obs-studio</title>
+    <meta name="description" content="Audio phase drift when routing Dante Virtual Soundcard (DVS) feeds across busy corporate networks into OBS Studio degrades audio quality, causing comb filtering, hollow sound, and sync loss. This issue stems from a combination of network packet jitter, c">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/causes-of-dante-audio-phase-drift-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Causes of Dante Audio Phase Drift in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/causes-of-dante-audio-phase-drift-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Audio phase drift when routing Dante Virtual Soundcard (DVS) feeds across busy corporate networks into OBS Studio degrades audio quality, causing comb filtering, hollow sound, and sync loss. This issue stems from a combination of network packet jitter, c" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="causes-of-dante-audio-phase-drift-in-obs-studio">Causes of Dante
+Audio Phase Drift in OBS Studio</h1>
+<p>Audio phase drift when routing Dante Virtual Soundcard (DVS) feeds
+across busy corporate networks into OBS Studio degrades audio quality,
+causing comb filtering, hollow sound, and sync loss. This issue stems
+from a combination of network packet jitter, clock synchronization
+limitations inherent to software-based audio endpoints, operating system
+audio buffering, and OBS Studio's internal audio clock management.
+Understanding how these network and software elements interact is
+essential for diagnosing and resolving phase discrepancies in
+multi-channel or multi-source environments.</p>
+<h3 id="1-ieee-1588-ptp-jitter-and-network-congestion">1. IEEE 1588 PTP
+Jitter and Network Congestion</h3>
+<p>Dante relies on the Precision Time Protocol (PTPv1 / IEEE 1588-2002)
+to synchronize audio samples across a network within sub-microsecond
+accuracy. On a busy corporate network lacking strict Quality of Service
+(QoS) configurations, high-bandwidth data transfers, VoIP, and general
+network traffic compete directly with Dante's synchronization and media
+streams.</p>
+<p>When switches do not prioritize Dante clock packets (typically DSCP
+56) and audio packets (typically DSCP 46), packet arrival times become
+inconsistent—a phenomenon known as network jitter. While hardware Dante
+devices contain dedicated hardware chips to handle this jitter, software
+solutions are far more vulnerable to it.</p>
+<h3 id="2-dvs-clocking-and-software-host-limitations">2. DVS Clocking
+and Software Host Limitations</h3>
+<p>Unlike dedicated hardware endpoints equipped with Dante Brooklyn or
+Ultimo chipsets, Dante Virtual Soundcard is a purely software-based
+implementation. It relies on the host computer's operating system and
+internal CPU clock to maintain timing.</p>
+<p>Because standard PC motherboards utilize unmanaged, crystal
+oscillators that are sensitive to temperature and load fluctuations, DVS
+inherently suffers from minor clock drift compared to hardware
+grandmaster clocks. When a congested network delays PTP packets, DVS
+cannot dynamically adjust its software clock accurately, causing the
+audio stream to drift out of phase relative to other networked sources
+or local inputs.</p>
+<h3 id="3-buffer-overruns-and-underruns-sample-dropping">3. Buffer
+Overruns and Underruns (Sample Dropping)</h3>
+<p>DVS provides selectable latency buffers (such as 4ms, 10ms, or 20ms)
+to counteract network jitter. If network traffic causes packet delivery
+times to exceed the configured DVS buffer window, the audio engine
+encounters an underrun or overrun.</p>
+<p>To prevent an audible click, pop, or complete stream failure, audio
+drivers often drop or insert micro-samples. In a multi-channel setup—or
+when comparing a Dante audio stream to a locally captured video or audio
+feed—these missing or duplicated samples permanently shift the relative
+timing of the channels, resulting in noticeable phase drift over
+time.</p>
+<h3 id="4-driver-architecture-asio-vs-wdmwasapi">4. Driver Architecture:
+ASIO vs. WDM/WASAPI</h3>
+<p>The method OBS Studio uses to ingest audio from DVS plays a critical
+role in phase stability:</p>
+<ul>
+<li><strong>WDM / WASAPI:</strong> Ingesting DVS via standard Windows
+Audio drivers forces the audio stream through the Windows Audio Engine.
+This introduces variable resampling, shared mode buffering, and
+system-level latency variations that directly cause phase skew between
+channels.</li>
+<li><strong>OBS-ASIO:</strong> Utilizing a dedicated ASIO input plugin
+avoids the OS mixer, delivering the DVS stream directly to OBS. If OBS
+is not configured to use ASIO for DVS ingest, phase drift across
+multi-channel inputs is virtually guaranteed over extended periods.</li>
+</ul>
+<h3 id="5-obs-studio-internal-resampling-and-drift-compensation">5. OBS
+Studio Internal Resampling and Drift Compensation</h3>
+<p>OBS Studio maintains its own internal audio clock to align audio
+tracks with incoming video frames. If the DVS audio sample rate (e.g.,
+48 kHz) does not match the OBS canvas audio sample rate exactly, OBS
+applies real-time software resampling.</p>
+<p>Furthermore, if OBS detects that an audio feed is falling behind the
+system clock or the video frame rate, its internal clock drift
+compensation logic dynamically adjusts audio playback by subtly dropping
+or adding audio samples. When ingesting stereo or multi-mic arrays over
+separate DVS streams, OBS may adjust these streams independently,
+pulling them out of phase with each other.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

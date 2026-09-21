@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS WebSocket Response Code for Missing Sources - obs-studio</title>
+    <meta name="description" content="This article details the specific WebSocket response code returned by OBS Studio when an API request references a source name that does not exist in the current collection. It outlines the exact numeric code used in modern OBS versions, the structure of">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-web-socket-response-code-for-missing-sources">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS WebSocket Response Code for Missing Sources - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-web-socket-response-code-for-missing-sources" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article details the specific WebSocket response code returned by OBS Studio when an API request references a source name that does not exist in the current collection. It outlines the exact numeric code used in modern OBS versions, the structure of" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-websocket-response-code-for-missing-sources">OBS WebSocket
+Response Code for Missing Sources</h1>
+<p>This article details the specific WebSocket response code returned by
+OBS Studio when an API request references a source name that does not
+exist in the current collection. It outlines the exact numeric code used
+in modern OBS versions, the structure of the error payload, and how
+developers should handle this response when automating OBS Studio.</p>
+<h2 id="the-response-code-600-resourcenotfound">The Response Code: 600
+(ResourceNotFound)</h2>
+<p>In modern versions of OBS Studio (OBS Studio 28 and newer, which
+natively integrate obs-websocket protocol version 5), requesting a
+source, input, or scene item that does not exist returns the response
+code <strong><code>600</code></strong>, corresponding to the identifier
+<strong><code>ResourceNotFound</code></strong>.</p>
+<p>The <code>ResourceNotFound</code> error indicates that the requested
+resource identifier (such as a source or input name) could not be
+located inside the loaded scene collection.</p>
+<h2 id="response-payload-structure">Response Payload Structure</h2>
+<p>When a client sends a request referencing a nonexistent source—such
+as calling <code>GetInputSettings</code>, <code>SetInputSettings</code>,
+or <code>GetSourceActive</code> with an invalid <code>inputName</code>
+or <code>sourceName</code>—OBS Studio returns an <code>op</code> code
+<code>7</code> (RequestResponse) with a failed
+<code>requestStatus</code>.</p>
+<p>A typical error payload looks like this:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;op&quot;</span><span class="fu">:</span> <span class="dv">7</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;d&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;requestType&quot;</span><span class="fu">:</span> <span class="st">&quot;GetInputSettings&quot;</span><span class="fu">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;requestId&quot;</span><span class="fu">:</span> <span class="st">&quot;unique-request-identifier&quot;</span><span class="fu">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;requestStatus&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;result&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="dv">600</span><span class="fu">,</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;comment&quot;</span><span class="fu">:</span> <span class="st">&quot;No source was found by the name of &#39;NonExistentSource&#39;.&quot;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>Key fields in this response:</p>
+<ul>
+<li><strong><code>result</code></strong>: A boolean set to
+<code>false</code>, indicating the request failed.</li>
+<li><strong><code>code</code></strong>: The integer <code>600</code>,
+representing <code>ResourceNotFound</code>.</li>
+<li><strong><code>comment</code></strong>: A human-readable message
+detailing the specific resource that could not be found.</li>
+</ul>
+<h2 id="legacy-protocol-differences-obs-websocket-v4x">Legacy Protocol
+Differences (obs-websocket v4.x)</h2>
+<p>If interacting with legacy installations running obs-websocket
+version 4.9.1 or older, the protocol did not use standardized numeric
+request codes. Instead, requests targeting nonexistent sources returned
+an <code>"error"</code> field with a descriptive string, typically
+returning <code>"status": "error"</code> alongside an error message such
+as <code>"specified source not found"</code> or
+<code>"resource not found"</code>.</p>
+<p>All modern implementations should target protocol version 5 and check
+specifically for code <code>600</code>.</p>
+<h2 id="handling-code-600-in-client-applications">Handling Code 600 in
+Client Applications</h2>
+<p>When developing automated tools or integrations:</p>
+<ol type="1">
+<li><strong>Catch Code 600 Explicitly</strong>: Differentiate between
+syntax errors (such as missing required fields, code <code>300</code> or
+<code>400</code>) and missing resources (code <code>600</code>).</li>
+<li><strong>Refresh Available Resources</strong>: If a code
+<code>600</code> is encountered, issue a <code>GetInputList</code> or
+<code>GetSceneList</code> request to verify whether the source was
+renamed, removed, or exists in a different scene collection.</li>
+<li><strong>Verify Case Sensitivity</strong>: Source names in OBS Studio
+are case-sensitive and must match exact naming conventions, including
+whitespace.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

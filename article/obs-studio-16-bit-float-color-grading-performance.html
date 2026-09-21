@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio 16-Bit Float Color Grading Performance - obs-studio</title>
+    <meta name="description" content="Switching to a 16-bit floating-point (FP16) intermediate surface format in OBS Studio eliminates banding, preserves highlight details, and improves color fidelity during complex compositing and color grading, but it introduces measurable GPU overhead. Us">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-16-bit-float-color-grading-performance">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio 16-Bit Float Color Grading Performance - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-16-bit-float-color-grading-performance" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Switching to a 16-bit floating-point (FP16) intermediate surface format in OBS Studio eliminates banding, preserves highlight details, and improves color fidelity during complex compositing and color grading, but it introduces measurable GPU overhead. Us" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-16-bit-float-color-grading-performance">OBS Studio
+16-Bit Float Color Grading Performance</h1>
+<p>Switching to a 16-bit floating-point (FP16) intermediate surface
+format in OBS Studio eliminates banding, preserves highlight details,
+and improves color fidelity during complex compositing and color
+grading, but it introduces measurable GPU overhead. Using 16-bit float
+formats doubles the memory footprint of internal render targets and
+increases memory bandwidth consumption, which can lead to higher GPU
+frame render times and potential rendering lag on constrained
+systems.</p>
+<h3 id="increased-memory-bandwidth-and-vram-footprint">Increased Memory
+Bandwidth and VRAM Footprint</h3>
+<p>Standard OBS rendering pipelines use 8-bit integer surface formats
+(such as RGBA8), requiring 32 bits (4 bytes) per pixel. In contrast, a
+16-bit float format (RGBA16F) requires 64 bits (8 bytes) per pixel.</p>
+<ul>
+<li><strong>VRAM Allocation:</strong> Every intermediate surface, render
+target, and texture buffer allocated for scenes, groups, and filter
+stages requires twice as much video memory. While this rarely exhausts
+modern VRAM pools on its own, it increases the memory pressure during
+high-resolution workflows (such as 4K compositing).</li>
+<li><strong>Bus and Memory Bandwidth:</strong> The primary performance
+bottleneck is memory bandwidth. Every compositing pass, blend mode, and
+filter read/write operation must transfer double the data across the
+GPU's memory bus. At 4K60 or high-framerate configurations, this
+drastically increases cache misses and memory bus saturation.</li>
+</ul>
+<h3 id="shader-execution-and-cache-efficiency">Shader Execution and
+Cache Efficiency</h3>
+<p>Modern desktop GPUs natively handle 16-bit floating-point math
+efficiently via dedicated FP16 or standard FP32 units. However,
+performance implications emerge at the hardware cache level:</p>
+<ul>
+<li><strong>GPU Cache Saturation:</strong> Because the data size per
+pixel is doubled, GPU L1 and L2 caches hold half the number of effective
+pixels compared to an 8-bit pipeline. This leads to higher cache miss
+rates during spatial filter passes, such as blurs, bicubic scaling, or
+complex lookup tables (LUTs).</li>
+<li><strong>Shader Execution Time:</strong> Evaluating color correction
+shaders, tone-mapping algorithms, and custom HLSL filters on FP16
+surfaces requires more compute cycles than running operations on 8-bit
+integer textures, marginally raising GPU render times per frame.</li>
+</ul>
+<h3 id="compositing-pipeline-latency">Compositing Pipeline Latency</h3>
+<p>OBS Studio processes sources hierarchically. When an intermediate
+format is set to 16-bit float:</p>
+<ol type="1">
+<li>Sources are rendered to 16-bit surfaces.</li>
+<li>Filters (color grading, transforms, blending) are evaluated at
+16-bit precision.</li>
+<li>The final composition is downsampled and converted to the target
+output format—typically 8-bit NV12/I420 for standard SDR streaming, or
+10-bit P010 for HDR streaming.</li>
+</ol>
+<p>This format conversion step introduces an additional GPU conversion
+pass before feeding the frame to the hardware encoder (NVENC, AMF, or
+QuickSync). This adds fraction-of-a-millisecond overhead to total frame
+delivery time.</p>
+<h3 id="real-world-hardware-impact">Real-World Hardware Impact</h3>
+<ul>
+<li><strong>High-End GPUs (e.g., RTX 3080/4080, RX 6800/7800 and
+above):</strong> The overhead is negligible in 1080p and 1440p
+workflows. GPU render times typically increase by less than 0.5
+milliseconds, posing little risk of frame drops unless the GPU is
+already at 98–99% utilization from running a simultaneous game.</li>
+<li><strong>Mid-Range and Entry-Level GPUs:</strong> At 1440p or 4K, the
+bandwidth penalty can push GPU utilization over the edge, turning minor
+compositor workloads into dropped frames due to OBS rendering lag.</li>
+<li><strong>Complex Scene Configurations:</strong> Scenes containing
+numerous nested scenes, intensive source filters, transparency blending,
+and high-resolution video capture devices scale the bandwidth penalty
+linearly per active layer.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

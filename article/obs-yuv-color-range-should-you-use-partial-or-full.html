@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS YUV Color Range: Should You Use Partial or Full? - obs-studio</title>
+    <meta name="description" content="In OBS Studio, the "YUV Color Range" setting determines how color levels are mapped and rendered in your video output. Choosing between "Partial" (also known as Limited) and "Full" impacts the contrast, black levels, and overall color accuracy of your st">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-yuv-color-range-should-you-use-partial-or-full">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS YUV Color Range: Should You Use Partial or Full? - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-yuv-color-range-should-you-use-partial-or-full" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In OBS Studio, the "YUV Color Range" setting determines how color levels are mapped and rendered in your video output. Choosing between "Partial" (also known as Limited) and "Full" impacts the contrast, black levels, and overall color accuracy of your st" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-yuv-color-range-should-you-use-partial-or-full">OBS YUV
+Color Range: Should You Use Partial or Full?</h1>
+<p>In OBS Studio, the "YUV Color Range" setting determines how color
+levels are mapped and rendered in your video output. Choosing between
+"Partial" (also known as Limited) and "Full" impacts the contrast, black
+levels, and overall color accuracy of your streams and recordings. This
+article explains the difference between these two settings and provides
+a clear recommendation on which one you should select for the best
+visual quality and platform compatibility.</p>
+<h2 id="what-is-yuv-color-range">What is YUV Color Range?</h2>
+<p>YUV is a color encoding system that separates brightness (luminance
+or "Y") from color (chrominance or "U" and "V"). The YUV Color Range
+setting in OBS dictates the numerical spectrum of these values:</p>
+<ul>
+<li><strong>Partial (Limited Range):</strong> This setting uses a
+compressed range of values, specifically 16 to 235 for luminance. Black
+is represented by 16, and white is represented by 235. This is the
+traditional broadcast and television standard.</li>
+<li><strong>Full (Full Range):</strong> This setting uses the entire
+digital range from 0 to 255. Black is represented by 0, and white is
+represented by 255. This is the native standard for PC monitors and
+computer graphics.</li>
+</ul>
+<h2 id="why-full-is-not-always-better">Why "Full" is Not Always
+Better</h2>
+<p>While "Full" sounds like it would offer better quality because it
+utilizes a wider range of values, it often causes playback issues. Most
+streaming platforms (like Twitch and YouTube) and video players (like
+web browsers) expect video feeds to be in the "Partial" color range.</p>
+<p>If you stream or record using the "Full" range setting, the video
+player rendering your content may not recognize it. As a result, one of
+two display errors will occur:</p>
+<ol type="1">
+<li><strong>Crushed Blacks and Clipped Whites:</strong> The player
+interprets your 0–255 range as 16–235, making dark areas pitch black and
+losing detail in bright highlights.</li>
+<li><strong>Washed-Out Colors:</strong> The player stretches your
+video’s colors, making blacks look grey and white areas look dull.</li>
+</ol>
+<p>Using "Partial" ensures that the color levels match the decoder
+settings of video players and streaming platforms, preserving your
+intended contrast and color balance.</p>
+<h2 id="which-setting-should-you-choose-in-obs">Which Setting Should You
+Choose in OBS?</h2>
+<p>For almost all content creators, the recommended setting is
+<strong>Partial</strong>.</p>
+<h3 id="use-partial-if">Use "Partial" if:</h3>
+<ul>
+<li>You stream to Twitch, YouTube, Facebook Live, or Kick.</li>
+<li>You record videos to upload directly to video-sharing
+platforms.</li>
+<li>You want your viewers to see accurate colors and contrast without
+manual adjustments.</li>
+</ul>
+<h3 id="use-full-only-if">Use "Full" only if:</h3>
+<ul>
+<li>You are recording footage for advanced post-production in a
+professional video editor (like DaVinci Resolve or Premiere Pro) that is
+specifically configured to handle full-range YUV video.</li>
+<li>You plan to manually convert the color range back to Partial during
+your final render.</li>
+</ul>
+<h2 id="how-to-configure-color-settings-in-obs-studio">How to Configure
+Color Settings in OBS Studio</h2>
+<p>To ensure your colors are set up correctly, follow these steps:</p>
+<ol type="1">
+<li>Open <strong>OBS Studio</strong> and click on
+<strong>Settings</strong> in the bottom-right corner.</li>
+<li>Select the <strong>Advanced</strong> tab from the left sidebar.</li>
+<li>Under the <strong>Video</strong> section, locate <strong>YUV Color
+Range</strong>.</li>
+<li>Set the dropdown menu to <strong>Partial</strong>.</li>
+<li>For the best compatibility alongside this setting, set the
+<strong>Color Space</strong> to <strong>Rec. 709</strong> (or Rec. 601
+if streaming at resolutions lower than 720p).</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong>.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

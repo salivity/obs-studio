@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Best OBS Encoder Settings for Apple Silicon Mac - obs-studio</title>
+    <meta name="description" content="Running OBS Studio on an Apple Silicon Mac (M1, M2, or M3) requires choosing the right video encoder to balance stream quality and system performance. This article guides you through the best encoder options available in OBS for macOS, comparing hardware">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/best-obs-encoder-settings-for-apple-silicon-mac">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Best OBS Encoder Settings for Apple Silicon Mac - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/best-obs-encoder-settings-for-apple-silicon-mac" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Running OBS Studio on an Apple Silicon Mac (M1, M2, or M3) requires choosing the right video encoder to balance stream quality and system performance. This article guides you through the best encoder options available in OBS for macOS, comparing hardware" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="best-obs-encoder-settings-for-apple-silicon-mac">Best OBS
+Encoder Settings for Apple Silicon Mac</h1>
+<p>Running OBS Studio on an Apple Silicon Mac (M1, M2, or M3) requires
+choosing the right video encoder to balance stream quality and system
+performance. This article guides you through the best encoder options
+available in OBS for macOS, comparing hardware-accelerated Apple Silicon
+options like VideoToolbox with traditional software encoders, and
+provides recommended settings for both live streaming and high-quality
+recording.</p>
+<h2 id="apple-silicon-encoder-options-in-obs-studio">Apple Silicon
+Encoder Options in OBS Studio</h2>
+<p>Apple Silicon chips feature dedicated media engines designed to
+handle video encoding and decoding hardware-wise. In OBS Studio, these
+hardware encoders are accessed via Apple's <strong>VideoToolbox
+(VT)</strong> framework.</p>
+<p>Here are the primary encoder options available:</p>
+<h3 id="1-apple-vt-h264-hardware-encoder">1. Apple VT H.264 Hardware
+Encoder</h3>
+<p>This is the most compatible encoder for live streaming to platforms
+like Twitch, YouTube, and Facebook Live.</p>
+<ul>
+<li><strong>How it works:</strong> It offloads the encoding process to
+the Mac’s dedicated hardware media engine.</li>
+<li><strong>Pros:</strong> Extremely low CPU usage, preventing dropped
+frames and keeping your Mac cool and silent during streams.</li>
+<li><strong>Cons:</strong> Slightly lower quality-per-bitrate compared
+to software x264 at very low bitrates (under 4,000 Kbps), but virtually
+indistinguishable at standard streaming bitrates (6,000+ Kbps).</li>
+</ul>
+<h3 id="2-apple-vt-hevc-hardware-encoder">2. Apple VT HEVC Hardware
+Encoder</h3>
+<p>HEVC (H.265) is the successor to H.264, offering significantly better
+visual quality at lower bitrates.</p>
+<ul>
+<li><strong>How it works:</strong> Uses the hardware-accelerated HEVC
+encoder on the Apple Silicon chip.</li>
+<li><strong>Pros:</strong> Excellent compression efficiency. Highly
+recommended for 2K or 4K YouTube streaming (via RTMP/HLS) and local
+recordings.</li>
+<li><strong>Cons:</strong> Not supported for streaming on older
+platforms like Twitch (unless using enhanced broadcasting
+features).</li>
+</ul>
+<h3 id="3-apple-vt-prores-hardware-encoder">3. Apple VT ProRes Hardware
+Encoder</h3>
+<p>ProRes is a professional video codec designed for
+post-production.</p>
+<ul>
+<li><strong>How it works:</strong> Utilizes the ProRes hardware
+accelerators on Apple Silicon (especially M-Pro, Max, and Ultra
+chips).</li>
+<li><strong>Pros:</strong> Lossless or near-lossless quality with
+incredibly low CPU overhead. Perfect for recording video that you intend
+to edit in Final Cut Pro or DaVinci Resolve.</li>
+<li><strong>Cons:</strong> Creates massive file sizes. Unsuitable for
+live streaming.</li>
+</ul>
+<h3 id="4-x264-software-encoder">4. x264 (Software Encoder)</h3>
+<p>This encoder uses your Mac's CPU cores to compress video.</p>
+<ul>
+<li><strong>How it works:</strong> Employs software-based H.264
+encoding.</li>
+<li><strong>Pros:</strong> Marginally better image quality at very low
+bitrates (e.g., streaming at 720p/30fps on slow internet).</li>
+<li><strong>Cons:</strong> Extremely heavy CPU usage. On Apple Silicon,
+using x264 wastes energy, generates heat, and increases the risk of
+encoder overload.</li>
+</ul>
+<hr />
+<h2 id="recommended-settings-for-streaming">Recommended Settings for
+Streaming</h2>
+<p>For the best balance of stream stability and performance on Twitch or
+YouTube, use the <strong>Apple VT H.264 Hardware Encoder</strong> with
+the following settings:</p>
+<ul>
+<li><strong>Rate Control:</strong> CBR (Constant Bitrate)</li>
+<li><strong>Bitrate:</strong> 6,000 Kbps (for 1080p at 60fps) or 4,500
+Kbps (for 1080p at 30fps)</li>
+<li><strong>Keyframe Interval:</strong> 2 seconds</li>
+<li><strong>Profile:</strong> high</li>
+<li><strong>Use Hardware Acceleration:</strong> Enabled</li>
+</ul>
+<p><em>Note: If you are streaming to YouTube and have a high-speed
+upload connection, switch to <strong>Apple VT HEVC</strong> and set your
+bitrate to 10,000–15,000 Kbps for high-quality 1440p streaming.</em></p>
+<hr />
+<h2 id="recommended-settings-for-recording">Recommended Settings for
+Recording</h2>
+<p>If you are recording gameplay, tutorials, or podcasts locally to your
+Mac's storage, prioritize quality over compression.</p>
+<h3 id="option-a-standard-high-quality-recording-recommended">Option A:
+Standard High-Quality Recording (Recommended)</h3>
+<p>Use this option to save storage space while keeping excellent visual
+quality.</p>
+<ul>
+<li><strong>Encoder:</strong> Apple VT HEVC Hardware Encoder</li>
+<li><strong>Rate Control:</strong> CRF (Constant Rate Factor) or
+Quality</li>
+<li><strong>Quality/CRF:</strong> 20 to 23 (Lower numbers mean higher
+quality; 0 is lossless)</li>
+<li><strong>Profile:</strong> Main</li>
+</ul>
+<h3 id="option-b-professional-editing-recording">Option B: Professional
+Editing Recording</h3>
+<p>Use this option if you plan to color grade or heavily edit your
+videos in post-production.</p>
+<ul>
+<li><strong>Encoder:</strong> Apple VT ProRes Hardware Encoder</li>
+<li><strong>ProRes Profile:</strong> ProRes 422 LT (good balance) or
+ProRes 422 HQ (maximum quality)</li>
+<li><strong>Format:</strong> QuickTime (.mov)</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Color Key Similarity and Smoothness Explained - obs-studio</title>
+    <meta name="description" content="The Color Key filter in OBS Studio isolates and removes specific colors from a video source by measuring the geometric distance between individual pixel colors and a designated target key color. This article details the mathematical mechanics behind this">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-color-key-similarity-and-smoothness-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Color Key Similarity and Smoothness Explained - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-color-key-similarity-and-smoothness-explained" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Color Key filter in OBS Studio isolates and removes specific colors from a video source by measuring the geometric distance between individual pixel colors and a designated target key color. This article details the mathematical mechanics behind this" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-color-key-similarity-and-smoothness-explained">OBS Color Key
+Similarity and Smoothness Explained</h1>
+<p>The Color Key filter in OBS Studio isolates and removes specific
+colors from a video source by measuring the geometric distance between
+individual pixel colors and a designated target key color. This article
+details the mathematical mechanics behind this shader-based process,
+explaining how OBS treats RGB values as three-dimensional vectors and
+uses the similarity and smoothness thresholds to compute the final alpha
+transparency of each pixel.</p>
+<h3 id="vector-representation-in-rgb-space">Vector Representation in RGB
+Space</h3>
+<p>Unlike the Chroma Key filter—which converts color data to the YCbCr
+(YUV) color space to separate brightness from chrominance—the standard
+Color Key filter operates directly in normalized RGB space.</p>
+<p>Every pixel is represented as a three-dimensional vector:</p>
+<p><span class="math display">\[\mathbf{C}_{\text{pixel}} = (R_p, G_p,
+B_p)\]</span></p>
+<p>where each channel is normalized to a floating-point range between
+<span class="math inline">\(0.0\)</span> and <span
+class="math inline">\(1.0\)</span>. The target color selected by the
+user is defined as a vector in the exact same format:</p>
+<p><span class="math display">\[\mathbf{C}_{\text{key}} = (R_k, G_k,
+B_k)\]</span></p>
+<h3 id="calculating-vector-distance">Calculating Vector Distance</h3>
+<p>To determine how closely a pixel matches the chosen key color, the
+graphics shader computes the Euclidean distance (<span
+class="math inline">\(D\)</span>) between the two color vectors:</p>
+<p><span class="math display">\[D = \|\mathbf{C}_{\text{pixel}} -
+\mathbf{C}_{\text{key}}\| = \sqrt{(R_p - R_k)^2 + (G_p - G_k)^2 + (B_p -
+B_k)^2}\]</span></p>
+<p>Because each color component ranges from <span
+class="math inline">\(0.0\)</span> to <span
+class="math inline">\(1.0\)</span>, the maximum possible distance
+between opposite corners of the RGB color cube (e.g., pure black to pure
+white) is <span class="math inline">\(\sqrt{1^2 + 1^2 + 1^2} \approx
+1.732\)</span>.</p>
+<h3 id="the-similarity-threshold">The Similarity Threshold</h3>
+<p>In the OBS Studio interface, the <strong>Similarity</strong> slider
+allows users to define the threshold radius around the target color
+vector within which pixels are identified as key color.</p>
+<p>Internally, the slider's integer value is scaled to match the
+normalized color distance metric. Let this converted value be
+represented as <span class="math inline">\(T_{\text{sim}}\)</span>.</p>
+<ul>
+<li>If the calculated Euclidean distance <span
+class="math inline">\(D\)</span> is less than or equal to <span
+class="math inline">\(T_{\text{sim}}\)</span>, the pixel is treated as
+an exact match to the key color.</li>
+<li>At or below this distance, the pixel's alpha multiplier is set to
+<span class="math inline">\(0.0\)</span>, making it completely
+transparent.</li>
+</ul>
+<h3 id="the-smoothness-threshold">The Smoothness Threshold</h3>
+<p>If the filter only relied on similarity, the boundary between
+transparent and opaque pixels would produce harsh, aliased ("jagged")
+edges. The <strong>Smoothness</strong> slider introduces an
+anti-aliasing feathering zone extending outward from the edge of the
+similarity boundary.</p>
+<p>The smoothness value is mapped to a normalized floating-point range,
+denoted as <span class="math inline">\(T_{\text{smooth}}\)</span>. It
+defines an outer boundary:</p>
+<p><span class="math display">\[\text{Outer Limit} = T_{\text{sim}} +
+T_{\text{smooth}}\]</span></p>
+<p>Within this transition zone, pixel opacity ramps linearly from fully
+transparent to fully opaque:</p>
+<ul>
+<li><strong><span class="math inline">\(D \le
+T_{\text{sim}}\)</span>:</strong> Fully transparent (<span
+class="math inline">\(\text{Alpha Multiplier} = 0.0\)</span>)</li>
+<li><strong><span class="math inline">\(D \ge T_{\text{sim}} +
+T_{\text{smooth}}\)</span>:</strong> Fully opaque (<span
+class="math inline">\(\text{Alpha Multiplier} = 1.0\)</span>)</li>
+<li><strong><span class="math inline">\(T_{\text{sim}} &lt; D &lt;
+T_{\text{sim}} + T_{\text{smooth}}\)</span>:</strong> Semi-transparent
+gradient</li>
+</ul>
+<h3 id="alpha-factor-calculation-in-the-shader">Alpha Factor Calculation
+in the Shader</h3>
+<p>In the pixel shader, the final alpha factor is calculated using a
+standard linear interpolation and clamp operation:</p>
+<p><span class="math display">\[\text{Factor} =
+\text{clamp}\left(\frac{D - T_{\text{sim}}}{T_{\text{smooth}}}, 0.0,
+1.0\right)\]</span></p>
+<p>This computed factor is then multiplied by the pixel's original alpha
+channel:</p>
+<p><span class="math display">\[A_{\text{final}} = A_{\text{source}}
+\times \text{Factor}\]</span></p>
+<p>When <span class="math inline">\(T_{\text{smooth}}\)</span> is set to
+zero (or an extremely small value approaching zero), the formula behaves
+like a step function, resulting in a hard cutoff. Increasing <span
+class="math inline">\(T_{\text{smooth}}\)</span> widens the denominator,
+expanding the range of color distances that receive partial
+transparency, which softens fringes and edge artifacts around the
+subject.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

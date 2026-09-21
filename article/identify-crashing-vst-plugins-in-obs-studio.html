@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Identify Crashing VST Plugins in OBS Studio - obs-studio</title>
+    <meta name="description" content="When OBS Studio launches, an incompatible or corrupted VST plugin can cause the core audio subsystem to crash silently, resulting in muted sources, frozen meters, and missing audio outputs without generating a standard crash reporter dialogue. Identifyin">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/identify-crashing-vst-plugins-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Identify Crashing VST Plugins in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/identify-crashing-vst-plugins-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When OBS Studio launches, an incompatible or corrupted VST plugin can cause the core audio subsystem to crash silently, resulting in muted sources, frozen meters, and missing audio outputs without generating a standard crash reporter dialogue. Identifyin" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="identify-crashing-vst-plugins-in-obs-studio">Identify Crashing
+VST Plugins in OBS Studio</h1>
+<p>When OBS Studio launches, an incompatible or corrupted VST plugin can
+cause the core audio subsystem to crash silently, resulting in muted
+sources, frozen meters, and missing audio outputs without generating a
+standard crash reporter dialogue. Identifying the problematic plugin
+requires reviewing the OBS log files, locating the VST scan directories,
+and performing an isolation test to pinpoint and remove the faulty
+dynamic link library (DLL).</p>
+<h3 id="step-1-check-the-obs-studio-log-file">Step 1: Check the OBS
+Studio Log File</h3>
+<p>OBS Studio records plugin initializations during launch. Even if the
+application does not hard-crash to desktop, the log often flags audio
+thread failures.</p>
+<ol type="1">
+<li>Launch OBS Studio.</li>
+<li>In the top menu, go to <strong>Help</strong> &gt; <strong>Log
+Files</strong> &gt; <strong>View Current Log</strong>.</li>
+<li>Press <code>Ctrl + F</code> to open the search bar and search for
+terms such as <code>vst</code>, <code>failed</code>,
+<code>exception</code>, or <code>audio thread</code>.</li>
+<li>Scan for lines containing <code>obs-vst</code> to see which plugin
+was being loaded immediately before the audio engine stopped
+initializing or logged an error.</li>
+</ol>
+<h3 id="step-2-locate-your-system-vst-folders">Step 2: Locate Your
+System VST Folders</h3>
+<p>OBS Studio does not use a custom VST directory by default; it scans
+the standard system paths for VST 2.4 (<code>.dll</code>) plugins:</p>
+<ul>
+<li><code>C:\Program Files\VSTPlugins\</code></li>
+<li><code>C:\Program Files\Steinberg\VSTPlugins\</code></li>
+<li><code>C:\Program Files\Common Files\VST2\</code></li>
+<li><code>C:\Program Files\Common Files\Steinberg\VST2\</code></li>
+</ul>
+<h3 id="step-3-isolate-the-culprit-using-the-split-half-method">Step 3:
+Isolate the Culprit Using the Split-Half Method</h3>
+<p>If the logs do not explicitly name the failing file, manually isolate
+the plugins using process of elimination:</p>
+<ol type="1">
+<li>Close OBS Studio completely. Ensure no background processes remain
+in Task Manager.</li>
+<li>Create a temporary folder on your desktop (e.g.,
+<code>VST_Quarantine</code>).</li>
+<li>Move all <code>.dll</code> files from your VST directories into the
+quarantine folder.</li>
+<li>Open OBS Studio. Verify that the audio meters move and the audio
+engine initializes normally.</li>
+<li>Close OBS Studio and move half of the quarantined plugins back to
+their original folder.</li>
+<li>Launch OBS Studio again.
+<ul>
+<li>If the audio engine works, the moved plugins are safe.</li>
+<li>If the audio engine fails or meters freeze, the problematic plugin
+is in that specific batch.</li>
+</ul></li>
+<li>Repeat this process by halving the suspect group until you isolate
+the exact <code>.dll</code> file causing the failure.</li>
+</ol>
+<h3 id="step-4-verify-common-incompatibility-triggers">Step 4: Verify
+Common Incompatibility Triggers</h3>
+<p>Once identified, examine why the plugin failed to prevent future
+crashes:</p>
+<ul>
+<li><strong>32-bit Architecture:</strong> Modern 64-bit OBS Studio
+cannot run 32-bit VSTs natively. A 32-bit DLL placed in a 64-bit
+directory causes silent loading crashes.</li>
+<li><strong>VST3 Incompatibility:</strong> OBS Studio's native
+<code>obs-vst</code> module only supports VST 2.x. Files with the
+<code>.vst3</code> extension placed directly into VST 2 paths can
+destabilize initialization.</li>
+<li><strong>Shell and Container Plugins:</strong> Bundled plugins (such
+as Waves or older iZotope wrappers) that use shell DLLs to load multiple
+modules often fail under OBS Studio's VST implementation.</li>
+<li><strong>Missing Dependencies:</strong> Some plugins require specific
+Microsoft Visual C++ Redistributables or external licensing software
+(like iLok or eLicenser) to run. If the license daemon fails to connect
+on launch, the plugin will silently drop the audio thread.</li>
+</ul>
+<h3 id="step-5-clean-up-the-obs-scene-configuration">Step 5: Clean Up
+the OBS Scene Configuration</h3>
+<p>After permanently removing the problematic file from your VST
+folder:</p>
+<ol type="1">
+<li>Launch OBS Studio.</li>
+<li>Inspect every audio source that previously utilized the faulty VST
+filter.</li>
+<li>Open <strong>Filters</strong>, select the legacy <strong>VST 2.x
+Plug-in</strong> filter containing the deleted item, and click the minus
+(<strong>-</strong>) icon to delete the stale reference.</li>
+<li>Restart OBS Studio to confirm that audio meters register properly
+and startup is stable.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

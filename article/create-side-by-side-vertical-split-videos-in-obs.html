@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Side-by-Side Vertical Split Videos in OBS - obs-studio</title>
+    <meta name="description" content="This guide provides a straightforward walkthrough on how to set up a side-by-side vertical split-screen reaction layout in OBS Studio. You will learn how to import your sources, crop them into vertical aspect ratios, and align them perfectly side-by-side">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/create-side-by-side-vertical-split-videos-in-obs">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Create Side-by-Side Vertical Split Videos in OBS - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/create-side-by-side-vertical-split-videos-in-obs" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide provides a straightforward walkthrough on how to set up a side-by-side vertical split-screen reaction layout in OBS Studio. You will learn how to import your sources, crop them into vertical aspect ratios, and align them perfectly side-by-side" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="create-side-by-side-vertical-split-videos-in-obs">Create
+Side-by-Side Vertical Split Videos in OBS</h1>
+<p>This guide provides a straightforward walkthrough on how to set up a
+side-by-side vertical split-screen reaction layout in OBS Studio. You
+will learn how to import your sources, crop them into vertical aspect
+ratios, and align them perfectly side-by-side for a professional-looking
+reaction video.</p>
+<h3 id="step-1-add-your-video-sources">Step 1: Add Your Video
+Sources</h3>
+<p>First, you need to bring both video inputs into your active OBS
+scene.</p>
+<ol type="1">
+<li>Go to the <strong>Sources</strong> dock at the bottom of the
+screen.</li>
+<li>Click the <strong>+</strong> (plus) icon.</li>
+<li>Select <strong>Video Capture Device</strong> to add your webcam or
+camera.</li>
+<li>Click the <strong>+</strong> icon again and select <strong>Media
+Source</strong> (for pre-recorded video files) or <strong>Window
+Capture/Display Capture</strong> (to record a YouTube video or game
+playing on your screen).</li>
+</ol>
+<h3 id="step-2-crop-the-sources-vertically">Step 2: Crop the Sources
+Vertically</h3>
+<p>To create a vertical split, you must crop both horizontal sources so
+they can sit side-by-side without overlapping.</p>
+<ol type="1">
+<li>Click on your camera source in the preview window to select it.</li>
+<li>Hold down the <strong>Alt</strong> key (Windows/Linux) or the
+<strong>Option</strong> key (Mac).</li>
+<li>Click and drag the left and right bounding box handles inward. This
+crops the source instead of resizing it. Crop it until it looks like a
+narrow vertical rectangle.</li>
+<li>Release the Alt/Option key.</li>
+<li>Select your reaction content source and repeat the process, cropping
+the left and right sides to create a matching vertical rectangle.</li>
+</ol>
+<h3 id="step-3-align-and-resize-the-layout">Step 3: Align and Resize the
+Layout</h3>
+<p>Now you must position the cropped videos side-by-side to fill the
+screen.</p>
+<ol type="1">
+<li>Click and drag your cropped camera source to the left half of the
+canvas.</li>
+<li>Click and drag the reaction content source to the right half of the
+canvas.</li>
+<li>To resize them, click and drag the corner handles of the bounding
+boxes (do not hold Alt/Option this time). Expand them so they match in
+height and fill the screen from top to bottom.</li>
+</ol>
+<h3 id="step-4-use-precision-alignment-recommended">Step 4: Use
+Precision Alignment (Recommended)</h3>
+<p>To ensure both sides are perfectly symmetrical and split exactly down
+the middle:</p>
+<ol type="1">
+<li>Right-click your left-side source and select
+<strong>Transform</strong> &gt; <strong>Edit Transform</strong>.</li>
+<li>Assuming you are using a standard 1920x1080 canvas, set the
+<strong>Size</strong> width to <code>960</code> and height to
+<code>1080</code>.</li>
+<li>Set the <strong>Position</strong> X to <code>0</code> and Y to
+<code>0</code>.</li>
+<li>Right-click the right-side source, select <strong>Transform</strong>
+&gt; <strong>Edit Transform</strong>, and set its <strong>Size</strong>
+to <code>960</code> and <code>1080</code>.</li>
+<li>Set its <strong>Position</strong> X to <code>960</code> and Y to
+<code>0</code>.</li>
+</ol>
+<p>This mathematical alignment ensures a perfect 50/50 vertical split
+down the exact center of your screen.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

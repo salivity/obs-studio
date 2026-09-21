@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Libobs Interacts with Vulkan on Linux - obs-studio</title>
+    <meta name="description" content="This article explores how the core graphics engine of OBS Studio, libobs, interfaces with Vulkan surfaces on Linux operating systems. While libobs uses an abstracted rendering pipeline traditionally powered by an OpenGL backend on Linux, handling Vulkan">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-libobs-interacts-with-vulkan-on-linux">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Libobs Interacts with Vulkan on Linux - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-libobs-interacts-with-vulkan-on-linux" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores how the core graphics engine of OBS Studio, libobs, interfaces with Vulkan surfaces on Linux operating systems. While libobs uses an abstracted rendering pipeline traditionally powered by an OpenGL backend on Linux, handling Vulkan" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-libobs-interacts-with-vulkan-on-linux">How Libobs Interacts
+with Vulkan on Linux</h1>
+<p>This article explores how the core graphics engine of OBS Studio,
+<code>libobs</code>, interfaces with Vulkan surfaces on Linux operating
+systems. While <code>libobs</code> uses an abstracted rendering pipeline
+traditionally powered by an OpenGL backend on Linux, handling Vulkan
+surfaces requires a combination of Vulkan API layers, platform-level
+display protocols via Wayland and X11, and zero-copy cross-API texture
+sharing using Linux DRM DMA-BUF. Below is a breakdown of how the
+graphics context initializes, captures, and manages these surfaces
+within the OBS rendering pipeline.</p>
+<h3 id="the-libobs-graphics-abstraction-layer">The libobs Graphics
+Abstraction Layer</h3>
+<p>The core library of OBS Studio (<code>libobs</code>) decouples video
+encoding and compositing from direct graphics API calls using an
+abstraction module known as <code>gs</code> (graphics subsystem). On
+Linux, the standard display and compositing engine relies primarily on
+<code>libobs-opengl</code>. Because <code>libobs</code> operates on its
+own internal graphics context—initializing display output through EGL or
+GLX—it does not inherently share memory with Vulkan-based processes out
+of the box. Instead, interacting with Vulkan surfaces requires bridging
+the gap between independent GPU processes and OBS's main compositing
+loop.</p>
+<h3 id="capturing-vulkan-application-surfaces">Capturing Vulkan
+Application Surfaces</h3>
+<p>To ingest frames from an external application rendering to a Vulkan
+swapchain (such as a game), OBS relies on Vulkan layers (notably via
+capture utilities like <code>obs-vkcapture</code>). When a target
+application initializes a Vulkan instance, the capture layer hooks key
+entry points in the Vulkan loader:</p>
+<ul>
+<li><code>vkCreateSwapchainKHR</code>: Intercepts swapchain creation to
+determine image formats, surface resolutions, and color spaces.</li>
+<li><code>vkQueuePresentKHR</code>: Captures the swapchain image
+immediately before it is queued for presentation to the display
+server.</li>
+</ul>
+<p>Rather than copying pixels through the CPU, the hooked layer uses the
+<code>VK_EXT_external_memory_dma_buf</code> extension. It exports the
+Vulkan image's underlying memory as a Linux DMA-BUF (Direct Memory
+Access Buffer) file descriptor.</p>
+<h3 id="cross-api-context-interoperability">Cross-API Context
+Interoperability</h3>
+<p>Once the Vulkan frame is exported to a DMA-BUF file descriptor, it
+must be ingested by the active <code>libobs</code> graphics context. The
+context interacts with this external surface through the following
+steps:</p>
+<ol type="1">
+<li><strong>Descriptor Passing:</strong> The file descriptor, memory
+layout modifiers, stride, and format details are sent over an
+inter-process communication (IPC) channel (usually a UNIX domain socket)
+directly to the OBS capture plugin.</li>
+<li><strong>EGL Import:</strong> Inside <code>libobs</code>, the
+graphics subsystem binds the file descriptor via the
+<code>EGL_EXT_image_dma_buf_import</code> extension to create an
+<code>EGLImageKHR</code>.</li>
+<li><strong>Texture Binding:</strong> The resulting
+<code>EGLImage</code> is linked directly to an OpenGL texture object
+using <code>glEGLImageTargetTexture2DOES</code>.</li>
+</ol>
+<p>This process allows <code>libobs</code> to read the Vulkan surface
+directly from VRAM, treating it as an internal texture source for OBS's
+compositing canvas without incurring synchronization overhead on the
+host CPU.</p>
+<h3 id="presentation-and-window-system-integration">Presentation and
+Window System Integration</h3>
+<p>When discussing OBS Studio rendering to a display surface via Vulkan
+directly (such as in experimental or modernization branches implementing
+a native <code>libobs-vulkan</code> backend), the context creation
+shifts to native surface handling:</p>
+<ul>
+<li><strong>Surface Creation:</strong> Under Wayland, the engine
+utilizes <code>VK_KHR_wayland_surface</code> to bind a
+<code>VkSurfaceKHR</code> to a <code>wl_surface</code>. Under X11, it
+employs <code>VK_KHR_xcb_surface</code> or
+<code>VK_KHR_xlib_surface</code>.</li>
+<li><strong>Swapchain Management:</strong> <code>libobs</code>
+configures the swapchain via <code>VK_KHR_swapchain</code>, setting
+present modes (typically <code>VK_PRESENT_MODE_FIFO_KHR</code> for
+tear-free output or <code>VK_PRESENT_MODE_MAILBOX_KHR</code> to minimize
+input latency).</li>
+<li><strong>Synchronization:</strong> The pipeline relies on
+<code>VkSemaphore</code> objects to coordinate between the internal
+compositing queues (rendering layers, sources, and filters) and the
+window server presentation engine, ensuring that frames are not
+overwritten while still being scanned out to the monitor.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

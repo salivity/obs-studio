@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Causes of OBS TCP Connection Resets on High-Jitter Networks - obs-studio</title>
+    <meta name="description" content="Streaming over TCP sockets using OBS Studio on high-jitter broadband networks frequently results in unexpected connection resets (TCP RST packets or broken pipe errors). This article examines the core networking mechanisms that cause these failures, incl">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/causes-of-obs-tcp-connection-resets-on-high-jitter-networks">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Causes of OBS TCP Connection Resets on High-Jitter Networks - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/causes-of-obs-tcp-connection-resets-on-high-jitter-networks" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Streaming over TCP sockets using OBS Studio on high-jitter broadband networks frequently results in unexpected connection resets (TCP RST packets or broken pipe errors). This article examines the core networking mechanisms that cause these failures, incl" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1
+id="causes-of-obs-tcp-connection-resets-on-high-jitter-networks">Causes
+of OBS TCP Connection Resets on High-Jitter Networks</h1>
+<p>Streaming over TCP sockets using OBS Studio on high-jitter broadband
+networks frequently results in unexpected connection resets (TCP RST
+packets or broken pipe errors). This article examines the core
+networking mechanisms that cause these failures, including bufferbloat,
+TCP sequence disruption, operating system socket buffer saturation,
+aggressive remote ingest server timeouts, and middlebox interference. It
+also outlines architectural solutions to mitigate these disruptions.</p>
+<h3 id="how-high-jitter-disrupts-tcp-streams">How High Jitter Disrupts
+TCP Streams</h3>
+<p>Transmission Control Protocol (TCP) is designed for reliable, ordered
+data transfer. When OBS Studio streams over protocols like RTMP
+(Real-Time Messaging Protocol), it relies on TCP to deliver video frames
+sequentially.</p>
+<p>Jitter represents the variance in packet arrival latency. When
+broadband networks experience significant jitter, packets arrive
+erratically, creating severe bottlenecks for real-time video
+delivery.</p>
+<h3 id="primary-causes-of-connection-resets">Primary Causes of
+Connection Resets</h3>
+<h4 id="1-tcp-window-exhaustion-and-socket-buffer-overflow">1. TCP
+Window Exhaustion and Socket Buffer Overflow</h4>
+<p>OBS Studio continuously encodes and pushes video frames at a target
+bitrate. When network jitter spikes, the sender must wait for TCP
+acknowledgments (ACKs).</p>
+<p>If ACKs are delayed, the TCP sliding window closes. This causes
+encoded frames to accumulate in the operating system's kernel-level
+socket send buffer (<code>SO_SNDBUF</code>). Once this buffer fills
+completely, the socket can no longer accept writes. If OBS encounters a
+blocking write timeout or an unhandled socket write error, it terminates
+the stream or triggers a local reset.</p>
+<h4 id="2-retransmission-timeouts-rto-and-spurious-retransmissions">2.
+Retransmission Timeouts (RTO) and Spurious Retransmissions</h4>
+<p>TCP calculates a smoothed round-trip time (SRTT) and derives a
+Retransmission Timeout (RTO). On high-jitter connections, sudden latency
+spikes can easily exceed the calculated RTO.</p>
+<p>When an RTO triggers:</p>
+<ul>
+<li>The sender marks unacknowledged segments as lost.</li>
+<li>The sender retransmits packets that may still be in transit.</li>
+<li>The congestion window (<code>cwnd</code>) collapses to 1 Maximum
+Segment Size (MSS).</li>
+</ul>
+<p>This abrupt collapse starves the stream bandwidth. If recovery takes
+longer than the application timeout threshold, the connection drops.</p>
+<h4 id="3-ingest-server-keep-alive-and-inactivity-timeouts">3. Ingest
+Server Keep-Alive and Inactivity Timeouts</h4>
+<p>Streaming ingest platforms (such as Twitch, YouTube, or custom RTMP
+servers) enforce strict real-time requirements. Because TCP guarantees
+in-order delivery, a single missing packet causes "head-of-line
+blocking," stalling all subsequent data.</p>
+<p>If high jitter creates a prolonged head-of-line stall, the remote
+ingest server receives no media chunks. Once the server's read deadline
+or keep-alive timer expires (often between 3 to 10 seconds), the server
+forcefully terminates the connection by sending a <code>TCP RST</code>
+packet to the streamer.</p>
+<h4 id="4-stateful-middlebox-and-nat-timeout-disconnections">4. Stateful
+Middlebox and NAT Timeout Disconnections</h4>
+<p>Consumer broadband networks frequently traverse ISP-level
+carrier-grade NATs (CGNAT), stateful inspection firewalls, and home
+routers.</p>
+<p>Under extreme jitter, packets may arrive severely out of sequence. If
+a packet falls outside the middlebox’s expected TCP window tracking
+range, or if temporary stall periods exceed aggressive state-tracking
+timers, the middlebox may drop the connection tracking entry. Subsequent
+packets for that flow are treated as invalid, causing the middlebox to
+reply with a <code>TCP RST</code>.</p>
+<h4 id="5-bufferbloat-in-the-upstream-path">5. Bufferbloat in the
+Upstream Path</h4>
+<p>High jitter on broadband lines (especially cable and fixed wireless)
+is frequently paired with bufferbloat—excessive buffering of packets
+inside ISP equipment or modems.</p>
+<p>When upstream buffers fill, latency skyrockets from milliseconds to
+several seconds. This latency surge directly inflates RTT, exhausts
+retransmission queues, and triggers cascade failures in TCP congestion
+control algorithms such as Reno or Cubic.</p>
+<h3 id="mitigating-tcp-streaming-instability-in-obs-studio">Mitigating
+TCP Streaming Instability in OBS Studio</h3>
+<p>To prevent jitter-induced connection resets:</p>
+<ul>
+<li><strong>Enable Dynamic Bitrate in OBS:</strong> Navigate to
+<em>Settings &gt; Advanced &gt; Network</em> and enable
+<strong>Dynamically change bitrate to manage congestion</strong>. This
+allows OBS to downscale video throughput in real time instead of
+overflowing the TCP socket buffer.</li>
+<li><strong>Enable Network Optimizations:</strong> Check <strong>Enable
+network optimizations</strong> in the same menu to let OBS utilize
+modern congestion-aware pacing.</li>
+<li><strong>Implement Smart Queue Management (SQM):</strong> Use a
+router featuring CAKE or FQ-CoDel algorithms to eliminate bufferbloat
+and smooth out latency spikes on the local network.</li>
+<li><strong>Switch to UDP-Based Protocols (SRT or RIST):</strong> If
+supported by the destination platform, migrate from RTMP/TCP to SRT
+(Secure Reliable Transport) or RIST (Reliable Internet Stream
+Transport). These protocols run over UDP and include dedicated packet
+recovery buffers specifically designed to absorb high jitter without
+stalling the connection.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

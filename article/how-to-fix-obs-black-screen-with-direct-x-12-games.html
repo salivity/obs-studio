@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Fix OBS Black Screen with DirectX 12 Games - obs-studio</title>
+    <meta name="description" content="Encountering a black screen in OBS Studio while attempting to capture a DirectX 12 game running in borderless windowed mode is a common issue for content creators. This article provides a direct, step-by-step troubleshooting guide to resolve this conflic">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-fix-obs-black-screen-with-direct-x-12-games">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Fix OBS Black Screen with DirectX 12 Games - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-fix-obs-black-screen-with-direct-x-12-games" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Encountering a black screen in OBS Studio while attempting to capture a DirectX 12 game running in borderless windowed mode is a common issue for content creators. This article provides a direct, step-by-step troubleshooting guide to resolve this conflic" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-fix-obs-black-screen-with-directx-12-games">How to Fix
+OBS Black Screen with DirectX 12 Games</h1>
+<p>Encountering a black screen in OBS Studio while attempting to capture
+a DirectX 12 game running in borderless windowed mode is a common issue
+for content creators. This article provides a direct, step-by-step
+troubleshooting guide to resolve this conflict. By adjusting OBS capture
+settings, configuring Windows graphics preferences, and running the
+software with administrative privileges, you can quickly restore your
+video feed and capture your gameplay seamlessly.</p>
+<h2 id="step-1-run-obs-studio-as-administrator">Step 1: Run OBS Studio
+as Administrator</h2>
+<p>DirectX 12 games often run with high-level system permissions that
+block standard applications from capturing their frames. Running OBS as
+an administrator bypasses these restrictions.</p>
+<ol type="1">
+<li>Close OBS Studio completely.</li>
+<li>Right-click the <strong>OBS Studio</strong> shortcut on your desktop
+or start menu.</li>
+<li>Select <strong>Run as administrator</strong>.</li>
+<li>Test the game capture to see if the black screen is resolved.</li>
+<li>To make this permanent, right-click the OBS shortcut, go to
+<strong>Properties</strong> &gt; <strong>Compatibility</strong> tab,
+check <strong>Run this program as an administrator</strong>, and click
+<strong>Apply</strong>.</li>
+</ol>
+<h2 id="step-2-use-window-capture-with-the-correct-capture-method">Step
+2: Use Window Capture with the Correct Capture Method</h2>
+<p>If "Game Capture" fails to hook into a DirectX 12 game running in
+borderless windowed mode, "Window Capture" is the most reliable
+alternative, provided you select the correct graphics engine hook.</p>
+<ol type="1">
+<li>In OBS, go to your <strong>Sources</strong> dock, click the
+<strong>+</strong> icon, and select <strong>Window
+Capture</strong>.</li>
+<li>Name the source and click <strong>OK</strong>.</li>
+<li>In the properties window, select your DX12 game from the
+<strong>Window</strong> dropdown menu.</li>
+<li>Change the <strong>Capture Method</strong> from "Automatic" to
+<strong>Windows 10 (1903 and up)</strong>. This method utilizes the
+modern Windows graphics capture API, which natively supports DX12
+borderless windowed applications.</li>
+<li>Click <strong>OK</strong>.</li>
+</ol>
+<h2 id="step-3-adjust-game-capture-hooks">Step 3: Adjust Game Capture
+Hooks</h2>
+<p>If you prefer to use "Game Capture" instead of "Window Capture",
+certain internal settings within the source properties can cause
+compatibility issues with DX12.</p>
+<ol type="1">
+<li>Double-click your <strong>Game Capture</strong> source to open its
+properties.</li>
+<li>Ensure the <strong>Mode</strong> is set to <strong>Capture specific
+window</strong> and select your DX12 game.</li>
+<li>Uncheck <strong>Capture third-party overlays (such as
+Steam)</strong>, as overlay hooks can conflict with DX12 rendering
+pipeline captures.</li>
+<li>Toggle the <strong>Use anti-cheat compatibility hook</strong>
+option. If it is checked, uncheck it, or vice versa, to see if the hook
+successfully registers the game.</li>
+<li>Click <strong>OK</strong>.</li>
+</ol>
+<h2 id="step-4-configure-windows-graphics-performance-settings">Step 4:
+Configure Windows Graphics Performance Settings</h2>
+<p>On systems with multiple GPUs (such as laptops with an integrated
+Intel/AMD GPU and a discrete NVIDIA/AMD GPU), OBS and the DX12 game must
+run on the same graphics processor to avoid a black screen.</p>
+<ol type="1">
+<li>Open the Windows <strong>Settings</strong> app (Windows Key +
+I).</li>
+<li>Navigate to <strong>System</strong> &gt; <strong>Display</strong>
+&gt; <strong>Graphics</strong> (or <strong>Graphics
+settings</strong>).</li>
+<li>Under "Custom options for apps," click <strong>Browse</strong> and
+locate the OBS Studio executable file (usually located in
+<code>C:\Program Files\obs-studio\bin\64bit\obs64.exe</code>).</li>
+<li>Click on <strong>OBS Studio</strong> in the list, then click
+<strong>Options</strong>.</li>
+<li>Select <strong>High performance</strong> (which forces OBS to use
+your discrete GPU, matching the DX12 game) and click
+<strong>Save</strong>.</li>
+</ol>
+<h2 id="step-5-disable-conflicting-third-party-overlays">Step 5: Disable
+Conflicting Third-Party Overlays</h2>
+<p>DirectX 12 is highly sensitive to multiple applications attempting to
+hook into its rendering pipeline simultaneously. Disable other active
+overlays that might be blocking OBS:</p>
+<ul>
+<li><strong>Discord:</strong> Go to User Settings &gt; Game Overlay &gt;
+toggle "Enable in-game overlay" to Off.</li>
+<li><strong>GeForce Experience / ShadowPlay:</strong> Open GeForce
+Experience, go to Settings (gear icon), and toggle off "In-Game
+Overlay."</li>
+<li><strong>Steam/Epic Games Launcher:</strong> Disable the in-game
+overlay features in the respective launcher settings.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

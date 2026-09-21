@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix OBS Media Source Video Lagging Behind Audio - obs-studio</title>
+    <meta name="description" content="If you are experiencing issues in OBS Studio where a media source's video trails behind its accompanying audio, you are dealing with a common playback synchronization problem. This article provides a straightforward, step-by-step guide to resolving this">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/fix-obs-media-source-video-lagging-behind-audio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Fix OBS Media Source Video Lagging Behind Audio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/fix-obs-media-source-video-lagging-behind-audio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="If you are experiencing issues in OBS Studio where a media source's video trails behind its accompanying audio, you are dealing with a common playback synchronization problem. This article provides a straightforward, step-by-step guide to resolving this" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="fix-obs-media-source-video-lagging-behind-audio">Fix OBS Media
+Source Video Lagging Behind Audio</h1>
+<p>If you are experiencing issues in OBS Studio where a media source's
+video trails behind its accompanying audio, you are dealing with a
+common playback synchronization problem. This article provides a
+straightforward, step-by-step guide to resolving this lag, covering
+solutions ranging from adjusting internal audio delays to optimizing OBS
+hardware settings and file formats.</p>
+<h2 id="1-adjust-the-audio-sync-offset">1. Adjust the Audio Sync
+Offset</h2>
+<p>If the video lag is consistent throughout the playback, the quickest
+workaround is to delay the audio so it matches the lagging video.</p>
+<ol type="1">
+<li>Locate the <strong>Audio Mixer</strong> dock in OBS Studio.</li>
+<li>Click the three dots (gear icon) next to your Media Source or your
+main audio output and select <strong>Advanced Audio
+Properties</strong>.</li>
+<li>Find your media source in the list.</li>
+<li>Locate the <strong>Sync Offset (ms)</strong> column.</li>
+<li>Enter a positive value in milliseconds to delay the audio (e.g.,
+<code>200</code> for a 0.2-second delay) or a negative value if you need
+to advance it.</li>
+<li>Test the playback and adjust the millisecond value until the audio
+and video are perfectly aligned.</li>
+</ol>
+<h2 id="2-toggle-hardware-decoding">2. Toggle Hardware Decoding</h2>
+<p>If your computer's CPU is struggling to decode the video, the video
+frames will drop, causing the video to fall behind the audio. Enabling
+hardware decoding offloads this work to your GPU.</p>
+<ol type="1">
+<li>Double-click your media source in the <strong>Sources</strong> dock
+to open its properties.</li>
+<li>Scroll down and check the box for <strong>Use hardware decoding when
+available</strong>.</li>
+<li>Click <strong>OK</strong>.</li>
+<li>If the option was already checked and you are still experiencing
+lag, try unchecking it, as certain video codecs perform better with CPU
+decoding depending on your hardware configuration.</li>
+</ol>
+<h2 id="3-change-media-source-performance-settings">3. Change Media
+Source Performance Settings</h2>
+<p>Certain properties within the Media Source can cause playback
+hiccups, especially on longer streams.</p>
+<ol type="1">
+<li>Double-click the problematic media source to open
+<strong>Properties</strong>.</li>
+<li>Uncheck <strong>Close file when inactive</strong>. Keeping the file
+loaded in the background prevents lag when the source is transitioned
+onto the screen.</li>
+<li>Check the box for <strong>Limit speed when invisible</strong> if you
+want to save resources when the video is not actively being shown.</li>
+</ol>
+<h2 id="4-run-obs-studio-as-administrator">4. Run OBS Studio as
+Administrator</h2>
+<p>When Windows runs out of GPU resources, it prioritizes gameplay or
+other applications over OBS Studio, resulting in dropped video frames.
+Running OBS as an administrator forces Windows to allocate sufficient
+GPU resources to the software.</p>
+<ol type="1">
+<li>Close OBS Studio completely.</li>
+<li>Right-click the OBS Studio shortcut on your desktop or start
+menu.</li>
+<li>Select <strong>Run as administrator</strong>.</li>
+</ol>
+<h2 id="5-re-encode-the-media-file">5. Re-encode the Media File</h2>
+<p>If the desync persists, the video file itself may have a variable
+framerate (VFR) or use a high-bitrate codec that OBS struggles to decode
+in real-time.</p>
+<ul>
+<li>Use a free transcoding tool like <strong>HandBrake</strong> or
+<strong>VLC</strong> to convert the video.</li>
+<li>Re-encode the video to <strong>MP4</strong> or <strong>MKV</strong>
+format using the <strong>H.264</strong> video codec and
+<strong>AAC</strong> audio codec.</li>
+<li>Ensure you select a <strong>Constant Framerate (CFR)</strong> of 30
+or 60 fps, rather than a variable framerate.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

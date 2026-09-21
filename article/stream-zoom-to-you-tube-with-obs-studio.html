@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stream Zoom to YouTube with OBS Studio - obs-studio</title>
+    <meta name="description" content="Streaming a Zoom meeting to YouTube using OBS Studio allows you to broadcast high-quality video conferences with custom overlays, scenes, and advanced audio controls. This guide provides a straightforward, step-by-step walkthrough on how to capture your">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/stream-zoom-to-you-tube-with-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Stream Zoom to YouTube with OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/stream-zoom-to-you-tube-with-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Streaming a Zoom meeting to YouTube using OBS Studio allows you to broadcast high-quality video conferences with custom overlays, scenes, and advanced audio controls. This guide provides a straightforward, step-by-step walkthrough on how to capture your" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="stream-zoom-to-youtube-with-obs-studio">Stream Zoom to YouTube
+with OBS Studio</h1>
+<p>Streaming a Zoom meeting to YouTube using OBS Studio allows you to
+broadcast high-quality video conferences with custom overlays, scenes,
+and advanced audio controls. This guide provides a straightforward,
+step-by-step walkthrough on how to capture your Zoom window, configure
+your audio settings, link OBS to your YouTube Live dashboard, and start
+broadcasting your meeting to your audience.</p>
+<h3 id="step-1-set-up-your-youtube-live-stream">Step 1: Set Up Your
+YouTube Live Stream</h3>
+<ol type="1">
+<li>Log in to your YouTube account and go to the <strong>YouTube Creator
+Studio</strong>.</li>
+<li>Click the <strong>Create</strong> button (camera icon) in the top
+right corner and select <strong>Go live</strong>.</li>
+<li>In the YouTube Live Control Room, create a new stream or edit an
+existing one by entering your title, description, and privacy
+settings.</li>
+<li>Locate the <strong>Stream Key</strong> in the stream settings tab.
+Copy this key, as you will need to paste it into OBS Studio. Keep this
+key private.</li>
+</ol>
+<h3 id="step-2-configure-obs-studio-for-youtube">Step 2: Configure OBS
+Studio for YouTube</h3>
+<ol type="1">
+<li>Open OBS Studio on your computer.</li>
+<li>Click on <strong>Settings</strong> in the bottom right corner of the
+OBS interface.</li>
+<li>Select the <strong>Stream</strong> tab from the left-hand menu.</li>
+<li>Set the <strong>Service</strong> dropdown to <strong>YouTube -
+HLS</strong> or <strong>YouTube - RTMPS</strong> (recommended).</li>
+<li>Paste your copied <strong>Stream Key</strong> into the Stream Key
+field, or click "Connect Account" to log in directly through OBS.</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong>.</li>
+</ol>
+<h3 id="step-3-capture-the-zoom-window-in-obs">Step 3: Capture the Zoom
+Window in OBS</h3>
+<ol type="1">
+<li>Open the Zoom application and start or join your meeting. (For best
+results, keep Zoom in a dedicated window and do not minimize it).</li>
+<li>Go back to OBS Studio. Under the <strong>Sources</strong> dock at
+the bottom, click the <strong>+</strong> (plus) icon.</li>
+<li>Select <strong>Window Capture</strong> from the list, name it "Zoom
+Meeting," and click <strong>OK</strong>.</li>
+<li>In the properties window, set the <strong>Window</strong> dropdown
+to select your Zoom meeting window (usually labeled
+<code>Zoom Meeting</code>).</li>
+<li>Set the <strong>Capture Method</strong> to <strong>Windows 10 (1903
+and up)</strong> or <strong>Graphics Capture</strong> if the window
+appears black.</li>
+<li>Click <strong>OK</strong>. You can drag the corners of the Zoom
+window in the OBS preview screen to resize and fit it to your
+canvas.</li>
+</ol>
+<h3 id="step-4-configure-the-audio">Step 4: Configure the Audio</h3>
+<p>To ensure your viewers can hear both you and the other Zoom
+participants, you must configure your audio sources correctly.</p>
+<ol type="1">
+<li>In the <strong>Audio Mixer</strong> section of OBS, locate
+<strong>Desktop Audio</strong>. This captures the sound of the other
+Zoom participants speaking. Ensure the volume meter moves when others
+speak.</li>
+<li>Locate <strong>Mic/Aux</strong>. This captures your own microphone.
+Ensure this meter moves when you speak.</li>
+<li>If you do not see these bars, go to <strong>Settings</strong> &gt;
+<strong>Audio</strong> and manually select your default desktop audio
+device and microphone.</li>
+</ol>
+<h3 id="step-5-start-the-live-stream">Step 5: Start the Live Stream</h3>
+<ol type="1">
+<li>Double-check your Zoom meeting layout (such as Speaker View or
+Gallery View) to ensure it looks correct in the OBS preview window.</li>
+<li>In the bottom right corner of OBS Studio, click <strong>Start
+Streaming</strong>.</li>
+<li>Go back to your <strong>YouTube Live Control Room</strong> in your
+web browser. You should see the video feed from OBS appear in the
+preview player.</li>
+<li>If your stream is set to public or scheduled, you are now live. When
+you are finished, click <strong>Stop Streaming</strong> in OBS Studio to
+end the broadcast.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

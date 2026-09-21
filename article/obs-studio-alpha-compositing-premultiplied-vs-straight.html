@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Alpha Compositing: Premultiplied vs Straight - obs-studio</title>
+    <meta name="description" content="OBS Studio composites scene layers within a unified graphics pipeline that standardizes transparency handling across diverse inputs. When mixing premultiplied alpha sources with straight (unassociated) alpha assets, OBS processes color values to avoid bl">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-alpha-compositing-premultiplied-vs-straight">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Alpha Compositing: Premultiplied vs Straight - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-alpha-compositing-premultiplied-vs-straight" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio composites scene layers within a unified graphics pipeline that standardizes transparency handling across diverse inputs. When mixing premultiplied alpha sources with straight (unassociated) alpha assets, OBS processes color values to avoid bl" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-alpha-compositing-premultiplied-vs-straight">OBS
+Studio Alpha Compositing: Premultiplied vs Straight</h1>
+<p>OBS Studio composites scene layers within a unified graphics pipeline
+that standardizes transparency handling across diverse inputs. When
+mixing premultiplied alpha sources with straight (unassociated) alpha
+assets, OBS processes color values to avoid blending artifacts such as
+dark halos or washed-out edges. This article explains how OBS Studio's
+rendering engine interprets alpha channels, converts straight alpha
+textures into premultiplied space, and executes GPU hardware blending to
+ensure accurate visual output across scenes.</p>
+<h2 id="straight-alpha-vs-premultiplied-alpha">Straight Alpha vs.
+Premultiplied Alpha</h2>
+<p>To understand compositing in OBS Studio, the distinction between the
+two alpha storage methods is essential:</p>
+<ul>
+<li><strong>Straight (Unassociated) Alpha:</strong> The RGB color
+channels and the alpha channel are stored independently. Fully
+transparent or semi-transparent pixels retain their original RGB values
+without alteration.</li>
+<li><strong>Premultiplied Alpha:</strong> The RGB color values are
+pre-multiplied by the alpha value during export (<span
+class="math inline">\(R \times A\)</span>, <span class="math inline">\(G
+\times A\)</span>, <span class="math inline">\(B \times A\)</span>).
+Fully transparent pixels have RGB values of <span
+class="math inline">\((0, 0, 0)\)</span>.</li>
+</ul>
+<p>Premultiplied alpha is the industry standard for real-time graphics
+rendering because it prevents fringing artifacts during texture
+filtering (scaling) and simplifies the mathematical blend equation.</p>
+<h2 id="the-obs-internal-compositing-pipeline">The OBS Internal
+Compositing Pipeline</h2>
+<p>OBS Studio’s core graphics subsystem (<code>libobs/graphics</code>)
+standardizes its internal render targets and framebuffers using
+premultiplied alpha. Whether running on Direct3D 11 (Windows) or
+OpenGL/Metal (Linux/macOS), the OBS canvas operates on the standard
+premultiplied blend function:</p>
+<p><span class="math display">\[\text{Result} = (\text{SourceColor}
+\times 1) + (\text{DestColor} \times (1 -
+\text{SourceAlpha}))\]</span></p>
+<p>In graphics API terms, this maps to:</p>
+<ul>
+<li><strong>Source Blend Factor:</strong> <code>ONE</code></li>
+<li><strong>Destination Blend Factor:</strong>
+<code>INV_SRC_ALPHA</code></li>
+</ul>
+<p>By maintaining a premultiplied render target, OBS can scale, filter
+(bicubic, bilinear, Lanczos), and stack multiple scene layers without
+generating black outlines around semi-transparent edges.</p>
+<h2 id="how-obs-handles-mixed-alpha-inputs">How OBS Handles Mixed Alpha
+Inputs</h2>
+<p>Because the internal render target expects premultiplied values,
+incoming sources must match this format before the final hardware blend
+stage occurs.</p>
+<h3 id="1-straight-alpha-sources">1. Straight Alpha Sources</h3>
+<p>Most standard static images (PNGs) and standard video codecs with
+alpha (such as straight-alpha ProRes 4444 or QuickTime Animation) enter
+OBS with unassociated color data.</p>
+<ul>
+<li>During the draw call, OBS passes the texture through a pixel
+shader.</li>
+<li>The shader multiplies the RGB components by the alpha component
+(<code>color.rgb *= color.a</code>) prior to outputting the pixel to the
+blend unit.</li>
+<li>This on-the-fly conversion converts straight assets into the
+premultiplied space required by the canvas blend state.</li>
+</ul>
+<h3 id="2-native-premultiplied-sources">2. Native Premultiplied
+Sources</h3>
+<p>Certain video streams, browser sources (CEF/Chromium), and optimized
+media files provide data that is already premultiplied.</p>
+<ul>
+<li>OBS bypasses the shader-level pre-multiplication step for these
+sources.</li>
+<li>The raw RGB values are fed directly to the blend hardware using the
+<code>ONE</code>, <code>INV_SRC_ALPHA</code> formula.</li>
+</ul>
+<h3 id="3-mixed-alpha-configuration-in-obs-media-sources">3. Mixed Alpha
+Configuration in OBS Media Sources</h3>
+<p>In components like the OBS Media Source or Stinger transitions, media
+playback libraries (such as FFmpeg) decode video frames into GPU
+textures. When rendering media with alpha transparency, OBS provides
+settings or internal heuristics to determine the alpha type:</p>
+<ul>
+<li><strong>If a straight alpha asset is mistakenly flagged as
+premultiplied:</strong> The shader will not apply the pre-multiplication
+step. Because the blend hardware expects colors scaled to alpha,
+semi-transparent edges appear too bright or produce fringing against
+dark backgrounds.</li>
+<li><strong>If a premultiplied asset is treated as straight:</strong>
+The shader multiplies the RGB values by alpha a second time. This causes
+semi-transparent edges to darken severely, creating a noticeable black
+halo around transparent elements.</li>
+</ul>
+<h2 id="nested-scenes-and-intermediate-surfaces">Nested Scenes and
+Intermediate Surfaces</h2>
+<p>When a user nests one scene inside another, OBS renders the child
+scene to an intermediate off-screen texture.</p>
+<ol type="1">
+<li><strong>Child Scene Accumulation:</strong> The child scene's layers
+(containing both straight and premultiplied sources) are composited into
+an off-screen surface using the standard premultiplied formula.</li>
+<li><strong>Intermediate Format Retention:</strong> The resulting
+intermediate surface remains in premultiplied format.</li>
+<li><strong>Parent Scene Blending:</strong> When the parent scene draws
+the child scene texture, it treats the entire nested scene as a single
+premultiplied texture, sampling and blending it without redundant
+conversions.</li>
+</ol>
+<p>This uniform pipeline ensures that regardless of how many straight
+and premultiplied sources are stacked, scaled, or grouped across
+multiple scene levels, OBS Studio maintains mathematically correct
+transparency.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

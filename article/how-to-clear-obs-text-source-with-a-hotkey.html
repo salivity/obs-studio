@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Clear OBS Text Source with a Hotkey - obs-studio</title>
+    <meta name="description" content="Streamlining your live stream workflow often requires clearing on-screen text quickly. This article provides a step-by-step guide on how to set up a custom keyboard shortcut (hotkey) in OBS Studio to instantly clear or hide a specific Text (GDI+) source">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-clear-obs-text-source-with-a-hotkey">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Clear OBS Text Source with a Hotkey - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-clear-obs-text-source-with-a-hotkey" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Streamlining your live stream workflow often requires clearing on-screen text quickly. This article provides a step-by-step guide on how to set up a custom keyboard shortcut (hotkey) in OBS Studio to instantly clear or hide a specific Text (GDI+) source" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-clear-obs-text-source-with-a-hotkey">How to Clear OBS
+Text Source with a Hotkey</h1>
+<p>Streamlining your live stream workflow often requires clearing
+on-screen text quickly. This article provides a step-by-step guide on
+how to set up a custom keyboard shortcut (hotkey) in OBS Studio to
+instantly clear or hide a specific Text (GDI+) source layer, ensuring
+seamless transitions during your broadcasts.</p>
+<h2 id="method-1-the-visual-clear-using-hide-hotkeys">Method 1: The
+Visual Clear (Using Hide Hotkeys)</h2>
+<p>If your primary goal is to make the text instantly disappear from
+your stream, the quickest and most reliable native method is to assign a
+hotkey to hide the text source.</p>
+<ol type="1">
+<li>Open <strong>OBS Studio</strong>.</li>
+<li>Click on <strong>Settings</strong> in the bottom-right corner (or go
+to <strong>File</strong> &gt; <strong>Settings</strong>).</li>
+<li>Select the <strong>Hotkeys</strong> tab from the left-hand
+menu.</li>
+<li>Use the search bar at the top to type the exact name of your
+specific text source layer.</li>
+<li>Locate the action labeled <strong>Hide '[Your Source
+Name]'</strong>.</li>
+<li>Click on the empty field next to it and press the key combination
+you want to use as your shortcut (for example,
+<code>Ctrl + Shift + C</code>).</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong>.</li>
+</ol>
+<p>Pressing your custom shortcut will now instantly hide the text layer
+from your canvas and stream. You can also assign a separate key to the
+<strong>Show</strong> action to make it reappear when needed.</p>
+<h2 id="method-2-actually-clearing-the-text-using-a-text-file">Method 2:
+Actually Clearing the Text (Using a Text File)</h2>
+<p>If you need the actual text data within the source to be wiped out
+completely (rather than just hiding the layer), you can set the source
+to read from a text file and use a shortcut to empty that file.</p>
+<h3 id="step-1-set-up-the-text-source-in-obs">Step 1: Set Up the Text
+Source in OBS</h3>
+<ol type="1">
+<li>Create a blank text document on your computer and name it
+<code>stream-text.txt</code>.</li>
+<li>Open OBS, double-click your text source to open its
+<strong>Properties</strong>.</li>
+<li>Check the box for <strong>Read from file</strong>.</li>
+<li>Click <strong>Browse</strong> and select the
+<code>stream-text.txt</code> file you just created.</li>
+<li>Click <strong>OK</strong>.</li>
+</ol>
+<h3 id="step-2-create-a-shortcut-to-clear-the-file">Step 2: Create a
+Shortcut to Clear the File</h3>
+<p>To empty the text file with a single keystroke, you can use a simple
+script wrapper.</p>
+<p><strong>For Windows Users (using AutoHotkey):</strong></p>
+<ol type="1">
+<li>Download and install the free utility
+<strong>AutoHotkey</strong>.</li>
+<li>Right-click your desktop, select <strong>New</strong> &gt;
+<strong>AutoHotkey Script</strong>, and name it
+<code>clear-text.ahk</code>.</li>
+<li>Right-click the file, select <strong>Edit Script</strong>, and paste
+the following code (replace the path with your actual file path):
+<pre class="autohotkey"><code>^!c::
+FileDelete, C:\path\to\your\stream-text.txt
+FileAppend,, C:\path\to\your\stream-text.txt
+return</code></pre></li>
+<li>Save the file and double-click it to run it.</li>
+</ol>
+<p>Now, pressing <code>Ctrl + Alt + C</code> (represented by
+<code>^!c</code> in the script) will instantly delete the contents of
+the text file, which OBS will immediately reflect by clearing the text
+source on your screen.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

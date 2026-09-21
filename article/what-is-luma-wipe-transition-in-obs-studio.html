@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What is Luma Wipe Transition in OBS Studio? - obs-studio</title>
+    <meta name="description" content="The Luma Wipe transition in OBS Studio is a customizable scene transition that uses grayscale image masks to control how one video source or scene fades into another based on brightness levels. This article explains the purpose of the Luma Wipe transitio">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/what-is-luma-wipe-transition-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="What is Luma Wipe Transition in OBS Studio? - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/what-is-luma-wipe-transition-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Luma Wipe transition in OBS Studio is a customizable scene transition that uses grayscale image masks to control how one video source or scene fades into another based on brightness levels. This article explains the purpose of the Luma Wipe transitio" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="what-is-luma-wipe-transition-in-obs-studio">What is Luma Wipe
+Transition in OBS Studio?</h1>
+<p>The Luma Wipe transition in OBS Studio is a customizable scene
+transition that uses grayscale image masks to control how one video
+source or scene fades into another based on brightness levels. This
+article explains the purpose of the Luma Wipe transition, how it works,
+and how you can use it to create professional, dynamic visual effects
+for your live streams and video recordings.</p>
+<h2 id="the-purpose-of-luma-wipe">The Purpose of Luma Wipe</h2>
+<p>The primary purpose of the Luma Wipe transition is to provide content
+creators with a highly customizable, lightweight way to transition
+between scenes without the need for resource-heavy video files (like
+Stinger transitions). By utilizing grayscale images, it allows for a
+wide variety of transition shapes and patterns—such as sweeps, circles,
+gates, and custom fades—that go far beyond a standard crossfade or hard
+cut.</p>
+<h2 id="how-luma-wipe-works">How Luma Wipe Works</h2>
+<p>Luma Wipe works by reading the luminance (brightness) values of a
+specific grayscale image map, known as a "luma mask."</p>
+<ul>
+<li><strong>Luminance Mapping:</strong> The transition progresses from
+the darkest parts of the mask (black) to the brightest parts (white). As
+the transition occurs, pixels corresponding to the black areas of the
+mask reveal the new scene first, followed progressively by the gray
+areas, until the white areas finally reveal the rest of the new
+scene.</li>
+<li><strong>Invert Option:</strong> Users can invert this process,
+making the transition start at the brightest areas (white) and end at
+the darkest areas (black).</li>
+<li><strong>Softness Control:</strong> OBS Studio allows you to adjust
+the "softness" of the transition. A low softness setting creates a
+sharp, defined edge along the transition path, while a high softness
+setting creates a smooth, feathered blend between the outgoing and
+incoming scenes.</li>
+</ul>
+<h2 id="why-use-luma-wipe">Why Use Luma Wipe?</h2>
+<ul>
+<li><strong>Low System Resource Usage:</strong> Unlike Stinger
+transitions, which require playing back a transparent video file and can
+cause CPU or GPU spikes, Luma Wipe transitions are rendered
+mathematically in real-time using simple image masks. This makes them
+incredibly resource-efficient.</li>
+<li><strong>Versatility:</strong> OBS Studio comes pre-loaded with
+several default Luma Wipe patterns, including linear wipes, box wipes,
+and clock wipes. Additionally, you can import any custom grayscale PNG
+or JPEG image to create your own unique transition shapes, such as a
+company logo or a custom geometric pattern.</li>
+<li><strong>Professional Aesthetic:</strong> It adds a polished,
+television-broadcast quality to stream transitions, helping content
+creators elevate their production value with minimal effort.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

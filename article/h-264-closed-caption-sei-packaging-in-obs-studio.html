@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H.264 Closed Caption SEI Packaging in OBS Studio - obs-studio</title>
+    <meta name="description" content="This article provides a technical breakdown of how OBS Studio formats, encapsulates, and injects CEA-608 and CEA-708 closed captioning data into H.264 elementary bitstreams. It covers the end-to-end data path, from receiving raw caption bytes within the">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/h-264-closed-caption-sei-packaging-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="H.264 Closed Caption SEI Packaging in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/h-264-closed-caption-sei-packaging-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides a technical breakdown of how OBS Studio formats, encapsulates, and injects CEA-608 and CEA-708 closed captioning data into H.264 elementary bitstreams. It covers the end-to-end data path, from receiving raw caption bytes within the" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="h264-closed-caption-sei-packaging-in-obs-studio">H.264 Closed
+Caption SEI Packaging in OBS Studio</h1>
+<p>This article provides a technical breakdown of how OBS Studio
+formats, encapsulates, and injects CEA-608 and CEA-708 closed captioning
+data into H.264 elementary bitstreams. It covers the end-to-end data
+path, from receiving raw caption bytes within the <code>libobs</code>
+core to structuring ATSC A/53-compliant Supplemental Enhancement
+Information (SEI) payloads, handling byte-level emulation prevention,
+and ordering Network Abstraction Layer (NAL) units for real-time
+streaming protocols like RTMP and MPEG-TS.</p>
+<h3 id="caption-ingestion-and-buffer-handling">Caption Ingestion and
+Buffer Handling</h3>
+<p>OBS Studio accepts closed caption data primarily through specialized
+input plugins (such as DeckLink SDI VANC capture) or via speech-to-text
+filters. Within <code>libobs</code>, caption data is normalized into
+3-byte EIA-608/CEA-608 or multi-byte CEA-708 data packets
+(<code>cc_data</code>). These packets are synchronized with the internal
+audio/video presentation timestamps (PTS) to ensure accurate alignment
+with the corresponding video frames.</p>
+<p>Instead of writing caption data into separate container-level
+metadata tracks, live broadcast standards require embedding captions
+directly into the video elementary stream. OBS queues these synchronized
+caption packets in its video encoding pipeline to be processed on the
+next encoded video frame.</p>
+<h3 id="the-atsc-a53-sei-payload-structure">The ATSC A/53 SEI Payload
+Structure</h3>
+<p>H.264 relies on Supplemental Enhancement Information (SEI) NAL units
+(NAL unit type 6) to carry non-slice data such as captions, mastering
+metadata, and timecodes. Closed captions in H.264 use the <strong>ITU-T
+T.35 User Data Registered</strong> format, defined by payload type
+<code>4</code>.</p>
+<p>OBS Studio structures the raw SEI payload according to the ATSC A/53
+Part 4 specification. The payload is laid out sequentially as
+follows:</p>
+<ol type="1">
+<li><strong>Payload Type:</strong> <code>0x04</code>
+(<code>user_data_registered_itu_t_t35</code>).</li>
+<li><strong>Payload Size:</strong> Variable byte length calculated using
+standard H.264 variable-length encoding (where any byte equal to
+<code>0xFF</code> indicates an overflow to the next byte).</li>
+<li><strong>ITU-T T.35 Country Code:</strong> <code>0xB5</code>
+(representing the United States).</li>
+<li><strong>Provider Code:</strong> <code>0x0031</code> (16-bit integer
+denoting ATSC).</li>
+<li><strong>User Identifier:</strong> <code>0x47413934</code> (ASCII for
+<code>GA94</code>, standard ATSC identifier).</li>
+<li><strong>User Data Type Code:</strong> <code>0x03</code> (designates
+<code>cc_data</code>).</li>
+<li><strong>Caption Header:</strong> Contains control flags, including
+<code>process_cc_data_flag</code>, <code>additional_data_flag</code>,
+and a 5-bit <code>cc_count</code> indicating the number of 3-byte
+caption constructs that follow.</li>
+<li><strong>Caption Data Packets:</strong> The sequence of 3-byte
+triplets containing the <code>marker_bits</code>, <code>cc_valid</code>
+flag, <code>cc_type</code> (CEA-608 Field 1/2 or CEA-708), and the two
+payload data bytes (<code>cc_data_1</code> and
+<code>cc_data_2</code>).</li>
+<li><strong>Payload Trailing Bits:</strong> A trailing byte (typically
+<code>0xFF</code> as marker padding) to close the A/53 payload.</li>
+</ol>
+<h3 id="raw-byte-stream-encoding-and-emulation-prevention">Raw Byte
+Stream Encoding and Emulation Prevention</h3>
+<p>Once the <code>user_data_registered_itu_t_t35</code> payload is fully
+assembled in memory, it exists as a Raw Byte Sequence Payload (RBSP).
+Before this RBSP can be placed into a bitstream, it must be protected
+against accidental start code emulation.</p>
+<p>In an H.264 elementary stream, start codes take the form of
+<code>0x000001</code> or <code>0x00000001</code>. If the caption payload
+naturally contains binary sequences matching these patterns, a decoder
+will misinterpret the caption payload as a new NAL unit boundary. OBS
+Studio—or the underlying encoder library (such as <code>libx264</code>,
+NVENC, or Apple VideoToolbox)—processes the RBSP to insert an
+<strong>emulation prevention byte</strong> (<code>0x03</code>) wherever
+the following sequences occur:</p>
+<ul>
+<li><code>0x00 0x00 0x00</code> <span
+class="math inline">\(\rightarrow\)</span>
+<code>0x00 0x00 0x03 0x00</code></li>
+<li><code>0x00 0x00 0x01</code> <span
+class="math inline">\(\rightarrow\)</span>
+<code>0x00 0x00 0x03 0x01</code></li>
+<li><code>0x00 0x00 0x02</code> <span
+class="math inline">\(\rightarrow\)</span>
+<code>0x00 0x00 0x03 0x02</code></li>
+<li><code>0x00 0x00 0x03</code> <span
+class="math inline">\(\rightarrow\)</span>
+<code>0x00 0x00 0x03 0x03</code></li>
+</ul>
+<p>The resulting data stream is the Encapsulated Byte Sequence Payload
+(EBSP).</p>
+<h3 id="nal-unit-packaging-and-stream-injection">NAL Unit Packaging and
+Stream Injection</h3>
+<p>To finalize the NAL unit, a 1-byte H.264 NAL header is prepended to
+the EBSP:</p>
+<ul>
+<li><code>forbidden_zero_bit</code>: <code>0</code> (1 bit)</li>
+<li><code>nal_ref_idc</code>: <code>00</code> (2 bits, indicating that
+SEI units do not modify reference frame states)</li>
+<li><code>nal_unit_type</code>: <code>00110</code> (5 bits, evaluating
+to <code>6</code> for SEI)</li>
+</ul>
+<p>This yields a combined single-byte header of <code>0x06</code>.</p>
+<p>OBS Studio inserts this complete SEI NAL unit into the video packet
+buffer immediately <strong>preceding</strong> the primary coded picture
+slice NAL units (types <code>1</code> or <code>5</code>) of the
+associated frame. When using Annex B formatting (typical for MPEG-TS), a
+3-byte or 4-byte start code (<code>0x00000001</code>) is prefixed to the
+SEI unit. When using AVCC formatting (typical for RTMP/FLV and MP4), a
+4-byte big-endian length prefix replaces the start code.</p>
+<p>Because the SEI packet is injected upstream directly into the
+outgoing frame buffer, consumer platforms, decoders, and media players
+extract and parse the embedded EIA-608/CEA-708 data directly from the
+H.264 access units without requiring secondary network requests or
+out-of-band subtitle streams.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

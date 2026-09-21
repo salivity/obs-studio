@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS DCI-P3 Color Profile Handling on macOS - obs-studio</title>
+    <meta name="description" content="Capturing wide-gamut displays such as Apple's Display P3 on macOS using OBS Studio often introduces color shifts, washed-out visuals, or unnatural oversaturation. This article examines how macOS manages wide color gamuts, how OBS Studio ingests frames vi">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-dci-p-3-color-profile-handling-on-mac-os">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS DCI-P3 Color Profile Handling on macOS - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-dci-p-3-color-profile-handling-on-mac-os" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Capturing wide-gamut displays such as Apple's Display P3 on macOS using OBS Studio often introduces color shifts, washed-out visuals, or unnatural oversaturation. This article examines how macOS manages wide color gamuts, how OBS Studio ingests frames vi" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-dci-p3-color-profile-handling-on-macos">OBS DCI-P3 Color
+Profile Handling on macOS</h1>
+<p>Capturing wide-gamut displays such as Apple's Display P3 on macOS
+using OBS Studio often introduces color shifts, washed-out visuals, or
+unnatural oversaturation. This article examines how macOS manages wide
+color gamuts, how OBS Studio ingests frames via macOS capture APIs like
+ScreenCaptureKit, how color space conversions occur internally within
+OBS, and how to configure settings for accurate color reproduction.</p>
+<h2 id="the-macos-color-pipeline-and-display-p3">The macOS Color
+Pipeline and Display P3</h2>
+<p>Modern Mac displays—including built-in MacBook Pro screens, the
+Studio Display, and iMacs—use the Display P3 color space. Display P3
+uses the wide color gamut of DCI-P3 combined with the sRGB transfer
+function (gamma curve) and a D65 white point.</p>
+<p>macOS enforces system-wide color management via Apple ColorSync.
+Applications that support ColorSync tag their window buffers with
+specific ICC profiles. When macOS renders these buffers to the screen,
+the compositor maps colors accurately to the physical display's color
+profile.</p>
+<h2 id="capture-ingestion-screencapturekit-and-coregraphics">Capture
+Ingestion: ScreenCaptureKit and CoreGraphics</h2>
+<p>OBS Studio captures macOS displays using Apple’s ScreenCaptureKit
+framework (on macOS 13 Ventura and later) or legacy CoreGraphics APIs.
+ScreenCaptureKit delivers video frames from the display compositor
+directly to OBS.</p>
+<p>When ScreenCaptureKit delivers a frame, the pixel buffer retains
+color metadata reflecting the display's native state:</p>
+<ul>
+<li><strong>Pixel Format:</strong> Typically 8-bit or 10-bit
+BGRA/RGBA.</li>
+<li><strong>Color Space Tag:</strong> Tagged as
+<code>kCGColorSpaceDisplayP3</code> or standard sRGB.</li>
+</ul>
+<p>If an older macOS capture API is used, color space tags may be
+stripped or ignored, causing the raw pixel values to be forwarded to OBS
+without contextual gamut metadata.</p>
+<h2 id="how-obs-studio-converts-dci-p3-to-rec-709">How OBS Studio
+Converts DCI-P3 to Rec. 709</h2>
+<p>OBS Studio operates primarily in the Rec. 709 color space using an
+8-bit standard dynamic range (SDR) pipeline by default. When ingesting a
+Display P3 or DCI-P3 surface, OBS must translate wide-gamut color
+coordinates into standard gamut coordinates.</p>
+<h3 id="1-matrix-transformation-via-shaders">1. Matrix Transformation
+via Shaders</h3>
+<p>When color tags are properly communicated from ScreenCaptureKit to
+OBS's rendering subsystem, OBS uses internal GPU shaders to apply a
+color matrix transform. This converts the RGB coordinates from the P3
+color primaries to Rec. 709 primaries:</p>
+<ul>
+<li>Colors within the standard Rec. 709 gamut maintain their visual
+appearance.</li>
+<li>Wide-gamut colors extending outside the Rec. 709 gamut boundary are
+clamped to the nearest reproducible Rec. 709 values.</li>
+</ul>
+<h3 id="2-the-washed-out-fallback-issue">2. The "Washed Out" Fallback
+Issue</h3>
+<p>If OBS does not read or apply the ColorSync profile from the capture
+source, it assumes incoming pixel data is already standard Rec. 709 /
+sRGB. Because DCI-P3 coordinates define a wider gamut, interpreting P3
+pixel values directly as Rec. 709 values without conversion results in
+lower saturation and incorrect color luminance, making the output appear
+faded or washed out.</p>
+<h3 id="3-hdr-and-advanced-color-management-obs-28">3. HDR and Advanced
+Color Management (OBS 28+)</h3>
+<p>Starting in OBS Studio 28, native support for 10-bit color and HDR
+workflows was introduced. When configured for HDR:</p>
+<ul>
+<li>OBS can ingest the full P3 gamut without clamping down to Rec.
+709.</li>
+<li>The internal pipeline utilizes Rec. 2100 primaries with either the
+PQ (Perceptual Quantizer) or HLG transfer curve.</li>
+<li>P3 coordinates are mapped into the larger Rec. 2020 container via
+matrix multiplication, preventing color clipping during recording or
+streaming to HDR-capable platforms.</li>
+</ul>
+<h2 id="configuring-obs-for-proper-color-accuracy-on-macos">Configuring
+OBS for Proper Color Accuracy on macOS</h2>
+<p>To ensure OBS Studio handles macOS DCI-P3 displays properly,
+configure the following settings:</p>
+<ol type="1">
+<li><strong>Use ScreenCaptureKit:</strong> Under OBS Sources, ensure the
+capture method is set to the native macOS Screen Capture
+(ScreenCaptureKit), which preserves display color metadata far better
+than older display capture methods.</li>
+<li><strong>Set Color Space in Advanced Settings:</strong>
+<ul>
+<li>Navigate to <strong>Settings &gt; Advanced &gt; Video</strong>.</li>
+<li>For SDR streaming, set <strong>Color Format</strong> to
+<code>NV12</code> or <code>I420</code>, <strong>Color Space</strong> to
+<code>Rec. 709</code>, and <strong>Color Range</strong> to
+<code>Partial</code> or <code>Limited</code> (standard broadcast range
+to prevent crushed blacks).</li>
+</ul></li>
+<li><strong>Configure HDR/Wide Gamut Recording (Optional):</strong>
+<ul>
+<li>If targeting wide-gamut or HDR playback, change the <strong>Color
+Format</strong> to <code>P010</code>, set the <strong>Color
+Space</strong> to <code>Rec. 2100 (PQ)</code> or
+<code>Rec. 2100 (HLG)</code>, and ensure you record with a compatible
+10-bit codec such as Apple HEVC (ProRes or H.265).</li>
+</ul></li>
+<li><strong>Source-Level Overrides:</strong> If a capture appears
+desaturated due to metadata mismatch, open the properties of the macOS
+Screen Capture source and verify whether manual color space overrides
+(such as forcing Rec. 709 or sRGB) are available to correct raw matrix
+translation.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

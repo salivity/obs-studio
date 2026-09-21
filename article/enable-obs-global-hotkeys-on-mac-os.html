@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enable OBS Global Hotkeys on macOS - obs-studio</title>
+    <meta name="description" content="To use global hotkeys in OBS Studio while the application is minimized or running in the background on macOS, you must grant the app Accessibility permissions. macOS restricts background applications from monitoring system-wide keyboard events for securi">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/enable-obs-global-hotkeys-on-mac-os">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Enable OBS Global Hotkeys on macOS - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/enable-obs-global-hotkeys-on-mac-os" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="To use global hotkeys in OBS Studio while the application is minimized or running in the background on macOS, you must grant the app Accessibility permissions. macOS restricts background applications from monitoring system-wide keyboard events for securi" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="enable-obs-global-hotkeys-on-macos">Enable OBS Global Hotkeys on
+macOS</h1>
+<p>To use global hotkeys in OBS Studio while the application is
+minimized or running in the background on macOS, you must grant the app
+Accessibility permissions. macOS restricts background applications from
+monitoring system-wide keyboard events for security reasons, meaning OBS
+Studio cannot detect your shortcut presses unless explicitly authorized.
+This guide explains which permissions are required, why they are
+necessary, and how to configure them properly in your system
+settings.</p>
+<h3 id="the-required-permission-accessibility">The Required Permission:
+Accessibility</h3>
+<p>The primary permission required for OBS Studio to register global
+hotkeys while backgrounded is <strong>Accessibility</strong>.</p>
+<p>In macOS, listening to keystrokes outside of an active application
+requires the use of global event taps (<code>CGEventTap</code>). Because
+this capability can potentially be exploited by malicious software to
+log keystrokes, macOS blocks background event monitoring by default.
+Granting Accessibility access explicitly authorizes OBS Studio to
+capture keyboard events even when another program is in focus.</p>
+<p>In some recent macOS versions, <strong>Input Monitoring</strong> may
+also be requested or required depending on the specific input devices or
+advanced key capture methods being used. However, Accessibility remains
+the essential authorization for standard hotkey listeners.</p>
+<hr />
+<h3 id="how-to-grant-hotkey-permissions-to-obs-studio">How to Grant
+Hotkey Permissions to OBS Studio</h3>
+<p>Follow these steps to enable Accessibility permissions for OBS Studio
+on macOS Ventura, Sonoma, and later:</p>
+<ol type="1">
+<li><strong>Quit OBS Studio</strong> completely to ensure permissions
+apply correctly upon restart.</li>
+<li>Open <strong>System Settings</strong> on your Mac.</li>
+<li>Click <strong>Privacy &amp; Security</strong> in the sidebar.</li>
+<li>Scroll down and select <strong>Accessibility</strong> on the
+right.</li>
+<li>Locate <strong>OBS</strong> in the list and toggle the switch to the
+<strong>On</strong> position.
+<ul>
+<li>If prompted, enter your Mac's administrator password or use Touch
+ID.</li>
+<li>If OBS is not in the list, click the <strong>Add (+)</strong> button
+at the bottom of the list, navigate to your <code>Applications</code>
+folder, select <code>OBS.app</code>, and click
+<strong>Open</strong>.</li>
+</ul></li>
+<li>Relaunch <strong>OBS Studio</strong>.</li>
+</ol>
+<hr />
+<h3 id="troubleshooting-hotkey-issues-after-updates">Troubleshooting
+Hotkey Issues After Updates</h3>
+<p>If OBS Studio stops responding to background hotkeys after updating
+macOS or updating the OBS application itself, permissions can become
+desynchronized:</p>
+<ul>
+<li><strong>Toggle Permissions Off and On:</strong> Go back to
+<code>System Settings &gt; Privacy &amp; Security &gt; Accessibility</code>,
+toggle the switch for OBS to <strong>Off</strong>, and then toggle it
+back to <strong>On</strong>.</li>
+<li><strong>Remove and Re-add:</strong> If toggling fails, select OBS in
+the Accessibility list, click the <strong>Remove (-)</strong> button,
+and manually re-add the application.</li>
+<li><strong>Check Input Monitoring:</strong> If hotkeys still do not
+trigger, navigate to
+<code>System Settings &gt; Privacy &amp; Security &gt; Input Monitoring</code>
+and ensure OBS is added and enabled there as well.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

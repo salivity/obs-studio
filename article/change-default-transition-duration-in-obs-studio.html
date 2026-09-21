@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change Default Transition Duration in OBS Studio - obs-studio</title>
+    <meta name="description" content="Adjusting the default transition duration in OBS Studio allows you to control how quickly or slowly your scenes blend into one another during a live stream or recording. This article provides a quick, step-by-step guide on how to change this setting glob">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/change-default-transition-duration-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Change Default Transition Duration in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/change-default-transition-duration-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Adjusting the default transition duration in OBS Studio allows you to control how quickly or slowly your scenes blend into one another during a live stream or recording. This article provides a quick, step-by-step guide on how to change this setting glob" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="change-default-transition-duration-in-obs-studio">Change Default
+Transition Duration in OBS Studio</h1>
+<p>Adjusting the default transition duration in OBS Studio allows you to
+control how quickly or slowly your scenes blend into one another during
+a live stream or recording. This article provides a quick, step-by-step
+guide on how to change this setting globally across all scenes using the
+Scene Transitions dock.</p>
+<h3 id="how-to-change-the-global-transition-duration">How to Change the
+Global Transition Duration</h3>
+<p>By default, OBS Studio uses the <strong>Scene Transitions</strong>
+dock to manage the default transition style and speed for all scene
+changes. Follow these steps to adjust the global duration:</p>
+<ol type="1">
+<li><p><strong>Locate the Scene Transitions Dock:</strong> Look for the
+<strong>Scene Transitions</strong> panel on your OBS Studio interface
+(it is typically located at the bottom of the screen next to the
+<em>Sources</em> or <em>Controls</em> dock). If you cannot find it, go
+to the top menu, select <strong>Docs</strong>, and ensure <strong>Scene
+Transitions</strong> is checked.</p></li>
+<li><p><strong>Select Your Transition Type:</strong> In the dropdown
+menu within the Scene Transitions dock, select the transition you want
+to use globally (such as <em>Fade</em> or <em>Swipe</em>).</p></li>
+<li><p><strong>Adjust the Duration:</strong> Next to the transition
+dropdown, you will see a box labeled <strong>Duration</strong>.</p>
+<ul>
+<li>Enter your preferred transition speed in milliseconds (ms).</li>
+<li>For reference, <strong>300ms</strong> is the default setting. If you
+want a slower, 1-second transition, change this value to
+<strong>1000ms</strong>.</li>
+</ul></li>
+</ol>
+<p>Once you change this number, the new duration is automatically
+applied to all scene changes that use the global default.</p>
+<h3 id="troubleshooting-scene-specific-overrides">Troubleshooting
+Scene-Specific Overrides</h3>
+<p>If a specific scene is not respecting your new global transition
+duration, it may have a scene-specific override enabled. To fix
+this:</p>
+<ol type="1">
+<li><strong>Right-click</strong> on the specific scene in your
+<strong>Scenes</strong> dock.</li>
+<li>Hover over <strong>Transition Override</strong>.</li>
+<li>Select <strong>None</strong> to force the scene to use the global
+transition duration you set in the previous steps.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How OBS Converts 44.1 kHz Audio to 48 kHz - obs-studio</title>
+    <meta name="description" content="When a 44.1 kHz audio source is fed into an OBS Studio project set to a 48 kHz master sample rate, OBS transparently upsamples the incoming stream in real time to prevent pitch shifting, audio drift, and buffer under-runs. This process is managed directl">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-obs-converts-44-1-k-hz-audio-to-48-k-hz">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How OBS Converts 44.1 kHz Audio to 48 kHz - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-obs-converts-44-1-k-hz-audio-to-48-k-hz" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When a 44.1 kHz audio source is fed into an OBS Studio project set to a 48 kHz master sample rate, OBS transparently upsamples the incoming stream in real time to prevent pitch shifting, audio drift, and buffer under-runs. This process is managed directl" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-obs-converts-441-khz-audio-to-48-khz">How OBS Converts 44.1
+kHz Audio to 48 kHz</h1>
+<p>When a 44.1 kHz audio source is fed into an OBS Studio project set to
+a 48 kHz master sample rate, OBS transparently upsamples the incoming
+stream in real time to prevent pitch shifting, audio drift, and buffer
+under-runs. This process is managed directly by OBS Studio's internal
+audio subsystem, which leverages high-performance resampling libraries
+to mathematically interpolate new sample points, align non-matching
+sample rates, and deliver a coherent 48 kHz stream to the final mix.</p>
+<h3 id="the-resampling-engine">The Resampling Engine</h3>
+<p>OBS Studio handles sample rate mismatches at the input level via its
+core audio pipeline (<code>libobs/audio-io</code>). Before an audio
+signal reaches the master mixer, OBS evaluates the source properties
+against the global settings configured under Settings &gt; Audio.</p>
+<p>If the input device outputs at 44,100 Hz and the project is
+configured for 48,000 Hz, OBS initializes a dedicated resampler instance
+for that specific source. On modern versions, OBS primarily relies on
+FFmpeg's <code>libswresample</code> library (or platform-native audio
+conversion utilities depending on the operating system and build
+configuration) to perform the conversion in memory.</p>
+<h3 id="the-147160-non-integer-ratio">The 147:160 Non-Integer Ratio</h3>
+<p>Converting 44.1 kHz to 48 kHz requires handling a non-integer
+mathematical relationship:</p>
+<p><span class="math display">\[\frac{48000}{44100} =
+\frac{160}{147}\]</span></p>
+<p>Because 44.1 does not divide evenly into 48, OBS cannot simply
+duplicate or drop samples without introducing severe distortion,
+popping, or timing drift. For every 147 samples received from the 44.1
+kHz source, OBS must output precisely 160 samples to the 48 kHz
+mixer.</p>
+<p>To bridge this gap, the resampler uses polyphase filterbanks and sinc
+interpolation:</p>
+<ol type="1">
+<li><strong>Interpolation:</strong> The discrete 44.1 kHz digital signal
+is reconstructed virtually into a continuous-time wave
+representation.</li>
+<li><strong>Filtering:</strong> An anti-aliasing low-pass filter is
+applied to remove spectral imaging and eliminate frequencies that could
+produce artifacts above the Nyquist threshold (approximately 22.05 kHz
+for the original signal).</li>
+<li><strong>Re-quantization:</strong> The continuous signal is sampled
+at the higher 48 kHz intervals, generating 160 output samples for every
+147 original input samples.</li>
+</ol>
+<h3 id="buffer-management-and-clock-synchronization">Buffer Management
+and Clock Synchronization</h3>
+<p>OBS processes audio in discrete, timed blocks (typically around 10
+milliseconds of audio per tick, or roughly 480 samples at 48 kHz).
+Because the ratio between 44.1 kHz and 48 kHz produces fractional sample
+counts over typical millisecond intervals, OBS uses dynamic ring buffers
+to store partial frames.</p>
+<p>If a 10 ms cycle requires 480 samples, the resampler calculates the
+necessary fractional input from the 44.1 kHz buffer, extracts the
+available data, and retains the remainder for the subsequent processing
+cycle. This phase tracking prevents clock drift between the audio
+hardware's independent crystal oscillator and the OBS processing
+thread.</p>
+<h3 id="system-impact-latency-cpu-and-fidelity">System Impact: Latency,
+CPU, and Fidelity</h3>
+<ul>
+<li><strong>Latency:</strong> The real-time conversion adds a negligible
+amount of latency—typically a fraction of a millisecond—governed
+strictly by the size of the resampler's internal filter window.</li>
+<li><strong>CPU Usage:</strong> Modern implementations of polyphase sinc
+resampling are SIMD-optimized (using AVX/SSE on x86 or NEON on ARM).
+Processing a stereo 44.1 kHz channel consumes a virtually imperceptible
+percentage of modern CPU processing time.</li>
+<li><strong>Audio Fidelity:</strong> Because the signal is being
+upsampled rather than downsampled, no original frequency data is lost.
+The reconstructed frequencies above 22.05 kHz up to the 48 kHz Nyquist
+limit (24 kHz) remain silent, preserving the spectral integrity of the
+original source without introducing harmonic distortion.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

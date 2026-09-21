@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direct3D Feature Level Required for OBS Studio - obs-studio</title>
+    <meta name="description" content="This guide outlines the specific Direct3D feature level required to run modern releases of OBS Studio on Windows, explains why these graphics capabilities are essential for video compositing, and details how users can verify their hardware compatibility">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/direct-3-d-feature-level-required-for-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Direct3D Feature Level Required for OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/direct-3-d-feature-level-required-for-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide outlines the specific Direct3D feature level required to run modern releases of OBS Studio on Windows, explains why these graphics capabilities are essential for video compositing, and details how users can verify their hardware compatibility" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="direct3d-feature-level-required-for-obs-studio">Direct3D Feature
+Level Required for OBS Studio</h1>
+<p>This guide outlines the specific Direct3D feature level required to
+run modern releases of OBS Studio on Windows, explains why these
+graphics capabilities are essential for video compositing, and details
+how users can verify their hardware compatibility to prevent startup
+crashes.</p>
+<h2 id="required-direct3d-feature-level">Required Direct3D Feature
+Level</h2>
+<p>Modern versions of OBS Studio on Windows strictly require
+<strong>Direct3D Feature Level 10.1</strong> as the absolute minimum
+hardware level, operating within the <strong>DirectX 11</strong>
+runtime.</p>
+<p>While OBS Studio utilizes the DirectX 11 graphics pipeline
+(<code>win-d3d11</code>), the rendering subsystem explicitly probes for
+the following hardware feature levels during initialization:</p>
+<ul>
+<li><strong>D3D_FEATURE_LEVEL_11_0</strong> (Standard /
+Recommended)</li>
+<li><strong>D3D_FEATURE_LEVEL_10_1</strong> (Strict Minimum)</li>
+</ul>
+<p>If a system’s graphics adapter and driver do not support at least
+Feature Level 10.1, OBS Studio cannot initialize its graphics subsystem
+and will immediately fail to launch.</p>
+<h2 id="why-obs-studio-enforces-this-requirement">Why OBS Studio
+Enforces This Requirement</h2>
+<p>OBS Studio does not merely encode video; it operates as a real-time
+GPU-accelerated video compositor. Every source—such as game captures,
+webcams, browser overlays, and transitions—is rendered and scaled using
+direct GPU shaders before being handed off to the video encoder.</p>
+<p>Key reasons for this hardware floor include:</p>
+<ul>
+<li><strong>Hardware Compositing:</strong> Direct3D 11 provides the
+necessary shader architecture and texture formats needed for real-time
+canvas rendering with minimal CPU overhead.</li>
+<li><strong>Modern OS Support:</strong> Starting with OBS Studio version
+28, support for Windows 7, 8, and older 32-bit platforms was deprecated.
+The transition to modern frameworks, such as Qt 6 for the user
+interface, aligned OBS with modern DirectX 11 and 12 graphics drivers
+available in Windows 10 and 11.</li>
+<li><strong>Advanced Capture APIs:</strong> Modern capture hooks, such
+as Windows Graphics Capture (WGC) and Desktop Duplication, directly
+interface with D3D11 surfaces.</li>
+</ul>
+<h2 id="how-to-check-your-direct3d-feature-level">How to Check Your
+Direct3D Feature Level</h2>
+<p>To confirm whether a GPU meets the required feature level on
+Windows:</p>
+<ol type="1">
+<li>Press <strong>Windows Key + R</strong> to open the Run dialog.</li>
+<li>Type <code>dxdiag</code> and press <strong>Enter</strong> to open
+the DirectX Diagnostic Tool.</li>
+<li>Select the <strong>Display</strong> tab (or <strong>Display 1 /
+Display 2</strong> if using multi-GPU systems).</li>
+<li>Locate the <strong>Drivers</strong> panel on the right-hand
+side.</li>
+<li>Review the <strong>Feature Levels</strong> entry. It will list
+values such as <code>12_1, 12_0, 11_1, 11_0, 10_1, 10_0</code>.</li>
+<li>Ensure that <strong>10_1</strong> or higher is listed.</li>
+</ol>
+<h2 id="resolving-d3d-initialization-errors">Resolving D3D
+Initialization Errors</h2>
+<p>Encountering the error <em>"Failed to initialize video. Your GPU may
+not support the required Direct3D 11 feature level (10.1)"</em>
+typically points to one of three issues:</p>
+<ul>
+<li><strong>Outdated Display Drivers:</strong> Windows may be using a
+generic Microsoft Basic Display Adapter driver that lacks hardware
+acceleration. Install the latest official drivers directly from NVIDIA,
+AMD, or Intel.</li>
+<li><strong>Dual-GPU Switching:</strong> On laptops with switchable
+graphics, OBS Studio might attempt to run on an integrated GPU that
+lacks the necessary driver or feature support. Assign OBS Studio to the
+dedicated GPU via <strong>Windows Settings &gt; System &gt; Display &gt;
+Graphics</strong>.</li>
+<li><strong>Obsolete Hardware:</strong> Graphics cards produced prior to
+2008–2009 (such as DirectX 9-only cards) physically lack the silicon
+instructions required for Feature Level 10.1 and cannot run modern
+releases of OBS Studio.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

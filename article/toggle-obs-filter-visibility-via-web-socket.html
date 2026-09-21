@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toggle OBS Filter Visibility via WebSocket - obs-studio</title>
+    <meta name="description" content="Controlling filter visibility programmatically in OBS Studio allows creators and developers to automate visual effects, color grading, and audio processing dynamically. This article outlines the specific WebSocket request used to toggle individual filter">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/toggle-obs-filter-visibility-via-web-socket">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Toggle OBS Filter Visibility via WebSocket - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/toggle-obs-filter-visibility-via-web-socket" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Controlling filter visibility programmatically in OBS Studio allows creators and developers to automate visual effects, color grading, and audio processing dynamically. This article outlines the specific WebSocket request used to toggle individual filter" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="toggle-obs-filter-visibility-via-websocket">Toggle OBS Filter
+Visibility via WebSocket</h1>
+<p>Controlling filter visibility programmatically in OBS Studio allows
+creators and developers to automate visual effects, color grading, and
+audio processing dynamically. This article outlines the specific
+WebSocket request used to toggle individual filter visibility on an OBS
+source, explains the required payload structure for the modern OBS
+WebSocket v5 protocol, and covers the standard implementation method for
+flipping filter states.</p>
+<h3 id="the-websocket-request-setsourcefilterenabled">The WebSocket
+Request: <code>SetSourceFilterEnabled</code></h3>
+<p>In OBS Studio 28 and newer (which integrates <strong>obs-websocket
+v5</strong> natively), the request used to set the visibility of an
+individual filter is
+<strong><code>SetSourceFilterEnabled</code></strong>.</p>
+<p>Because the API does not provide a standalone single-command "toggle"
+action, toggling is achieved by passing the inverted boolean state to
+<code>SetSourceFilterEnabled</code>.</p>
+<h3 id="request-data-structure">Request Data Structure</h3>
+<p>To enable or disable a filter, send a WebSocket message with the
+<code>Request</code> op-code (<code>6</code>) containing the following
+JSON payload:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;op&quot;</span><span class="fu">:</span> <span class="dv">6</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;d&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;requestType&quot;</span><span class="fu">:</span> <span class="st">&quot;SetSourceFilterEnabled&quot;</span><span class="fu">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;requestId&quot;</span><span class="fu">:</span> <span class="st">&quot;toggle-filter-example&quot;</span><span class="fu">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;requestData&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;sourceName&quot;</span><span class="fu">:</span> <span class="st">&quot;Camera Source&quot;</span><span class="fu">,</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;filterName&quot;</span><span class="fu">:</span> <span class="st">&quot;Color Correction&quot;</span><span class="fu">,</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;filterEnabled&quot;</span><span class="fu">:</span> <span class="kw">false</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h4 id="parameters">Parameters:</h4>
+<ul>
+<li><strong><code>sourceName</code></strong> <em>(String)</em>: The name
+of the source hosting the filter. Alternatively, you can use
+<code>sourceUuid</code>.</li>
+<li><strong><code>filterName</code></strong> <em>(String)</em>: The
+exact name of the filter applied to the source.</li>
+<li><strong><code>filterEnabled</code></strong> <em>(Boolean)</em>: Set
+to <code>true</code> to make the filter visible/active, or
+<code>false</code> to hide/disable it.</li>
+</ul>
+<h3 id="implementing-a-true-toggle">Implementing a True Toggle</h3>
+<p>To dynamically toggle the filter state without tracking it locally in
+your application:</p>
+<ol type="1">
+<li><strong>Check Current State:</strong> Send a
+<code>GetSourceFilter</code> request.
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;op&quot;</span><span class="fu">:</span> <span class="dv">6</span><span class="fu">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;d&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;requestType&quot;</span><span class="fu">:</span> <span class="st">&quot;GetSourceFilter&quot;</span><span class="fu">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;requestId&quot;</span><span class="fu">:</span> <span class="st">&quot;check-state-1&quot;</span><span class="fu">,</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;requestData&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;sourceName&quot;</span><span class="fu">:</span> <span class="st">&quot;Camera Source&quot;</span><span class="fu">,</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;filterName&quot;</span><span class="fu">:</span> <span class="st">&quot;Color Correction&quot;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div></li>
+<li><strong>Read the Response:</strong> The response payload
+(<code>responseData</code>) returns <code>filterEnabled</code> as a
+boolean.</li>
+<li><strong>Invert and Apply:</strong> Send the
+<code>SetSourceFilterEnabled</code> request with
+<code>filterEnabled</code> set to the opposite value of the current
+state.</li>
+</ol>
+<h3 id="legacy-support-obs-websocket-v49x">Legacy Support (obs-websocket
+v4.9.x)</h3>
+<p>For systems running OBS Studio 27 or older with the legacy v4 plugin,
+the corresponding request name is
+<strong><code>SetSourceFilterVisibility</code></strong>:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;request-type&quot;</span><span class="fu">:</span> <span class="st">&quot;SetSourceFilterVisibility&quot;</span><span class="fu">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;message-id&quot;</span><span class="fu">:</span> <span class="st">&quot;legacy-toggle-1&quot;</span><span class="fu">,</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;sourceName&quot;</span><span class="fu">:</span> <span class="st">&quot;Camera Source&quot;</span><span class="fu">,</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;filterName&quot;</span><span class="fu">:</span> <span class="st">&quot;Color Correction&quot;</span><span class="fu">,</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;filterEnabled&quot;</span><span class="fu">:</span> <span class="kw">false</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

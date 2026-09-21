@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor OBS Studio Audio Without Broadcasting It - obs-studio</title>
+    <meta name="description" content="In OBS Studio, monitoring your audio allows you to listen to your audio sources in real-time to ensure your levels are correct. However, configuring this incorrectly can cause your stream to hear a distracting double-audio echo or broadcast audio that yo">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/monitor-obs-studio-audio-without-broadcasting-it">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Monitor OBS Studio Audio Without Broadcasting It - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/monitor-obs-studio-audio-without-broadcasting-it" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In OBS Studio, monitoring your audio allows you to listen to your audio sources in real-time to ensure your levels are correct. However, configuring this incorrectly can cause your stream to hear a distracting double-audio echo or broadcast audio that yo" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="monitor-obs-studio-audio-without-broadcasting-it">Monitor OBS
+Studio Audio Without Broadcasting It</h1>
+<p>In OBS Studio, monitoring your audio allows you to listen to your
+audio sources in real-time to ensure your levels are correct. However,
+configuring this incorrectly can cause your stream to hear a distracting
+double-audio echo or broadcast audio that you wanted to keep private.
+This guide will show you how to configure your OBS audio settings so you
+can monitor your audio sources privately without broadcasting that
+monitored audio to your live stream.</p>
+<h3 id="step-1-set-your-dedicated-monitoring-device">Step 1: Set Your
+Dedicated Monitoring Device</h3>
+<p>To prevent monitored audio from looping back into your stream, you
+must output it to a device that OBS is not capturing as an input.</p>
+<ol type="1">
+<li>Open OBS Studio and click <strong>Settings</strong> in the
+bottom-right corner.</li>
+<li>Select the <strong>Audio</strong> tab from the left-hand menu.</li>
+<li>Scroll down to the <strong>Advanced</strong> section.</li>
+<li>Next to <strong>Monitoring Device</strong>, select your headphones
+or audio interface.</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong>.</li>
+</ol>
+<p><em>Note: Avoid selecting "Default" or your main desktop speakers.
+Using headphones is highly recommended to prevent your microphone from
+picking up the monitored sound.</em></p>
+<h3 id="step-2-configure-advanced-audio-properties">Step 2: Configure
+Advanced Audio Properties</h3>
+<p>Once your monitoring device is set, you need to tell OBS which
+specific audio sources you want to hear.</p>
+<ol type="1">
+<li>In the main OBS window, locate the <strong>Audio Mixer</strong>
+dock.</li>
+<li>Click the <strong>three dots</strong> (or gear icon) next to any of
+your audio sources and select <strong>Advanced Audio
+Properties</strong>.</li>
+<li>Locate the audio source you want to monitor.</li>
+<li>Under the <strong>Audio Monitoring</strong> column, click the
+dropdown menu and select one of the following:
+<ul>
+<li><strong>Monitor Only (mute output):</strong> This allows you to hear
+the audio source in your headphones, but it is completely muted for your
+stream/recording.</li>
+<li><strong>Monitor and Output:</strong> Both you and your audience will
+hear this audio source.</li>
+<li><strong>Monitor Off:</strong> Only your audience will hear the audio
+source; you will not hear it.</li>
+</ul></li>
+</ol>
+<h3 id="step-3-prevent-feedback-and-echo-the-double-audio-fix">Step 3:
+Prevent Feedback and Echo (The "Double Audio" Fix)</h3>
+<p>If you chose <strong>Monitor and Output</strong> in the step above,
+OBS will send that audio to your headphones. If your OBS is also
+capturing your "Desktop Audio" (which includes your headphones), your
+stream will hear the audio twice.</p>
+<p>To prevent this:</p>
+<ul>
+<li><strong>Use Application Audio Capture:</strong> Instead of capturing
+your entire "Desktop Audio" globally, add individual <strong>Application
+Audio Capture</strong> sources (such as your game or Discord) directly
+into your scenes. This ensures OBS only captures the specific apps you
+want, bypassing the global monitoring channel.</li>
+<li><strong>Disable Desktop Audio:</strong> Go to
+<strong>Settings</strong> &gt; <strong>Audio</strong> and set
+<strong>Desktop Audio</strong> to <strong>Disabled</strong> if you are
+manually routing your audio sources. This completely eliminates the risk
+of feedback loops.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

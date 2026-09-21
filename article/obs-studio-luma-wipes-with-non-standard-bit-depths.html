@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Luma Wipes with Non-Standard Bit Depths - obs-studio</title>
+    <meta name="description" content="This article examines the internal pipeline OBS Studio uses to render custom luma wipe transitions when supplied with grayscale gradient bitmaps featuring non-standard bit depths. It details the process from initial image decoding and color normalization">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-luma-wipes-with-non-standard-bit-depths">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Luma Wipes with Non-Standard Bit Depths - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-luma-wipes-with-non-standard-bit-depths" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines the internal pipeline OBS Studio uses to render custom luma wipe transitions when supplied with grayscale gradient bitmaps featuring non-standard bit depths. It details the process from initial image decoding and color normalization" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-luma-wipes-with-non-standard-bit-depths">OBS Studio
+Luma Wipes with Non-Standard Bit Depths</h1>
+<p>This article examines the internal pipeline OBS Studio uses to render
+custom luma wipe transitions when supplied with grayscale gradient
+bitmaps featuring non-standard bit depths. It details the process from
+initial image decoding and color normalization to GPU texture allocation
+and pixel shader execution, explaining how unusual bit allocations
+impact transition smoothness, performance, and visual artifacts.</p>
+<h3 id="image-ingestion-and-decoding">Image Ingestion and Decoding</h3>
+<p>When a user selects a custom bitmap for a luma wipe transition in OBS
+Studio, the software does not pass the raw file directly to the graphics
+rendering engine. Instead, the file is processed through OBS Studio's
+image loading subsystem (<code>libobs/graphics</code>), which relies on
+platform-native decoding libraries or third-party decoders like FFmpeg
+and <code>stb_image</code>.</p>
+<p>When encountering non-standard bit depths—such as 1-bit monochrome,
+2-bit or 4-bit indexed palettes, or high-depth 16-bit integer grayscale
+images—the decoder normalizes the pixel data into a format compatible
+with the rendering backend. Sub-8-bit formats (such as 1-bit or 4-bit
+images) are expanded by looking up the palette values or bit-shifting
+the packed integer values into standard 8-bit channels. High-depth
+formats, such as 16-bit grayscale PNGs, are typically downsampled to 8
+bits per channel (<code>uint8_t</code>) during the CPU-side decoding
+stage to conserve memory and maintain uniform texture pipelines.</p>
+<h3 id="gpu-texture-conversion-and-upload">GPU Texture Conversion and
+Upload</h3>
+<p>Once decoded, the CPU-side image data is converted into an internal
+graphics surface (<code>gs_texture_t</code>). OBS Studio standardizes
+its internal transitions around common Direct3D 11 and OpenGL
+formats.</p>
+<p>Regardless of whether the source file was an unusual 1-bit bitmap or
+a 16-bit gradient, the GPU texture is allocated as either an 8-bit
+single-channel texture (<code>GS_R8</code>) or an 8-bit four-channel
+texture (<code>GS_RGBA</code>). During this stage:</p>
+<ul>
+<li><strong>Values are Normalized:</strong> The 8-bit integer values
+(ranging from 0 to 255) are mapped to normalized floating-point values
+ranging from <code>0.0</code> (pure black) to <code>1.0</code> (pure
+white) in GPU memory.</li>
+<li><strong>Filtering Modes are Applied:</strong> OBS applies linear
+texture filtering (<code>GS_FILTER_LINEAR</code>) by default. This
+bilinear interpolation creates intermediate gradient steps across
+neighboring texels, which slightly softens hard pixel transitions
+introduced by low-bit-depth source files.</li>
+</ul>
+<h3 id="shader-execution-in-luma_wipeeffect">Shader Execution in
+<code>luma_wipe.effect</code></h3>
+<p>The actual wipe effect is executed via the
+<code>luma_wipe.effect</code> shader file on the GPU. The shader samples
+the luma mask texture and compares its luminance value against the
+current progress of the transition, which is represented by a scalar
+float parameter <code>progress</code> ranging from <code>0.0</code> to
+<code>1.0</code>.</p>
+<ol type="1">
+<li><strong>Luma Extraction:</strong> If the texture is loaded as an
+RGBA texture, the shader converts the sampled RGB color into a scalar
+luminance value using standard Rec. 709 weighting coefficients: <span
+class="math display">\[\text{Luminance} = 0.2126R + 0.7152G +
+0.0722B\]</span> If sampled from a single-channel texture, the red
+channel value is used directly as the luminance reference.</li>
+<li><strong>Threshold Testing:</strong> The shader computes a visibility
+threshold based on the transition's progress and a user-defined
+"softness" parameter. It uses smoothstep or linear interpolation
+functions to blend between the outgoing and incoming video frames.</li>
+</ol>
+<h3 id="visual-implications-of-non-standard-bit-depths">Visual
+Implications of Non-Standard Bit Depths</h3>
+<p>Because the pipeline forces non-standard bit depths into a normalized
+8-bit equivalent before shader evaluation, specific visual behaviors
+occur:</p>
+<ul>
+<li><strong>Low Bit Depths (1-bit to 4-bit):</strong> Images with 1-bit
+depth only contain two values (0.0 and 1.0). When used as a luma wipe,
+this causes an instantaneous binary transition without intermediate
+gradations, regardless of the softness setting, except for minimal
+blending along pixel borders caused by bilinear filtering. 4-bit masks
+provide only 16 distinct grayscale steps, resulting in noticeable
+posterization and stepping artifacts as the transition advances.</li>
+<li><strong>High Bit Depths (16-bit):</strong> Because the loader
+truncates or downsamples 16-bit data to 8 bits per channel, any
+potential 65,536-step gradient resolution is reduced to 256 distinct
+levels. While this eliminates banding that would otherwise appear with
+low bit depths, it does not provide true 16-bit micro-stepping; the
+transition behaves identically to a high-quality 8-bit grayscale source
+file.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

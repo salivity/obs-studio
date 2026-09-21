@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lossless RGB Recording in OBS Studio with x264 - obs-studio</title>
+    <meta name="description" content="This article explores the technical mechanisms that enable mathematically lossless RGB capture in OBS Studio using the x264 encoder set to CRF 0. Achieving true lossless recording requires bypassing lossy color matrix conversions, eliminating chroma subs">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/lossless-rgb-recording-in-obs-studio-with-x-264">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Lossless RGB Recording in OBS Studio with x264 - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/lossless-rgb-recording-in-obs-studio-with-x-264" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores the technical mechanisms that enable mathematically lossless RGB capture in OBS Studio using the x264 encoder set to CRF 0. Achieving true lossless recording requires bypassing lossy color matrix conversions, eliminating chroma subs" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="lossless-rgb-recording-in-obs-studio-with-x264">Lossless RGB
+Recording in OBS Studio with x264</h1>
+<p>This article explores the technical mechanisms that enable
+mathematically lossless RGB capture in OBS Studio using the x264 encoder
+set to CRF 0. Achieving true lossless recording requires bypassing lossy
+color matrix conversions, eliminating chroma subsampling, and disabling
+quantization stages within the H.264 compression pipeline. Below is a
+detailed breakdown of how OBS Studio and the x264 library handle native
+RGB data from screen acquisition to bitstream output.</p>
+<h3 id="the-role-of-crf-0-in-x264">The Role of CRF 0 in x264</h3>
+<p>Constant Rate Factor (CRF) typically acts as a perceptual
+rate-control mechanism that varies quantization to maintain consistent
+visual quality. However, setting <code>CRF 0</code> functions as an
+operational trigger within x264 that switches the encoder into a true
+mathematical lossless mode.</p>
+<p>In standard lossy encoding, the encoder applies an integer Discrete
+Cosine Transform (DCT) to prediction residuals and divides the resulting
+coefficients by a Quantization Parameter (QP) matrix, permanently
+discarding high-frequency detail. When <code>CRF 0</code> is
+invoked:</p>
+<ul>
+<li>The QP is set to 0.</li>
+<li>The transform and quantization stages are bypassed using H.264's
+<code>transform_bypass_mode_flag</code>.</li>
+<li>Instead of quantizing the spatial frequency domain, the residual
+difference between the predicted block and the source frame is
+transmitted directly to the entropy encoder (CABAC or CAVLC).</li>
+<li>The decoded output matches the uncompressed input frame
+bit-for-bit.</li>
+</ul>
+<h3 id="bypassing-color-conversion-and-subsampling">Bypassing Color
+Conversion and Subsampling</h3>
+<p>Most digital video is encoded in the YUV (YCbCr) color space, often
+paired with 4:2:0 chroma subsampling to reduce data bandwidth by
+discarding half the horizontal and vertical color resolution. This
+presents two points of degradation for computer graphics: conversion
+rounding errors between RGB and YUV matrices, and spatial color
+loss.</p>
+<p>For lossless RGB capture to function:</p>
+<ol type="1">
+<li><strong>Source Capture:</strong> Computer graphics are rendered
+natively in sRGB/RGB space. OBS captures these textures directly via GPU
+hooks (DirectX, OpenGL, or Vulkan) as raw RGB surfaces.</li>
+<li><strong>Color Format Configuration:</strong> In OBS <strong>Settings
+&gt; Advanced &gt; Video</strong>, the Color Format must be set directly
+to <strong>RGB</strong> rather than NV12, P010, or I420.</li>
+<li><strong>Pipeline Preservation:</strong> Setting the format to RGB
+forces OBS to keep the captured GPU textures in planar RGB without
+executing a color space conversion shader (such as RGB to Rec. 709 or
+Rec. 601). This eliminates the color clipping and rounding errors
+inherent to matrix transformations.</li>
+</ol>
+<h3 id="high-444-predictive-profile-hi444pp">High 4:4:4 Predictive
+Profile (Hi444PP)</h3>
+<p>Standard H.264 profiles (Baseline, Main, High) are restricted to
+4:2:0 subsampled YUV video. To process native RGB data losslessly, x264
+engages the <strong>High 4:4:4 Predictive Profile</strong> (Profile IDC
+244).</p>
+<p>Under this profile:</p>
+<ul>
+<li><strong>Planar RGB / GBR Mapping:</strong> H.264 stores RGB data
+internally mapped as GBR (Green, Blue, Red). Green is assigned to the
+luma channel (<span class="math inline">\(Y\)</span>) because it carries
+the majority of luminance information, while Blue and Red are mapped to
+the chroma channels (<span class="math inline">\(Cb\)</span> and <span
+class="math inline">\(Cr\)</span>).</li>
+<li><strong>Full Resolution Channels:</strong> All three color channels
+retain an identical <span class="math inline">\(1:1\)</span> pixel grid,
+meaning no downsampling occurs.</li>
+<li><strong>Spatial Intra-Prediction:</strong> The encoder uses
+intra-prediction modes across all three independent color planes,
+predicting pixel values based on neighboring boundary pixels.</li>
+<li><strong>Lossless Residual Coding:</strong> The arithmetic
+differences (residuals) between predicted pixels and source pixels are
+calculated, passed through entropy coding, and written directly into the
+bitstream without loss.</li>
+</ul>
+<h3 id="end-to-end-pipeline-summary">End-to-End Pipeline Summary</h3>
+<p>When OBS Studio is configured for RGB recording with x264 at CRF
+0:</p>
+<ol type="1">
+<li>Graphic frames are acquired from the desktop or application surface
+in 8-bit RGB format.</li>
+<li>The OBS rendering engine transfers the uncompressed RGB frame buffer
+to the libx264 library without matrix conversion or downsampling.</li>
+<li>x264 identifies the RGB input and initializes the High 4:4:4
+Predictive Profile.</li>
+<li>Setting CRF to 0 instructs x264 to bypass the forward transform and
+quantization steps entirely.</li>
+<li>Spatial predictions are generated, exact residuals are
+entropy-encoded using lossless CABAC/CAVLC, and the data is multiplexed
+into the designated container (such as MKV), producing a pristine,
+mathematically identical replica of the display output.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Plugin Hotkey Collisions Explained - obs-studio</title>
+    <meta name="description" content="This article explains the internal mechanics of hotkey management in OBS Studio, detailing what occurs when two external control plugins register identical hotkey identifiers or duplicate key combinations. It covers the core registration process, how OBS">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-plugin-hotkey-collisions-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Plugin Hotkey Collisions Explained - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-plugin-hotkey-collisions-explained" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains the internal mechanics of hotkey management in OBS Studio, detailing what occurs when two external control plugins register identical hotkey identifiers or duplicate key combinations. It covers the core registration process, how OBS" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-plugin-hotkey-collisions-explained">OBS Studio Plugin
+Hotkey Collisions Explained</h1>
+<p>This article explains the internal mechanics of hotkey management in
+OBS Studio, detailing what occurs when two external control plugins
+register identical hotkey identifiers or duplicate key combinations. It
+covers the core registration process, how OBS separates logical internal
+IDs from string names, how the configuration system handles duplicate
+entries, and the exact order of execution when a collision occurs.</p>
+<h3 id="internal-hotkey-id-generation">Internal Hotkey ID
+Generation</h3>
+<p>In OBS Studio, external plugins interact with the hotkey system via
+the <code>obs-hotkeys.c</code> API, typically calling functions such as
+<code>obs_hotkey_register_frontend()</code> or
+<code>obs_hotkey_register_source()</code>.</p>
+<p>OBS Studio does not allow external plugins to define the primary
+numeric shortcut ID directly. Instead:</p>
+<ol type="1">
+<li>A plugin provides a string identifier (e.g.,
+<code>plugin_a.toggle_mute</code>), a human-readable description, and a
+callback function.</li>
+<li>OBS core generates a unique, sequential runtime integer
+(<code>obs_hotkey_id</code>) and returns it to the registering
+plugin.</li>
+<li>Because the internal <code>obs_hotkey_id</code> is assigned
+sequentially by OBS, low-level integer collisions cannot occur at the
+system level.</li>
+</ol>
+<h3 id="handling-duplicate-string-identifiers">Handling Duplicate String
+Identifiers</h3>
+<p>A collision problem arises when two independent plugins register
+using the exact same textual identifier.</p>
+<p>OBS Studio maintains hotkeys inside a dynamic array
+(<code>da_push_back(obs-&gt;hotkeys, ...)</code>). The core library does
+not implement strict uniqueness validation on the string identifiers
+during registration. Consequently:</p>
+<ul>
+<li><strong>Dual Registration:</strong> Both registrations succeed. OBS
+creates two distinct hotkey entries internally, each holding the same
+string identifier but assigned different numeric
+<code>obs_hotkey_id</code> values.</li>
+<li><strong>Callback Retention:</strong> Each entry retains its own
+independent callback pointer assigned by its respective plugin.</li>
+</ul>
+<h3 id="configuration-file-mapping-and-persistence">Configuration File
+Mapping and Persistence</h3>
+<p>OBS Studio persists user-assigned key combinations inside the profile
+configuration files (such as <code>basic.ini</code>). Hotkeys are mapped
+using their string identifiers rather than dynamic numeric IDs, ensuring
+that bindings persist across application restarts.</p>
+<p>When two plugins claim the same string identifier:</p>
+<ul>
+<li><strong>Binding Assignment:</strong> When OBS parses the
+configuration file at startup, it matches the saved key combination
+against registered hotkeys by their string names.</li>
+<li><strong>Duplicate Population:</strong> If two entries match the
+saved name, OBS assigns the loaded physical key binding to <em>both</em>
+internal hotkey objects.</li>
+<li><strong>UI Display:</strong> In the OBS <strong>Settings &gt;
+Hotkeys</strong> menu, both hotkeys appear. If their human-readable
+descriptions are identical, they are visually indistinguishable to the
+end-user.</li>
+</ul>
+<h3 id="execution-behavior-during-a-trigger-event">Execution Behavior
+During a Trigger Event</h3>
+<p>When a physical shortcut or an external control trigger is
+pressed:</p>
+<ol type="1">
+<li><strong>Sequential Execution (FIFO):</strong> The OBS input handler
+matches the pressed key combination against all active hotkey objects.
+Because both registrations hold the same key combo, the event dispatcher
+executes both registered callbacks sequentially in the order they were
+registered (first-in, first-out).</li>
+<li><strong>Lack of Priority Overrides:</strong> OBS does not feature a
+priority system for hotkey listeners. One plugin cannot intercept or
+consume the event to prevent the second plugin from executing.</li>
+</ol>
+<h3 id="external-api-and-websocket-collisions">External API and
+WebSocket Collisions</h3>
+<p>When external control plugins interact via the
+<code>obs-websocket</code> protocol or IPC to trigger a hotkey by
+name:</p>
+<ul>
+<li>Most lookup methods iterate through the internal hotkey array and
+execute the first matching name found.</li>
+<li>The plugin registered first typically receives the simulated
+trigger, while the second registered plugin with the matching name is
+bypassed entirely.</li>
+<li>If the external tool triggers hotkeys via virtual key presses rather
+than API name lookups, both plugins will fire simultaneously, matching
+standard keyboard input behavior.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

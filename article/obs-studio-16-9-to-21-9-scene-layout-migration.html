@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio 16:9 to 21:9 Scene Layout Migration - obs-studio</title>
+    <meta name="description" content="Migrating OBS Studio scene collections between 16:9 and 21:9 aspect ratios requires an understanding of how the software handles coordinates, canvas boundaries, and source transformations. By default, OBS Studio does not dynamically reflow or auto-scale">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-16-9-to-21-9-scene-layout-migration">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio 16:9 to 21:9 Scene Layout Migration - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-16-9-to-21-9-scene-layout-migration" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Migrating OBS Studio scene collections between 16:9 and 21:9 aspect ratios requires an understanding of how the software handles coordinates, canvas boundaries, and source transformations. By default, OBS Studio does not dynamically reflow or auto-scale" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-169-to-219-scene-layout-migration">OBS Studio 16:9 to
+21:9 Scene Layout Migration</h1>
+<p>Migrating OBS Studio scene collections between 16:9 and 21:9 aspect
+ratios requires an understanding of how the software handles
+coordinates, canvas boundaries, and source transformations. By default,
+OBS Studio does not dynamically reflow or auto-scale layouts when the
+Base (Canvas) Resolution changes. Instead, it relies on an absolute
+coordinate system and user-defined bounding box constraints to maintain
+element proportions and positions across different display formats.</p>
+<h3 id="the-absolute-coordinate-system">The Absolute Coordinate
+System</h3>
+<p>OBS Studio maps all visual elements using an absolute pixel-based
+grid starting from an origin point—typically the top-left corner
+(coordinates <code>0, 0</code>). When you change your canvas resolution
+from 16:9 (such as 1920×1080) to an ultrawide 21:9 format (such as
+2560×1080 or 3440×1440), the existing assets remain anchored to their
+absolute pixel coordinates.</p>
+<p>Because the canvas width expands horizontally while the vertical
+bounds remain proportionally identical, your existing elements will not
+automatically stretch or reposition toward the center. Instead, the
+extra horizontal canvas space appears on the right and bottom edges,
+leaving the original 16:9 layout grouped toward the top-left unless
+repositioned.</p>
+<h3 id="role-of-bounding-box-types-in-aspect-ratio-preservation">Role of
+Bounding Box Types in Aspect Ratio Preservation</h3>
+<p>To prevent visual distortion when switching resolutions, OBS Studio
+relies on "Bounding Box" settings assigned to each source. These
+settings dictate how an image, browser capture, or video feed reacts
+when its container size changes:</p>
+<ul>
+<li><strong>No Bounds (Default):</strong> The source displays at its
+native resolution or manually dragged dimensions. Changing the scene
+canvas does not alter the size of the source, but it may cause the
+source to be cut off or positioned awkwardly relative to the new
+borders.</li>
+<li><strong>Scale to Inner / Outer Bounds:</strong> These modes enforce
+an aspect-ratio lock. If a bounding box is set up within a scene, the
+asset retains its correct proportion within that box regardless of
+global canvas adjustments, preventing unnatural horizontal
+stretching.</li>
+<li><strong>Fit to Screen:</strong> Pressing <code>Ctrl + F</code>
+scales the selected source to fit within the new bounds while strictly
+preserving its original aspect ratio, automatically introducing
+pillarboxing (black bars on the sides) on a 21:9 canvas for 16:9
+media.</li>
+<li><strong>Stretch to Screen:</strong> Pressing <code>Ctrl + S</code>
+forces the element to cover the entire canvas. This breaks aspect ratio
+proportions, distorting 16:9 sources across a 21:9 space, and is
+generally avoided during migration.</li>
+</ul>
+<h3 id="maintaining-layouts-via-nested-scenes">Maintaining Layouts via
+Nested Scenes</h3>
+<p>The most robust technique OBS Studio uses to maintain a composite
+layout's exact proportions across different aspect ratios is scene
+nesting.</p>
+<p>Instead of moving individual sources directly into an ultrawide
+canvas, an entire 16:9 scene can be imported as a single source into a
+21:9 scene collection. Within this parent scene:</p>
+<ol type="1">
+<li>The 16:9 layout remains fully intact as a self-contained
+sub-canvas.</li>
+<li>The sub-canvas can be centered, anchored, or scaled uniformly
+without misaligning individual elements like overlays, webcams, and chat
+boxes.</li>
+<li>The remaining flanking areas (the extra 21:9 horizontal space) can
+then be populated with dedicated side panels, stream alerts, or extended
+game viewports.</li>
+</ol>
+<h3 id="transform-alignment-anchors">Transform Alignment Anchors</h3>
+<p>OBS uses positional alignment anchors (found in the "Edit Transform"
+menu) to govern how sources anchor relative to their positions. By
+switching an alignment point from "Top Left" to "Center," sources react
+more predictably to global coordinate adjustments. While this does not
+automatically resize assets to fit ultrawide dimensions, it keeps
+central elements centered on the screen when changing canvas dimensions
+manually.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Resolve OBS Studio Memory Leak - obs-studio</title>
+    <meta name="description" content="OBS Studio is a powerful tool for streaming and recording, but experiencing a memory leak can severely impact your system's performance and cause the software to crash during use. This article provides a straightforward, step-by-step guide to identifying">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-resolve-obs-studio-memory-leak">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Resolve OBS Studio Memory Leak - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-resolve-obs-studio-memory-leak" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio is a powerful tool for streaming and recording, but experiencing a memory leak can severely impact your system's performance and cause the software to crash during use. This article provides a straightforward, step-by-step guide to identifying" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-resolve-obs-studio-memory-leak">How to Resolve OBS Studio
+Memory Leak</h1>
+<p>OBS Studio is a powerful tool for streaming and recording, but
+experiencing a memory leak can severely impact your system's performance
+and cause the software to crash during use. This article provides a
+straightforward, step-by-step guide to identifying the root causes of
+OBS Studio memory leaks—such as outdated plugins, problematic browser
+sources, and buggy drivers—and offers practical solutions to resolve
+them quickly.</p>
+<h2 id="update-obs-studio-and-third-party-plugins">Update OBS Studio and
+Third-Party Plugins</h2>
+<p>The most common cause of memory leaks in OBS Studio is outdated
+software or buggy third-party plugins. Developers constantly release
+patches to fix memory management bugs.</p>
+<ol type="1">
+<li><strong>Update OBS Studio:</strong> Open OBS, click on
+<strong>Help</strong> in the top menu, and select <strong>Check for
+Updates</strong>. If an update is available, install it
+immediately.</li>
+<li><strong>Update Plugins:</strong> If you use plugins like
+<em>StreamFX</em>, <em>Move Transition</em>, or <em>obs-websocket</em>,
+visit their respective download pages and install the latest versions.
+Outdated plugins are notorious for failing to release allocated
+memory.</li>
+</ol>
+<h2 id="optimize-browser-sources">Optimize Browser Sources</h2>
+<p>Browser sources (used for alerts, overlays, and widgets) run on an
+embedded version of Chromium. If a webpage or widget is poorly coded, it
+will continuously consume RAM.</p>
+<ol type="1">
+<li><strong>Enable/Disable Hardware Acceleration:</strong> Go to
+<strong>Settings</strong> &gt; <strong>Advanced</strong> &gt;
+<strong>Sources</strong>. Toggle the option <strong>Enable Browser
+Source Hardware Acceleration</strong>. For some systems, turning this on
+reduces CPU/RAM load; for others, turning it off resolves memory leaks.
+Test both settings.</li>
+<li><strong>Close Inactive Browser Sources:</strong> Check the
+properties of your browser sources and check the box that says
+<strong>Shutdown source when not visible</strong>. This frees up memory
+when you switch to a different scene.</li>
+</ol>
+<h2 id="perform-a-clean-gpu-driver-installation">Perform a Clean GPU
+Driver Installation</h2>
+<p>Corrupted or outdated graphics card drivers can prevent OBS from
+properly releasing video memory (VRAM) and system RAM.</p>
+<ol type="1">
+<li>Download the latest drivers for your graphics card (NVIDIA, AMD, or
+Intel).</li>
+<li>Use <strong>Display Driver Uninstaller (DDU)</strong> in Windows
+Safe Mode to completely wipe your old graphics drivers.</li>
+<li>Install the newly downloaded driver and restart your computer.</li>
+</ol>
+<h2 id="analyze-obs-log-files">Analyze OBS Log Files</h2>
+<p>If the memory leak persists, OBS Studio's built-in log analyzer can
+pinpoint the exact source, plugin, or setting causing the issue.</p>
+<ol type="1">
+<li>Open OBS Studio and reproduce the memory leak (let it run for a few
+minutes).</li>
+<li>Go to <strong>Help</strong> &gt; <strong>Log Files</strong> &gt;
+<strong>Upload Current Log File</strong>.</li>
+<li>Click the <strong>Analyze</strong> button. The analyzer will open in
+your browser and highlight critical issues, such as outdated plugins,
+rendering lags, or heavy browser sources, in red or yellow.</li>
+</ol>
+<h2 id="run-obs-studio-in-safe-mode">Run OBS Studio in Safe Mode</h2>
+<p>Running OBS in Safe Mode disables all third-party plugins, scripts,
+and websockets. This is a great way to isolate whether the leak is
+caused by the core OBS program or external add-ons.</p>
+<ol type="1">
+<li>Close OBS Studio completely.</li>
+<li>Hold down the <strong>Shift</strong> key on your keyboard and
+double-click the OBS Studio shortcut.</li>
+<li>Click <strong>Yes</strong> when prompted to run in Safe Mode.</li>
+<li>Monitor your RAM usage in Task Manager. If the memory leak stops, a
+third-party plugin or script is the culprit, and you should uninstall
+them one by one to find the offender.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Replay Buffer Memory Management on 16GB RAM - obs-studio</title>
+    <meta name="description" content="OBS Studio prevents out-of-memory errors on 16GB RAM systems by utilizing an encoded circular ring buffer, enforcing user-defined memory limits, and storing compressed video packets rather than raw video frames. By establishing strict boundaries on how m">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-replay-buffer-memory-management-on-16-gb-ram">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Replay Buffer Memory Management on 16GB RAM - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-replay-buffer-memory-management-on-16-gb-ram" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio prevents out-of-memory errors on 16GB RAM systems by utilizing an encoded circular ring buffer, enforcing user-defined memory limits, and storing compressed video packets rather than raw video frames. By establishing strict boundaries on how m" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-replay-buffer-memory-management-on-16gb-ram">OBS Replay
+Buffer Memory Management on 16GB RAM</h1>
+<p>OBS Studio prevents out-of-memory errors on 16GB RAM systems by
+utilizing an encoded circular ring buffer, enforcing user-defined memory
+limits, and storing compressed video packets rather than raw video
+frames. By establishing strict boundaries on how much memory the buffer
+can consume and dynamically pruning the oldest data, OBS allows users to
+continuously capture background footage alongside memory-heavy games and
+applications without risking system instability or memory
+exhaustion.</p>
+<h3 id="encoded-bitstream-caching">Encoded Bitstream Caching</h3>
+<p>The most critical way OBS manages memory is by capturing data
+<em>after</em> it has been processed by the video encoder (such as
+NVIDIA NVENC, AMD AMF, Intel QuickSync, or x264). Uncompressed 1080p60
+video consumes approximately 350 megabytes per second, which would
+exhaust a 16GB system in less than a minute. By storing only the
+compressed bitstream (H.264, HEVC, or AV1), OBS reduces this footprint
+to a fraction of the raw size. At a typical bitrate of 15,000 Kbps
+(roughly 1.88 MB/s), a two-minute replay buffer requires less than 250
+MB of system RAM.</p>
+<h3 id="circular-ring-buffer-architecture">Circular Ring Buffer
+Architecture</h3>
+<p>OBS implements a first-in, first-out (FIFO) circular buffer
+structure. Once the allocated buffer limit is reached, OBS drops the
+oldest packets to make room for incoming packets. This operation occurs
+continuously in RAM without needing to dynamically allocate large new
+blocks of memory or flush unfinalized data to the drive. Because memory
+allocations remain static and predictable, the operating system does not
+suffer from rapid heap fragmentation.</p>
+<h3 id="dual-constraint-limits-time-and-capacity">Dual-Constraint
+Limits: Time and Capacity</h3>
+<p>In the OBS output settings, the Replay Buffer allows users to define
+both a <strong>Maximum Replay Time</strong> (in seconds) and a
+<strong>Maximum Memory</strong> limit (in megabytes).</p>
+<p>OBS treats the memory limit as a hard ceiling. If complex visual
+motion causes the encoder to spike the bitrate, the memory limit
+overrides the time limit. For instance, if a user specifies a 180-second
+replay with a 1,024 MB memory cap, and high-motion gameplay drives the
+buffer size to 1,024 MB in only 120 seconds, OBS discards the oldest
+keyframe interval to stay under the memory threshold. This dual-check
+mechanism ensures the buffer never expands beyond the assigned
+boundary.</p>
+<h3 id="safe-headroom-on-16gb-configurations">Safe Headroom on 16GB
+Configurations</h3>
+<p>On a 16GB machine, memory overhead is typically tight: modern
+operating systems occupy roughly 3GB to 4GB, while modern titles
+routinely allocate 8GB to 10GB. OBS operates comfortably within this
+margin because the software itself typically requires under 500 MB of
+base RAM, and a standard 2-to-5 minute replay buffer rarely needs more
+than 500 MB to 2,048 MB. By establishing a deterministic upper boundary
+on buffer growth, OBS guarantees that memory-sensitive games never
+trigger OS-level low-memory handlers, page-file thrashing, or
+application termination.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

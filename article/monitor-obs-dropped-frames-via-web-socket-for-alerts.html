@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor OBS Dropped Frames via WebSocket for Alerts - obs-studio</title>
+    <meta name="description" content="Streaming stability is critical for live broadcasters, and network or hardware bottlenecks often result in dropped frames that degrade broadcast quality. This article explains how an external automation tool can connect to OBS Studio's native WebSocket s">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/monitor-obs-dropped-frames-via-web-socket-for-alerts">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Monitor OBS Dropped Frames via WebSocket for Alerts - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/monitor-obs-dropped-frames-via-web-socket-for-alerts" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Streaming stability is critical for live broadcasters, and network or hardware bottlenecks often result in dropped frames that degrade broadcast quality. This article explains how an external automation tool can connect to OBS Studio's native WebSocket s" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="monitor-obs-dropped-frames-via-websocket-for-alerts">Monitor OBS
+Dropped Frames via WebSocket for Alerts</h1>
+<p>Streaming stability is critical for live broadcasters, and network or
+hardware bottlenecks often result in dropped frames that degrade
+broadcast quality. This article explains how an external automation tool
+can connect to OBS Studio's native WebSocket server, monitor real-time
+stream statistics, calculate dropped frame percentages, and trigger
+automated visual or audible alerts back inside OBS Studio when streaming
+thresholds are breached.</p>
+<h3 id="enabling-the-obs-websocket-server">Enabling the OBS WebSocket
+Server</h3>
+<p>Modern versions of OBS Studio (version 28 and newer) include an
+integrated WebSocket server based on the obs-websocket v5 protocol.</p>
+<ol type="1">
+<li>Open OBS Studio.</li>
+<li>Navigate to <strong>Tools</strong> &gt; <strong>WebSocket Server
+Settings</strong>.</li>
+<li>Check <strong>Enable WebSocket server</strong>.</li>
+<li>Set a port (default is <code>4455</code>) and configure an
+authentication password.</li>
+</ol>
+<h3 id="connecting-the-external-automation-tool">Connecting the External
+Automation Tool</h3>
+<p>Your automation tool—whether built with Python, Node.js, Node-RED, or
+platforms like Streamer.bot—must establish a standard WebSocket
+connection to <code>ws://localhost:4455</code> (or your OBS machine's
+local IP address).</p>
+<p>Upon opening the socket, the client must perform the OBS WebSocket v5
+handshake:</p>
+<ol type="1">
+<li>Receive the <code>Hello</code> message from OBS (OpCode
+<code>0</code>).</li>
+<li>Send an <code>Identify</code> message (OpCode <code>1</code>),
+containing the RPC version (<code>1</code>), required event
+subscriptions, and an authentication string (a SHA256 challenge
+generated with your password and the salt provided in the
+<code>Hello</code> payload).</li>
+<li>Receive the <code>Identified</code> message (OpCode <code>2</code>)
+confirming a valid session.</li>
+</ol>
+<h3 id="querying-stream-statistics">Querying Stream Statistics</h3>
+<p>While OBS issues events for state changes, granular stream output
+metrics are typically retrieved by polling the
+<code>GetStreamStatus</code> request at regular intervals (such as every
+2 to 5 seconds).</p>
+<p>Send a <code>Request</code> message (OpCode <code>6</code>):</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;op&quot;</span><span class="fu">:</span> <span class="dv">6</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;d&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;requestType&quot;</span><span class="fu">:</span> <span class="st">&quot;GetStreamStatus&quot;</span><span class="fu">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;requestId&quot;</span><span class="fu">:</span> <span class="st">&quot;check-frames-task&quot;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>OBS Studio responds with a payload containing current broadcast
+performance metrics:</p>
+<ul>
+<li><code>outputActive</code>: Boolean indicating if the stream is
+live.</li>
+<li><code>outputSkippedFrames</code>: Number of frames dropped due to
+rendering/encoding lag.</li>
+<li><code>outputTotalFrames</code>: Total frames processed by the stream
+encoder.</li>
+<li><code>outputCongestion</code>: Network congestion estimate (0.0 to
+1.0).</li>
+</ul>
+<p><em>Note: For network-dropped frames specifically, you can also query
+<code>GetOutputStatus</code> with
+<code>outputName: "simple_stream"</code> or <code>"adv_stream"</code>
+depending on your output configuration to inspect network drop
+numbers.</em></p>
+<h3 id="calculating-the-dropped-frame-percentage">Calculating the
+Dropped Frame Percentage</h3>
+<p>Once your automation script receives the response, calculate the drop
+rate:</p>
+<p><span class="math display">\[\text{Drop Percentage} = \left(
+\frac{\text{outputSkippedFrames}}{\text{outputTotalFrames}} \right)
+\times 100\]</span></p>
+<p>To measure real-time spikes rather than lifetime averages, store the
+values from the previous poll cycle and calculate the delta:</p>
+<p><span class="math display">\[\Delta \text{Skipped} =
+\text{Skipped}_{\text{current}} -
+\text{Skipped}_{\text{previous}}\]</span> <span
+class="math display">\[\Delta \text{Total} =
+\text{Total}_{\text{current}} - \text{Total}_{\text{previous}}\]</span>
+<span class="math display">\[\text{Current Drop Rate} = \left(
+\frac{\Delta \text{Skipped}}{\Delta \text{Total}} \right) \times
+100\]</span></p>
+<h3 id="triggering-stream-alerts-in-obs">Triggering Stream Alerts in
+OBS</h3>
+<p>When the drop rate exceeds a predetermined threshold (e.g., 5% over a
+10-second period), your tool sends an action request back through the
+same WebSocket connection to alert you. Common integration methods
+include:</p>
+<h4 id="1-displaying-an-on-screen-indicator">1. Displaying an On-Screen
+Indicator</h4>
+<p>Create a hidden warning graphic, text box, or browser source in OBS
+Studio, and make it visible using <code>SetSceneItemEnabled</code>:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;op&quot;</span><span class="fu">:</span> <span class="dv">6</span><span class="fu">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;d&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;requestType&quot;</span><span class="fu">:</span> <span class="st">&quot;SetSceneItemEnabled&quot;</span><span class="fu">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;requestId&quot;</span><span class="fu">:</span> <span class="st">&quot;show-warning&quot;</span><span class="fu">,</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;requestData&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;sceneName&quot;</span><span class="fu">:</span> <span class="st">&quot;Live Scene&quot;</span><span class="fu">,</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;sceneItemId&quot;</span><span class="fu">:</span> <span class="dv">12</span><span class="fu">,</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;sceneItemEnabled&quot;</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h4 id="2-playing-an-audio-chime">2. Playing an Audio Chime</h4>
+<p>Route a private audio alert to your monitoring headphones by creating
+a dedicated media source set to "Monitor Only" and triggering it via
+<code>TriggerMediaInputAction</code>:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;op&quot;</span><span class="fu">:</span> <span class="dv">6</span><span class="fu">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;d&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;requestType&quot;</span><span class="fu">:</span> <span class="st">&quot;TriggerMediaInputAction&quot;</span><span class="fu">,</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;requestId&quot;</span><span class="fu">:</span> <span class="st">&quot;play-audio-chime&quot;</span><span class="fu">,</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;requestData&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;inputName&quot;</span><span class="fu">:</span> <span class="st">&quot;FrameDropWarningAudio&quot;</span><span class="fu">,</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;mediaAction&quot;</span><span class="fu">:</span> <span class="st">&quot;OBS_WEBSOCKET_MEDIA_INPUT_ACTION_RESTART&quot;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="resetting-the-alert-state">Resetting the Alert State</h3>
+<p>To prevent notification loops, your automation tool should
+incorporate hysteresis or cooldown logic. Once the delta dropped frame
+rate falls back below an acceptable threshold (e.g., under 1%) for a
+sustained period, dispatch a follow-up request to set
+<code>sceneItemEnabled: false</code>, clearing the alert until the next
+instability event.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

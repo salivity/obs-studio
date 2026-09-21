@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Use Track Matte Transitions in OBS Studio - obs-studio</title>
+    <meta name="description" content="This article explains what a Track Matte transition is and provides a step-by-step guide on how to configure it in OBS Studio. You will learn how this transition style uses grayscale masks to create seamless, professional-looking scene changes, and how t">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-use-track-matte-transitions-in-obs-studio">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Use Track Matte Transitions in OBS Studio - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-use-track-matte-transitions-in-obs-studio" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains what a Track Matte transition is and provides a step-by-step guide on how to configure it in OBS Studio. You will learn how this transition style uses grayscale masks to create seamless, professional-looking scene changes, and how t" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-use-track-matte-transitions-in-obs-studio">How to Use
+Track Matte Transitions in OBS Studio</h1>
+<p>This article explains what a Track Matte transition is and provides a
+step-by-step guide on how to configure it in OBS Studio. You will learn
+how this transition style uses grayscale masks to create seamless,
+professional-looking scene changes, and how to apply it to your own live
+streams.</p>
+<h3 id="what-is-a-track-matte-transition">What is a Track Matte
+Transition?</h3>
+<p>A Track Matte transition is an advanced type of stinger transition
+used in video production and live streaming. While a standard stinger
+transition uses a full-screen video overlay to hide the cut between two
+scenes, a Track Matte transition uses a specialized video file
+containing both the color animation and a black-and-white "matte" (or
+mask).</p>
+<p>The matte tells OBS Studio exactly which parts of the incoming and
+outgoing scenes should be visible at any given millisecond during the
+transition. Black areas represent transparency (showing the old scene),
+white areas represent opacity (showing the new scene), and gray areas
+create smooth gradients and soft feathers. This allows for highly
+creative, organic transitions—like smoke, paint splatters, or
+wipes—without needing a solid graphic to cover the entire screen during
+the cut.</p>
+<h3 id="how-to-configure-a-track-matte-transition-in-obs-studio">How to
+Configure a Track Matte Transition in OBS Studio</h3>
+<p>To set up a Track Matte transition, you will need a compatible
+transition video file (usually in WebM format) that includes both the
+color video and the matte mask, either stacked vertically or placed
+side-by-side.</p>
+<p>Follow these steps to configure it in OBS Studio:</p>
+<ol type="1">
+<li><p><strong>Add a New Stinger Transition:</strong> In the
+<strong>Scene Transitions</strong> dock in OBS Studio, click the
+drop-down menu (which defaults to "Fade" or "Cut") and select
+<strong>Add: Stinger</strong>. Name your new transition (e.g., "Track
+Matte Transition") and click <strong>OK</strong>.</p></li>
+<li><p><strong>Select Your Video File:</strong> In the properties window
+that appears, click <strong>Browse</strong> next to "Video File" and
+select your WebM transition file.</p></li>
+<li><p><strong>Enable the Track Matte Option:</strong> Scroll down the
+properties window until you see the <strong>Use a Track Matte</strong>
+checkbox. Check this box to reveal the track matte settings.</p></li>
+<li><p><strong>Configure the Matte Layout:</strong> Look at the
+<strong>Matte Layout</strong> drop-down menu. You must choose the option
+that matches how your video file was created:</p>
+<ul>
+<li><strong>Side-by-Side:</strong> The color video is on the left, and
+the black-and-white matte is on the right (or vice-versa).</li>
+<li><strong>Stacked:</strong> The color video is on top, and the matte
+is on the bottom.</li>
+<li><strong>Separate File:</strong> If your matte is a completely
+separate video file, select this option and browse for the secondary
+file.</li>
+</ul></li>
+<li><p><strong>Adjust Transition Timing:</strong> Set the
+<strong>Transition Point Type</strong> to <strong>Frame</strong> or
+<strong>Time (ms)</strong>. Adjust the transition point to line up with
+the moment the matte fully begins to reveal the second scene.</p></li>
+<li><p><strong>Preview and Save:</strong> Use the <strong>Preview
+Transition</strong> button at the bottom of the properties window to
+ensure the scenes cut over smoothly. Once you are satisfied with the
+alignment, click <strong>OK</strong>.</p></li>
+</ol>
+<p>Your Track Matte transition is now ready to use and will trigger
+automatically whenever you switch scenes in OBS Studio.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

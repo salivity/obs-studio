@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Stream 1080p 60fps on Facebook Gaming OBS - obs-studio</title>
+    <meta name="description" content="Yes, you can stream directly to Facebook Gaming at 1080p resolution and 60 frames per second (fps) using OBS Studio. Doing so requires a stable high-speed internet connection, capable hardware, and specific encoder configurations in your streaming softwa">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-stream-1080-p-60-fps-on-facebook-gaming-obs">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Stream 1080p 60fps on Facebook Gaming OBS - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-stream-1080-p-60-fps-on-facebook-gaming-obs" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Yes, you can stream directly to Facebook Gaming at 1080p resolution and 60 frames per second (fps) using OBS Studio. Doing so requires a stable high-speed internet connection, capable hardware, and specific encoder configurations in your streaming softwa" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-stream-1080p-60fps-on-facebook-gaming-obs">How to Stream
+1080p 60fps on Facebook Gaming OBS</h1>
+<p>Yes, you can stream directly to Facebook Gaming at 1080p resolution
+and 60 frames per second (fps) using OBS Studio. Doing so requires a
+stable high-speed internet connection, capable hardware, and specific
+encoder configurations in your streaming software. However, access to
+1080p 60fps streaming is generally restricted to creators who are part
+of the Facebook Gaming Level Up Program or are official Facebook
+Partners. Standard accounts are typically limited to 720p at 30fps.</p>
+<h3 id="facebook-gaming-level-up-program-requirement">Facebook Gaming
+Level Up Program Requirement</h3>
+<p>Before configuring your settings, you must unlock 1080p 60fps
+privileges. To join the Level Up program, your gaming creator page must
+meet the following criteria:</p>
+<ul>
+<li>Have at least 100 page followers.</li>
+<li>Stream gaming content for at least 4 hours in the prior 14
+days.</li>
+<li>Stream gaming content on at least 2 days in the prior 14 days.</li>
+<li>Stream from an eligible country and comply with Facebook's community
+standards and monetization policies.</li>
+</ul>
+<hr />
+<h3 id="required-obs-studio-settings-for-1080p-60fps">Required OBS
+Studio Settings for 1080p 60fps</h3>
+<p>Once you have unlocked the feature, apply the following settings in
+OBS Studio to ensure your stream meets Facebook’s strict ingestion
+requirements.</p>
+<h4 id="1-video-settings">1. Video Settings</h4>
+<p>Navigate to <strong>Settings &gt; Video</strong> in OBS:</p>
+<ul>
+<li><strong>Base (Canvas) Resolution:</strong> <code>1920x1080</code>
+(This matches your monitor's resolution or your game's resolution).</li>
+<li><strong>Output (Scaled) Resolution:</strong> <code>1920x1080</code>
+(This is the final resolution sent to Facebook).</li>
+<li><strong>Downscale Filter:</strong>
+<code>Lanczos (Sharpened scaling, 36 samples)</code> or
+<code>Bicubic</code>.</li>
+<li><strong>Common FPS Values:</strong> <code>60</code>.</li>
+</ul>
+<h4 id="2-output-streaming-settings">2. Output (Streaming) Settings</h4>
+<p>Navigate to <strong>Settings &gt; Output</strong>. Set the
+<strong>Output Mode</strong> at the top to <strong>Advanced</strong>,
+then select the <strong>Streaming</strong> tab:</p>
+<ul>
+<li><strong>Audio Track:</strong> <code>1</code></li>
+<li><strong>Encoder:</strong> Select <code>NVIDIA NVENC H.264</code> (if
+you have an Nvidia graphics card) or <code>x264</code> (if you are
+relying on your CPU).</li>
+<li><strong>Rate Control:</strong> <code>CBR</code> (Constant Bitrate is
+mandatory for stable live streaming).</li>
+<li><strong>Bitrate:</strong> <code>4000 Kbps to 6000 Kbps</code>
+(Facebook's maximum supported bitrate for 1080p 60fps is 9000 Kbps, but
+6000 Kbps is optimal for viewer compatibility and stability).</li>
+<li><strong>Keyframe Interval:</strong> <code>2</code> (Facebook
+requires a keyframe interval of exactly 2 seconds).</li>
+<li><strong>Preset:</strong> <code>Quality</code> or
+<code>Max Quality</code> (for NVENC) / <code>veryfast</code> or
+<code>faster</code> (for x264).</li>
+<li><strong>Profile:</strong> <code>high</code>.</li>
+</ul>
+<h4 id="3-audio-settings">3. Audio Settings</h4>
+<p>Navigate to <strong>Settings &gt; Audio</strong>:</p>
+<ul>
+<li><strong>Sample Rate:</strong> <code>44.1 kHz</code> or
+<code>48 kHz</code>.</li>
+<li><strong>Audio Bitrate (under the Output &gt; Audio tab):</strong>
+<code>128 Kbps</code> (Facebook's maximum supported audio bitrate).</li>
+</ul>
+<hr />
+<h3 id="hardware-and-bandwidth-requirements">Hardware and Bandwidth
+Requirements</h3>
+<p>To maintain a smooth 1080p 60fps stream without dropped frames, your
+system and network must meet the following benchmarks:</p>
+<ul>
+<li><strong>Upload Speed:</strong> A minimum upload speed of <strong>10
+Mbps</strong> is recommended. Your stream bitrate of 6000 Kbps (6 Mbps)
+requires headroom for game traffic and background processes.</li>
+<li><strong>Connection Type:</strong> Always use a wired Ethernet
+connection rather than Wi-Fi to prevent bitrate fluctuations and packet
+loss.</li>
+<li><strong>Hardware:</strong> A dedicated GPU (Nvidia GTX 1660/RTX
+series or equivalent) or a multi-core processor (Intel i7/AMD Ryzen 7 or
+higher) to handle simultaneous gaming and video encoding.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

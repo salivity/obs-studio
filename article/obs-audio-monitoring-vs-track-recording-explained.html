@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Audio Monitoring vs Track Recording Explained - obs-studio</title>
+    <meta name="description" content="OBS Studio separates audio monitoring from track recording assignments in its Advanced Audio Properties matrix because local listening and destination encoding serve entirely different functional purposes. While audio monitoring controls what the creator">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-audio-monitoring-vs-track-recording-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Audio Monitoring vs Track Recording Explained - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-audio-monitoring-vs-track-recording-explained" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="OBS Studio separates audio monitoring from track recording assignments in its Advanced Audio Properties matrix because local listening and destination encoding serve entirely different functional purposes. While audio monitoring controls what the creator" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-audio-monitoring-vs-track-recording-explained">OBS Audio
+Monitoring vs Track Recording Explained</h1>
+<p>OBS Studio separates audio monitoring from track recording
+assignments in its Advanced Audio Properties matrix because local
+listening and destination encoding serve entirely different functional
+purposes. While audio monitoring controls what the creator hears in real
+time through their headphones, track assignments determine how audio is
+routed, mixed, and saved to the live stream or multitrack recording
+files. Decoupling these systems prevents audio feedback loops, enables
+flexible post-production workflows, and allows creators to independently
+customize what they hear versus what their audience hears.</p>
+<h3 id="local-playback-vs-final-output-delivery">Local Playback vs.
+Final Output Delivery</h3>
+<p>Audio monitoring is purely a local utility. When you set an audio
+source to "Monitor and Output" or "Monitor Only," OBS routes that sound
+directly to the monitoring device defined in your global settings
+(typically your headphones). This ensures you can verify audio fidelity,
+listen to scene transitions, or keep tabs on media playback.</p>
+<p>In contrast, the numbered Tracks (1 through 6) in the matrix dictate
+where audio is routed for external delivery. Track 1 is commonly
+designated as the primary mix sent to a live broadcast on platforms like
+Twitch or YouTube, while Tracks 2 through 6 are typically reserved for
+multitrack recording. Because the end listener is completely
+different—the creator versus the audience—OBS manages these pipelines
+separately.</p>
+<h3 id="prevention-of-audio-echo-and-feedback-loops">Prevention of Audio
+Echo and Feedback Loops</h3>
+<p>If monitoring and track assignments were locked together, audio
+feedback loops would be frequent and difficult to troubleshoot. For
+example, if a creator captures their default desktop audio and
+simultaneously monitors an alert through that same desktop device, a
+combined system would re-capture the monitored sound, creating an
+infinite echo.</p>
+<p>By isolating monitoring from the track matrix, OBS allows you to send
+an audio source directly to a designated physical monitoring device
+without automatically re-injecting it into the stream or recording
+tracks.</p>
+<h3 id="multitrack-post-production-flexibility">Multitrack
+Post-Production Flexibility</h3>
+<p>Video editors require isolated audio stems to balance levels, remove
+unwanted noises, or eliminate background music during post-production.
+In OBS, the 1–6 matrix allows a creator to map:</p>
+<ul>
+<li><strong>Track 1:</strong> Full stereo master mix (Microphone + Game
++ Voice Chat)</li>
+<li><strong>Track 2:</strong> Isolated Microphone</li>
+<li><strong>Track 3:</strong> Isolated Game Sound</li>
+<li><strong>Track 4:</strong> Isolated Discord or Voice Chat</li>
+</ul>
+<p>Because this matrix is separated from audio monitoring, your
+post-production track layout remains intact regardless of whether you
+want to hear a specific source in your headphones during the live
+session.</p>
+<h3 id="the-mix-minus-and-secret-audio-advantage">The Mix-Minus and
+"Secret Audio" Advantage</h3>
+<p>Separating these controls gives creators the ability to run a
+"mix-minus" setup directly within the software:</p>
+<ul>
+<li><strong>Monitor Only (Mute Output):</strong> Allows the streamer to
+hear audio that the stream cannot, such as a musical metronome, private
+producer cues, or audio cues from a capture card that is already being
+handled elsewhere.</li>
+<li><strong>Output Only (Monitor Off):</strong> Allows the audience to
+hear an audio source while sparing the streamer from hearing it. This is
+useful for desktop audio the creator can already hear natively outside
+OBS, preventing double-audio in the creator's ears.</li>
+</ul>
+<p>By treating real-time monitoring and output routing as distinct
+operations, OBS Studio gives creators complete control over their
+acoustic environment without compromising the final recorded or
+broadcasted product.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCIe Bandwidth Limits for 4K Capture Cards in OBS - obs-studio</title>
+    <meta name="description" content="Installing four dual-channel 4K capture cards into a single production PC allows for the simultaneous ingestion of up to eight 4K video feeds into OBS Studio. However, transferring this immense volume of uncompressed video pushes host systems to their li">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/pc-ie-bandwidth-limits-for-4-k-capture-cards-in-obs">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="PCIe Bandwidth Limits for 4K Capture Cards in OBS - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/pc-ie-bandwidth-limits-for-4-k-capture-cards-in-obs" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Installing four dual-channel 4K capture cards into a single production PC allows for the simultaneous ingestion of up to eight 4K video feeds into OBS Studio. However, transferring this immense volume of uncompressed video pushes host systems to their li" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="pcie-bandwidth-limits-for-4k-capture-cards-in-obs">PCIe
+Bandwidth Limits for 4K Capture Cards in OBS</h1>
+<p>Installing four dual-channel 4K capture cards into a single
+production PC allows for the simultaneous ingestion of up to eight 4K
+video feeds into OBS Studio. However, transferring this immense volume
+of uncompressed video pushes host systems to their limits. When the
+available PCIe lane bandwidth is saturated, the system encounters severe
+bottlenecks resulting in dropped capture frames, GPU rendering lag in
+OBS Studio, audio/video desynchronization, and full driver crashes.</p>
+<h3 id="calculating-the-pcie-data-load">Calculating the PCIe Data
+Load</h3>
+<p>Capture cards do not pass compressed video to OBS Studio; they ingest
+video over HDMI or SDI, decode the signal, and stream raw, uncompressed
+frames directly to system memory (RAM) via Direct Memory Access
+(DMA).</p>
+<p>A single 4K (3840x2160) stream at 60 frames per second using standard
+8-bit YUY2 (4:2:2 chroma subsampling) requires approximately 8 Gbps (1
+GB/s) of continuous throughput. If eight 4K60 inputs are active
+simultaneously across four dual-channel cards, the system must process
+at least 8 GB/s (64 Gbps) of sustained data. Using RGB or 4:4:4 formats
+increases this requirement to over 12 GB/s.</p>
+<p>To accommodate this data rate without packet loss, a dual-channel 4K
+capture card typically requires a physical PCIe 3.0 x4 (approx. 3.94
+GB/s theoretical limit) or PCIe 3.0 x8 slot. Four of these cards require
+a combined minimum of 16 dedicated PCIe 3.0 lanes solely for video
+ingestion.</p>
+<h3 id="the-motherboard-and-chipset-bottleneck">The Motherboard and
+Chipset Bottleneck</h3>
+<p>Most mainstream desktop platforms (such as Intel Core LGA 1700 or AMD
+Ryzen AM5) provide only 16 to 24 PCIe lanes directly connected to the
+CPU. The primary PCIe slot typically takes 16 lanes for the discrete
+graphics card. The remaining expansion slots route their signals through
+the motherboard chipset, which connects to the CPU via a narrow uplink
+(such as Intel DMI 4.0 x8 or an AMD PCIe 4.0 x4 equivalent).</p>
+<p>Placing four dual-channel capture cards on a consumer motherboard
+triggers two major points of failure:</p>
+<ol type="1">
+<li><strong>Chipset Saturation:</strong> Multiple cards routed through
+secondary slots will exhaust the chipset-to-CPU uplink. Once this
+pipeline saturates, data packets are discarded at the controller level,
+causing capture feeds to freeze, stutter, or disconnect entirely.</li>
+<li><strong>GPU Starvation:</strong> If the motherboard splits the
+primary CPU lanes to feed lower expansion slots (lane bifurcation), the
+discrete GPU may be forced down to PCIe x8 or x4 operation, constraining
+its ability to render the OBS compositing canvas.</li>
+</ol>
+<h3 id="impact-on-obs-studio-performance">Impact on OBS Studio
+Performance</h3>
+<p>When PCIe bandwidth is exhausted, the breakdown in OBS Studio
+manifests in several distinct ways:</p>
+<ul>
+<li><strong>Source-Level Frame Dropping:</strong> Video frames are
+dropped across the PCIe bus before they ever reach the OBS application
+layer. This does not trigger an "encoder overloaded" warning in OBS,
+making it harder to diagnose because the source simply appears choppy or
+frozen.</li>
+<li><strong>Rendering Lag:</strong> OBS uses the GPU to composite all
+sources, apply filters, and scale scenes before encoding. A saturated
+PCIe bus delays texture transfers to the GPU, causing the OBS render
+loop to miss timing deadlines. This results in high rendering lag
+metrics in the OBS Stats dock.</li>
+<li><strong>Audio Drift and Desynchronization:</strong> Audio packets
+travel alongside the uncompressed video payload. Saturated buffers cause
+packet loss, which leads to drifting audio that progressively falls out
+of sync with the video feeds over long broadcasts.</li>
+<li><strong>Driver Timeouts:</strong> When PCIe queues back up, capture
+card drivers fail to receive expected interrupts and report hardware
+timeouts to the operating system, causing blue-screen errors (BSOD) or
+forced driver restarts.</li>
+</ul>
+<h3 id="hardware-requirements-for-stable-operation">Hardware
+Requirements for Stable Operation</h3>
+<p>Running four dual-channel 4K capture cards in OBS Studio requires an
+enterprise or high-end desktop (HEDT) platform, such as AMD Ryzen
+Threadripper or Intel Xeon Workstation. These platforms offer 64 to 128
+native PCIe lanes directly from the processor, bypassing chipset
+bottlenecks and ensuring each capture card and GPU maintains dedicated,
+full-bandwidth lanes. Additionally, configuring OBS capture formats to
+use NV12 (4:2:0 subsampling) instead of YUY2 reduces per-stream
+bandwidth consumption by roughly 25%, helping maintain stable bus
+throughput.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

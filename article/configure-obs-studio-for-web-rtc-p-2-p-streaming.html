@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configure OBS Studio for WebRTC P2P Streaming - obs-studio</title>
+    <meta name="description" content="This guide provides a straightforward walk-through on how to configure OBS Studio to stream natively to peer-to-peer (P2P) WebRTC platforms. By utilizing the WebRTC HTTP Ingestion Protocol (WHIP), which is natively integrated into modern versions of OBS">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/configure-obs-studio-for-web-rtc-p-2-p-streaming">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Configure OBS Studio for WebRTC P2P Streaming - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/configure-obs-studio-for-web-rtc-p-2-p-streaming" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide provides a straightforward walk-through on how to configure OBS Studio to stream natively to peer-to-peer (P2P) WebRTC platforms. By utilizing the WebRTC HTTP Ingestion Protocol (WHIP), which is natively integrated into modern versions of OBS" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="configure-obs-studio-for-webrtc-p2p-streaming">Configure OBS
+Studio for WebRTC P2P Streaming</h1>
+<p>This guide provides a straightforward walk-through on how to
+configure OBS Studio to stream natively to peer-to-peer (P2P) WebRTC
+platforms. By utilizing the WebRTC HTTP Ingestion Protocol (WHIP), which
+is natively integrated into modern versions of OBS Studio, you can
+achieve sub-second latency streaming without relying on third-party
+plugins or external RTMP-to-WebRTC converters.</p>
+<h2 id="step-1-retrieve-whip-credentials">Step 1: Retrieve WHIP
+Credentials</h2>
+<p>To establish a WebRTC connection, OBS Studio needs to target a WHIP
+endpoint provided by your destination platform.</p>
+<ol type="1">
+<li>Log in to your target WebRTC streaming platform.</li>
+<li>Navigate to the streaming setup, developer console, or channel
+settings.</li>
+<li>Locate and copy the <strong>WHIP Endpoint URL</strong> (typically
+begins with <code>https://</code>).</li>
+<li>Copy the <strong>Bearer Token</strong> or Stream Key if your
+platform requires authentication.</li>
+</ol>
+<h2 id="step-2-configure-obs-stream-settings">Step 2: Configure OBS
+Stream Settings</h2>
+<p>Once you have your credentials, you must configure OBS Studio to use
+the WHIP protocol.</p>
+<ol type="1">
+<li>Launch OBS Studio (ensure you are using version 30.0 or later).</li>
+<li>Click <strong>Settings</strong> in the bottom-right control
+panel.</li>
+<li>Select the <strong>Stream</strong> tab from the left-hand menu.</li>
+<li>Click the <strong>Service</strong> dropdown menu and select
+<strong>WHIP</strong>.</li>
+<li>In the <strong>Server</strong> field, paste the WHIP Endpoint URL
+you retrieved in Step 1.</li>
+<li>In the <strong>Bearer Token</strong> field, paste your platform’s
+stream key or token.</li>
+<li>Click <strong>Apply</strong>.</li>
+</ol>
+<h2 id="step-3-optimize-encoder-settings-for-webrtc">Step 3: Optimize
+Encoder Settings for WebRTC</h2>
+<p>WebRTC is designed for real-time communication, which requires
+specific encoder settings to prevent buffering and packet loss.</p>
+<ol type="1">
+<li>In the Settings window, navigate to the <strong>Output</strong>
+tab.</li>
+<li>Change the <strong>Output Mode</strong> dropdown at the top to
+<strong>Advanced</strong>.</li>
+<li>Under the <strong>Streaming</strong> tab, select your preferred
+video encoder (NVIDIA NVENC, AMD AMF, or x264).</li>
+<li>Set the <strong>Rate Control</strong> to <strong>CBR</strong>
+(Constant Bitrate).</li>
+<li>Set the <strong>Keyframe Interval</strong> to <strong>1s</strong> or
+<strong>2s</strong> (do not leave it on 0/Auto).</li>
+<li>Set the <strong>Preset</strong> to <strong>Low-Latency</strong> or
+<strong>Max Performance</strong>.</li>
+<li>Change <strong>Max B-frames</strong> to <strong>0</strong>. WebRTC
+does not support B-frames, and disabling them is critical for achieving
+sub-second latency.</li>
+</ol>
+<h2 id="step-4-configure-audio-settings">Step 4: Configure Audio
+Settings</h2>
+<p>WebRTC platforms require highly compatible audio configurations.</p>
+<ol type="1">
+<li>Navigate to the <strong>Audio</strong> tab in Settings.</li>
+<li>Ensure the <strong>Sample Rate</strong> is set to <strong>48
+kHz</strong>.</li>
+<li>If your platform supports Opus audio encoding, ensure your audio
+bitrate in the <strong>Output</strong> &gt; <strong>Audio</strong> tab
+is set between <strong>96 Kbps</strong> and <strong>160 Kbps</strong>
+for optimal performance.</li>
+</ol>
+<h2 id="step-5-start-streaming">Step 5: Start Streaming</h2>
+<p>Click <strong>Apply</strong> and then <strong>OK</strong> to close
+the Settings menu. Click <strong>Start Streaming</strong> on the main
+OBS interface. Your video and audio feeds will now stream natively via
+WebRTC directly to the peer-to-peer network interface of your
+destination platform.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Use OBS Studio Bind to IP to Fix Connection Issues - obs-studio</title>
+    <meta name="description" content="If you are experiencing dropped frames, disconnected streams, or unstable connection issues while streaming with OBS Studio, configuring the network "Bind to IP" feature can often resolve these problems. This guide provides a straightforward, step-by-ste">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-use-obs-studio-bind-to-ip-to-fix-connection-issues">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Use OBS Studio Bind to IP to Fix Connection Issues - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-use-obs-studio-bind-to-ip-to-fix-connection-issues" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="If you are experiencing dropped frames, disconnected streams, or unstable connection issues while streaming with OBS Studio, configuring the network "Bind to IP" feature can often resolve these problems. This guide provides a straightforward, step-by-ste" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-use-obs-studio-bind-to-ip-to-fix-connection-issues">How
+to Use OBS Studio Bind to IP to Fix Connection Issues</h1>
+<p>If you are experiencing dropped frames, disconnected streams, or
+unstable connection issues while streaming with OBS Studio, configuring
+the network "Bind to IP" feature can often resolve these problems. This
+guide provides a straightforward, step-by-step walkthrough on how to
+locate, configure, and use the Bind to IP setting in OBS Studio to force
+your stream through a specific network adapter, ensuring a stable and
+reliable broadcast.</p>
+<h3 id="why-use-the-bind-to-ip-feature">Why Use the Bind to IP
+Feature?</h3>
+<p>By default, OBS Studio is set to "Default," meaning it lets Windows
+decide which network connection to use for streaming. If your computer
+is connected to multiple networks (such as an Ethernet cable and Wi-Fi
+simultaneously), has active virtual adapters from VPNs, or uses
+virtualization software, OBS can get confused. This confusion leads to
+connection drops, high latency, and dropped frames. Binding OBS to a
+specific, local IP address forces the software to use your reliable,
+physical internet connection (preferably your wired Ethernet
+adapter).</p>
+<h3
+id="step-by-step-how-to-bind-obs-studio-to-a-specific-ip">Step-by-Step:
+How to Bind OBS Studio to a Specific IP</h3>
+<p>Follow these steps to configure the Bind to IP setting:</p>
+<ol type="1">
+<li><p><strong>Find Your Local IP Address:</strong></p>
+<ul>
+<li>On Windows, open the <strong>Start Menu</strong>, type
+<code>cmd</code>, and press Enter to open the Command Prompt.</li>
+<li>Type <code>ipconfig</code> and press Enter.</li>
+<li>Look for your active network adapter (usually named "Ethernet
+adapter" or "Wireless LAN adapter").</li>
+<li>Note down the <strong>IPv4 Address</strong> associated with that
+adapter (it usually looks like <code>192.168.1.X</code> or
+<code>10.0.0.X</code>).</li>
+</ul></li>
+<li><p><strong>Open OBS Network Settings:</strong></p>
+<ul>
+<li>Launch <strong>OBS Studio</strong>.</li>
+<li>Click on <strong>Settings</strong> in the bottom-right corner (or go
+to <strong>File</strong> &gt; <strong>Settings</strong>).</li>
+<li>In the left-hand menu, click on the <strong>Advanced</strong>
+tab.</li>
+</ul></li>
+<li><p><strong>Configure the Bind to IP Setting:</strong></p>
+<ul>
+<li>Scroll down to the <strong>Network</strong> section.</li>
+<li>Locate the dropdown menu next to <strong>Bind to IP</strong>.</li>
+<li>By default, this is set to <em>Default</em>. Click the dropdown and
+select the specific IPv4 address of your preferred network adapter that
+you noted in Step 1.</li>
+</ul></li>
+<li><p><strong>Enable Additional Network Optimizations
+(Recommended):</strong></p>
+<ul>
+<li>While in the Network section, check the box for <strong>Enable
+network optimizations</strong>. This uses OBS's updated network code to
+improve throughput.</li>
+<li>If your connection is highly unstable, you can also check
+<strong>Dynamically change bitrate to manage congestion</strong>. This
+prevents your stream from disconnecting by lowering your video quality
+instead of dropping frames when your internet bandwidth dips.</li>
+</ul></li>
+<li><p><strong>Save and Test:</strong></p>
+<ul>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong> to save
+your changes.</li>
+<li>Restart OBS Studio.</li>
+<li>Start a test stream to verify if your connection stability has
+improved.</li>
+</ul></li>
+</ol>
+<h3 id="troubleshooting-bind-to-ip-issues">Troubleshooting Bind to IP
+Issues</h3>
+<p>If you bind OBS to a specific IP address and later lose internet
+connection on that specific adapter, OBS will not be able to connect to
+any streaming service. If you change network environments (such as
+moving your laptop to a different router or switching from Ethernet to
+Wi-Fi), your local IP address will change. If OBS fails to connect after
+a network change, return to the <strong>Advanced Settings</strong> and
+update the <strong>Bind to IP</strong> dropdown to your new local IP
+address, or temporarily revert it to <strong>Default</strong>.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

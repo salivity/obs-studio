@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automate OBS Studio Profile Switching via Bash CLI - obs-studio</title>
+    <meta name="description" content="This guide explains how to automate profile and scene switching in OBS Studio using a custom Bash script and command-line interface (CLI) tools. By leveraging the built-in OBS WebSocket server and a lightweight terminal client, you can trigger seamless s">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/automate-obs-studio-profile-switching-via-bash-cli">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Automate OBS Studio Profile Switching via Bash CLI - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/automate-obs-studio-profile-switching-via-bash-cli" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide explains how to automate profile and scene switching in OBS Studio using a custom Bash script and command-line interface (CLI) tools. By leveraging the built-in OBS WebSocket server and a lightweight terminal client, you can trigger seamless s" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="automate-obs-studio-profile-switching-via-bash-cli">Automate OBS
+Studio Profile Switching via Bash CLI</h1>
+<p>This guide explains how to automate profile and scene switching in
+OBS Studio using a custom Bash script and command-line interface (CLI)
+tools. By leveraging the built-in OBS WebSocket server and a lightweight
+terminal client, you can trigger seamless stream configuration changes
+automatically based on system events, hotkeys, or schedules.</p>
+<h2 id="1-enable-obs-websocket-server">1. Enable OBS WebSocket
+Server</h2>
+<p>To allow a command-line tool to communicate with OBS Studio, you must
+enable its built-in WebSocket server.</p>
+<ol type="1">
+<li>Open <strong>OBS Studio</strong>.</li>
+<li>Navigate to <strong>Tools</strong> &gt; <strong>WebSocket Server
+Settings</strong> from the top menu.</li>
+<li>Check the box to <strong>Enable WebSocket Server</strong>.</li>
+<li>Note the <strong>Server Port</strong> (default is <code>4455</code>)
+and click <strong>Show Connect Info</strong> to copy or set your
+<strong>Server Password</strong>.</li>
+</ol>
+<h2 id="2-install-the-obs-command-line-tool">2. Install the OBS
+Command-Line Tool</h2>
+<p>To send commands from your Bash script to OBS, you need a CLI
+utility. The open-source tool <code>obs-cmd</code> is designed
+specifically for OBS WebSocket v5.</p>
+<ul>
+<li><strong>macOS (via Homebrew):</strong>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install obs-cmd</span></code></pre></div></li>
+<li><strong>Linux / Windows (WSL):</strong> Download the latest binary
+for your architecture from the official <code>obs-cmd</code> GitHub
+releases page, extract it, and place it in your system's PATH (e.g.,
+<code>/usr/local/bin</code>).</li>
+</ul>
+<h2 id="3-write-the-custom-bash-script">3. Write the Custom Bash
+Script</h2>
+<p>Create a new script file, make it executable, and configure it to
+connect to your OBS instance to switch profiles.</p>
+<ol type="1">
+<li><p>Create the script file:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">touch</span> switch_obs.sh</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> +x switch_obs.sh</span></code></pre></div></li>
+<li><p>Open the file in a text editor and add the following code:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Configuration - Match these with your OBS settings</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="va">OBS_HOST</span><span class="op">=</span><span class="st">&quot;localhost&quot;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="va">OBS_PORT</span><span class="op">=</span><span class="st">&quot;4455&quot;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="va">OBS_PASSWORD</span><span class="op">=</span><span class="st">&quot;your_actual_password_here&quot;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Target Profile and Scene names</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="va">TARGET_PROFILE</span><span class="op">=</span><span class="st">&quot;Gaming_Setup&quot;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="va">TARGET_SCENE</span><span class="op">=</span><span class="st">&quot;In-Game Action&quot;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Helper variable for the command</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="va">OBS_CLI</span><span class="op">=</span><span class="st">&quot;obs-cmd -w </span><span class="va">$OBS_HOST</span><span class="st">:</span><span class="va">$OBS_PORT</span><span class="st"> -p </span><span class="va">$OBS_PASSWORD</span><span class="st">&quot;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;Connecting to OBS...&quot;</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Switch the Profile</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;Switching profile to: </span><span class="va">$TARGET_PROFILE</span><span class="st">&quot;</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="va">$OBS_CLI</span> profile switch <span class="st">&quot;</span><span class="va">$TARGET_PROFILE</span><span class="st">&quot;</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Pause briefly to allow the profile swap to load assets</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="fu">sleep</span> 1.5</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Switch to the desired Scene within that profile</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;Switching scene to: </span><span class="va">$TARGET_SCENE</span><span class="st">&quot;</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="va">$OBS_CLI</span> scene switch <span class="st">&quot;</span><span class="va">$TARGET_SCENE</span><span class="st">&quot;</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;OBS configuration updated successfully.&quot;</span></span></code></pre></div></li>
+</ol>
+<h2 id="4-run-and-test-the-script">4. Run and Test the Script</h2>
+<p>Ensure OBS Studio is running, then execute the script from your
+terminal:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./switch_obs.sh</span></span></code></pre></div>
+<p>If configured correctly, OBS Studio will immediately swap to your
+specified profile and transition to the target scene. You can now bind
+this script to keyboard shortcuts, system cron jobs, or trigger it
+automatically when specific applications launch.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

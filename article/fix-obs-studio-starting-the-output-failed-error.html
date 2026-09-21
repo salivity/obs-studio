@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix OBS Studio Starting the Output Failed Error - obs-studio</title>
+    <meta name="description" content="If you encounter the "Starting the output failed. Please check the log for details" error in OBS Studio when trying to stream or record, it is typically caused by issues with your graphics card drivers, misconfigured encoder settings, or a lack of admini">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/fix-obs-studio-starting-the-output-failed-error">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Fix OBS Studio Starting the Output Failed Error - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/fix-obs-studio-starting-the-output-failed-error" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="If you encounter the "Starting the output failed. Please check the log for details" error in OBS Studio when trying to stream or record, it is typically caused by issues with your graphics card drivers, misconfigured encoder settings, or a lack of admini" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="fix-obs-studio-starting-the-output-failed-error">Fix OBS Studio
+Starting the Output Failed Error</h1>
+<p>If you encounter the "Starting the output failed. Please check the
+log for details" error in OBS Studio when trying to stream or record, it
+is typically caused by issues with your graphics card drivers,
+misconfigured encoder settings, or a lack of administrative permissions.
+This article explains the primary causes behind this frustrating error
+and provides direct, step-by-step solutions to get your stream or
+recording running smoothly again.</p>
+<h3 id="update-your-graphics-card-drivers">Update Your Graphics Card
+Drivers</h3>
+<p>The most common cause of this error is an outdated or corrupted
+graphics driver. OBS Studio relies heavily on your GPU's hardware
+encoders (like NVIDIA NVENC or AMD Advanced Media Framework) to compress
+video. If your drivers are out of date, OBS cannot communicate with the
+hardware.</p>
+<ul>
+<li><strong>NVIDIA Users:</strong> Open GeForce Experience and install
+the latest Game Ready or Studio Driver, or download them directly from
+the NVIDIA website.</li>
+<li><strong>AMD Users:</strong> Use the AMD Radeon Software to check for
+and install the latest Adrenalin driver updates.</li>
+<li><strong>Intel Users:</strong> Update your integrated graphics
+drivers using the Intel Driver &amp; Support Assistant.</li>
+</ul>
+<h3 id="change-your-video-encoder-settings">Change Your Video Encoder
+Settings</h3>
+<p>If your graphics card does not support hardware encoding, or if the
+encoder is currently failing, switching to a different encoder can
+bypass the issue.</p>
+<ol type="1">
+<li>Open OBS Studio and go to <strong>Settings</strong> in the bottom
+right corner.</li>
+<li>Click on the <strong>Output</strong> tab in the left sidebar.</li>
+<li>Locate the <strong>Encoder</strong> dropdown menu (under Streaming
+or Recording).</li>
+<li>If it is set to a hardware encoder like <em>NVIDIA NVENC H.264</em>
+or <em>AMD HW H.264</em>, change it to <strong>Software (x264)</strong>.
+This uses your CPU instead of your GPU to encode the video.</li>
+<li>Click <strong>Apply</strong> and then <strong>OK</strong> to test if
+the issue is resolved.</li>
+</ol>
+<h3 id="run-obs-studio-as-an-administrator">Run OBS Studio as an
+Administrator</h3>
+<p>Sometimes, Windows restricts OBS Studio from accessing the necessary
+hardware resources required for encoding. Running the program with
+administrative privileges often resolves these resource conflicts.</p>
+<ol type="1">
+<li>Close OBS Studio completely.</li>
+<li>Right-click on the OBS Studio shortcut icon on your desktop or in
+the Start menu.</li>
+<li>Select <strong>Run as administrator</strong>.</li>
+<li>If this fixes the issue, you can make this permanent by
+right-clicking the shortcut, selecting <strong>Properties</strong>,
+going to the <strong>Compatibility</strong> tab, checking the box for
+<strong>Run this program as an administrator</strong>, and clicking
+<strong>Apply</strong>.</li>
+</ol>
+<h3 id="reinstall-or-update-obs-studio">Reinstall or Update OBS
+Studio</h3>
+<p>Running an outdated version of OBS Studio can lead to compatibility
+issues with newer Windows updates and GPU drivers.</p>
+<ul>
+<li>Go to <strong>Help</strong> in the top menu of OBS and click
+<strong>Check for updates</strong> to install the latest version.</li>
+<li>If the issue persists, perform a clean reinstallation of the
+software by downloading the latest installer from the official OBS
+Studio website.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

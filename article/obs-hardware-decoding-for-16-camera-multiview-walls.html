@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Hardware Decoding for 16-Camera Multiview Walls - obs-studio</title>
+    <meta name="description" content="Managing a 16-camera multiview layout on a secondary display in OBS Studio requires balancing GPU hardware decoding limits with real-time rendering pipelines. This article explains how OBS handles the ingest, decoding, compositing, and output of multiple">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-hardware-decoding-for-16-camera-multiview-walls">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Hardware Decoding for 16-Camera Multiview Walls - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-hardware-decoding-for-16-camera-multiview-walls" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Managing a 16-camera multiview layout on a secondary display in OBS Studio requires balancing GPU hardware decoding limits with real-time rendering pipelines. This article explains how OBS handles the ingest, decoding, compositing, and output of multiple" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-hardware-decoding-for-16-camera-multiview-walls">OBS
+Hardware Decoding for 16-Camera Multiview Walls</h1>
+<p>Managing a 16-camera multiview layout on a secondary display in OBS
+Studio requires balancing GPU hardware decoding limits with real-time
+rendering pipelines. This article explains how OBS handles the ingest,
+decoding, compositing, and output of multiple high-density video feeds,
+highlighting how GPU resources are allocated across hardware decoder
+limits, the internal compositing canvas, and secondary monitor
+projections to maintain smooth performance without dropping frames.</p>
+<h3 id="video-ingest-and-dedicated-hardware-decoders">Video Ingest and
+Dedicated Hardware Decoders</h3>
+<p>When handling 16 concurrent video inputs (such as RTSP, SRT, or NDI
+streams), OBS Studio offloads the decoding process to dedicated video
+decoding chips (ASICs), such as NVIDIA’s NVDEC, Intel Quick Sync Video
+(QSV), or AMD AMF. However, hardware decoders possess strict
+architectural limits on concurrent streams and total pixel
+throughput.</p>
+<p>Consumer GPUs often feature a cap on simultaneous
+hardware-accelerated decode sessions. If 16 streams exceed the maximum
+session limit of the GPU's dedicated decoder, OBS falls back to
+multi-threaded CPU software decoding (via FFmpeg/libavcodec) for the
+remaining feeds. To maintain full hardware acceleration across all 16
+feeds, operators typically feed OBS lower-resolution sub-streams (e.g.,
+720p or 1080p at reduced bitrates) rather than raw 4K feeds, ensuring
+the total throughput remains well within the decoder's aggregate
+bandwidth limits.</p>
+<h3 id="unified-gpu-canvas-compositing">Unified GPU Canvas
+Compositing</h3>
+<p>OBS does not render 16 individual video players to your secondary
+display. Instead, it relies on its internal graphics subsystem
+(<code>libobs</code>), which interacts directly with the primary
+graphics API (Direct3D 11 on Windows or Metal on macOS).</p>
+<ol type="1">
+<li><strong>Frame Buffering and Color Conversion:</strong> Each decoded
+video frame is uploaded directly to GPU memory (VRAM) as a texture.
+Color space conversion (typically from YUV420 to RGB) occurs via GPU
+pixel shaders rather than the CPU.</li>
+<li><strong>Scene Canvas Assembly:</strong> OBS treats the Multiview
+window as a single rendering target. A custom vertex and pixel shader
+pipeline arranges the 16 video textures into a single grid layout on a
+single graphics canvas.</li>
+<li><strong>Downscaling at the Shader Level:</strong> High-resolution
+inputs are downsampled directly on the GPU using bilinear or bicubic
+filtering to fit the multiview grid tiles, minimizing memory bandwidth
+bottlenecks.</li>
+</ol>
+<h3 id="secondary-display-projection-architecture">Secondary Display
+Projection Architecture</h3>
+<p>To output the multiview grid to a secondary display, OBS utilizes an
+asynchronous render thread connected to a native window swap chain. The
+Multiview projector shares the exact same GPU context and VRAM textures
+that the main OBS rendering pipeline uses.</p>
+<p>Because the multiview system taps directly into the
+already-composited textures via shared memory pointers, rendering the
+second display incurs virtually zero additional decoding penalty. The
+secondary display simply reads the final composited frame from the GPU's
+back buffer and presents it via the display output pipeline.</p>
+<h3 id="mitigating-hardware-overload">Mitigating Hardware Overload</h3>
+<p>Running 16 simultaneous feeds can saturate PCIe bus bandwidth and
+VRAM allocation. OBS mitigates this load by:</p>
+<ul>
+<li><strong>Frame Synchronization:</strong> Incoming network feeds are
+synchronized against the project's base framerate canvas, preventing the
+render engine from over-polling frames faster than the secondary
+monitor's refresh rate.</li>
+<li><strong>Stream Multiplexing:</strong> By using low-overhead ingest
+protocols and disabling preview rendering on minimized scenes, OBS
+ensures that secondary projector pipelines receive high GPU priority,
+keeping display latency low and preventing UI stutters.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OBS Studio High GPU Priority in Registry - obs-studio</title>
+    <meta name="description" content="This guide explains how to locate and inspect the specific Windows Registry keys that indicate whether OBS Studio has been granted High GPU Priority and high-performance graphics scheduling. Windows manages GPU prioritization through DirectX settings, th">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/verify-obs-studio-high-gpu-priority-in-registry">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Verify OBS Studio High GPU Priority in Registry - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/verify-obs-studio-high-gpu-priority-in-registry" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide explains how to locate and inspect the specific Windows Registry keys that indicate whether OBS Studio has been granted High GPU Priority and high-performance graphics scheduling. Windows manages GPU prioritization through DirectX settings, th" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="verify-obs-studio-high-gpu-priority-in-registry">Verify OBS
+Studio High GPU Priority in Registry</h1>
+<p>This guide explains how to locate and inspect the specific Windows
+Registry keys that indicate whether OBS Studio has been granted High GPU
+Priority and high-performance graphics scheduling. Windows manages GPU
+prioritization through DirectX settings, the Multimedia Class Scheduler
+Service (MMCSS), and the Graphics Performance preference subsystem.
+Examining these keys allows you to verify that your system is actively
+allocating prioritized hardware resources to <code>obs64.exe</code>.</p>
+<hr />
+<h3 id="1-directx-user-gpu-preferences-key">1. DirectX User GPU
+Preferences Key</h3>
+<p>The primary registry path Windows uses to enforce per-application GPU
+performance priority (such as selecting the high-performance discrete
+GPU and granting elevated power state privileges) is located in the user
+DirectX configuration:</p>
+<ul>
+<li><strong>Registry Path:</strong><br />
+<code>HKEY_CURRENT_USER\Software\Microsoft\DirectX\UserGpuPreferences</code></li>
+<li><strong>Value Name:</strong><br />
+The full absolute file path to the OBS executable, typically:<br />
+<code>C:\Program Files\obs-studio\bin\64bit\obs64.exe</code></li>
+<li><strong>Data Value:</strong><br />
+Look for a string value containing <code>GpuPreference=2;</code>.
+<ul>
+<li><code>GpuPreference=0</code>: Let Windows decide (Default)</li>
+<li><code>GpuPreference=1</code>: Power saving (Integrated GPU)</li>
+<li><code>GpuPreference=2</code>: High performance (Discrete GPU /
+Maximum Allocation)</li>
+</ul></li>
+</ul>
+<p>If this value is set to <code>2</code>, Windows has registered the
+application to run under the highest performance GPU profile.</p>
+<hr />
+<h3 id="2-mmcss-system-profile-task-keys">2. MMCSS System Profile Task
+Keys</h3>
+<p>Windows uses the Multimedia Class Scheduler Service (MMCSS) to
+control thread execution and GPU resource priority for multimedia and
+capture workloads. When OBS requests elevated execution priority via the
+Windows graphics subsystem, the scheduling behavior is governed under
+this key:</p>
+<ul>
+<li><strong>Registry Path:</strong><br />
+<code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games</code></li>
+<li><strong>Relevant Values:</strong>
+<ul>
+<li><strong><code>GPU Priority</code></strong>: A <code>DWORD</code>
+value typically set between <code>8</code> and <code>18</code>
+(hexadecimal <code>0x8</code> to <code>0x12</code>). A value of
+<code>8</code> is standard for high-priority rendering tasks.</li>
+<li><strong><code>Priority</code></strong>: A <code>DWORD</code>
+defining thread priority (typically <code>6</code>).</li>
+<li><strong><code>Scheduling Category</code></strong>: A
+<code>String</code> value set to <code>High</code>.</li>
+<li><strong><code>SFIO Priority</code></strong>: A <code>String</code>
+set to <code>High</code>.</li>
+</ul></li>
+</ul>
+<p>While this path applies globally to tasks registered in the
+multimedia scheduling group, it defines the GPU priority ceiling OBS
+Studio accesses when run as an administrator.</p>
+<hr />
+<h3 id="3-windows-game-configuration-store">3. Windows Game
+Configuration Store</h3>
+<p>Per-application behavior regarding background recording, focus
+assistance, and Windows Game Mode hooks (which grant elevated foreground
+GPU priority) is registered under the GameConfigStore:</p>
+<ul>
+<li><strong>Registry Path:</strong><br />
+<code>HKEY_CURRENT_USER\System\GameConfigStore\Children</code></li>
+<li><strong>Verification:</strong><br />
+Subkeys under <code>Children</code> are structured by unique GUIDs.
+Locate the GUID key containing:
+<ul>
+<li><strong><code>MatchedExeFullPath</code></strong>: Set to the path of
+<code>obs64.exe</code>.</li>
+<li><strong><code>Flags</code></strong>: A <code>DWORD</code>
+determining how the Windows Desktop Window Manager (DWM) treats the
+application during scene capture and frame queuing.</li>
+</ul></li>
+</ul>
+<hr />
+<h3 id="runtime-verification-note">Runtime Verification Note</h3>
+<p>OBS Studio utilizes the
+<code>D3DKMTSetContextSchedulingPriority</code> API to dynamically
+elevate its DirectX 11 rendering context to high priority at runtime.
+Because this is a dynamic context request created by the graphics driver
+when OBS launches with administrator privileges, it does not persist as
+a standalone static executable switch in the registry, but relies on the
+underlying configurations in <code>UserGpuPreferences</code> and the
+<code>SystemProfile\Tasks</code> hierarchy to succeed.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

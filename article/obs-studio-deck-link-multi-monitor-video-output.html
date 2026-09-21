@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio DeckLink Multi-Monitor Video Output - obs-studio</title>
+    <meta name="description" content="This article explains how to configure OBS Studio and Blackmagic Design DeckLink hardware to route separate, discrete video feeds to multiple auxiliary monitors or external displays. Achieving independent auxiliary outputs requires configuring DeckLink S">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-deck-link-multi-monitor-video-output">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio DeckLink Multi-Monitor Video Output - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-deck-link-multi-monitor-video-output" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how to configure OBS Studio and Blackmagic Design DeckLink hardware to route separate, discrete video feeds to multiple auxiliary monitors or external displays. Achieving independent auxiliary outputs requires configuring DeckLink S" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-decklink-multi-monitor-video-output">OBS Studio
+DeckLink Multi-Monitor Video Output</h1>
+<p>This article explains how to configure OBS Studio and Blackmagic
+Design DeckLink hardware to route separate, discrete video feeds to
+multiple auxiliary monitors or external displays. Achieving independent
+auxiliary outputs requires configuring DeckLink SDI/HDMI ports for
+playback, setting up output filters or dedicated OBS tools per channel,
+and mapping individual scenes or sources to specific hardware
+outputs.</p>
+<h3 id="prerequisites-and-hardware-preparation">Prerequisites and
+Hardware Preparation</h3>
+<p>To send independent video feeds from a single computer running OBS
+Studio, you need a multi-channel DeckLink capture and playback card,
+such as the DeckLink Duo 2 (up to 4 channels) or DeckLink Quad 2 (up to
+8 channels).</p>
+<ol type="1">
+<li><strong>Install Drivers</strong>: Download and install the latest
+Blackmagic Desktop Video software.</li>
+<li><strong>Configure Port Mapping</strong>: Open the Blackmagic Desktop
+Video Setup utility. By default, multi-channel cards often share SDI
+connectors. Group or un-map connector pairs (e.g., mapping SDI 1 and SDI
+2 as independent full-duplex or playback-only ports) to ensure each
+physical port acts as a standalone output channel.</li>
+<li><strong>Format Alignment</strong>: Match the reference clock, frame
+rate, and resolution of each output port to the OBS Studio project
+settings (e.g., 1080p at 59.94 fps) to prevent conversion latency or
+frame tearing.</li>
+</ol>
+<h3 id="native-decklink-output-in-obs-studio">Native DeckLink Output in
+OBS Studio</h3>
+<p>OBS Studio includes native DeckLink output capability accessible via
+<strong>Tools &gt; DeckLink Output</strong>.</p>
+<ul>
+<li><strong>Mode Selection</strong>: This tool allows you to assign a
+DeckLink hardware device to output either the <strong>Program</strong>
+feed or the <strong>Preview</strong> feed.</li>
+<li><strong>Limitations</strong>: The native tool natively controls only
+one hardware output channel at a time. It cannot route arbitrary,
+separate scenes to three or four physical DeckLink outputs
+simultaneously on its own.</li>
+</ul>
+<h3 id="routing-discrete-feeds-using-filters-and-plugins">Routing
+Discrete Feeds Using Filters and Plugins</h3>
+<p>To route distinct video sources—such as a dedicated confidence
+monitor, a clean camera feed, and a presenter timer—to separate DeckLink
+ports, you must use auxiliary tools or source-level filters.</p>
+<h4 id="method-1-the-decklink-source-output-plugin">Method 1: The
+DeckLink Source Output Plugin</h4>
+<p>Third-party plugins, such as the <em>DeckLink Source Output</em>
+filter (built on the DeckLink SDK), provide source-level hardware
+assignment.</p>
+<ol type="1">
+<li>Install the compatible plugin into your OBS Studio plugin
+directory.</li>
+<li>Right-click the specific Scene or Source you want to route (e.g.,
+"Stage Display").</li>
+<li>Select <strong>Filters</strong>, click the <strong>+</strong> (Add)
+icon under Audio/Video Filters, and select <strong>DeckLink
+Output</strong>.</li>
+<li>In the filter settings, select the target DeckLink device port
+(e.g., <em>DeckLink Duo (2)</em>).</li>
+<li>Choose the output format (e.g., 1080p59.94) and click
+<strong>Start</strong>.</li>
+<li>Repeat this process on other distinct sources or scenes, assigning
+each to a different physical DeckLink port (<em>DeckLink Duo (3)</em>,
+<em>DeckLink Duo (4)</em>, etc.).</li>
+</ol>
+<h4 id="method-2-obs-windowed--fullscreen-projectors">Method 2: OBS
+Windowed / Fullscreen Projectors</h4>
+<p>If using DeckLink devices configured with WDM drivers or
+HDMI/DisplayPort auxiliary adapters that appear directly as OS-level
+displays:</p>
+<ol type="1">
+<li>Right-click the desired Scene or Source inside the OBS
+interface.</li>
+<li>Hover over <strong>Fullscreen Projector (Source)</strong> or
+<strong>Windowed Projector (Source)</strong>.</li>
+<li>Choose the auxiliary monitor linked to your hardware output.</li>
+<li>Each projection runs as an isolated thread, enabling simultaneous,
+unique feeds across every connected monitor.</li>
+</ol>
+<h3 id="key-considerations-for-stable-playback">Key Considerations for
+Stable Playback</h3>
+<ul>
+<li><strong>PCIe Bandwidth</strong>: Ensure your DeckLink card is seated
+in a PCIe slot with adequate lanes (typically PCIe 2.0/3.0 x4 or x8) to
+handle simultaneous uncompressed video streams.</li>
+<li><strong>Color Space and Conversion</strong>: Match the OBS Canvas
+color format (NV12, P010, or I420) to the DeckLink output setting
+(usually YUV 4:2:2 8-bit or 10-bit) to minimize GPU color space
+conversion overhead.</li>
+<li><strong>Audio Routing</strong>: When assigning feeds, verify that
+audio monitoring settings in the <strong>Advanced Audio
+Properties</strong> are routed to the matching DeckLink channels if
+embedded SDI/HDMI audio is required on the auxiliary monitors.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

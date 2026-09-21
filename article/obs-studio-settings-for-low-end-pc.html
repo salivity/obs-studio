@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio Settings for Low End PC - obs-studio</title>
+    <meta name="description" content="Running OBS Studio on an older or budget computer can result in laggy recordings, high CPU usage, and dropped frames. This guide provides a straightforward walkthrough on how to optimize your OBS Studio settings specifically for a low-end PC, allowing yo">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-studio-settings-for-low-end-pc">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Studio Settings for Low End PC - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-studio-settings-for-low-end-pc" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Running OBS Studio on an older or budget computer can result in laggy recordings, high CPU usage, and dropped frames. This guide provides a straightforward walkthrough on how to optimize your OBS Studio settings specifically for a low-end PC, allowing yo" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-studio-settings-for-low-end-pc">OBS Studio Settings for Low
+End PC</h1>
+<p>Running OBS Studio on an older or budget computer can result in laggy
+recordings, high CPU usage, and dropped frames. This guide provides a
+straightforward walkthrough on how to optimize your OBS Studio settings
+specifically for a low-end PC, allowing you to capture high-quality
+video and stream smoothly without overloading your system resources.</p>
+<h2 id="1-adjust-video-settings-resolution-and-fps">1. Adjust Video
+Settings (Resolution and FPS)</h2>
+<p>Reducing your resolution and frame rate is the most effective way to
+lower the strain on your CPU and GPU.</p>
+<ul>
+<li><strong>Base (Canvas) Resolution:</strong> Set this to your
+monitor's native resolution (e.g., 1920x1080).</li>
+<li><strong>Output (Scaled) Resolution:</strong> Downscale this to
+<strong>1280x720</strong> (720p) or even <strong>1024x576</strong>.
+Lowering the output resolution significantly reduces the rendering
+workload.</li>
+<li><strong>Downscale Filter:</strong> Choose <strong>Bilinear</strong>.
+It is the fastest filtering method and requires the least amount of
+processing power.</li>
+<li><strong>Common FPS Values:</strong> Change this from 60 to
+<strong>30</strong>. Cutting the frame rate in half instantly reduces
+the performance demand on your system by 50%.</li>
+</ul>
+<h2 id="2-optimize-output-settings-encoder-and-bitrate">2. Optimize
+Output Settings (Encoder and Bitrate)</h2>
+<p>The encoder translates your screen capture into video data. Choosing
+the right encoder is crucial for low-end hardware.</p>
+<ul>
+<li><strong>Output Mode:</strong> Switch this from Simple to
+<strong>Advanced</strong> to unlock more control.</li>
+<li><strong>Encoder:</strong> If you have a dedicated graphics card,
+select the hardware encoder (like <strong>NVIDIA NVENC</strong>,
+<strong>AMD AMF</strong>, or <strong>Intel Quick Sync QSV</strong>).
+This offloads the work from your CPU. If you only have integrated
+graphics, use <strong>x264</strong> (CPU encoding).</li>
+<li><strong>Rate Control:</strong> Set this to <strong>CBR</strong>
+(Constant Bitrate) for consistent performance.</li>
+<li><strong>Bitrate:</strong> For 720p at 30fps, a bitrate between
+<strong>2,500 Kbps and 3,500 Kbps</strong> is ideal.</li>
+<li><strong>CPU Usage Preset (for x264):</strong> If using x264, set the
+preset to <strong>veryfast</strong> or <strong>superfast</strong>. The
+faster the preset, the less CPU power OBS will use (though image quality
+may slightly decrease).</li>
+</ul>
+<h2 id="3-change-process-priority">3. Change Process Priority</h2>
+<p>Giving OBS Studio higher priority in Windows ensures that the
+operating system allocates resources to your stream or recording over
+other background processes.</p>
+<ul>
+<li>Go to <strong>Settings</strong> &gt; <strong>Advanced</strong>.</li>
+<li>Under the <strong>General</strong> section, find <strong>Process
+Priority</strong>.</li>
+<li>Change the setting from Normal to <strong>Above Normal</strong> or
+<strong>High</strong>.</li>
+</ul>
+<h2 id="4-disable-the-obs-studio-preview">4. Disable the OBS Studio
+Preview</h2>
+<p>The live preview window in OBS constantly renders your screen, which
+consumes valuable GPU power.</p>
+<ul>
+<li>Right-click on the blank space around the preview window in the main
+OBS interface.</li>
+<li>Uncheck <strong>Enable Preview</strong>.</li>
+<li>You will see a black screen in the center of OBS, but the software
+will still record or stream perfectly while saving system
+resources.</li>
+</ul>
+<h2 id="5-run-obs-as-administrator">5. Run OBS as Administrator</h2>
+<p>Running OBS Studio with administrator privileges allows the software
+to bypass certain Windows limitations and prioritize GPU allocation.</p>
+<ul>
+<li>Right-click the OBS Studio shortcut on your desktop.</li>
+<li>Select <strong>Properties</strong> &gt;
+<strong>Compatibility</strong> tab.</li>
+<li>Check the box for <strong>Run this program as an
+administrator</strong> and click Apply.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

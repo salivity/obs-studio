@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Bicubic Downscaling Algorithm Explained - obs-studio</title>
+    <meta name="description" content="This article explores the mathematical foundation of the bicubic downscaling filter used in OBS Studio. It covers the specific cubic convolution algorithm implemented in OBS's rendering pipeline, breaks down the mathematical formulas used to weigh neighb">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-bicubic-downscaling-algorithm-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Bicubic Downscaling Algorithm Explained - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-bicubic-downscaling-algorithm-explained" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores the mathematical foundation of the bicubic downscaling filter used in OBS Studio. It covers the specific cubic convolution algorithm implemented in OBS's rendering pipeline, breaks down the mathematical formulas used to weigh neighb" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-bicubic-downscaling-algorithm-explained">OBS Bicubic
+Downscaling Algorithm Explained</h1>
+<p>This article explores the mathematical foundation of the bicubic
+downscaling filter used in OBS Studio. It covers the specific cubic
+convolution algorithm implemented in OBS's rendering pipeline, breaks
+down the mathematical formulas used to weigh neighboring pixels, and
+explains how this algorithm balances computational performance with
+image sharpness during live video encoding.</p>
+<h2 id="the-core-algorithm-bicubic-convolution">The Core Algorithm:
+Bicubic Convolution</h2>
+<p>OBS Studio implements bicubic downscaling using a standard
+<strong>cubic convolution interpolation algorithm</strong> operating
+over a 16-sample grid (a 4x4 pixel kernel). Rather than taking a simple
+weighted average of adjacent pixels as seen in bilinear scaling, OBS
+applies a separable third-order polynomial across both horizontal and
+vertical axes to approximate an ideal sinc reconstruction filter.</p>
+<p>In OBS Studio's graphics subsystem (<code>libobs</code>), the bicubic
+filter relies primarily on the <strong>Catmull-Rom spline</strong>, a
+specific formulation of the Keys cubic convolution kernel where the
+sharpening parameter <span class="math inline">\(a\)</span> is set to
+<span class="math inline">\(-0.5\)</span> (or represented within the
+Mitchell-Netravali family where <span class="math inline">\(B =
+0\)</span> and <span class="math inline">\(C = 0.5\)</span>).</p>
+<h2 id="mathematical-formulation">Mathematical Formulation</h2>
+<p>The cubic convolution kernel calculates the weighting factor <span
+class="math inline">\(W(x)\)</span> for a pixel at a continuous distance
+<span class="math inline">\(x\)</span> from the sampling point using the
+following piecewise cubic function:</p>
+<p><span class="math display">\[W(x) = \begin{cases} (a + 2)|x|^3 - (a +
+3)|x|^2 + 1 &amp; \text{for } |x| \le 1 \\ a|x|^3 - 5a|x|^2 + 8a|x| - 4a
+&amp; \text{for } 1 &lt; |x| &lt; 2 \\ 0 &amp; \text{otherwise}
+\end{cases}\]</span></p>
+<p>When substituting the Catmull-Rom parameter (<span
+class="math inline">\(a = -0.5\)</span>), the system simplifies into two
+primary distance intervals:</p>
+<ol type="1">
+<li><p>For <span class="math inline">\(|x| \le 1\)</span>: <span
+class="math display">\[W(x) = 1.5|x|^3 - 2.5|x|^2 + 1\]</span></p></li>
+<li><p>For <span class="math inline">\(1 &lt; |x| &lt; 2\)</span>: <span
+class="math display">\[W(x) = -0.5|x|^3 + 2.5|x|^2 - 4|x| +
+2\]</span></p></li>
+<li><p>For <span class="math inline">\(|x| \ge 2\)</span>: <span
+class="math display">\[W(x) = 0\]</span></p></li>
+</ol>
+<p>Because the kernel evaluates to zero when <span
+class="math inline">\(|x| \ge 2\)</span>, the algorithm only needs to
+consider two pixels to the left and two pixels to the right of the
+sample point along each dimension.</p>
+<h2 id="2d-implementation-and-separability">2D Implementation and
+Separability</h2>
+<p>Because the 2D cubic filter is mathematically separable, the
+interpolation can be computed independently along rows and columns:</p>
+<ol type="1">
+<li><strong>Sampling:</strong> A 4x4 neighborhood of input pixels
+surrounding the target downscaled coordinate is gathered.</li>
+<li><strong>Weight Calculation:</strong> The fractional offsets <span
+class="math inline">\((\Delta x, \Delta y)\)</span> between the target
+coordinate and the nearest grid point are passed into the cubic
+polynomial function to derive four horizontal weights and four vertical
+weights.</li>
+<li><strong>Normalization and Summation:</strong> The 16 source color
+values <span class="math inline">\(C_{i,j}\)</span> are multiplied by
+their corresponding spatial weights: <span
+class="math display">\[C_{\text{final}} = \sum_{i=-1}^{2}
+\sum_{j=-1}^{2} C_{i,j} \cdot W(i - \Delta x) \cdot W(j - \Delta
+y)\]</span></li>
+</ol>
+<p>In OBS's HLSL shader implementation (<code>bicubic.effect</code>),
+these calculations are optimized for GPU execution by taking advantage
+of hardware bilinear filtering to reduce the required texture fetches
+from 16 discrete reads down to 4 filtered reads with offset sampling
+coordinates.</p>
+<h2 id="performance-and-visual-characteristics">Performance and Visual
+Characteristics</h2>
+<p>By setting <span class="math inline">\(a = -0.5\)</span>, the
+Catmull-Rom variant maintains continuity in both the first derivative
+(slope) and pixel values across sampling boundaries. This negative lobe
+behavior sharpens edges and preserves fine detail significantly better
+than bilinear filtering, while avoiding the ringing artifacts (haloing)
+and high GPU overhead associated with higher-order Lanczos (sinc-based)
+filtering.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

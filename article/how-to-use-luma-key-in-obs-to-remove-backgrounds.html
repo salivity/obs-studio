@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Use Luma Key in OBS to Remove Backgrounds - obs-studio</title>
+    <meta name="description" content="Using animated graphics with solid black or white backgrounds can clutter your stream layouts in OBS Studio. This guide provides a straightforward, step-by-step walkthrough on how to use the "Luma Key" filter in OBS Studio to instantly remove these backg">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/how-to-use-luma-key-in-obs-to-remove-backgrounds">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Use Luma Key in OBS to Remove Backgrounds - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/how-to-use-luma-key-in-obs-to-remove-backgrounds" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Using animated graphics with solid black or white backgrounds can clutter your stream layouts in OBS Studio. This guide provides a straightforward, step-by-step walkthrough on how to use the "Luma Key" filter in OBS Studio to instantly remove these backg" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-use-luma-key-in-obs-to-remove-backgrounds">How to Use
+Luma Key in OBS to Remove Backgrounds</h1>
+<p>Using animated graphics with solid black or white backgrounds can
+clutter your stream layouts in OBS Studio. This guide provides a
+straightforward, step-by-step walkthrough on how to use the "Luma Key"
+filter in OBS Studio to instantly remove these backgrounds, allowing
+your overlays, alerts, and animations to blend seamlessly into your
+broadcast.</p>
+<h3 id="step-1-add-your-animated-graphic">Step 1: Add Your Animated
+Graphic</h3>
+<p>First, import your graphic into OBS Studio. Go to the
+<strong>Sources</strong> dock at the bottom of the screen, click the
+<strong>+</strong> (plus) icon, and select <strong>Media Source</strong>
+(for MP4 or WebM files) or <strong>Image</strong> (for GIFs). Browse to
+locate your file, check the <strong>Loop</strong> option if you want the
+animation to repeat continuously, and click <strong>OK</strong>.</p>
+<h3 id="step-2-open-the-filters-menu">Step 2: Open the Filters Menu</h3>
+<p>Right-click on your newly added source in the
+<strong>Sources</strong> list and select <strong>Filters</strong> from
+the context menu. This will open a new configuration window where you
+can apply visual effects to your graphic.</p>
+<h3 id="step-3-add-the-luma-key-filter">Step 3: Add the Luma Key
+Filter</h3>
+<p>In the Filters window, look at the bottom section labeled
+<strong>Effect Filters</strong>. Click the <strong>+</strong> icon in
+the bottom-left corner of this section and select <strong>Luma
+Key</strong> from the list. You can leave the name as default or rename
+it, then click <strong>OK</strong>.</p>
+<h3 id="step-4-configure-the-luma-key-settings">Step 4: Configure the
+Luma Key Settings</h3>
+<p>Luma Key works by filtering out pixels based on their brightness
+(luminance). Depending on the color of your background, adjust the
+sliders as follows:</p>
+<ul>
+<li><strong>To Remove a Black Background:</strong> Gradually drag the
+<strong>Luma Min</strong> slider to the right. This setting controls the
+minimum brightness threshold; raising it will make the darkest areas of
+the graphic transparent. Stop sliding once the black background
+completely disappears. If the edges of your graphic look jagged,
+slightly increase the <strong>Luma Min Smooth</strong> slider to soften
+the transition.</li>
+<li><strong>To Remove a White Background:</strong> Gradually drag the
+<strong>Luma Max</strong> slider to the left. This setting controls the
+maximum brightness threshold; lowering it will make the brightest areas
+transparent. Stop sliding once the white background is fully keyed out.
+Adjust the <strong>Luma Max Smooth</strong> slider to clean up any
+remaining bright halos around your animation.</li>
+</ul>
+<p>Once the background is gone and the edges look clean, click
+<strong>Close</strong> at the bottom of the Filters window. Your
+animated graphic will now display with a transparent background directly
+over your stream layout.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

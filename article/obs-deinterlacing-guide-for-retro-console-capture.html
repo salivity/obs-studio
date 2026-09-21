@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Deinterlacing Guide for Retro Console Capture - obs-studio</title>
+    <meta name="description" content="Capturing retro video game consoles using OBS Studio often results in jagged, blurry lines during fast-moving gameplay. This article explains the purpose of the "Deinterlacing" settings menu in OBS Studio, how interlaced video signals from older consoles">
+    <link rel="canonical" href="https://salivity.github.io/obs-studio/article/obs-deinterlacing-guide-for-retro-console-capture">
+    <link rel="search" type="application/opensearchdescription+xml" title="obs-studio" href="/obs-studio/opensearch.xml">
+    <link rel="icon" href="/obs-studio/favicon.ico">
+    <link rel="stylesheet" href="/obs-studio/css/style.css">
+    <link media="print" rel="stylesheet" href="/obs-studio/css/print.css">
+    <script src="/obs-studio/js/fuse.min.js"></script>
+    <script src="/obs-studio/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OBS Deinterlacing Guide for Retro Console Capture - obs-studio" />
+    <meta property="og:url" content="https://salivity.github.io/obs-studio/article/obs-deinterlacing-guide-for-retro-console-capture" />
+    <meta property="og:image" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/obs-studio/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Capturing retro video game consoles using OBS Studio often results in jagged, blurry lines during fast-moving gameplay. This article explains the purpose of the "Deinterlacing" settings menu in OBS Studio, how interlaced video signals from older consoles" />
+    <link rel="manifest" href="/obs-studio/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/obs-studio/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>obs-studio</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/obs-studio/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="obs-deinterlacing-guide-for-retro-console-capture">OBS
+Deinterlacing Guide for Retro Console Capture</h1>
+<p>Capturing retro video game consoles using OBS Studio often results in
+jagged, blurry lines during fast-moving gameplay. This article explains
+the purpose of the "Deinterlacing" settings menu in OBS Studio, how
+interlaced video signals from older consoles cause visual artifacts on
+modern displays, and how to configure these settings to achieve a clean,
+smooth, and authentic visual output for your streams or recordings.</p>
+<h3 id="understanding-interlaced-video-and-retro-consoles">Understanding
+Interlaced Video and Retro Consoles</h3>
+<p>Older television standards (like NTSC and PAL) utilized interlaced
+video to save broadcast bandwidth. Consoles from the PlayStation 2,
+original Xbox, and Nintendo GameCube eras frequently outputted signals
+in 480i or 576i ("i" standing for interlaced).</p>
+<p>In an interlaced signal, the console sends video in alternating
+fields: first the odd-numbered horizontal lines of the image, then the
+even-numbered lines. Old CRT televisions displayed these fields so
+quickly that the human eye perceived them as a single, continuous
+image.</p>
+<h3 id="the-problem-on-modern-displays-combing-artifacts">The Problem on
+Modern Displays: Combing Artifacts</h3>
+<p>Modern computer monitors, TVs, and capture cards operate on
+progressive scan ("p"), meaning they draw every line of the image
+simultaneously. When a capture card receives an interlaced signal (like
+480i) and sends it to OBS, the software displays both the odd and even
+fields at the same time.</p>
+<p>Because game objects move between the time the odd field and the even
+field are drawn, this causes a visual glitch known as
+<strong>combing</strong>. Combing appears as jagged, horizontal,
+zipper-like lines cutting through any moving object on the screen.</p>
+<h3 id="the-purpose-of-obs-deinterlacing">The Purpose of OBS
+Deinterlacing</h3>
+<p>The Deinterlacing menu in OBS Studio exists to eliminate these
+combing artifacts. When enabled, OBS uses real-time processing
+algorithms to combine, discard, or interpolate the alternating fields of
+the video signal into a clean, progressive frame.</p>
+<p>Without deinterlacing enabled, fast-paced action games will look
+highly distorted and pixelated during movement. Enabling deinterlacing
+restores image clarity and prevents viewer eye strain.</p>
+<h3 id="recommended-obs-deinterlacing-settings">Recommended OBS
+Deinterlacing Settings</h3>
+<p>To access these settings, right-click your capture card source in
+OBS, navigate to <strong>Deinterlacing</strong>, and configure the
+following options:</p>
+<ul>
+<li><p><strong>Deinterlacing Method:</strong></p>
+<ul>
+<li><strong>Yadif 2x:</strong> This is the highly recommended setting
+for retro gaming. The "2x" indicates that it doubles the frame rate by
+turning every individual interlaced field into a full progressive frame.
+This converts a 30fps interlaced signal (which contains 60 fields per
+second of motion data) into a fluid, true 60fps progressive output.</li>
+<li><strong>Yadif:</strong> This merges the fields into a 30fps
+progressive output. While it removes combing, it cuts the motion
+smoothness of the gameplay in half.</li>
+<li><strong>Retro / Discard:</strong> These methods discard half of the
+fields. They are lightweight on system resources but result in a loss of
+vertical resolution.</li>
+</ul></li>
+<li><p><strong>Deinterlacing Order:</strong></p>
+<ul>
+<li>Set this to <strong>Top Field First</strong> or <strong>Bottom Field
+First</strong>. If the movement in your capture looks stuttery or
+jittery (as if frames are playing out of order), switch to the opposite
+option.</li>
+</ul></li>
+</ul>
+<h3 id="when-to-turn-deinterlacing-off">When to Turn Deinterlacing
+Off</h3>
+<p>Deinterlacing should only be enabled when capturing an interlaced
+signal (like 480i or 576i).</p>
+<p>If you are playing older 8-bit or 16-bit consoles (like the NES,
+Genesis, or SNES) that output in 240p, or newer retro consoles utilizing
+progressive scan (like the Wii or Dreamcast running at 480p), you must
+turn deinterlacing <strong>Off</strong>. Applying deinterlacing to a
+progressive signal will unnecessarily degrade the image quality, causing
+unwanted blurriness and input lag.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/obs-studio'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/obs-studio/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/obs-studio/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>
